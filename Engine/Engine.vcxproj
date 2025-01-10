@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Defines.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="IExecute.h" />
     <ClInclude Include="pch.h" />

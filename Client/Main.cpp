@@ -4,7 +4,6 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {
-	Game game(hInstance);
 	AppDesc desc;
 	desc.appName = L"GameApplication";
 	desc.hAppInstance = hInstance;
@@ -12,7 +11,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 	desc.width = 800;
 	desc.height = 600;
 
-	Game::GetApp()->Run(desc);
+	GAME->Run(desc);
 
 	return 0;
 }

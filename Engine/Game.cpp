@@ -1,26 +1,24 @@
 #include "pch.h"
 #include "Game.h"
 
-Game::Game(HINSTANCE hInstance) : _hAppInstance(hInstance)
-{
-	// Singleton
-	assert(_gameApp == nullptr);
-	_gameApp = this;
-}
+Game* Game::_gameApp = nullptr;
 
 Game::~Game()
 {
 
 }
 
-Game* Game::GetApp()
+WPARAM Game::Run(AppDesc& appDesc)
 {
-	return _gameApp;
+	_appDesc = appDesc;
+	return Run();
 }
 
 WPARAM Game::Run()
 {
 	MSG msg = { 0 };
+
+	Initialize();
 
 	while (msg.message != WM_QUIT)
 	{
@@ -38,20 +36,13 @@ WPARAM Game::Run()
 	return msg.wParam;
 }
 
-WPARAM Game::Run(AppDesc& appDesc)
-{
-	_appDesc = appDesc;
-	Initialize();
-	return Run();
-}
-
+// 윈도우 생성 인자로 넘겨줄 콜백 함수
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return Game::GetApp()->MsgProc(hwnd, msg, wParam, lParam);
+	return GAME->MsgProc(hwnd, msg, wParam, lParam);
 }
 
-Game* Game::_gameApp = nullptr;
-
+// 실질적 윈도우 메세지 처리부
 LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -79,6 +70,7 @@ LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
+// 윈도우, DirectX 초기 설정부
 bool Game::Initialize()
 {
 	if (!InitMainWindow())
@@ -87,6 +79,7 @@ bool Game::Initialize()
 	return true;
 }
 
+// 윈도우 설정 함수
 bool Game::InitMainWindow()
 {
 	WNDCLASS wc;

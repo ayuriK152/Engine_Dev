@@ -12,13 +12,11 @@ struct AppDesc
 
 class Game
 {
+	DECLARE_SINGLE(Game);
 public:
-	Game(HINSTANCE hInstance);
 	virtual ~Game();
 
 public:
-	static Game* GetApp();
-
 	WPARAM Run();
 	WPARAM Run(AppDesc& appDesc);
 

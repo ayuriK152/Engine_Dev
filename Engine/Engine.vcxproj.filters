@@ -11,6 +11,9 @@
     <ClInclude Include="IExecute.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">

@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include "Types.h"
+#include "Defines.h"
 
 // STL
 #include <memory>

@@ -4,15 +4,36 @@
     <ClInclude Include="Types.h">
       <Filter>Defines</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
+    <ClInclude Include="GameApplication.h">
       <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="IExecute.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameResource.h">
+      <Filter>EngineComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="UniversalUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
     <ClInclude Include="Defines.h">
       <Filter>Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>00. Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Descriptors.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="UploadBuffer.h">
+      <Filter>EngineComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>00. Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -25,14 +46,35 @@
     <Filter Include="Interfaces">
       <UniqueIdentifier>{1dad3b72-7d91-4855-92cb-18c7b6020180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineComponents">
+      <UniqueIdentifier>{5b08aaa2-9c22-448b-acc4-74f446072b4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="GameApplication.cpp">
       <Filter>00. Core</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="IExecute.cpp">
       <Filter>Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameResource.cpp">
+      <Filter>EngineComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="UniversalUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>00. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>00. Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

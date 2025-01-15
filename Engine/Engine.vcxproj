@@ -20,17 +20,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Defines.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Descriptors.h" />
+    <ClInclude Include="FrameResource.h" />
+    <ClInclude Include="GameApplication.h" />
+    <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="Graphic.h" />
     <ClInclude Include="IExecute.h" />
+    <ClInclude Include="MathHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UniversalUtils.h" />
+    <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="FrameResource.cpp" />
+    <ClCompile Include="GameApplication.cpp" />
+    <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IExecute.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UniversalUtils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -121,7 +133,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries\Include\;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

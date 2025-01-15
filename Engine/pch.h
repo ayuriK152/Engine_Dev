@@ -18,17 +18,31 @@ using namespace std;
 
 // Win
 #include <windows.h>
+#include <windowsx.h>
 #include <assert.h>
+#include <comdef.h>
 
 // DX
 #include "d3dx12/d3dx12.h"
+#include <dxgi1_4.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
 #include <wrl.h>
 #include <DirectXMath.h>
+#include <DirectXColors.h>
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
+
+#include "Descriptors.h"
+#include "UniversalUtils.h"
+#include "MathHelper.h"
+#include "GameTimer.h"
+
+#include "UploadBuffer.h"
+#include "FrameResource.h"
+#include "GameApplication.h"
+#include "Graphic.h"

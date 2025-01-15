@@ -12,4 +12,8 @@ public:									\
 
 #define GET_SINGLE(classname)	classname::GetInstance()
 
-#define GAME	GET_SINGLE(Game)
+#ifndef ReleaseCom
+#define ReleaseCom(x) { if (x) { x->Release(); x = 0; } }
+#endif
+
+#define GRAPHIC GET_SINGLE(Graphic)

@@ -16,4 +16,6 @@ public:									\
 #define ReleaseCom(x) { if (x) { x->Release(); x = 0; } }
 #endif
 
-#define GRAPHIC GET_SINGLE(Graphic)
+#define GAMEAPP		GET_SINGLE(GameApplication)
+#define GRAPHIC		GET_SINGLE(Graphic)
+#define TIME		GET_SINGLE(GameTimer)

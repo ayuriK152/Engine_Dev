@@ -11,8 +11,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 	//desc.width = 800;
 	//desc.height = 600;
 
-	GRAPHIC->SetAppInst(hInstance);
-	GRAPHIC->Run();
+	GAMEAPP->SetAppInst(hInstance);
+	GAMEAPP->Run();
 
 	return 0;
 }

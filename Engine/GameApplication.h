@@ -5,7 +5,7 @@ class GameApplication
 	DECLARE_SINGLE(GameApplication);
 public:
 	HINSTANCE	GetAppInst()const;
-	void		SetAppInst(HINSTANCE hInstance);
+	void		SetAppInst(HINSTANCE hInstance, AppDesc appDesc);
 
 	AppStatus	GetAppStatus()const;
 	void		SetAppStatus(AppStatus appStatus);

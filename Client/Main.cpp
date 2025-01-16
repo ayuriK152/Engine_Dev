@@ -4,14 +4,14 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {
-	//AppDesc desc;
-	//desc._mainWndCaption = L"GameApplication";
-	//desc.hAppInstance = hInstance;
-	//desc.hMainWnd = NULL;
-	//desc.width = 800;
-	//desc.height = 600;
+	AppDesc desc;
+	desc.mainWndCaption = L"GameApplication";
+	desc._4xMsaaState = false;
+	desc._4xMsaaQuality = 0;
+	desc.clientWidth = 800;
+	desc.clientHeight = 600;
 
-	GAMEAPP->SetAppInst(hInstance);
+	GAMEAPP->SetAppInst(hInstance, desc);
 	GAMEAPP->Run();
 
 	return 0;

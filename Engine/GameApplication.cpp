@@ -6,9 +6,10 @@ HINSTANCE GameApplication::GetAppInst() const
 	return _hAppInst;
 }
 
-void GameApplication::SetAppInst(HINSTANCE hInstance)
+void GameApplication::SetAppInst(HINSTANCE hInstance, AppDesc appDesc)
 {
 	_hAppInst = hInstance;
+	GRAPHIC->SetAppDesc(appDesc);
 }
 
 AppStatus GameApplication::GetAppStatus() const

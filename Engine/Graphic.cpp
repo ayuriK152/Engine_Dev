@@ -22,24 +22,34 @@ HWND Graphic::GetMainWnd() const
 
 float Graphic::GetAspectRatio() const
 {
-	return static_cast<float>(_clientWidth) / _clientHeight;
+	return static_cast<float>(_appDesc.clientWidth) / _appDesc.clientHeight;
 }
 
 bool Graphic::Get4xMsaaState()const
 {
-	return _4xMsaaState;
+	return _appDesc._4xMsaaState;
 }
 
 void Graphic::Set4xMsaaState(bool value)
 {
-	if (_4xMsaaState != value)
+	if (_appDesc._4xMsaaState != value)
 	{
-		_4xMsaaState = value;
+		_appDesc._4xMsaaState = value;
 
 		// Recreate the swapchain and buffers with new multisample settings.
 		CreateSwapChain();
 		OnResize();
 	}
+}
+
+AppDesc Graphic::GetAppDesc() const
+{
+	return _appDesc;
+}
+
+void Graphic::SetAppDesc(AppDesc appDesc)
+{
+	_appDesc = appDesc;
 }
 
 bool Graphic::Initialize()
@@ -95,7 +105,7 @@ void Graphic::OnResize()
 	// Resize the swap chain.
 	ThrowIfFailed(_swapChain->ResizeBuffers(
 		_SwapChainBufferCount,
-		_clientWidth, _clientHeight,
+		_appDesc.clientWidth, _appDesc.clientHeight,
 		_backBufferFormat,
 		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
 
@@ -113,8 +123,8 @@ void Graphic::OnResize()
 	D3D12_RESOURCE_DESC depthStencilDesc;
 	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Alignment = 0;
-	depthStencilDesc.Width = _clientWidth;
-	depthStencilDesc.Height = _clientHeight;
+	depthStencilDesc.Width = _appDesc.clientWidth;
+	depthStencilDesc.Height = _appDesc.clientHeight;
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
 
@@ -125,8 +135,8 @@ void Graphic::OnResize()
 	// we need to create the depth buffer resource with a typeless format.  
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
-	depthStencilDesc.SampleDesc.Count = _4xMsaaState ? 4 : 1;
-	depthStencilDesc.SampleDesc.Quality = _4xMsaaState ? (_4xMsaaQuality - 1) : 0;
+	depthStencilDesc.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
+	depthStencilDesc.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
 	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
@@ -165,12 +175,12 @@ void Graphic::OnResize()
 	// Update the viewport transform to cover the client area.
 	_screenViewport.TopLeftX = 0;
 	_screenViewport.TopLeftY = 0;
-	_screenViewport.Width = static_cast<float>(_clientWidth);
-	_screenViewport.Height = static_cast<float>(_clientHeight);
+	_screenViewport.Width = static_cast<float>(_appDesc.clientWidth);
+	_screenViewport.Height = static_cast<float>(_appDesc.clientHeight);
 	_screenViewport.MinDepth = 0.0f;
 	_screenViewport.MaxDepth = 1.0f;
 
-	_scissorRect = { 0, 0, _clientWidth, _clientHeight };
+	_scissorRect = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
 }
 
 void Graphic::Update()
@@ -180,47 +190,32 @@ void Graphic::Update()
 
 void Graphic::Render()
 {
-	// Reuse the memory associated with command recording.
-	// We can only reset when the associated command lists have finished execution on the GPU.
 	ThrowIfFailed(_directCmdListAlloc->Reset());
 
-	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
-	// Reusing the command list reuses memory.
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
-	// Indicate a state transition on the resource usage.
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
 	_commandList->RSSetViewports(1, &_screenViewport);
 	_commandList->RSSetScissorRects(1, &_scissorRect);
 
-	// Clear the back buffer and depth buffer.
 	_commandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
 	_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-	// Specify the buffers we are going to render to.
 	_commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 
-	// Indicate a state transition on the resource usage.
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	// Done recording commands.
 	ThrowIfFailed(_commandList->Close());
 
-	// Add the command list to the queue for execution.
 	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// swap the back and front buffers
 	ThrowIfFailed(_swapChain->Present(0, 0));
 	_currBackBuffer = (_currBackBuffer + 1) % _SwapChainBufferCount;
 
-	// Wait until frame commands are complete.  This waiting is inefficient and is
-	// done for simplicity.  Later we will show how to organize our rendering code
-	// so we do not have to wait per frame.
 	FlushCommandQueue();
 }
 
@@ -229,136 +224,133 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	AppStatus appStatus = GAMEAPP->GetAppStatus();
 	switch (msg)
 	{
-		// WM_ACTIVATE is sent when the window is activated or deactivated.  
-		// We pause the game when the window is deactivated and unpause it 
-		// when it becomes active.  
-	case WM_ACTIVATE:
-		if (LOWORD(wParam) == WA_INACTIVE)
-		{
-			appStatus.appPaused = true;
-			TIME->Stop();
-		}
-		else
-		{
-			appStatus.appPaused = false;
-			TIME->Start();
-		}
-		GAMEAPP->SetAppStatus(appStatus);
-		return 0;
-
-		// WM_SIZE is sent when the user resizes the window.  
-	case WM_SIZE:
-		// Save the new client area dimensions.
-		_clientWidth = LOWORD(lParam);
-		_clientHeight = HIWORD(lParam);
-		if (_device)
-		{
-			if (wParam == SIZE_MINIMIZED)
+		case WM_ACTIVATE:
+			if (LOWORD(wParam) == WA_INACTIVE)
 			{
 				appStatus.appPaused = true;
-				appStatus.minimized = true;
-				appStatus.maximized = false;
+				TIME->Stop();
 			}
-			else if (wParam == SIZE_MAXIMIZED)
+			else
 			{
 				appStatus.appPaused = false;
-				appStatus.minimized = false;
-				appStatus.maximized = true;
-				OnResize();
+				TIME->Start();
 			}
-			else if (wParam == SIZE_RESTORED)
-			{
+			GAMEAPP->SetAppStatus(appStatus);
+			return 0;
 
-				// Restoring from minimized state?
-				if (appStatus.minimized)
+			// WM_SIZE is sent when the user resizes the window.  
+		case WM_SIZE:
+			// Save the new client area dimensions.
+			_appDesc.clientWidth = LOWORD(lParam);
+			_appDesc.clientHeight = HIWORD(lParam);
+			if (_device)
+			{
+				if (wParam == SIZE_MINIMIZED)
+				{
+					appStatus.appPaused = true;
+					appStatus.minimized = true;
+					appStatus.maximized = false;
+				}
+				else if (wParam == SIZE_MAXIMIZED)
 				{
 					appStatus.appPaused = false;
 					appStatus.minimized = false;
+					appStatus.maximized = true;
 					OnResize();
 				}
+				else if (wParam == SIZE_RESTORED)
+				{
 
-				// Restoring from maximized state?
-				else if (appStatus.maximized)
-				{
-					appStatus.appPaused = false;
-					appStatus.maximized = false;
-					OnResize();
-				}
-				else if (appStatus.resizing)
-				{
-					// If user is dragging the resize bars, we do not resize 
-					// the buffers here because as the user continuously 
-					// drags the resize bars, a stream of WM_SIZE messages are
-					// sent to the window, and it would be pointless (and slow)
-					// to resize for each WM_SIZE message received from dragging
-					// the resize bars.  So instead, we reset after the user is 
-					// done resizing the window and releases the resize bars, which 
-					// sends a WM_EXITSIZEMOVE message.
-				}
-				else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
-				{
-					OnResize();
+					// Restoring from minimized state?
+					if (appStatus.minimized)
+					{
+						appStatus.appPaused = false;
+						appStatus.minimized = false;
+						OnResize();
+					}
+
+					// Restoring from maximized state?
+					else if (appStatus.maximized)
+					{
+						appStatus.appPaused = false;
+						appStatus.maximized = false;
+						OnResize();
+					}
+					else if (appStatus.resizing)
+					{
+						// If user is dragging the resize bars, we do not resize 
+						// the buffers here because as the user continuously 
+						// drags the resize bars, a stream of WM_SIZE messages are
+						// sent to the window, and it would be pointless (and slow)
+						// to resize for each WM_SIZE message received from dragging
+						// the resize bars.  So instead, we reset after the user is 
+						// done resizing the window and releases the resize bars, which 
+						// sends a WM_EXITSIZEMOVE message.
+					}
+					else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
+					{
+						OnResize();
+					}
 				}
 			}
-		}
-		GAMEAPP->SetAppStatus(appStatus);
-		return 0;
+			GAMEAPP->SetAppStatus(appStatus);
+			return 0;
 
-		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
-	case WM_ENTERSIZEMOVE:
-		appStatus.appPaused = true;
-		appStatus.resizing = true;
-		TIME->Stop();
-		GAMEAPP->SetAppStatus(appStatus);
-		return 0;
+			// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
+		case WM_ENTERSIZEMOVE:
+			appStatus.appPaused = true;
+			appStatus.resizing = true;
+			TIME->Stop();
+			GAMEAPP->SetAppStatus(appStatus);
+			return 0;
 
-		// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
-		// Here we reset everything based on the new window dimensions.
-	case WM_EXITSIZEMOVE:
-		appStatus.appPaused = false;
-		appStatus.resizing = false;
-		TIME->Start();
-		GAMEAPP->SetAppStatus(appStatus);
-		OnResize();
-		return 0;
+			// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
+			// Here we reset everything based on the new window dimensions.
+		case WM_EXITSIZEMOVE:
+			appStatus.appPaused = false;
+			appStatus.resizing = false;
+			TIME->Start();
+			GAMEAPP->SetAppStatus(appStatus);
+			OnResize();
+			return 0;
 
-		// WM_DESTROY is sent when the window is being destroyed.
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-
-		// The WM_MENUCHAR message is sent when a menu is active and the user presses 
-		// a key that does not correspond to any mnemonic or accelerator key. 
-	case WM_MENUCHAR:
-		// Don't beep when we alt-enter.
-		return MAKELRESULT(0, MNC_CLOSE);
-
-		// Catch this message so to prevent the window from becoming too small.
-	case WM_GETMINMAXINFO:
-		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
-		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
-		return 0;
-
-	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-		return 0;
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
-		return 0;
-	case WM_MOUSEMOVE:
-		return 0;
-	case WM_KEYUP:
-		if (wParam == VK_ESCAPE)
-		{
+			// WM_DESTROY is sent when the window is being destroyed.
+		case WM_DESTROY:
 			PostQuitMessage(0);
-		}
-		else if ((int)wParam == VK_F2)
-			Set4xMsaaState(!_4xMsaaState);
+			return 0;
 
-		return 0;
-	}
+			// The WM_MENUCHAR message is sent when a menu is active and the user presses 
+			// a key that does not correspond to any mnemonic or accelerator key. 
+		case WM_MENUCHAR:
+			// Don't beep when we alt-enter.
+			return MAKELRESULT(0, MNC_CLOSE);
+
+			// Catch this message so to prevent the window from becoming too small.
+		case WM_GETMINMAXINFO:
+			((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
+			((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
+			return 0;
+
+		case WM_LBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+			return 0;
+		case WM_LBUTTONUP:
+		case WM_MBUTTONUP:
+		case WM_RBUTTONUP:
+			return 0;
+		case WM_MOUSEMOVE:
+			return 0;
+		case WM_KEYUP:
+			if (wParam == VK_ESCAPE)
+			{
+				PostQuitMessage(0);
+			}
+			else if ((int)wParam == VK_F2)
+				Set4xMsaaState(!_appDesc._4xMsaaState);
+
+			return 0;
+		}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -384,12 +376,12 @@ bool Graphic::InitMainWindow()
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	RECT R = { 0, 0, _clientWidth, _clientHeight };
+	RECT R = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
 	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
-	_hMainWnd = CreateWindow(L"MainWnd", _mainWndCaption.c_str(),
+	_hMainWnd = CreateWindow(L"MainWnd", _appDesc.mainWndCaption.c_str(),
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, GAMEAPP->GetAppInst(), 0);
 	if (!_hMainWnd)
 	{
@@ -455,8 +447,8 @@ bool Graphic::InitDirect3D()
 		&msQualityLevels,
 		sizeof(msQualityLevels)));
 
-	_4xMsaaQuality = msQualityLevels.NumQualityLevels;
-	assert(_4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
+	_appDesc._4xMsaaQuality = msQualityLevels.NumQualityLevels;
+	assert(_appDesc._4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
 #ifdef _DEBUG
 	LogAdapters();
@@ -499,15 +491,15 @@ void Graphic::CreateSwapChain()
 	_swapChain.Reset();
 
 	DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferDesc.Width = _clientWidth;
-	sd.BufferDesc.Height = _clientHeight;
+	sd.BufferDesc.Width = _appDesc.clientWidth;
+	sd.BufferDesc.Height = _appDesc.clientHeight;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferDesc.Format = _backBufferFormat;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.SampleDesc.Count = _4xMsaaState ? 4 : 1;
-	sd.SampleDesc.Quality = _4xMsaaState ? (_4xMsaaQuality - 1) : 0;
+	sd.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
+	sd.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = _SwapChainBufferCount;
 	sd.OutputWindow = _hMainWnd;
@@ -584,7 +576,7 @@ void Graphic::CalculateFrameStats()
 		wstring fpsStr = to_wstring(fps);
 		wstring mspfStr = to_wstring(mspf);
 
-		wstring windowText = _mainWndCaption +
+		wstring windowText = _appDesc.mainWndCaption +
 			L"    fps: " + fpsStr +
 			L"   mspf: " + mspfStr;
 

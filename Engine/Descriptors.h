@@ -3,9 +3,9 @@
 struct AppDesc
 {
 	//shared_ptr<class IExecute> app = nullptr;
-	wstring _mainWndCaption = L"GameApplication";
-	bool msaaState = false;
-	int msaaQuality = 1;
+	wstring mainWndCaption = L"GameApplication";
+	bool _4xMsaaState = false;
+	int _4xMsaaQuality = 0;
 	int clientWidth = 800;
 	int clientHeight = 600;
 };

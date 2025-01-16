@@ -30,6 +30,7 @@ using namespace std;
 #include <wrl.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
+#include <DirectXCollision.h>
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -40,8 +41,12 @@ using namespace Microsoft::WRL;
 #include "Descriptors.h"
 #include "UniversalUtils.h"
 #include "MathHelper.h"
-#include "GameTimer.h"
+#include "DXUtil.h"
 
+#include "Mesh.h"
+#include "Vertex.h"
+
+#include "GameTimer.h"
 #include "UploadBuffer.h"
 #include "FrameResource.h"
 #include "GameApplication.h"

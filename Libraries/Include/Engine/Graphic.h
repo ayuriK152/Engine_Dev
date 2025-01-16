@@ -33,8 +33,16 @@ private:
 private:
 	bool InitMainWindow();
 	bool InitDirect3D();
+
 	void CreateCommandObjects();
 	void CreateSwapChain();
+
+	void CreateDescriptorHeaps();
+	void CreateConstantBuffers();
+	void CreateRootSignature();
+	void CreateShaderAndInputLayout();
+	void CreateBoxGeoMetry();
+	void CreatePSO();
 
 	void FlushCommandQueue();
 
@@ -67,8 +75,11 @@ private:
 	ComPtr<ID3D12Resource> _swapChainBuffer[_SwapChainBufferCount];
 	ComPtr<ID3D12Resource> _depthStencilBuffer;
 
+	ComPtr<ID3D12RootSignature> _rootSignature;
+
 	ComPtr<ID3D12DescriptorHeap> _rtvHeap;
 	ComPtr<ID3D12DescriptorHeap> _dsvHeap;
+	ComPtr<ID3D12DescriptorHeap> _cbvHeap;
 
 	D3D12_VIEWPORT _screenViewport;
 	D3D12_RECT _scissorRect;
@@ -77,11 +88,31 @@ private:
 	UINT _dsvDescriptorSize = 0;
 	UINT _cbvSrvUavDescriptorSize = 0;
 
-	// Derived class should set these in derived constructor to customize starting values.
 	D3D_DRIVER_TYPE _d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
 	DXGI_FORMAT _backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	AppDesc _appDesc;
+
+	//===========================리팩토링 필수!!!!!!!!============
+
+	unique_ptr<UploadBuffer<ObjectConstants>> _objectCB = nullptr;
+
+	ComPtr<ID3DBlob> _vsByteCode = nullptr;
+	ComPtr<ID3DBlob> _psByteCode = nullptr;
+
+	ComPtr<ID3D12PipelineState> _PSO = nullptr;
+
+	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+
+	unique_ptr<Mesh> _boxGeo = nullptr;
+
+	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float mTheta = 1.5f * XM_PI;
+	float mPhi = XM_PIDIV4;
+	float mRadius = 5.0f;
 };
 

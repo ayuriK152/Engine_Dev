@@ -37,7 +37,10 @@ public:
 		return _uploadBuffer.Get();
 	}
 
-	void CopyData(int elementIndex, const T& data);
+	void CopyData(int elementIndex, const T& data)
+	{
+		memcpy(&_mappedData[elementIndex * _elementByteSize], &data, sizeof(T));
+	}
 
 	static UINT CalcConstantBufferByteSize(UINT byteSize)
 	{

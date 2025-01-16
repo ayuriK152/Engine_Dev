@@ -59,6 +59,23 @@ bool Graphic::Initialize()
 
 	OnResize();
 
+	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
+
+	CreateDescriptorHeaps();
+	CreateConstantBuffers();
+	CreateRootSignature();
+	CreateShaderAndInputLayout();
+	CreateBoxGeoMetry();
+	CreatePSO();
+
+	// Execute the initialization commands.
+	ThrowIfFailed(_commandList->Close());
+	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
+	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// Wait until initialization is complete.
+	FlushCommandQueue();
+
 	return true;
 }
 
@@ -163,18 +180,41 @@ void Graphic::OnResize()
 	_screenViewport.MaxDepth = 1.0f;
 
 	_scissorRect = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
+
+	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetAspectRatio(), 1.0f, 1000.0f);
+	XMStoreFloat4x4(&mProj, P);
 }
 
 void Graphic::Update()
 {
+	// Convert Spherical to Cartesian coordinates.
+	float x = mRadius * sinf(mPhi) * cosf(mTheta);
+	float z = mRadius * sinf(mPhi) * sinf(mTheta);
+	float y = mRadius * cosf(mPhi);
 
+	// Build the view matrix.
+	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+	XMVECTOR target = XMVectorZero();
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
+
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX worldViewProj = world * view * proj;
+
+	// Update the constant buffer with the latest worldViewProj matrix.
+	ObjectConstants objConstants;
+	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(worldViewProj));
+	_objectCB->CopyData(0, objConstants);
 }
 
 void Graphic::Render()
 {
 	ThrowIfFailed(_directCmdListAlloc->Reset());
 
-	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
+	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), _PSO.Get()));
 
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
@@ -187,6 +227,22 @@ void Graphic::Render()
 
 	_commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 
+	//================
+	ID3D12DescriptorHeap* descriptorHeaps[] = { _cbvHeap.Get() };
+	_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	_commandList->SetGraphicsRootSignature(_rootSignature.Get());
+
+	_commandList->IASetVertexBuffers(0, 1, &_boxGeo->VertexBufferView());
+	_commandList->IASetIndexBuffer(&_boxGeo->IndexBufferView());
+	_commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	_commandList->SetGraphicsRootDescriptorTable(0, _cbvHeap->GetGPUDescriptorHandleForHeapStart());
+
+	_commandList->DrawIndexedInstanced(
+		_boxGeo->drawArgs["box"].indexCount,
+		1, 0, 0, 0);
+	//=================
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
@@ -461,6 +517,181 @@ void Graphic::CreateSwapChain()
 		_commandQueue.Get(),
 		&sd,
 		_swapChain.GetAddressOf()));
+}
+
+void Graphic::CreateDescriptorHeaps()
+{
+	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+	cbvHeapDesc.NumDescriptors = 1;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.NodeMask = 0;
+	ThrowIfFailed(_device->CreateDescriptorHeap(&cbvHeapDesc,
+		IID_PPV_ARGS(&_cbvHeap)));
+}
+
+void Graphic::CreateConstantBuffers()
+{
+	_objectCB = std::make_unique<UploadBuffer<ObjectConstants>>(_device.Get(), 1, true);
+
+	UINT objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+
+	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = _objectCB->GetResource()->GetGPUVirtualAddress();
+	// Offset to the ith object constant buffer in the buffer.
+	int boxCBufIndex = 0;
+	cbAddress += boxCBufIndex * objCBByteSize;
+
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	cbvDesc.BufferLocation = cbAddress;
+	cbvDesc.SizeInBytes = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+
+	_device->CreateConstantBufferView(
+		&cbvDesc,
+		_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+}
+
+void Graphic::CreateRootSignature()
+{
+	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+
+	CD3DX12_DESCRIPTOR_RANGE cbvTable;
+	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+	ComPtr<ID3DBlob> serializedRootSig = nullptr;
+	ComPtr<ID3DBlob> errorBlob = nullptr;
+	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+		serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+
+	if (errorBlob != nullptr)
+	{
+		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+	}
+	ThrowIfFailed(hr);
+
+	ThrowIfFailed(_device->CreateRootSignature(
+		0,
+		serializedRootSig->GetBufferPointer(),
+		serializedRootSig->GetBufferSize(),
+		IID_PPV_ARGS(&_rootSignature)));
+}
+
+void Graphic::CreateShaderAndInputLayout()
+{
+	HRESULT hr = S_OK;
+
+	_vsByteCode = DXUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_0");
+	_psByteCode = DXUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
+
+	_inputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+}
+
+void Graphic::CreateBoxGeoMetry()
+{
+	std::array<Vertex, 8> vertices =
+	{
+		Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
+		Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) }),
+		Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) }),
+		Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) }),
+		Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) }),
+		Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) }),
+		Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) }),
+		Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) })
+	};
+
+	std::array<std::uint16_t, 36> indices =
+	{
+		// front face
+		0, 1, 2,
+		0, 2, 3,
+
+		// back face
+		4, 6, 5,
+		4, 7, 6,
+
+		// left face
+		4, 5, 1,
+		4, 1, 0,
+
+		// right face
+		3, 2, 6,
+		3, 6, 7,
+
+		// top face
+		1, 5, 6,
+		1, 6, 2,
+
+		// bottom face
+		4, 0, 3,
+		4, 3, 7
+	};
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+
+	_boxGeo = make_unique<Mesh>();
+	_boxGeo->name = "boxGeo";
+
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &_boxGeo->vertexBufferCPU));
+	CopyMemory(_boxGeo->vertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &_boxGeo->indexBufferCPU));
+	CopyMemory(_boxGeo->indexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+
+	_boxGeo->vertexBufferGPU = DXUtil::CreateDefaultBuffer(_device.Get(),
+		_commandList.Get(), vertices.data(), vbByteSize, _boxGeo->vertexBufferUploader);
+
+	_boxGeo->indexBufferGPU = DXUtil::CreateDefaultBuffer(_device.Get(),
+		_commandList.Get(), indices.data(), ibByteSize, _boxGeo->indexBufferUploader);
+
+	_boxGeo->vertexByteStride = sizeof(Vertex);
+	_boxGeo->vertexBufferByteSize = vbByteSize;
+	_boxGeo->indexFormat = DXGI_FORMAT_R16_UINT;
+	_boxGeo->indexBufferByteSize = ibByteSize;
+
+	Submesh submesh;
+	submesh.indexCount = (UINT)indices.size();
+	submesh.startIndexLocation = 0;
+	submesh.baseVertexLocation = 0;
+
+	_boxGeo->drawArgs["box"] = submesh;
+}
+
+void Graphic::CreatePSO()
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	psoDesc.InputLayout = { _inputLayout.data(), (UINT)_inputLayout.size() };
+	psoDesc.pRootSignature = _rootSignature.Get();
+	psoDesc.VS =
+	{
+		reinterpret_cast<BYTE*>(_vsByteCode->GetBufferPointer()),
+		_vsByteCode->GetBufferSize()
+	};
+	psoDesc.PS =
+	{
+		reinterpret_cast<BYTE*>(_psByteCode->GetBufferPointer()),
+		_psByteCode->GetBufferSize()
+	};
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	psoDesc.SampleMask = UINT_MAX;
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	psoDesc.NumRenderTargets = 1;
+	psoDesc.RTVFormats[0] = _backBufferFormat;
+	psoDesc.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
+	psoDesc.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
+	psoDesc.DSVFormat = _depthStencilFormat;
+	ThrowIfFailed(_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&_PSO)));
 }
 
 void Graphic::FlushCommandQueue()

@@ -35,6 +35,15 @@
     <ClInclude Include="GameTimer.h">
       <Filter>00. Core</Filter>
     </ClInclude>
+    <ClInclude Include="DXUtil.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -51,6 +60,9 @@
     </Filter>
     <Filter Include="EngineComponents">
       <UniqueIdentifier>{5b08aaa2-9c22-448b-acc4-74f446072b4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{3f209c1b-a4f3-4890-a26f-d65bfbae8c6c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +87,12 @@
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
       <Filter>00. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUtil.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

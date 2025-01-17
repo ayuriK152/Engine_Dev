@@ -15,7 +15,7 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="FrameResource.h">
-      <Filter>EngineComponents</Filter>
+      <Filter>01. EngineComponents</Filter>
     </ClInclude>
     <ClInclude Include="UniversalUtils.h">
       <Filter>Utils</Filter>
@@ -30,7 +30,7 @@
       <Filter>Defines</Filter>
     </ClInclude>
     <ClInclude Include="UploadBuffer.h">
-      <Filter>EngineComponents</Filter>
+      <Filter>01. EngineComponents</Filter>
     </ClInclude>
     <ClInclude Include="GameTimer.h">
       <Filter>00. Core</Filter>
@@ -39,10 +39,13 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Components</Filter>
+      <Filter>02. GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>02. GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -58,11 +61,14 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EngineComponents">
-      <UniqueIdentifier>{5b08aaa2-9c22-448b-acc4-74f446072b4d}</UniqueIdentifier>
+    <Filter Include="02. GameObject">
+      <UniqueIdentifier>{c45e393e-2bc7-4ba4-842f-48371a4ee789}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Components">
+    <Filter Include="02. GameObject\Components">
       <UniqueIdentifier>{3f209c1b-a4f3-4890-a26f-d65bfbae8c6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. EngineComponents">
+      <UniqueIdentifier>{5b08aaa2-9c22-448b-acc4-74f446072b4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -77,7 +83,7 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="FrameResource.cpp">
-      <Filter>EngineComponents</Filter>
+      <Filter>01. EngineComponents</Filter>
     </ClCompile>
     <ClCompile Include="UniversalUtils.cpp">
       <Filter>Utils</Filter>
@@ -92,7 +98,10 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Components</Filter>
+      <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>02. GameObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

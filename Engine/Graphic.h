@@ -21,6 +21,8 @@ public:
 	AppDesc GetAppDesc()const;
 	void SetAppDesc(AppDesc appDesc);
 
+	int GetNumFrameResources()const;
+
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -29,6 +31,8 @@ private:
 	void OnResize();
 	void Update();
 	void Render();
+	void RenderBegin();
+	void RenderEnd();
 
 private:
 	bool InitMainWindow();
@@ -107,12 +111,12 @@ private:
 
 	unique_ptr<Mesh> _boxGeo = nullptr;
 
-	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
-	XMFLOAT4X4 mView = MathHelper::Identity4x4();
-	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+	XMFLOAT4X4 _world = MathHelper::Identity4x4();
+	XMFLOAT4X4 _view = MathHelper::Identity4x4();
+	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
 
-	float mTheta = 1.5f * XM_PI;
-	float mPhi = XM_PIDIV4;
-	float mRadius = 5.0f;
+	unique_ptr<GameObject> _object;
+
+	static const int _numFrameResources = 3;
 };
 

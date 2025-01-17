@@ -49,6 +49,11 @@ void Graphic::SetAppDesc(AppDesc appDesc)
 	_appDesc = appDesc;
 }
 
+int Graphic::GetNumFrameResources()const
+{
+	return _numFrameResources;
+}
+
 bool Graphic::Initialize()
 {
 	if (!InitMainWindow())
@@ -182,29 +187,22 @@ void Graphic::OnResize()
 	_scissorRect = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
 
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetAspectRatio(), 1.0f, 1000.0f);
-	XMStoreFloat4x4(&mProj, P);
+	XMStoreFloat4x4(&_proj, P);
 }
 
 void Graphic::Update()
 {
-	// Convert Spherical to Cartesian coordinates.
-	float x = mRadius * sinf(mPhi) * cosf(mTheta);
-	float z = mRadius * sinf(mPhi) * sinf(mTheta);
-	float y = mRadius * cosf(mPhi);
-
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+	XMVECTOR pos = XMVectorSet(-5.0f, 5.0f, 0.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
+	XMStoreFloat4x4(&_view, view);
 
-	XMMATRIX world = XMLoadFloat4x4(&mWorld);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX world = XMLoadFloat4x4(&_world);
+	XMMATRIX proj = XMLoadFloat4x4(&_proj);
 	XMMATRIX worldViewProj = world * view * proj;
 
-	// Update the constant buffer with the latest worldViewProj matrix.
 	ObjectConstants objConstants;
 	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(worldViewProj));
 	_objectCB->CopyData(0, objConstants);
@@ -212,6 +210,33 @@ void Graphic::Update()
 
 void Graphic::Render()
 {
+	RenderBegin();
+
+	//================
+	ID3D12DescriptorHeap* descriptorHeaps[] = { _cbvHeap.Get() };
+	_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	_commandList->SetGraphicsRootSignature(_rootSignature.Get());
+
+	_commandList->IASetVertexBuffers(0, 1, &_object->mesh->VertexBufferView());
+	_commandList->IASetIndexBuffer(&_object->mesh->IndexBufferView());
+	_commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	_commandList->SetGraphicsRootDescriptorTable(0, _cbvHeap->GetGPUDescriptorHandleForHeapStart());
+
+	_commandList->DrawIndexedInstanced(
+		_boxGeo->drawArgs["box"].indexCount,
+		1, 0, 0, 0);
+	//=================
+
+	RenderEnd();
+}
+
+void Graphic::RenderBegin()
+{
+	/* 
+	* CommandList 초기화 후 렌더링에 필요한 기초 요소들 설정
+	*/
 	ThrowIfFailed(_directCmdListAlloc->Reset());
 
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), _PSO.Get()));
@@ -226,23 +251,10 @@ void Graphic::Render()
 	_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	_commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+}
 
-	//================
-	ID3D12DescriptorHeap* descriptorHeaps[] = { _cbvHeap.Get() };
-	_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-	_commandList->SetGraphicsRootSignature(_rootSignature.Get());
-
-	_commandList->IASetVertexBuffers(0, 1, &_boxGeo->VertexBufferView());
-	_commandList->IASetIndexBuffer(&_boxGeo->IndexBufferView());
-	_commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	_commandList->SetGraphicsRootDescriptorTable(0, _cbvHeap->GetGPUDescriptorHandleForHeapStart());
-
-	_commandList->DrawIndexedInstanced(
-		_boxGeo->drawArgs["box"].indexCount,
-		1, 0, 0, 0);
-	//=================
+void Graphic::RenderEnd()
+{
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
@@ -595,7 +607,7 @@ void Graphic::CreateShaderAndInputLayout()
 
 void Graphic::CreateBoxGeoMetry()
 {
-	std::array<Vertex, 8> vertices =
+	array<Vertex, 8> vertices =
 	{
 		Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
 		Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) }),
@@ -607,7 +619,7 @@ void Graphic::CreateBoxGeoMetry()
 		Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) })
 	};
 
-	std::array<std::uint16_t, 36> indices =
+	array<uint16_t, 36> indices =
 	{
 		// front face
 		0, 1, 2,
@@ -637,6 +649,7 @@ void Graphic::CreateBoxGeoMetry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
+
 	_boxGeo = make_unique<Mesh>();
 	_boxGeo->name = "boxGeo";
 
@@ -663,6 +676,16 @@ void Graphic::CreateBoxGeoMetry()
 	submesh.baseVertexLocation = 0;
 
 	_boxGeo->drawArgs["box"] = submesh;
+
+	//================
+
+	_object = make_unique<GameObject>();
+	_object->objCBIndex = 0;
+	_object->mesh = _boxGeo.get();
+	_object->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	_object->indexCount = _object->mesh->drawArgs["box"].indexCount;
+	_object->startIndexLocation = _object->mesh->drawArgs["box"].startIndexLocation;
+	_object->baseVertexLocation = _object->mesh->drawArgs["box"].baseVertexLocation;
 }
 
 void Graphic::CreatePSO()

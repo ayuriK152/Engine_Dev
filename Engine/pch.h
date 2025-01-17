@@ -43,6 +43,7 @@ using namespace Microsoft::WRL;
 #include "MathHelper.h"
 #include "DXUtil.h"
 
+#include "GameObject.h"
 #include "Mesh.h"
 #include "Vertex.h"
 

@@ -23,6 +23,9 @@ public:
 
 	int GetNumFrameResources()const;
 
+	ID3D12GraphicsCommandList* GetCommandList()const;
+	ID3D12DescriptorHeap* GetConstantBufferHeap()const;
+
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -109,13 +112,13 @@ private:
 
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
 
-	unique_ptr<Mesh> _boxGeo = nullptr;
+	unique_ptr<Geometry> _boxGeo = nullptr;
 
 	XMFLOAT4X4 _world = MathHelper::Identity4x4();
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();
 	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
 
-	unique_ptr<GameObject> _object;
+	vector<unique_ptr<GameObject>> _objects;
 
 	static const int _numFrameResources = 3;
 };

@@ -54,6 +54,16 @@ int Graphic::GetNumFrameResources()const
 	return _numFrameResources;
 }
 
+ID3D12GraphicsCommandList* Graphic::GetCommandList()const
+{
+	return _commandList.Get();
+}
+
+ID3D12DescriptorHeap* Graphic::GetConstantBufferHeap() const
+{
+	return _cbvHeap.Get();
+}
+
 bool Graphic::Initialize()
 {
 	if (!InitMainWindow())
@@ -218,15 +228,9 @@ void Graphic::Render()
 
 	_commandList->SetGraphicsRootSignature(_rootSignature.Get());
 
-	_commandList->IASetVertexBuffers(0, 1, &_object->mesh->VertexBufferView());
-	_commandList->IASetIndexBuffer(&_object->mesh->IndexBufferView());
-	_commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	for (int i = 0; i < _objects.size(); i++)
+		_objects[i]->Render();
 
-	_commandList->SetGraphicsRootDescriptorTable(0, _cbvHeap->GetGPUDescriptorHandleForHeapStart());
-
-	_commandList->DrawIndexedInstanced(
-		_boxGeo->drawArgs["box"].indexCount,
-		1, 0, 0, 0);
 	//=================
 
 	RenderEnd();
@@ -650,7 +654,7 @@ void Graphic::CreateBoxGeoMetry()
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
 
-	_boxGeo = make_unique<Mesh>();
+	_boxGeo = make_unique<Geometry>();
 	_boxGeo->name = "boxGeo";
 
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &_boxGeo->vertexBufferCPU));
@@ -679,13 +683,15 @@ void Graphic::CreateBoxGeoMetry()
 
 	//================
 
-	_object = make_unique<GameObject>();
-	_object->objCBIndex = 0;
-	_object->mesh = _boxGeo.get();
-	_object->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	_object->indexCount = _object->mesh->drawArgs["box"].indexCount;
-	_object->startIndexLocation = _object->mesh->drawArgs["box"].startIndexLocation;
-	_object->baseVertexLocation = _object->mesh->drawArgs["box"].baseVertexLocation;
+	auto box = make_unique<GameObject>();
+	box = make_unique<GameObject>();
+	box->objCBIndex = 0;
+	box->geometry = _boxGeo.get();
+	box->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	box->indexCount = box->geometry->drawArgs["box"].indexCount;
+	box->startIndexLocation = box->geometry->drawArgs["box"].startIndexLocation;
+	box->baseVertexLocation = box->geometry->drawArgs["box"].baseVertexLocation;
+	_objects.push_back(move(box));
 }
 
 void Graphic::CreatePSO()

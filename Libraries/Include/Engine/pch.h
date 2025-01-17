@@ -44,7 +44,7 @@ using namespace Microsoft::WRL;
 #include "DXUtil.h"
 
 #include "GameObject.h"
-#include "Mesh.h"
+#include "Geometry.h"
 #include "Vertex.h"
 
 #include "GameTimer.h"

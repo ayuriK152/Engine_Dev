@@ -38,7 +38,7 @@
     <ClInclude Include="DXUtil.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Geometry.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
@@ -97,7 +97,7 @@
     <ClCompile Include="DXUtil.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="Geometry.cpp">
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">

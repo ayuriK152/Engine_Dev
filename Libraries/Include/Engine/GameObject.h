@@ -1,7 +1,7 @@
 #pragma once
 
 #pragma region 전방선언
-class Mesh;
+class Geometry;
 #pragma endregion
 
 
@@ -11,10 +11,12 @@ public:
 	GameObject();
 	~GameObject();
 
+	void Render();
+
 public:
 	XMFLOAT4X4 world;
 
-	Mesh* mesh;
+	Geometry* geometry;
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
 	UINT objCBIndex;

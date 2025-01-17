@@ -29,7 +29,7 @@
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="IExecute.h" />
     <ClInclude Include="MathHelper.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniversalUtils.h" />
@@ -45,7 +45,7 @@
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IExecute.cpp" />
     <ClCompile Include="MathHelper.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>

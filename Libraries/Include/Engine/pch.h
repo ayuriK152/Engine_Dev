@@ -42,13 +42,15 @@ using namespace Microsoft::WRL;
 #include "UniversalUtils.h"
 #include "MathHelper.h"
 #include "DXUtil.h"
+#include "GeometryGenerator.h"
 
 #include "GameObject.h"
 #include "Geometry.h"
-#include "Vertex.h"
+#include "DataStructures.h"
 
-#include "GameTimer.h"
 #include "UploadBuffer.h"
 #include "FrameResource.h"
+
+#include "GameTimer.h"
 #include "GameApplication.h"
 #include "Graphic.h"

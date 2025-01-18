@@ -19,3 +19,4 @@ public:									\
 #define GAMEAPP		GET_SINGLE(GameApplication)
 #define GRAPHIC		GET_SINGLE(Graphic)
 #define TIME		GET_SINGLE(GameTimer)
+#define GEOGEN		GET_SINGLE(GeometryGenerator)

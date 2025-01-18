@@ -26,6 +26,7 @@
     <ClInclude Include="GameApplication.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="IExecute.h" />
     <ClInclude Include="MathHelper.h" />
@@ -34,7 +35,7 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniversalUtils.h" />
     <ClInclude Include="UploadBuffer.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="DataStructures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXUtil.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="GameApplication.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IExecute.cpp" />
     <ClCompile Include="MathHelper.cpp" />

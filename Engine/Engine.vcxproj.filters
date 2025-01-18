@@ -41,12 +41,13 @@
     <ClInclude Include="Geometry.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
+    <ClInclude Include="DataStructures.h">
       <Filter>Defines</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>02. GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="GeometryGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -103,5 +104,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>02. GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp" />
   </ItemGroup>
 </Project>

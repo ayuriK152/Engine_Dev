@@ -611,73 +611,35 @@ void Graphic::CreateShaderAndInputLayout()
 
 void Graphic::CreateBoxGeoMetry()
 {
-	array<Vertex, 8> vertices =
-	{
-		Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) }),
-		Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) }),
-		Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) }),
-		Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) }),
-		Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) }),
-		Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) }),
-		Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) })
-	};
+	Mesh boxMesh = GEOGEN->CreateBox(1.5f, 0.5f, 1.5f, 3);
 
-	array<uint16_t, 36> indices =
-	{
-		// front face
-		0, 1, 2,
-		0, 2, 3,
+	const UINT vbByteSize = (UINT)boxMesh.vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)boxMesh.GetIndicices16().size() * sizeof(UINT16);
 
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
-
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
-
+	Submesh submesh;
+	submesh.indexCount = (UINT)boxMesh.indices32.size();
+	submesh.startIndexLocation = 0;
+	submesh.baseVertexLocation = 0;
 
 	_boxGeo = make_unique<Geometry>();
 	_boxGeo->name = "boxGeo";
 
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &_boxGeo->vertexBufferCPU));
-	CopyMemory(_boxGeo->vertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+	CopyMemory(_boxGeo->vertexBufferCPU->GetBufferPointer(), boxMesh.vertices.data(), vbByteSize);
 
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &_boxGeo->indexBufferCPU));
-	CopyMemory(_boxGeo->indexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+	CopyMemory(_boxGeo->indexBufferCPU->GetBufferPointer(), boxMesh.GetIndicices16().data(), ibByteSize);
 
 	_boxGeo->vertexBufferGPU = DXUtil::CreateDefaultBuffer(_device.Get(),
-		_commandList.Get(), vertices.data(), vbByteSize, _boxGeo->vertexBufferUploader);
+		_commandList.Get(), boxMesh.vertices.data(), vbByteSize, _boxGeo->vertexBufferUploader);
 
 	_boxGeo->indexBufferGPU = DXUtil::CreateDefaultBuffer(_device.Get(),
-		_commandList.Get(), indices.data(), ibByteSize, _boxGeo->indexBufferUploader);
+		_commandList.Get(), boxMesh.GetIndicices16().data(), ibByteSize, _boxGeo->indexBufferUploader);
 
 	_boxGeo->vertexByteStride = sizeof(Vertex);
 	_boxGeo->vertexBufferByteSize = vbByteSize;
 	_boxGeo->indexFormat = DXGI_FORMAT_R16_UINT;
 	_boxGeo->indexBufferByteSize = ibByteSize;
-
-	Submesh submesh;
-	submesh.indexCount = (UINT)indices.size();
-	submesh.startIndexLocation = 0;
-	submesh.baseVertexLocation = 0;
 
 	_boxGeo->drawArgs["box"] = submesh;
 

@@ -19,6 +19,8 @@ public:
 	Geometry* geometry;
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
+	string meshName;
+
 	UINT objCBIndex;
 	UINT indexCount;
 	UINT startIndexLocation;

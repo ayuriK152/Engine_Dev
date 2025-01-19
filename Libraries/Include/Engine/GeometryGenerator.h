@@ -5,10 +5,9 @@ struct Mesh;
 
 class GeometryGenerator
 {
-	DECLARE_SINGLE(GeometryGenerator);
 public:
-	Mesh CreateBox(float width, float height, float depth, UINT32 numSubdivisions);
+	static Mesh CreateBox(float width, float height, float depth, UINT32 numSubdivisions);
 
-	void Subdivide(Mesh& meshData);
-	Vertex MidPoint(const Vertex& v0, const Vertex& v1);
+	static void Subdivide(Mesh& meshData);
+	static Vertex MidPoint(const Vertex& v0, const Vertex& v1);
 };

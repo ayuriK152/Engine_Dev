@@ -23,8 +23,9 @@ public:
 
 	int GetNumFrameResources()const;
 
-	ID3D12GraphicsCommandList* GetCommandList()const;
-	ID3D12DescriptorHeap* GetConstantBufferHeap()const;
+	ComPtr<ID3D12Device> GetDevice()const;
+	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const;
+	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const;
 
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -41,15 +42,15 @@ private:
 	bool InitMainWindow();
 	bool InitDirect3D();
 
-	void CreateCommandObjects();
-	void CreateSwapChain();
+	void BuildCommandObjects();
+	void BuildSwapChain();
 
-	void CreateDescriptorHeaps();
-	void CreateConstantBuffers();
-	void CreateRootSignature();
-	void CreateShaderAndInputLayout();
-	void CreateBoxGeoMetry();
-	void CreatePSO();
+	void BuildDescriptorHeaps();
+	void BuildConstantBuffers();
+	void BuildRootSignature();
+	void BuildShaderAndInputLayout();
+	void BuildObjectGeometry();
+	void BuildPSO();
 
 	void FlushCommandQueue();
 
@@ -99,27 +100,24 @@ private:
 	DXGI_FORMAT _backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
+	unordered_map<string, ComPtr<ID3DBlob>> _shaders;
+	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+
+	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
+	unordered_map<string, unique_ptr<Geometry>> _geometrys;
+
+	vector<unique_ptr<GameObject>> _objects;
+
+	static const int _numFrameResources = 3;
+
 	AppDesc _appDesc;
 
 	//===========================리팩토링 필수!!!!!!!!============
 
 	unique_ptr<UploadBuffer<ObjectConstants>> _objectCB = nullptr;
 
-	ComPtr<ID3DBlob> _vsByteCode = nullptr;
-	ComPtr<ID3DBlob> _psByteCode = nullptr;
-
-	ComPtr<ID3D12PipelineState> _PSO = nullptr;
-
-	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
-
-	unique_ptr<Geometry> _boxGeo = nullptr;
-
 	XMFLOAT4X4 _world = MathHelper::Identity4x4();
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();
 	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
-
-	vector<unique_ptr<GameObject>> _objects;
-
-	static const int _numFrameResources = 3;
 };
 

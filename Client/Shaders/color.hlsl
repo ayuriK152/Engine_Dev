@@ -45,7 +45,7 @@ VertexOut VS(VertexIn vin)
 	
 	// Transform to homogeneous clip space.
 	float4 posW = mul(float4(vin.PosL, 1.0f), world);
-	vout.PosH = mul(float4(vin.PosL, 1.0f), world);
+	vout.PosH = mul(posW, gViewProj);
 	
 	// Just pass vertex color into the pixel shader.
     vout.Color = vin.Color;

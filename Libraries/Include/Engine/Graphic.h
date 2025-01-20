@@ -22,12 +22,13 @@ public:
 	void SetAppDesc(AppDesc appDesc);
 
 	int GetNumFrameResources()const;
+	int GetCurrFrameResourceIndex()const;
 
 	ComPtr<ID3D12Device> GetDevice()const;
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const;
 	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const;
 
-
+	vector<unique_ptr<GameObject>>& GetObjects();
 
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -120,10 +121,18 @@ private:
 
 	//===========================리팩토링 필수!!!!!!!!============
 
-	unique_ptr<UploadBuffer<ObjectConstants>> _objectCB = nullptr;
+	//unique_ptr<UploadBuffer<ObjectConstants>> _objectCB = nullptr;
 
 	XMFLOAT4X4 _world = MathHelper::Identity4x4();
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();
 	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
+
+	Position _cameraPos = { 0.0f, 5.0f, -9.0f };
+
+	UINT _passCbvOffset = 0;
+
+	PassConstants _mainPassCB;
+
+	Position _eyePos;
 };
 

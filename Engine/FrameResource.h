@@ -31,6 +31,9 @@ public:
 	FrameResource& operator=(const FrameResource& rhs) = delete;
 	~FrameResource();
 
+	void Update();
+
+public:
 	ComPtr<ID3D12CommandAllocator> cmdListAlloc;
 
 	unique_ptr<UploadBuffer<PassConstants>> passCB = nullptr;

@@ -15,3 +15,21 @@ FrameResource::~FrameResource()
 {
 
 }
+
+void FrameResource::Update()
+{
+	for (auto& o : GRAPHIC->GetObjects())
+	{
+		if (o->numFramesDirty > 0)
+		{
+			XMMATRIX world = XMLoadFloat4x4(&o->world);
+
+			ObjectConstants objConstants;
+			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
+
+			objectCB->CopyData(o->objCBIndex, objConstants);
+
+			o->numFramesDirty--;
+		}
+	}
+}

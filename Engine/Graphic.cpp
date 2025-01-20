@@ -87,6 +87,7 @@ bool Graphic::Initialize()
 	BuildShaderAndInputLayout();
 	BuildObjectGeometry();
 	BuildPSO();
+	BuildFrameResources();
 
 	// Execute the initialization commands.
 	ThrowIfFailed(_commandList->Close());
@@ -182,7 +183,7 @@ void Graphic::OnResize()
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = _depthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
-	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, DepthStencilView());
+	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, GetDepthStencilView());
 
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_depthStencilBuffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
@@ -209,20 +210,33 @@ void Graphic::OnResize()
 
 void Graphic::Update()
 {
-	XMVECTOR pos = XMVectorSet(-5.0f, 5.0f, 0.0f, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
+	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
 
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&_view, view);
+	if (_currFrameResource->fence != 0 && _fence->GetCompletedValue() < _currFrameResource->fence)
+	{
+		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+		ThrowIfFailed(_fence->SetEventOnCompletion(_currFrameResource->fence, eventHandle));
+		WaitForSingleObject(eventHandle, INFINITE);
+		CloseHandle(eventHandle);
+	}
 
-	XMMATRIX world = XMLoadFloat4x4(&_world);
-	XMMATRIX proj = XMLoadFloat4x4(&_proj);
-	XMMATRIX worldViewProj = world * view * proj;
+	{
+		XMVECTOR pos = XMVectorSet(-5.0f, 5.0f, 0.0f, 1.0f);
+		XMVECTOR target = XMVectorZero();
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(worldViewProj));
-	_objectCB->CopyData(0, objConstants);
+		XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+		XMStoreFloat4x4(&_view, view);
+
+		XMMATRIX world = XMLoadFloat4x4(&_world);
+		XMMATRIX proj = XMLoadFloat4x4(&_proj);
+		XMMATRIX worldViewProj = world * view * proj;
+
+		ObjectConstants objConstants;
+		XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(worldViewProj));
+		_objectCB->CopyData(0, objConstants);
+	}
 }
 
 
@@ -250,26 +264,28 @@ void Graphic::RenderBegin()
 	/* 
 	* CommandList 초기화 후 렌더링에 필요한 기초 요소들 설정
 	*/
-	ThrowIfFailed(_directCmdListAlloc->Reset());
+	auto cmdListAlloc = _currFrameResource->cmdListAlloc;
 
-	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), _PSOs["opaque"].Get()));
+	ThrowIfFailed(cmdListAlloc->Reset());
 
-	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+	ThrowIfFailed(_commandList->Reset(cmdListAlloc.Get(), _PSOs["opaque"].Get()));
+
+	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	_commandList->RSSetViewports(1, &_screenViewport);
 	_commandList->RSSetScissorRects(1, &_scissorRect);
 
-	_commandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	_commandList->ClearRenderTargetView(GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	_commandList->ClearDepthStencilView(GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-	_commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+	_commandList->OMSetRenderTargets(1, &GetCurrentBackBufferView(), true, &GetDepthStencilView());
 }
 
 
 void Graphic::RenderEnd()
 {
-	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	ThrowIfFailed(_commandList->Close());
@@ -280,7 +296,10 @@ void Graphic::RenderEnd()
 	ThrowIfFailed(_swapChain->Present(0, 0));
 	_currBackBuffer = (_currBackBuffer + 1) % _SwapChainBufferCount;
 
-	FlushCommandQueue();
+	_currFrameResource->fence = ++_currentFence;
+
+	_commandQueue->Signal(_fence.Get(), _currentFence);
+	// FlushCommandQueue();
 }
 
 
@@ -644,6 +663,7 @@ void Graphic::BuildObjectGeometry()
 	box->indexCount = box->geometry->drawArgs["box"].indexCount;
 	box->startIndexLocation = box->geometry->drawArgs["box"].startIndexLocation;
 	box->baseVertexLocation = box->geometry->drawArgs["box"].baseVertexLocation;
+	XMStoreFloat4x4(&box->world, XMMatrixTranslation(20.0f, 0.0f, 0.0f));
 	_objects.push_back(move(box));
 }
 
@@ -678,6 +698,15 @@ void Graphic::BuildPSO()
 	}
 }
 
+void Graphic::BuildFrameResources()
+{
+	for (int i = 0; i < _numFrameResources; ++i)
+	{
+		_frameResources.push_back(make_unique<FrameResource>(_device.Get(), 1,
+			(UINT)_objects.size()));
+	}
+}
+
 void Graphic::FlushCommandQueue()
 {
 	_currentFence++;
@@ -695,12 +724,12 @@ void Graphic::FlushCommandQueue()
 	}
 }
 
-ID3D12Resource* Graphic::CurrentBackBuffer()const
+ID3D12Resource* Graphic::GetCurrentBackBuffer()const
 {
 	return _swapChainBuffer[_currBackBuffer].Get();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::CurrentBackBufferView()const
+D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetCurrentBackBufferView()const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
 		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
@@ -708,7 +737,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE Graphic::CurrentBackBufferView()const
 		_rtvDescriptorSize);
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::DepthStencilView()const
+D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetDepthStencilView()const
 {
 	return _dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }

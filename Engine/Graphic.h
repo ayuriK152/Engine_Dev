@@ -27,6 +27,8 @@ public:
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const;
 	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const;
 
+
+
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -51,12 +53,13 @@ private:
 	void BuildShaderAndInputLayout();
 	void BuildObjectGeometry();
 	void BuildPSO();
+	void BuildFrameResources();
 
 	void FlushCommandQueue();
 
-	ID3D12Resource* CurrentBackBuffer()const;
-	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
-	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
+	ID3D12Resource* GetCurrentBackBuffer()const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView()const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView()const;
 
 	void CalculateFrameStats();
 
@@ -109,6 +112,9 @@ private:
 	vector<unique_ptr<GameObject>> _objects;
 
 	static const int _numFrameResources = 3;
+	int _currFrameResourceIndex = 0;
+	FrameResource* _currFrameResource = nullptr;
+	vector<unique_ptr<FrameResource>> _frameResources;
 
 	AppDesc _appDesc;
 

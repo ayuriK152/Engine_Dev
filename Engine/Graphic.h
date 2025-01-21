@@ -34,9 +34,10 @@ public:
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 private:
-	void CreateRtvAndDsvDescriptorHeaps();
 	void OnResize();
 	void Update();
+	void UpdateCamera();
+	void UpdateMainCB();
 	void Render();
 	void RenderBegin();
 	void RenderEnd();
@@ -47,6 +48,7 @@ private:
 
 	void BuildCommandObjects();
 	void BuildSwapChain();
+	void BuildRtvAndDsvDescriptorHeaps();
 
 	void BuildDescriptorHeaps();
 	void BuildConstantBuffers();
@@ -120,8 +122,6 @@ private:
 	AppDesc _appDesc;
 
 	//===========================리팩토링 필수!!!!!!!!============
-
-	//unique_ptr<UploadBuffer<ObjectConstants>> _objectCB = nullptr;
 
 	XMFLOAT4X4 _world = MathHelper::Identity4x4();
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();

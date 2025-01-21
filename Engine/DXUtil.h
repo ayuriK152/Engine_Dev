@@ -21,4 +21,15 @@ public:
 		const string& entrypoint,
 		const string& target
 	);
+
+	static void BuildPSO(
+		string name,
+		vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,
+		ComPtr<ID3D12RootSignature> rootSignature,
+		ComPtr<ID3DBlob> vertexShader,
+		ComPtr<ID3DBlob> pixelShader,
+		DXGI_FORMAT backBufferFormat,
+		DXGI_FORMAT depthStencilFormat,
+		unordered_map<string, ComPtr<ID3D12PipelineState>>& PSOs
+	);
 };

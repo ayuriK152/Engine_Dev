@@ -110,7 +110,7 @@ bool Graphic::Initialize()
 	return true;
 }
 
-void Graphic::CreateRtvAndDsvDescriptorHeaps()
+void Graphic::BuildRtvAndDsvDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 	rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
@@ -220,14 +220,8 @@ void Graphic::OnResize()
 
 void Graphic::Update()
 {
-	{
-		XMVECTOR pos = XMVectorSet(_cameraPos.x, _cameraPos.y, _cameraPos.z, 1.0f);
-		XMVECTOR target = XMVectorZero();
-		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	UpdateCamera();
 
-		XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-		XMStoreFloat4x4(&_view, view);
-	}
 	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
 	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
 
@@ -240,38 +234,47 @@ void Graphic::Update()
 	}
 
 	_currFrameResource->Update();
-
-	{
-		XMMATRIX view = XMLoadFloat4x4(&_view);
-		XMMATRIX proj = XMLoadFloat4x4(&_proj);
-
-		XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-		XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-		XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-		XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
-
-		XMStoreFloat4x4(&_mainPassCB.View, XMMatrixTranspose(view));
-		XMStoreFloat4x4(&_mainPassCB.InvView, XMMatrixTranspose(invView));
-		XMStoreFloat4x4(&_mainPassCB.Proj, XMMatrixTranspose(proj));
-		XMStoreFloat4x4(&_mainPassCB.InvProj, XMMatrixTranspose(invProj));
-		XMStoreFloat4x4(&_mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
-		XMStoreFloat4x4(&_mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
-		_mainPassCB.EyePosW = _eyePos;
-		_mainPassCB.RenderTargetSize = XMFLOAT2((float)_appDesc.clientWidth, (float)_appDesc.clientHeight);
-		_mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / _appDesc.clientWidth, 1.0f / _appDesc.clientHeight);
-		_mainPassCB.NearZ = 1.0f;
-		_mainPassCB.FarZ = 1000.0f;
-		_mainPassCB.TotalTime = TIME->TotalTime();
-		_mainPassCB.DeltaTime = TIME->DeltaTime();
-
-		auto currPassCB = _currFrameResource->passCB.get();
-		currPassCB->CopyData(0, _mainPassCB);
-		//ObjectConstants objConstants;
-		//XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(worldViewProj));
-		//_objectCB->CopyData(0, objConstants);
-	}
+	UpdateMainCB();
 }
 
+
+void Graphic::UpdateCamera()
+{
+	XMVECTOR pos = XMVectorSet(_cameraPos.x, _cameraPos.y, _cameraPos.z, 1.0f);
+	XMVECTOR target = XMVectorZero();
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&_view, view);
+}
+
+void Graphic::UpdateMainCB()
+{
+	XMMATRIX view = XMLoadFloat4x4(&_view);
+	XMMATRIX proj = XMLoadFloat4x4(&_proj);
+
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+	XMStoreFloat4x4(&_mainPassCB.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&_mainPassCB.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4(&_mainPassCB.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&_mainPassCB.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&_mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4(&_mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
+	_mainPassCB.EyePosW = _eyePos;
+	_mainPassCB.RenderTargetSize = XMFLOAT2((float)_appDesc.clientWidth, (float)_appDesc.clientHeight);
+	_mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / _appDesc.clientWidth, 1.0f / _appDesc.clientHeight);
+	_mainPassCB.NearZ = 1.0f;
+	_mainPassCB.FarZ = 1000.0f;
+	_mainPassCB.TotalTime = TIME->TotalTime();
+	_mainPassCB.DeltaTime = TIME->DeltaTime();
+
+	auto currPassCB = _currFrameResource->passCB.get();
+	currPassCB->CopyData(0, _mainPassCB);
+}
 
 void Graphic::Render()
 {
@@ -554,7 +557,7 @@ bool Graphic::InitDirect3D()
 
 	BuildCommandObjects();
 	BuildSwapChain();
-	CreateRtvAndDsvDescriptorHeaps();
+	BuildRtvAndDsvDescriptorHeaps();
 
 	return true;
 }
@@ -628,8 +631,6 @@ void Graphic::BuildDescriptorHeaps()
 
 void Graphic::BuildConstantBuffers()
 {
-	//_objectCB = make_unique<UploadBuffer<ObjectConstants>>(_device.Get(), 1, true);
-
 	UINT objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
 	UINT objCount = (UINT)_objects.size();
@@ -745,34 +746,9 @@ void Graphic::BuildObjectGeometry()
 
 void Graphic::BuildPSO()
 {
-	{
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-		psoDesc.InputLayout = { _inputLayout.data(), (UINT)_inputLayout.size() };
-		psoDesc.pRootSignature = _rootSignature.Get();
-		psoDesc.VS =
-		{
-			reinterpret_cast<BYTE*>(_shaders["standardVS"]->GetBufferPointer()),
-			_shaders["standardVS"]->GetBufferSize()
-		};
-		psoDesc.PS =
-		{
-			reinterpret_cast<BYTE*>(_shaders["opaquePS"]->GetBufferPointer()),
-			_shaders["opaquePS"]->GetBufferSize()
-		};
-		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		psoDesc.SampleMask = UINT_MAX;
-		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		psoDesc.NumRenderTargets = 1;
-		psoDesc.RTVFormats[0] = _backBufferFormat;
-		psoDesc.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
-		psoDesc.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
-		psoDesc.DSVFormat = _depthStencilFormat;
-		ThrowIfFailed(_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&_PSOs["opaque"])));
-	}
+	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature, 
+		_shaders["standardVS"], _shaders["opaquePS"], 
+		_backBufferFormat, _depthStencilFormat, _PSOs);
 }
 
 void Graphic::BuildFrameResources()

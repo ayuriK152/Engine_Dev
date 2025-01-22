@@ -22,11 +22,15 @@ public:
 	void SetAppDesc(AppDesc appDesc);
 
 	int GetNumFrameResources()const;
+	FrameResource* GetCurrFrameResource()const;
 	int GetCurrFrameResourceIndex()const;
 
 	ComPtr<ID3D12Device> GetDevice()const;
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const;
 	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const;
+	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const;
+
+	UINT GetCBVSRVDescriptorSize()const;
 
 	vector<unique_ptr<GameObject>>& GetObjects();
 
@@ -46,6 +50,8 @@ private:
 	bool InitMainWindow();
 	bool InitDirect3D();
 
+	void LoadTextures();
+
 	void BuildCommandObjects();
 	void BuildSwapChain();
 	void BuildRtvAndDsvDescriptorHeaps();
@@ -55,7 +61,6 @@ private:
 	void BuildRootSignature();
 	void BuildShaderAndInputLayout();
 	void BuildObjectGeometry();
-	void BuildPSO();
 	void BuildFrameResources();
 
 	void FlushCommandQueue();
@@ -69,6 +74,10 @@ private:
 	void LogAdapters();
 	void LogAdapterOutputs(IDXGIAdapter* adapter);
 	void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
+
+	//=========================
+
+	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 
 private:
 	HWND      _hMainWnd = nullptr;
@@ -94,6 +103,7 @@ private:
 	ComPtr<ID3D12DescriptorHeap> _rtvHeap;
 	ComPtr<ID3D12DescriptorHeap> _dsvHeap;
 	ComPtr<ID3D12DescriptorHeap> _cbvHeap;
+	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 
 	D3D12_VIEWPORT _screenViewport;
 	D3D12_RECT _scissorRect;
@@ -127,12 +137,17 @@ private:
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();
 	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
 
-	Position _cameraPos = { 0.0f, 5.0f, -9.0f };
+	Vector3 _cameraPos = { 0.0f, 3.0f, -5.0f };
 
 	UINT _passCbvOffset = 0;
 
 	PassConstants _mainPassCB;
 
-	Position _eyePos;
+	Vector3 _eyePos;
+
+	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+
+	unordered_map<string, unique_ptr<Texture>> _textures;
+	unordered_map<string, unique_ptr<Material>> _materials;
 };
 

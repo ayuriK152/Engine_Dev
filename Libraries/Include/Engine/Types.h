@@ -2,8 +2,9 @@
 
 #include "DirectXMath.h"
 
-using Position		= DirectX::XMFLOAT3;
-using Normal		= DirectX::XMFLOAT3;
-using TexC			= DirectX::XMFLOAT2;
-using TangentU		= DirectX::XMFLOAT3;
-using Color			= DirectX::XMFLOAT4;
+using Vector3		= DirectX::XMFLOAT3;
+using Vector2		= DirectX::XMFLOAT2;
+
+using ColorRGBA		= DirectX::XMFLOAT4;
+using Color			= ColorRGBA;
+using ColorRGB		= DirectX::XMFLOAT3;

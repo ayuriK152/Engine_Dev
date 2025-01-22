@@ -54,6 +54,11 @@ int Graphic::GetNumFrameResources()const
 	return _numFrameResources;
 }
 
+FrameResource* Graphic::GetCurrFrameResource() const
+{
+	return _currFrameResource;
+}
+
 int Graphic::GetCurrFrameResourceIndex() const
 {
 	return _currFrameResourceIndex;
@@ -74,6 +79,16 @@ ComPtr<ID3D12DescriptorHeap> Graphic::GetConstantBufferHeap() const
 	return _cbvHeap;
 }
 
+ComPtr<ID3D12DescriptorHeap> Graphic::GetShaderResourceViewHeap() const
+{
+	return _srvHeap;
+}
+
+UINT Graphic::GetCBVSRVDescriptorSize() const
+{
+	return _cbvSrvUavDescriptorSize;
+}
+
 vector<unique_ptr<GameObject>>& Graphic::GetObjects()
 {
 	return _objects;
@@ -91,20 +106,22 @@ bool Graphic::Initialize()
 
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
+	LoadTextures();
+
 	BuildRootSignature();
 	BuildShaderAndInputLayout();
 	BuildObjectGeometry();
 	BuildFrameResources();
 	BuildDescriptorHeaps();
-	BuildConstantBuffers();
-	BuildPSO();
+	//BuildConstantBuffers();
+	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature,
+		_shaders["standardVS"], _shaders["opaquePS"],
+		_backBufferFormat, _depthStencilFormat, _PSOs);
 
-	// Execute the initialization commands.
 	ThrowIfFailed(_commandList->Close());
 	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// Wait until initialization is complete.
 	FlushCommandQueue();
 
 	return true;
@@ -271,6 +288,13 @@ void Graphic::UpdateMainCB()
 	_mainPassCB.FarZ = 1000.0f;
 	_mainPassCB.TotalTime = TIME->TotalTime();
 	_mainPassCB.DeltaTime = TIME->DeltaTime();
+	_mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	_mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	_mainPassCB.Lights[0].Strength = { 0.8f, 0.8f, 0.8f };
+	_mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	_mainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
+	_mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	_mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
 
 	auto currPassCB = _currFrameResource->passCB.get();
 	currPassCB->CopyData(0, _mainPassCB);
@@ -281,16 +305,14 @@ void Graphic::Render()
 	RenderBegin();
 
 	//================
-	ID3D12DescriptorHeap* descriptorHeaps[] = { _cbvHeap.Get() };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
 	_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	_commandList->SetGraphicsRootSignature(_rootSignature.Get());
 
-	int passCbvIndex = _passCbvOffset + _currFrameResourceIndex;
-	auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(_cbvHeap->GetGPUDescriptorHandleForHeapStart());
-	passCbvHandle.Offset(passCbvIndex, _cbvSrvUavDescriptorSize);
-	_commandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
-
+	auto passCB = _currFrameResource->passCB->GetResource();
+	_commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
+	
 	for (int i = 0; i < _objects.size(); i++)
 		_objects[i]->Render();
 
@@ -563,6 +585,20 @@ bool Graphic::InitDirect3D()
 }
 
 
+void Graphic::LoadTextures()
+{
+	auto whiteTex = make_unique<Texture>();
+	whiteTex->Name = "whiteTex";
+	whiteTex->Filename = L"Textures\\white1x1.dds";
+	ResourceUploadBatch upload(_device.Get());
+	upload.Begin();
+	ThrowIfFailed(CreateDDSTextureFromFile(_device.Get(), upload,
+		whiteTex->Filename.c_str(), whiteTex->Resource.GetAddressOf()));
+	_textures[whiteTex->Name] = move(whiteTex);
+	auto finish = upload.End(_commandQueue.Get());
+	finish.wait();
+}
+
 void Graphic::BuildCommandObjects()
 {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
@@ -614,19 +650,23 @@ void Graphic::BuildSwapChain()
 
 void Graphic::BuildDescriptorHeaps()
 {
-	UINT objCount = (UINT)_objects.size();
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	ThrowIfFailed(_device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
 
-	UINT numDescriptors = (objCount + 1) * _numFrameResources;
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(_srvHeap->GetCPUDescriptorHandleForHeapStart());
 
-	_passCbvOffset = objCount * _numFrameResources;
-
-	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = numDescriptors;
-	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	cbvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(_device->CreateDescriptorHeap(&cbvHeapDesc,
-		IID_PPV_ARGS(&_cbvHeap)));
+	auto whiteTex = _textures["whiteTex"]->Resource;
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = whiteTex->GetDesc().Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = whiteTex->GetDesc().MipLevels;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	_device->CreateShaderResourceView(whiteTex.Get(), &srvDesc, hDescriptor);
 }
 
 void Graphic::BuildConstantBuffers()
@@ -663,7 +703,6 @@ void Graphic::BuildConstantBuffers()
 		auto passCB = _frameResources[frameIndex]->passCB->GetResource();
 		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = passCB->GetGPUVirtualAddress();
 
-		// Offset to the pass cbv in the descriptor heap.
 		int heapIndex = _passCbvOffset + frameIndex;
 		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(heapIndex, _cbvSrvUavDescriptorSize);
@@ -678,17 +717,20 @@ void Graphic::BuildConstantBuffers()
 
 void Graphic::BuildRootSignature()
 {
-	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+	CD3DX12_DESCRIPTOR_RANGE texTable;
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
-	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
-	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
 
-	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
-	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
+	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[1].InitAsConstantBufferView(0);
+	slotRootParameter[2].InitAsConstantBufferView(1);
+	slotRootParameter[3].InitAsConstantBufferView(2);
+
+	auto staticSamplers = GetStaticSamplers();
+	
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(4, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -706,20 +748,21 @@ void Graphic::BuildRootSignature()
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
-		IID_PPV_ARGS(&_rootSignature)));
+		IID_PPV_ARGS(_rootSignature.GetAddressOf())));
 }
 
 void Graphic::BuildShaderAndInputLayout()
 {
 	HRESULT hr = S_OK;
 
-	_shaders["standardVS"] = DXUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_1");
-	_shaders["opaquePS"] = DXUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_1");
+	_shaders["standardVS"] = DXUtil::CompileShader(L"Shaders\\Default.hlsl", nullptr, "VS", "vs_5_1");
+	_shaders["opaquePS"] = DXUtil::CompileShader(L"Shaders\\Default.hlsl", nullptr, "PS", "ps_5_1");
 
 	_inputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 
@@ -731,10 +774,16 @@ void Graphic::BuildObjectGeometry()
 
 	//================
 
+	auto defaultMat = make_unique<Material>("default", 0, 0, -1);
+	_materials[defaultMat->name] = move(defaultMat);
+
+	//================
+
 	auto box = make_unique<GameObject>();
 	box = make_unique<GameObject>();
 	box->objCBIndex = _objects.size();
 	box->geometry = _geometrys["BasicShapeGeo"].get();
+	box->material = _materials["default"].get();
 	box->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	box->meshName = "box";
 	box->indexCount = box->geometry->drawArgs["box"].indexCount;
@@ -744,19 +793,12 @@ void Graphic::BuildObjectGeometry()
 	_objects.push_back(move(box));
 }
 
-void Graphic::BuildPSO()
-{
-	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature, 
-		_shaders["standardVS"], _shaders["opaquePS"], 
-		_backBufferFormat, _depthStencilFormat, _PSOs);
-}
-
 void Graphic::BuildFrameResources()
 {
 	for (int i = 0; i < _numFrameResources; ++i)
 	{
 		_frameResources.push_back(make_unique<FrameResource>(_device.Get(), 1,
-			(UINT)_objects.size()));
+			(UINT)_objects.size(), _materials.size()));
 	}
 }
 
@@ -893,4 +935,61 @@ void Graphic::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
 
 		::OutputDebugString(text.c_str());
 	}
+}
+
+array<const CD3DX12_STATIC_SAMPLER_DESC, 6> Graphic::GetStaticSamplers()
+{
+	// Applications usually only need a handful of samplers.  So just define them all up front
+	// and keep them available as part of the root signature.  
+
+	const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+		0, // shaderRegister
+		D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
+
+	const CD3DX12_STATIC_SAMPLER_DESC pointClamp(
+		1, // shaderRegister
+		D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
+
+	const CD3DX12_STATIC_SAMPLER_DESC linearWrap(
+		2, // shaderRegister
+		D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
+
+	const CD3DX12_STATIC_SAMPLER_DESC linearClamp(
+		3, // shaderRegister
+		D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
+
+	const CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
+		4, // shaderRegister
+		D3D12_FILTER_ANISOTROPIC, // filter
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressW
+		0.0f,                             // mipLODBias
+		8);                               // maxAnisotropy
+
+	const CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
+		5, // shaderRegister
+		D3D12_FILTER_ANISOTROPIC, // filter
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressW
+		0.0f,                              // mipLODBias
+		8);                                // maxAnisotropy
+
+	return {
+		pointWrap, pointClamp,
+		linearWrap, linearClamp,
+		anisotropicWrap, anisotropicClamp };
 }

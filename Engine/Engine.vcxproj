@@ -29,6 +29,7 @@
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="IExecute.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="pch.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IExecute.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="pch.cpp">

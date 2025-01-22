@@ -5,49 +5,84 @@ Mesh GeometryGenerator::CreateBox(float width, float height, float depth, UINT32
 {
 	Mesh meshData;
 
-	Vertex vertices[8] =
-	{
-		Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::White) }),
-		Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::White) })
-	};
+	Vertex v[24];
 
-	UINT16 indices[36] =
-	{
-		// front face
-		0, 1, 2,
-		0, 2, 3,
+	float w2 = 0.5f * width;
+	float h2 = 0.5f * height;
+	float d2 = 0.5f * depth;
 
-		// back face
-		4, 6, 5,
-		4, 7, 6,
+	// Fill in the front face vertex data.
+	v[0] = Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[1] = Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[2] = Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[3] = Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-		// left face
-		4, 5, 1,
-		4, 1, 0,
+	// Fill in the back face vertex data.
+	v[4] = Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[5] = Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[6] = Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[7] = Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-		// right face
-		3, 2, 6,
-		3, 6, 7,
+	// Fill in the top face vertex data.
+	v[8] = Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[9] = Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[10] = Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[11] = Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-		// top face
-		1, 5, 6,
-		1, 6, 2,
+	// Fill in the bottom face vertex data.
+	v[12] = Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[13] = Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[14] = Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[15] = Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
+	// Fill in the left face vertex data.
+	v[16] = Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	v[17] = Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	v[18] = Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	v[19] = Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
 
-	meshData.vertices.assign(&vertices[0], &vertices[8]);
-	meshData.indices32.assign(&indices[0], &indices[36]);
+	// Fill in the right face vertex data.
+	v[20] = Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+	v[21] = Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	v[22] = Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+	v[23] = Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
-	numSubdivisions = min<UINT32>(numSubdivisions, 6u);
+	meshData.vertices.assign(&v[0], &v[24]);
+
+	//
+	// Create the indices.
+	//
+
+	UINT32 i[36];
+
+	// Fill in the front face index data
+	i[0] = 0; i[1] = 1; i[2] = 2;
+	i[3] = 0; i[4] = 2; i[5] = 3;
+
+	// Fill in the back face index data
+	i[6] = 4; i[7] = 5; i[8] = 6;
+	i[9] = 4; i[10] = 6; i[11] = 7;
+
+	// Fill in the top face index data
+	i[12] = 8; i[13] = 9; i[14] = 10;
+	i[15] = 8; i[16] = 10; i[17] = 11;
+
+	// Fill in the bottom face index data
+	i[18] = 12; i[19] = 13; i[20] = 14;
+	i[21] = 12; i[22] = 14; i[23] = 15;
+
+	// Fill in the left face index data
+	i[24] = 16; i[25] = 17; i[26] = 18;
+	i[27] = 16; i[28] = 18; i[29] = 19;
+
+	// Fill in the right face index data
+	i[30] = 20; i[31] = 21; i[32] = 22;
+	i[33] = 20; i[34] = 22; i[35] = 23;
+
+	meshData.indices32.assign(&i[0], &i[36]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<UINT32>(numSubdivisions, 6u);
 
 	for (UINT32 i = 0; i < numSubdivisions; ++i)
 		Subdivide(meshData);
@@ -109,18 +144,30 @@ void GeometryGenerator::Subdivide(Mesh& meshData)
 
 Vertex GeometryGenerator::MidPoint(const Vertex& v0, const Vertex& v1)
 {
-	XMVECTOR p0 = XMLoadFloat3(&(XMFLOAT3)v0.position);
-	XMVECTOR p1 = XMLoadFloat3(&(XMFLOAT3)v1.position);
+	XMVECTOR p0 = XMLoadFloat3(&v0.position);
+	XMVECTOR p1 = XMLoadFloat3(&v1.position);
 
-	XMVECTOR c0 = XMLoadFloat4(&(XMFLOAT4)v0.color);
-	XMVECTOR c1 = XMLoadFloat4(&(XMFLOAT4)v1.color);
+	XMVECTOR n0 = XMLoadFloat3(&v0.normal);
+	XMVECTOR n1 = XMLoadFloat3(&v1.normal);
 
+	XMVECTOR tan0 = XMLoadFloat3(&v0.tangent);
+	XMVECTOR tan1 = XMLoadFloat3(&v1.tangent);
+
+	XMVECTOR tex0 = XMLoadFloat2(&v0.texUV);
+	XMVECTOR tex1 = XMLoadFloat2(&v1.texUV);
+
+	// Compute the midpoints of all the attributes.  Vectors need to be normalized
+	// since linear interpolating can make them not unit length.  
 	XMVECTOR pos = 0.5f * (p0 + p1);
-	XMVECTOR color = 0.5f * (c0 + c1);
+	XMVECTOR normal = XMVector3Normalize(0.5f * (n0 + n1));
+	XMVECTOR tangent = XMVector3Normalize(0.5f * (tan0 + tan1));
+	XMVECTOR tex = 0.5f * (tex0 + tex1);
 
 	Vertex v;
 	XMStoreFloat3(&v.position, pos);
-	XMStoreFloat4(&v.color, color);
+	XMStoreFloat3(&v.normal, normal);
+	XMStoreFloat3(&v.tangent, tangent);
+	XMStoreFloat2(&v.texUV, tex);
 
 	return v;
 }

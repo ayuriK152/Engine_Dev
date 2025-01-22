@@ -7,6 +7,7 @@
 cbuffer cbPerObject : register(b0)
 {
 	float4x4 world; 
+    float4x4 gTexTransform;
 };
 
 cbuffer cbPass : register(b1)
@@ -27,29 +28,48 @@ cbuffer cbPass : register(b1)
     float gDeltaTime;
 };
 
+cbuffer cbMaterial : register(b2)
+{
+	float4   gDiffuseAlbedo;
+    float3   gFresnelR0;
+    float    gRoughness;
+	float4x4 gMatTransform;
+};
+
 struct VertexIn
 {
 	float3 PosL  : POSITION;
-    float4 Color : COLOR;
+    float3 NormalL : NORMAL;
+    float2 TexC : TEXCOORD;
 };
 
 struct VertexOut
 {
-	float4 PosH  : SV_POSITION;
-    float4 Color : COLOR;
+	float4 PosH    : SV_POSITION;
+    float3 PosW    : POSITION;
+    float3 NormalW : NORMAL;
+	float2 TexC    : TEXCOORD;
 };
 
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
+	VertexOut vout = (VertexOut)0.0f;
 	
-	// Transform to homogeneous clip space.
-	float4 posW = mul(float4(vin.PosL, 1.0f), world);
-	vout.PosH = mul(posW, gViewProj);
+    // Transform to world space.
+    float4 posW = mul(float4(vin.PosL, 1.0f), world);
+    vout.PosW = posW.xyz;
+
+    // Assumes nonuniform scaling; otherwise, need to use inverse-transpose of world matrix.
+    vout.NormalW = mul(vin.NormalL, (float3x3)world);
+
+    // Transform to homogeneous clip space.
+    vout.PosH = mul(posW, gViewProj);
 	
-	// Just pass vertex color into the pixel shader.
-    vout.Color = vin.Color;
-    
+	// Output vertex attributes for interpolation across triangle.
+	float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), gTexTransform);
+	vout.TexC = mul(texC, gMatTransform).xy;
+	
     return vout;
 }
 

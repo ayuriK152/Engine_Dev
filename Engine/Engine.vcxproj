@@ -33,6 +33,7 @@
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniversalUtils.h" />
     <ClInclude Include="UploadBuffer.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="UniversalUtils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

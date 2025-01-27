@@ -27,6 +27,7 @@ public:
 
 	ComPtr<ID3D12Device> GetDevice()const;
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const;
+	ComPtr<ID3D12CommandQueue> GetCommandQueue()const;
 	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const;
 	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const;
 

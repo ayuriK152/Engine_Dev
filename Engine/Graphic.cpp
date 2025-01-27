@@ -13,6 +13,8 @@ Graphic::~Graphic()
 		FlushCommandQueue();
 }
 
+
+#pragma region GetterSetter
 HWND Graphic::GetMainWnd() const
 {
 	return _hMainWnd;
@@ -74,6 +76,11 @@ ComPtr<ID3D12GraphicsCommandList> Graphic::GetCommandList()const
 	return _commandList;
 }
 
+ComPtr<ID3D12CommandQueue> Graphic::GetCommandQueue() const
+{
+	return _commandQueue;
+}
+
 ComPtr<ID3D12DescriptorHeap> Graphic::GetConstantBufferHeap() const
 {
 	return _cbvHeap;
@@ -93,6 +100,8 @@ vector<unique_ptr<GameObject>>& Graphic::GetObjects()
 {
 	return _objects;
 }
+#pragma endregion
+
 
 bool Graphic::Initialize()
 {
@@ -587,16 +596,7 @@ bool Graphic::InitDirect3D()
 
 void Graphic::LoadTextures()
 {
-	auto whiteTex = make_unique<Texture>();
-	whiteTex->Name = "whiteTex";
-	whiteTex->Filename = L"Textures\\white1x1.dds";
-	ResourceUploadBatch upload(_device.Get());
-	upload.Begin();
-	ThrowIfFailed(CreateDDSTextureFromFile(_device.Get(), upload,
-		whiteTex->Filename.c_str(), whiteTex->Resource.GetAddressOf()));
-	_textures[whiteTex->Name] = move(whiteTex);
-	auto finish = upload.End(_commandQueue.Get());
-	finish.wait();
+	TEXTURE->LoadTexture("whiteTex", L"Textures\\white1x1.dds");
 }
 
 void Graphic::BuildCommandObjects()
@@ -658,7 +658,7 @@ void Graphic::BuildDescriptorHeaps()
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(_srvHeap->GetCPUDescriptorHandleForHeapStart());
 
-	auto whiteTex = _textures["whiteTex"]->Resource;
+	auto whiteTex = TEXTURE->GetTexture("whiteTex")->Resource;
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Format = whiteTex->GetDesc().Format;
@@ -721,7 +721,6 @@ void Graphic::BuildRootSignature()
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
-
 
 	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[1].InitAsConstantBufferView(0);

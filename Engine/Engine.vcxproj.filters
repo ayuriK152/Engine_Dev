@@ -51,6 +51,9 @@
     <ClInclude Include="Geometry.h">
       <Filter>02. GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -76,6 +79,9 @@
     </Filter>
     <Filter Include="Libararies">
       <UniqueIdentifier>{c656ce65-91b3-4ee4-9dc1-c10ab126aeb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. EngineComponents\01. Managers">
+      <UniqueIdentifier>{dca9fbf7-1588-499f-9f07-24cfaeca83fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="Geometry.cpp">
       <Filter>02. GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

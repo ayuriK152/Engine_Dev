@@ -127,6 +127,9 @@ bool Graphic::Initialize()
 		_shaders["standardVS"], _shaders["opaquePS"],
 		_backBufferFormat, _depthStencilFormat, _PSOs);
 
+	if (_appDesc.app != nullptr)
+		_appDesc.app->Init();
+
 	ThrowIfFailed(_commandList->Close());
 	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
@@ -246,6 +249,9 @@ void Graphic::OnResize()
 
 void Graphic::Update()
 {
+	if (_appDesc.app != nullptr)
+		_appDesc.app->Update();
+
 	UpdateCamera();
 
 	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;

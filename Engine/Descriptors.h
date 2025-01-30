@@ -2,7 +2,7 @@
 
 struct AppDesc
 {
-	//shared_ptr<class IExecute> app = nullptr;
+	shared_ptr<class IExecute> app = nullptr;
 	wstring mainWndCaption = L"GameApplication";
 	bool _4xMsaaState = false;
 	int _4xMsaaQuality = 0;

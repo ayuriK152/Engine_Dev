@@ -66,7 +66,7 @@ public:
 
 private:
 	vector<Vertex> _vertices;
-	vector<UINT16> _indices16;
+	vector<UINT16> _indices;
 
 	UINT _submeshIndexOffset = 0;
 	UINT _submeshVertexOffset = 0;

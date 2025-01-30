@@ -41,7 +41,9 @@ public:
 		indexBufferUploader = nullptr;
 	}
 
-	static unique_ptr<Geometry> CreateGeometry(Mesh& mesh, string geoName, string meshName);
+	static unique_ptr<Geometry> CreateGeometry(string geoName);
+	void AddMeshToGeo(Mesh& mesh, string meshName);
+	void EndCreateGeometry();
 
 public:
 	string name;
@@ -61,4 +63,11 @@ public:
 	UINT indexBufferByteSize = 0;
 
 	unordered_map<string, Submesh> drawArgs;
+
+private:
+	vector<Vertex> _vertices;
+	vector<UINT16> _indices16;
+
+	UINT _submeshIndexOffset = 0;
+	UINT _submeshVertexOffset = 0;
 };

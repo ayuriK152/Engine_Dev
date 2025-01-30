@@ -769,7 +769,10 @@ void Graphic::BuildObjectGeometry()
 {
 	Mesh boxMesh = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
 	Mesh sphereMesh = GeometryGenerator::CreateGeosphere(1.5f, 3);
-	unique_ptr<Geometry> geo = Geometry::CreateGeometry(sphereMesh, "BasicShapeGeo", "box");
+	unique_ptr<Geometry> geo = Geometry::CreateGeometry("BasicShapeGeo");
+	geo->AddMeshToGeo(boxMesh, "box");
+	geo->AddMeshToGeo(sphereMesh, "sphere");
+	geo->EndCreateGeometry();
 	_geometrys[geo->name] = move(geo);
 
 	//================

@@ -49,15 +49,19 @@ using namespace Microsoft::WRL;
 #include "DXUtil.h"
 #include "GeometryGenerator.h"
 
+#include "Resource.h"
 #include "GameObject.h"
 #include "Geometry.h"
 #include "Material.h"
+#include "Mesh.h"
 
 #include "IExecute.h"
+#include "Component.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"
 #include "TextureManager.h"
+#include "ResourceManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

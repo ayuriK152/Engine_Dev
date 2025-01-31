@@ -38,6 +38,8 @@ public:
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+	GameObject* AddGameObject(unique_ptr<GameObject> obj);
+
 private:
 	void OnResize();
 	void Update();

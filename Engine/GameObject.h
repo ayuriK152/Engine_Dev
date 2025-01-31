@@ -3,6 +3,7 @@
 #pragma region 전방선언
 class Geometry;
 class Material;
+class Component;
 #pragma endregion
 
 
@@ -29,4 +30,6 @@ public:
 	int baseVertexLocation;
 
 	int numFramesDirty;
+
+	vector<shared_ptr<Component>> components;
 };

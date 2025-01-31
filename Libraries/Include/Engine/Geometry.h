@@ -1,7 +1,5 @@
 #pragma once
 
-struct Mesh;
-
 class Submesh
 {
 public:
@@ -42,7 +40,7 @@ public:
 	}
 
 	static unique_ptr<Geometry> CreateGeometry(string geoName);
-	void AddMeshToGeo(Mesh& mesh, string meshName);
+	void AddMeshToGeo(shared_ptr<Mesh> mesh, string meshName);
 	void EndCreateGeometry();
 
 public:

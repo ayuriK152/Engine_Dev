@@ -498,6 +498,15 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
+GameObject* Graphic::AddGameObject(unique_ptr<GameObject> obj)
+{
+	obj->objCBIndex = _objects.size();
+	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	_objects.push_back(move(obj));
+	return _objects[_objects.size() - 1].get();
+}
+
 // 윈도우 초기화
 bool Graphic::InitMainWindow()
 {
@@ -773,8 +782,8 @@ void Graphic::BuildShaderAndInputLayout()
 
 void Graphic::BuildObjectGeometry()
 {
-	Mesh boxMesh = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
-	Mesh sphereMesh = GeometryGenerator::CreateGeosphere(1.5f, 3);
+	shared_ptr<Mesh> boxMesh = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
+	shared_ptr<Mesh> sphereMesh = GeometryGenerator::CreateGeosphere(1.5f, 3);
 	unique_ptr<Geometry> geo = Geometry::CreateGeometry("BasicShapeGeo");
 	geo->AddMeshToGeo(boxMesh, "box");
 	geo->AddMeshToGeo(sphereMesh, "sphere");
@@ -789,17 +798,14 @@ void Graphic::BuildObjectGeometry()
 	//================
 
 	auto box = make_unique<GameObject>();
-	box = make_unique<GameObject>();
-	box->objCBIndex = _objects.size();
 	box->geometry = _geometrys["BasicShapeGeo"].get();
 	box->material = _materials["default"].get();
-	box->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	box->meshName = "box";
 	box->indexCount = box->geometry->drawArgs["box"].indexCount;
 	box->startIndexLocation = box->geometry->drawArgs["box"].startIndexLocation;
 	box->baseVertexLocation = box->geometry->drawArgs["box"].baseVertexLocation;
-	XMStoreFloat4x4(&box->world, XMMatrixTranslation(0.0f, -10.0f, 10.0f));
-	_objects.push_back(move(box));
+	auto boxInstance = AddGameObject(move(box));
+	XMStoreFloat4x4(&boxInstance->world, XMMatrixTranslation(0.0f, -5.0f, 10.0f));
 }
 
 void Graphic::BuildFrameResources()

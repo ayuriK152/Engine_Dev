@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
 
+class Geometry;
+
 struct Vertex
 {
 	Vertex() {}
@@ -29,7 +31,7 @@ struct Vertex
 	Vector2 TexC;
 };
 
-struct Mesh
+struct MeshData
 {
 	vector<Vertex> Vertices;
 	vector<UINT32> Indices32;

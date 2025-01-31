@@ -9,18 +9,18 @@ unique_ptr<Geometry> Geometry::CreateGeometry(string geoName)
 	return geo;
 }
 
-void Geometry::AddMeshToGeo(Mesh& mesh, string meshName)
+void Geometry::AddMeshToGeo(shared_ptr<Mesh> mesh, string meshName)
 {
-	_vertices.insert(_vertices.end(), begin(mesh.Vertices), end(mesh.Vertices));
-	_indices.insert(_indices.end(), begin(mesh.GetIndicices16()), end(mesh.GetIndicices16()));
+	_vertices.insert(_vertices.end(), begin(mesh->Vertices), end(mesh->Vertices));
+	_indices.insert(_indices.end(), begin(mesh->GetIndicices16()), end(mesh->GetIndicices16()));
 
 	Submesh submesh;
-	submesh.indexCount = (UINT)mesh.Indices32.size();
+	submesh.indexCount = (UINT)mesh->Indices32.size();
 	submesh.startIndexLocation = _submeshIndexOffset;
 	submesh.baseVertexLocation = _submeshVertexOffset;
 
-	_submeshIndexOffset += (UINT)mesh.Indices32.size();
-	_submeshVertexOffset += (UINT)mesh.Vertices.size();
+	_submeshIndexOffset += (UINT)mesh->Indices32.size();
+	_submeshVertexOffset += (UINT)mesh->Vertices.size();
 
 	this->drawArgs[meshName] = submesh;
 }

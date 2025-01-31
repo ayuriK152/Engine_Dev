@@ -44,7 +44,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>02. GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Material.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
@@ -54,6 +53,22 @@
     <ClInclude Include="TextureManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>02. GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -113,7 +128,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>02. GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Material.cpp">
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
@@ -123,5 +137,21 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
 </Project>

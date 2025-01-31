@@ -1,14 +1,14 @@
 #pragma once
 
 struct Vertex;
-struct Mesh;
+class Mesh;
 
 class GeometryGenerator
 {
 public:
-	static Mesh CreateBox(float width, float height, float depth, UINT32 numSubdivisions);
-	static Mesh CreateGeosphere(float radius, UINT32 numSubdivisions);
+	static shared_ptr<Mesh> CreateBox(float width, float height, float depth, UINT32 numSubdivisions);
+	static shared_ptr<Mesh> CreateGeosphere(float radius, UINT32 numSubdivisions);
 
-	static void Subdivide(Mesh& meshData);
+	static void Subdivide(shared_ptr<Mesh> mesh);
 	static Vertex MidPoint(const Vertex& v0, const Vertex& v1);
 };

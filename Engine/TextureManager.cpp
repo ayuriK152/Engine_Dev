@@ -6,7 +6,7 @@ void TextureManager::LoadTexture(string name, wstring fileDir)
 	auto device = GRAPHIC->GetDevice().Get();
 	auto commandQueue = GRAPHIC->GetCommandQueue().Get();
 
-	auto texture = make_unique<Texture>();
+	auto texture = make_shared<Texture>();
 	texture->Name = name;
 	texture->Filename = fileDir;
 	ResourceUploadBatch upload(device);
@@ -18,7 +18,7 @@ void TextureManager::LoadTexture(string name, wstring fileDir)
 	finish.wait();
 }
 
-Texture* TextureManager::GetTexture(string name)
+shared_ptr<Texture> TextureManager::GetTexture(string name)
 {
-	return _textures[name].get();
+	return _textures[name];
 }

@@ -54,6 +54,7 @@ using namespace Microsoft::WRL;
 #include "Geometry.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 #include "IExecute.h"
 #include "Component.h"

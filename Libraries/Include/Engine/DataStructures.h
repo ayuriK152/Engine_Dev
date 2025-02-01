@@ -31,33 +31,12 @@ struct Vertex
 	Vector2 TexC;
 };
 
-//struct MeshData
+//struct Texture
 //{
-//	vector<Vertex> Vertices;
-//	vector<UINT32> Indices32;
+//	string Name;
+//	
+//	wstring Filename;
 //
-//	vector<UINT16>& GetIndicices16()
-//	{
-//		if (_Indices16.empty())
-//		{
-//			_Indices16.resize(Indices32.size());
-//			for (size_t i = 0; i < Indices32.size(); ++i)
-//				_Indices16[i] = static_cast<UINT16>(Indices32[i]);
-//		}
-//
-//		return _Indices16;
-//	}
-//
-//private:
-//	vector<UINT16> _Indices16;
+//	ComPtr<ID3D12Resource> Resource = nullptr;
+//	ComPtr<ID3D12Resource> UploadHeap = nullptr;
 //};
-
-struct Texture
-{
-	string Name;
-	
-	wstring Filename;
-
-	ComPtr<ID3D12Resource> Resource = nullptr;
-	ComPtr<ID3D12Resource> UploadHeap = nullptr;
-};

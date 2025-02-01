@@ -69,6 +69,7 @@
       <Filter>Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -153,5 +154,6 @@
       <Filter>Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
 </Project>

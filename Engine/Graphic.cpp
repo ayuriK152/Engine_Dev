@@ -611,7 +611,7 @@ bool Graphic::InitDirect3D()
 
 void Graphic::LoadTextures()
 {
-	TEXTURE->LoadTexture("whiteTex", L"Textures\\white1x1.dds");
+	TEXTURE->LoadTexture(L"whiteTex", L"Textures\\white1x1.dds");
 }
 
 void Graphic::BuildCommandObjects()
@@ -673,7 +673,7 @@ void Graphic::BuildDescriptorHeaps()
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(_srvHeap->GetCPUDescriptorHandleForHeapStart());
 
-	auto whiteTex = TEXTURE->GetTexture("whiteTex")->Resource;
+	auto whiteTex = TEXTURE->GetTexture(L"whiteTex")->Resource;
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Format = whiteTex->GetDesc().Format;

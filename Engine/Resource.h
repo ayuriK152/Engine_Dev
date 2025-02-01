@@ -22,6 +22,13 @@ public:
 	virtual ~Resource();
 
 	ResourceType GetType() { return _type; }
+
+	void SetName(wstring name) { _name = name; }
+	wstring GetName() { return _name; }
+
+	void SetPath(wstring path) { _path = path; }
+	wstring GetPath() { return _path; }
+
 protected:
 	ResourceType _type;
 	wstring _name;

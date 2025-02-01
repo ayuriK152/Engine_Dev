@@ -10,9 +10,6 @@ public:
 	Mesh();
 	virtual ~Mesh();
 
-	vector<Vertex> Vertices;
-	vector<UINT32> Indices32;
-
 	vector<UINT16>& GetIndicices16()
 	{
 		if (_Indices16.empty())
@@ -25,7 +22,11 @@ public:
 		return _Indices16;
 	}
 
-	private:
-		vector<UINT16> _Indices16;
+public:
+	vector<Vertex> Vertices;
+	vector<UINT32> Indices32;
+
+private:
+	vector<UINT16> _Indices16;
 };
 

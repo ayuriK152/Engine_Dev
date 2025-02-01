@@ -4,10 +4,10 @@ class TextureManager
 {
 	DECLARE_SINGLE(TextureManager);
 public:
-	void LoadTexture(string name, wstring fileDir);
-	shared_ptr<Texture> GetTexture(string name);
+	void LoadTexture(wstring name, wstring fileDir);
+	shared_ptr<Texture> GetTexture(wstring name);
 
 private:
-	unordered_map<string, shared_ptr<Texture>> _textures;
+	unordered_map<wstring, shared_ptr<Texture>> _textures;
 };
 

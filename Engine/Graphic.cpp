@@ -800,12 +800,13 @@ void Graphic::BuildObjectGeometry()
 	auto box = make_unique<GameObject>();
 	box->geometry = _geometrys["BasicShapeGeo"].get();
 	box->material = _materials["default"].get();
-	box->meshName = "box";
-	box->indexCount = box->geometry->drawArgs["box"].indexCount;
-	box->startIndexLocation = box->geometry->drawArgs["box"].startIndexLocation;
-	box->baseVertexLocation = box->geometry->drawArgs["box"].baseVertexLocation;
+	box->meshName = "sphere";
+	box->indexCount = box->geometry->drawArgs["sphere"].indexCount;
+	box->startIndexLocation = box->geometry->drawArgs["sphere"].startIndexLocation;
+	box->baseVertexLocation = box->geometry->drawArgs["sphere"].baseVertexLocation;
 	auto boxInstance = AddGameObject(move(box));
 	XMStoreFloat4x4(&boxInstance->world, XMMatrixTranslation(0.0f, -5.0f, 10.0f));
+
 }
 
 void Graphic::BuildFrameResources()

@@ -1,12 +1,17 @@
 #include "pch.h"
 #include "Component.h"
 
-void Component::Init()
+Component::Component(ComponentType type) : type(type)
 {
 
 }
 
-void Component::Update()
+Component::~Component()
 {
 
+}
+
+shared_ptr<GameObject> Component::GetGameObject()
+{
+	return _gameObject.lock();
 }

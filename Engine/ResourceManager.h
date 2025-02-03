@@ -37,11 +37,11 @@ bool ResourceManager::Add(const wstring& key, shared_ptr<T> resource)
 template<typename T>
 ResourceType ResourceManager::GetResourceType()
 {
-	if (is_same<T, Mesh>)
+	if (is_same_v<T, Mesh>)
 		return ResourceType::Mesh;
-	if (is_same<T, Texture>)
+	if (is_same_v<T, Texture>)
 		return ResourceType::Texture;
-	if (is_same<T, Material>)
+	if (is_same_v<T, Material>)
 		return ResourceType::Material;
 
 	return ResourceType::Undefined;

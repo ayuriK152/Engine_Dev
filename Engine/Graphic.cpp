@@ -96,7 +96,7 @@ UINT Graphic::GetCBVSRVDescriptorSize() const
 	return _cbvSrvUavDescriptorSize;
 }
 
-vector<unique_ptr<GameObject>>& Graphic::GetObjects()
+vector<shared_ptr<GameObject>>& Graphic::GetObjects()
 {
 	return _objects;
 }
@@ -498,13 +498,13 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
-GameObject* Graphic::AddGameObject(unique_ptr<GameObject> obj)
+shared_ptr<GameObject> Graphic::AddGameObject(shared_ptr<GameObject> obj)
 {
 	obj->objCBIndex = _objects.size();
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	_objects.push_back(move(obj));
-	return _objects[_objects.size() - 1].get();
+	return _objects[_objects.size() - 1];
 }
 
 // 윈도우 초기화
@@ -782,31 +782,26 @@ void Graphic::BuildShaderAndInputLayout()
 
 void Graphic::BuildObjectGeometry()
 {
-	shared_ptr<Mesh> boxMesh = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
-	shared_ptr<Mesh> sphereMesh = GeometryGenerator::CreateGeosphere(1.5f, 3);
-	unique_ptr<Geometry> geo = Geometry::CreateGeometry("BasicShapeGeo");
-	geo->AddMeshToGeo(boxMesh, "box");
-	geo->AddMeshToGeo(sphereMesh, "sphere");
-	geo->EndCreateGeometry();
-	_geometrys[geo->name] = move(geo);
+	//shared_ptr<Mesh> boxMesh = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
+	//shared_ptr<Mesh> sphereMesh = GeometryGenerator::CreateGeosphere(1.5f, 3);
+	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>();
+	sphereMesh->CreateBasicSphere();
 
 	//================
 
-	auto defaultMat = make_unique<Material>("default", 0, 0, -1);
-	_materials[defaultMat->name] = move(defaultMat);
+	auto defaultMat = make_shared<Material>("default", 0, 0, -1);
+	_materials[defaultMat->name] = defaultMat;
 
 	//================
 
-	auto box = make_unique<GameObject>();
-	box->geometry = _geometrys["BasicShapeGeo"].get();
-	box->material = _materials["default"].get();
+	auto box = make_shared<GameObject>();
+	box->material = _materials["default"];
 	box->meshName = "sphere";
-	box->indexCount = box->geometry->drawArgs["sphere"].indexCount;
-	box->startIndexLocation = box->geometry->drawArgs["sphere"].startIndexLocation;
-	box->baseVertexLocation = box->geometry->drawArgs["sphere"].baseVertexLocation;
-	auto boxInstance = AddGameObject(move(box));
+	box->AddComponent(make_shared<MeshRenderer>());
+	box->GetComponent<MeshRenderer>()->SetMesh(sphereMesh);
+	box->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
+	auto boxInstance = AddGameObject(box);
 	XMStoreFloat4x4(&boxInstance->world, XMMatrixTranslation(0.0f, -5.0f, 10.0f));
-
 }
 
 void Graphic::BuildFrameResources()

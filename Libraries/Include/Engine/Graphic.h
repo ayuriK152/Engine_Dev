@@ -33,12 +33,12 @@ public:
 
 	UINT GetCBVSRVDescriptorSize()const;
 
-	vector<unique_ptr<GameObject>>& GetObjects();
+	vector<shared_ptr<GameObject>>& GetObjects();
 
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	GameObject* AddGameObject(unique_ptr<GameObject> obj);
+	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
 private:
 	void OnResize();
@@ -125,7 +125,7 @@ private:
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	unordered_map<string, unique_ptr<Geometry>> _geometrys;
 
-	vector<unique_ptr<GameObject>> _objects;
+	vector<shared_ptr<GameObject>> _objects;
 
 	static const int _numFrameResources = 3;
 	int _currFrameResourceIndex = 0;
@@ -151,6 +151,6 @@ private:
 	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
 	unordered_map<string, unique_ptr<Texture>> _textures;
-	unordered_map<string, unique_ptr<Material>> _materials;
+	unordered_map<string, shared_ptr<Material>> _materials;
 };
 

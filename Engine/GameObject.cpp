@@ -5,7 +5,6 @@ GameObject::GameObject()
 {
 	world = MathHelper::Identity4x4();
 
-	geometry = nullptr;
 	material = nullptr;
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -26,6 +25,11 @@ GameObject::~GameObject()
 
 void GameObject::Render()
 {
+	for (auto& c : components)
+	{
+		c.second->Render();
+	}
+	/*
 	GRAPHIC->GetCommandList().Get()->IASetVertexBuffers(0, 1, &geometry->VertexBufferView());
 	GRAPHIC->GetCommandList().Get()->IASetIndexBuffer(&geometry->IndexBufferView());
 	GRAPHIC->GetCommandList().Get()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -50,5 +54,13 @@ void GameObject::Render()
 	GRAPHIC->GetCommandList().Get()->SetGraphicsRootConstantBufferView(1, objCBAddress);
 	GRAPHIC->GetCommandList().Get()->SetGraphicsRootConstantBufferView(3, matCBAddress);
 
-	GRAPHIC->GetCommandList().Get()->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
+	//GRAPHIC->GetCommandList().Get()->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
+	GRAPHIC->GetCommandList().Get()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
+	*/
+}
+
+void GameObject::AddComponent(shared_ptr<Component> component)
+{
+	component->SetGameObject(shared_from_this());
+	components.insert({component->type, component});
 }

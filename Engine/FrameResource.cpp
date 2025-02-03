@@ -21,7 +21,7 @@ void FrameResource::Update()
 {
 	for (auto& o : GRAPHIC->GetObjects())
 	{
-		Material* mat = o->material;
+		auto mat = o->material;
 		if (o->numFramesDirty > 0)
 		{
 			XMMATRIX world = XMLoadFloat4x4(&o->world);

@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "GeometryGenerator.h"
 
-shared_ptr<Mesh> GeometryGenerator::CreateBox(float width, float height, float depth, UINT32 numSubdivisions)
+shared_ptr<Geometry> GeometryGenerator::CreateBox(float width, float height, float depth, UINT32 numSubdivisions)
 {
 	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	shared_ptr<Geometry> geometry = make_shared<Geometry>();
 
 	Vertex v[24];
 
@@ -47,7 +48,7 @@ shared_ptr<Mesh> GeometryGenerator::CreateBox(float width, float height, float d
 	v[22] = Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 	v[23] = Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
-	mesh->Vertices.assign(&v[0], &v[24]);
+	geometry->GetVertices().assign(&v[0], &v[24]);
 
 	//
 	// Create the indices.
@@ -79,20 +80,20 @@ shared_ptr<Mesh> GeometryGenerator::CreateBox(float width, float height, float d
 	i[30] = 20; i[31] = 21; i[32] = 22;
 	i[33] = 20; i[34] = 22; i[35] = 23;
 
-	mesh->Indices32.assign(&i[0], &i[36]);
+	geometry->GetIndices().assign(&i[0], &i[36]);
 
 	// Put a cap on the number of subdivisions.
 	numSubdivisions = std::min<UINT32>(numSubdivisions, 6u);
 
 	for (UINT32 i = 0; i < numSubdivisions; ++i)
-		Subdivide(mesh);
+		Subdivide(geometry);
 
-	return mesh;
+	return geometry;
 }
 
-shared_ptr<Mesh> GeometryGenerator::CreateGeosphere(float radius, UINT32 numSubdivisions)
+shared_ptr<Geometry> GeometryGenerator::CreateGeosphere(float radius, UINT32 numSubdivisions)
 {
-	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	shared_ptr<Geometry> geometry = make_shared<Geometry>();
 
 	// Put a cap on the number of subdivisions.
 	numSubdivisions = std::min<UINT32>(numSubdivisions, 6u);
@@ -120,59 +121,59 @@ shared_ptr<Mesh> GeometryGenerator::CreateGeosphere(float radius, UINT32 numSubd
 		10,1,6, 11,0,9, 2,11,9, 5,2,9,  11,2,7
 	};
 
-	mesh->Vertices.resize(12);
-	mesh->Indices32.assign(&k[0], &k[60]);
+	geometry->GetVertices().resize(12);
+	geometry->GetIndices().assign(&k[0], &k[60]);
 
 	for (UINT32 i = 0; i < 12; ++i)
-		mesh->Vertices[i].Position = pos[i];
+		geometry->GetVertices()[i].Position = pos[i];
 
 	for (UINT32 i = 0; i < numSubdivisions; ++i)
-		Subdivide(mesh);
+		Subdivide(geometry);
 
 	// Project vertices onto sphere and scale.
-	for (UINT32 i = 0; i < mesh->Vertices.size(); ++i)
+	for (UINT32 i = 0; i < geometry->GetVertices().size(); ++i)
 	{
 		// Project onto unit sphere.
-		XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&mesh->Vertices[i].Position));
+		XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&geometry->GetVertices()[i].Position));
 
 		// Project onto sphere.
 		XMVECTOR p = radius * n;
 
-		XMStoreFloat3(&mesh->Vertices[i].Position, p);
-		XMStoreFloat3(&mesh->Vertices[i].Normal, n);
+		XMStoreFloat3(&geometry->GetVertices()[i].Position, p);
+		XMStoreFloat3(&geometry->GetVertices()[i].Normal, n);
 
 		// Derive texture coordinates from spherical coordinates.
-		float theta = atan2f(mesh->Vertices[i].Position.z, mesh->Vertices[i].Position.x);
+		float theta = atan2f(geometry->GetVertices()[i].Position.z, geometry->GetVertices()[i].Position.x);
 
 		// Put in [0, 2pi].
 		if (theta < 0.0f)
 			theta += XM_2PI;
 
-		float phi = acosf(mesh->Vertices[i].Position.y / radius);
+		float phi = acosf(geometry->GetVertices()[i].Position.y / radius);
 
-		mesh->Vertices[i].TexC.x = theta / XM_2PI;
-		mesh->Vertices[i].TexC.y = phi / XM_PI;
+		geometry->GetVertices()[i].TexC.x = theta / XM_2PI;
+		geometry->GetVertices()[i].TexC.y = phi / XM_PI;
 
 		// Partial derivative of P with respect to theta
-		mesh->Vertices[i].Tangent.x = -radius * sinf(phi) * sinf(theta);
-		mesh->Vertices[i].Tangent.y = 0.0f;
-		mesh->Vertices[i].Tangent.z = +radius * sinf(phi) * cosf(theta);
+		geometry->GetVertices()[i].Tangent.x = -radius * sinf(phi) * sinf(theta);
+		geometry->GetVertices()[i].Tangent.y = 0.0f;
+		geometry->GetVertices()[i].Tangent.z = +radius * sinf(phi) * cosf(theta);
 
-		XMVECTOR T = XMLoadFloat3(&mesh->Vertices[i].Tangent);
-		XMStoreFloat3(&mesh->Vertices[i].Tangent, XMVector3Normalize(T));
+		XMVECTOR T = XMLoadFloat3(&geometry->GetVertices()[i].Tangent);
+		XMStoreFloat3(&geometry->GetVertices()[i].Tangent, XMVector3Normalize(T));
 	}
 
-	return mesh;
+	return geometry;
 }
 
-void GeometryGenerator::Subdivide(shared_ptr<Mesh> mesh)
+void GeometryGenerator::Subdivide(shared_ptr<Geometry> geometry)
 {
 	// Save a copy of the input geometry.
-	auto indicesCopy = mesh->Indices32;
-	auto verticesCopy = mesh->Vertices;
+	auto indicesCopy = geometry->GetIndices();
+	auto verticesCopy = geometry->GetVertices();
 
-	mesh->Vertices.resize(0);
-	mesh->Indices32.resize(0);
+	geometry->GetIndices().resize(0);
+	geometry->GetVertices().resize(0);
 
 	UINT32 numTris = (UINT32)indicesCopy.size() / 3;
 	for (UINT32 i = 0; i < numTris; ++i)
@@ -193,28 +194,28 @@ void GeometryGenerator::Subdivide(shared_ptr<Mesh> mesh)
 		// Add new geometry.
 		//
 
-		mesh->Vertices.push_back(v0); // 0
-		mesh->Vertices.push_back(v1); // 1
-		mesh->Vertices.push_back(v2); // 2
-		mesh->Vertices.push_back(m0); // 3
-		mesh->Vertices.push_back(m1); // 4
-		mesh->Vertices.push_back(m2); // 5
+		geometry->GetVertices().push_back(v0); // 0
+		geometry->GetVertices().push_back(v1); // 1
+		geometry->GetVertices().push_back(v2); // 2
+		geometry->GetVertices().push_back(m0); // 3
+		geometry->GetVertices().push_back(m1); // 4
+		geometry->GetVertices().push_back(m2); // 5
 
-		mesh->Indices32.push_back(i * 6 + 0);
-		mesh->Indices32.push_back(i * 6 + 3);
-		mesh->Indices32.push_back(i * 6 + 5);
+		geometry->GetIndices().push_back(i * 6 + 0);
+		geometry->GetIndices().push_back(i * 6 + 3);
+		geometry->GetIndices().push_back(i * 6 + 5);
 
-		mesh->Indices32.push_back(i * 6 + 3);
-		mesh->Indices32.push_back(i * 6 + 4);
-		mesh->Indices32.push_back(i * 6 + 5);
+		geometry->GetIndices().push_back(i * 6 + 3);
+		geometry->GetIndices().push_back(i * 6 + 4);
+		geometry->GetIndices().push_back(i * 6 + 5);
 
-		mesh->Indices32.push_back(i * 6 + 5);
-		mesh->Indices32.push_back(i * 6 + 4);
-		mesh->Indices32.push_back(i * 6 + 2);
+		geometry->GetIndices().push_back(i * 6 + 5);
+		geometry->GetIndices().push_back(i * 6 + 4);
+		geometry->GetIndices().push_back(i * 6 + 2);
 
-		mesh->Indices32.push_back(i * 6 + 3);
-		mesh->Indices32.push_back(i * 6 + 1);
-		mesh->Indices32.push_back(i * 6 + 4);
+		geometry->GetIndices().push_back(i * 6 + 3);
+		geometry->GetIndices().push_back(i * 6 + 1);
+		geometry->GetIndices().push_back(i * 6 + 4);
 	}
 }
 

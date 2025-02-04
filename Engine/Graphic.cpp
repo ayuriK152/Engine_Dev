@@ -786,8 +786,10 @@ void Graphic::BuildObjectGeometry()
 {
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>();
 	boxMesh->CreateBasicCube();
+	RESOURCE->Add<Mesh>(L"Mesh_BasicBox", boxMesh);
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>();
 	sphereMesh->CreateBasicSphere();
+	RESOURCE->Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
 
 	//================
 
@@ -799,14 +801,14 @@ void Graphic::BuildObjectGeometry()
 	auto box = make_shared<GameObject>();
 	box->meshName = "box";
 	box->AddComponent(make_shared<MeshRenderer>());
-	box->GetComponent<MeshRenderer>()->SetMesh(boxMesh);
+	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 	box->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
 	auto boxInstance = AddGameObject(box);
 
 	auto sphere = make_shared<GameObject>();
 	sphere->meshName = "sphere";
 	sphere->AddComponent(make_shared<MeshRenderer>());
-	sphere->GetComponent<MeshRenderer>()->SetMesh(sphereMesh);
+	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	sphere->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
 	auto sphereInstance = AddGameObject(sphere);
 

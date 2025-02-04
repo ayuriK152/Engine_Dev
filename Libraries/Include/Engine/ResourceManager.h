@@ -12,10 +12,13 @@ public:
 	bool Add(const wstring& key, shared_ptr<T> resource);
 
 	template<typename T>
+	shared_ptr<T> Get(const wstring& key);
+
+	template<typename T>
 	ResourceType GetResourceType();
 
 private:
-	using KeyObjMap = map<wstring, Resource>;
+	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;
 };
 
@@ -32,6 +35,20 @@ bool ResourceManager::Add(const wstring& key, shared_ptr<T> resource)
 
 	keyObjMap[key] = resource;
 	return true;
+}
+
+template<typename T>
+shared_ptr<T>
+ResourceManager::Get(const wstring& key)
+{
+	ResourceType type = GetResourceType<T>();
+	KeyObjMap& keyObjMap = _resources[static_cast<UINT8>(type)];
+
+	auto found = keyObjMap.find(key);
+	if (found != keyObjMap.end())
+		return static_pointer_cast<T>(keyObjMap[key]);
+
+	return nullptr;
 }
 
 template<typename T>

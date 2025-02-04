@@ -267,6 +267,8 @@ void Graphic::Update()
 
 	_currFrameResource->Update();
 	UpdateMainCB();
+	for (auto& o : _objects)
+		o->Update();
 }
 
 
@@ -782,8 +784,8 @@ void Graphic::BuildShaderAndInputLayout()
 
 void Graphic::BuildObjectGeometry()
 {
-	//shared_ptr<Mesh> boxMesh = GeometryGenerator::CreateBox(1.5f, 0.5f, 1.5f, 3);
-	//shared_ptr<Mesh> sphereMesh = GeometryGenerator::CreateGeosphere(1.5f, 3);
+	shared_ptr<Mesh> boxMesh = make_shared<Mesh>();
+	boxMesh->CreateBasicCube();
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>();
 	sphereMesh->CreateBasicSphere();
 
@@ -795,13 +797,21 @@ void Graphic::BuildObjectGeometry()
 	//================
 
 	auto box = make_shared<GameObject>();
-	box->material = _materials["default"];
-	box->meshName = "sphere";
+	box->meshName = "box";
 	box->AddComponent(make_shared<MeshRenderer>());
-	box->GetComponent<MeshRenderer>()->SetMesh(sphereMesh);
+	box->GetComponent<MeshRenderer>()->SetMesh(boxMesh);
 	box->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
 	auto boxInstance = AddGameObject(box);
+
+	auto sphere = make_shared<GameObject>();
+	sphere->meshName = "sphere";
+	sphere->AddComponent(make_shared<MeshRenderer>());
+	sphere->GetComponent<MeshRenderer>()->SetMesh(sphereMesh);
+	sphere->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
+	auto sphereInstance = AddGameObject(sphere);
+
 	XMStoreFloat4x4(&boxInstance->world, XMMatrixTranslation(0.0f, -5.0f, 10.0f));
+	XMStoreFloat4x4(&sphereInstance->world, XMMatrixTranslation(0.0f, -10.0f, 10.0f));
 }
 
 void Graphic::BuildFrameResources()

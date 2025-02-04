@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "UploadBuffer.h"
 
 class MeshRenderer : public Component
 {
@@ -15,10 +16,10 @@ public:
 	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
 	void SetMaterial(shared_ptr<Material> material) { _material = material; }
 
-public:
-	
 private:
 	shared_ptr<Mesh> _mesh;
 	shared_ptr<Material> _material;
+
+	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 };
 

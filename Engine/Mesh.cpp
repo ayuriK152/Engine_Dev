@@ -11,6 +11,17 @@ Mesh::~Mesh()
 
 }
 
+void Mesh::CreateBasicCube()
+{
+	CreateBasicCube(1.5f, 0.5f, 1.5f, 3);
+}
+
+void Mesh::CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions)
+{
+	_geometry = GeometryGenerator::CreateBox(width, height, depth, numSubdivisions);
+	CreateBuffer();
+}
+
 void Mesh::CreateBasicSphere()
 {
 	return CreateBasicSphere(1.0f, 3);

@@ -12,20 +12,10 @@ public:
 	Mesh();
 	virtual ~Mesh();
 
-	vector<UINT16>& GetIndicices16()
-	{
-		if (_indices16.empty())
-		{
-			_indices16.resize(indices32.size());
-			for (size_t i = 0; i < indices32.size(); ++i)
-				_indices16[i] = static_cast<UINT16>(indices32[i]);
-		}
-
-		return _indices16;
-	}
-
 	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
 
+	void CreateBasicCube();
+	void CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions);
 	void CreateBasicSphere();
 	void CreateBasicSphere(float radius, UINT32 numSubdivisions);
 
@@ -52,9 +42,6 @@ public:
 	void CreateBuffer();
 
 public:
-	vector<Vertex> vertices;
-	vector<UINT32> indices32;
-
 	ComPtr<ID3D12Resource> vertexBufferGPU = nullptr;
 	ComPtr<ID3D12Resource> indexBufferGPU = nullptr;
 
@@ -67,7 +54,6 @@ public:
 	UINT indexBufferByteSize = 0;
 
 private:
-	vector<UINT16> _indices16;
 	shared_ptr<Geometry> _geometry;
 };
 

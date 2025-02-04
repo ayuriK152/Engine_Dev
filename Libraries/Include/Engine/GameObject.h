@@ -4,6 +4,7 @@
 class Geometry;
 class Material;
 class Component;
+class MeshRenderer;
 #pragma endregion
 
 
@@ -13,6 +14,7 @@ public:
 	GameObject();
 	~GameObject();
 
+	void Update();
 	void Render();
 
 	void AddComponent(shared_ptr<Component> component);
@@ -26,7 +28,6 @@ public:
 public:
 	XMFLOAT4X4 world;
 
-	shared_ptr<Material> material;
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
 	string meshName;

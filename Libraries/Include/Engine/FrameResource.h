@@ -50,7 +50,6 @@ public:
 	ComPtr<ID3D12CommandAllocator> cmdListAlloc;
 
 	unique_ptr<UploadBuffer<PassConstants>> passCB = nullptr;
-	unique_ptr<UploadBuffer<MaterialConstants>> materialCB = nullptr;
 	unique_ptr<UploadBuffer<ObjectConstants>> objectCB = nullptr;
 
 	UINT64 fence = 0;

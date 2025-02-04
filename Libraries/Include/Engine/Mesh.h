@@ -1,35 +1,23 @@
 #pragma once
+#include "Resource.h"
 
-class Submesh
+#pragma region 전방선언
+struct Vertex;
+#pragma endregion
+
+class Mesh : public Resource
 {
+	using Super = Resource;
 public:
-	UINT indexCount = 0;
-	UINT startIndexLocation = 0;
-	INT baseVertexLocation = 0;
+	Mesh();
+	virtual ~Mesh();
 
-	BoundingBox bounds;
-};
+	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
 
-class Mesh
-{
-public:
-	string name;
-
-	ComPtr<ID3DBlob> vertexBufferCPU = nullptr;
-	ComPtr<ID3DBlob> indexBufferCPU = nullptr;
-
-	ComPtr<ID3D12Resource> vertexBufferGPU = nullptr;
-	ComPtr<ID3D12Resource> indexBufferGPU = nullptr;
-
-	ComPtr<ID3D12Resource> vertexBufferUploader = nullptr;
-	ComPtr<ID3D12Resource> indexBufferUploader = nullptr;
-
-	UINT vertexByteStride = 0;
-	UINT vertexBufferByteSize = 0;
-	DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT;
-	UINT indexBufferByteSize = 0;
-
-	unordered_map<string, Submesh> drawArgs;
+	void CreateBasicCube();
+	void CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions);
+	void CreateBasicSphere();
+	void CreateBasicSphere(float radius, UINT32 numSubdivisions);
 
 	D3D12_VERTEX_BUFFER_VIEW VertexBufferView()const
 	{
@@ -51,9 +39,21 @@ public:
 		return ibv;
 	}
 
-	void DisposeUploaders()
-	{
-		vertexBufferUploader = nullptr;
-		indexBufferUploader = nullptr;
-	}
+	void CreateBuffer();
+
+public:
+	ComPtr<ID3D12Resource> vertexBufferGPU = nullptr;
+	ComPtr<ID3D12Resource> indexBufferGPU = nullptr;
+
+	ComPtr<ID3D12Resource> vertexBufferUploader = nullptr;
+	ComPtr<ID3D12Resource> indexBufferUploader = nullptr;
+
+	UINT vertexByteStride = 0;
+	UINT vertexBufferByteSize = 0;
+	DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT;
+	UINT indexBufferByteSize = 0;
+
+private:
+	shared_ptr<Geometry> _geometry;
 };
+

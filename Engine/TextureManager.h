@@ -1,16 +1,13 @@
 #pragma once
 
-#pragma region 전방선언
-struct Texture;
-#pragma endregion
-
 class TextureManager
 {
 	DECLARE_SINGLE(TextureManager);
 public:
-	void LoadTexture(string name, wstring fileDir);
-	Texture* GetTexture(string name);
+	void LoadTexture(wstring name, wstring fileDir);
+	shared_ptr<Texture> GetTexture(wstring name);
+
 private:
-	unordered_map<string, unique_ptr<Texture>> _textures;
+	unordered_map<wstring, shared_ptr<Texture>> _textures;
 };
 

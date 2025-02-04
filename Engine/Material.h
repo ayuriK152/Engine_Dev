@@ -1,4 +1,6 @@
 #pragma once
+#include "Resource.h"
+
 struct MaterialConstants
 {
 	Color diffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -8,12 +10,13 @@ struct MaterialConstants
 	XMFLOAT4X4 matTransform = MathHelper::Identity4x4();
 };
 
-class Material
+class Material : public Resource
 {
+	using Super = Resource;
 public:
 	Material();
 	Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex);
-	~Material();
+	virtual ~Material();
 
 public:
 	string name;

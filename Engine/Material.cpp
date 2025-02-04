@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Material.h"
 
-Material::Material()
+Material::Material() : Super(ResourceType::Material)
 {
 	matCBIndex = -1;
 	diffuseSrvHeapIndex = -1;
@@ -14,7 +14,7 @@ Material::Material()
 	matTransform = MathHelper::Identity4x4();
 }
 
-Material::Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex) :
+Material::Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex) : Super(ResourceType::Material),
 	name(name), matCBIndex(matCBIndex), diffuseSrvHeapIndex(diffuseSrvHeapIndex), normalSrvHeapIndex(normalSrvHeapIndex)
 {
 	numFramesDirty = GRAPHIC->GetNumFrameResources();

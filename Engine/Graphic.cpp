@@ -141,26 +141,6 @@ bool Graphic::Initialize()
 	return true;
 }
 
-void Graphic::BuildRtvAndDsvDescriptorHeaps()
-{
-	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
-	rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
-	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	rtvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(_device->CreateDescriptorHeap(
-		&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
-
-
-	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-	dsvHeapDesc.NumDescriptors = 1;
-	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	dsvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(_device->CreateDescriptorHeap(
-		&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
-}
-
 
 void Graphic::OnResize()
 {
@@ -612,13 +592,6 @@ bool Graphic::InitDirect3D()
 	return true;
 }
 
-
-void Graphic::LoadTextures()
-{
-	auto tex = make_shared<Texture>(L"white1x1.dds");
-	RESOURCE->Add<Texture>(L"whiteTex", tex);
-}
-
 void Graphic::BuildCommandObjects()
 {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
@@ -639,7 +612,6 @@ void Graphic::BuildCommandObjects()
 
 	_commandList->Close();
 }
-
 
 void Graphic::BuildSwapChain()
 {
@@ -668,6 +640,33 @@ void Graphic::BuildSwapChain()
 		_swapChain.GetAddressOf()));
 }
 
+void Graphic::BuildRtvAndDsvDescriptorHeaps()
+{
+	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
+	rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
+	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	rtvHeapDesc.NodeMask = 0;
+	ThrowIfFailed(_device->CreateDescriptorHeap(
+		&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
+
+
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
+	dsvHeapDesc.NumDescriptors = 1;
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	dsvHeapDesc.NodeMask = 0;
+	ThrowIfFailed(_device->CreateDescriptorHeap(
+		&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
+}
+
+
+void Graphic::LoadTextures()
+{
+	auto tex = make_shared<Texture>(L"white1x1.dds");
+	RESOURCE->Add<Texture>(L"whiteTex", tex);
+}
+
 void Graphic::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
@@ -687,52 +686,6 @@ void Graphic::BuildDescriptorHeaps()
 	srvDesc.Texture2D.MipLevels = whiteTex->GetDesc().MipLevels;
 	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
 	_device->CreateShaderResourceView(whiteTex.Get(), &srvDesc, hDescriptor);
-}
-
-void Graphic::BuildConstantBuffers()
-{
-	UINT objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-
-	UINT objCount = (UINT)_objects.size();
-
-	for (int frameIndex = 0; frameIndex < _numFrameResources; ++frameIndex)
-	{
-		auto objectCB = _frameResources[frameIndex]->objectCB->GetResource();
-		for (UINT i = 0; i < objCount; ++i)
-		{
-			D3D12_GPU_VIRTUAL_ADDRESS cbAddress = objectCB->GetGPUVirtualAddress();
-
-			cbAddress += i * objCBByteSize;
-
-			int heapIndex = frameIndex * objCount + i;
-			auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-			handle.Offset(heapIndex, _cbvSrvUavDescriptorSize);
-
-			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-			cbvDesc.BufferLocation = cbAddress;
-			cbvDesc.SizeInBytes = objCBByteSize;
-
-			_device->CreateConstantBufferView(&cbvDesc, handle);
-		}
-	}
-
-	UINT passCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
-	
-	for (int frameIndex = 0; frameIndex < _numFrameResources; ++frameIndex)
-	{
-		auto passCB = _frameResources[frameIndex]->passCB->GetResource();
-		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = passCB->GetGPUVirtualAddress();
-
-		int heapIndex = _passCbvOffset + frameIndex;
-		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-		handle.Offset(heapIndex, _cbvSrvUavDescriptorSize);
-
-		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-		cbvDesc.BufferLocation = cbAddress;
-		cbvDesc.SizeInBytes = passCBByteSize;
-
-		_device->CreateConstantBufferView(&cbvDesc, handle);
-	}
 }
 
 void Graphic::BuildRootSignature()

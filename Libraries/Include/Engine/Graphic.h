@@ -60,7 +60,6 @@ private:
 	void BuildRtvAndDsvDescriptorHeaps();
 
 	void BuildDescriptorHeaps();
-	void BuildConstantBuffers();
 	void BuildRootSignature();
 	void BuildShaderAndInputLayout();
 	void BuildObjectGeometry();

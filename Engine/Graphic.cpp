@@ -124,7 +124,8 @@ bool Graphic::Initialize()
 	BuildDescriptorHeaps();
 	//BuildConstantBuffers();
 	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature,
-		_shaders["standardVS"], _shaders["opaquePS"],
+		RESOURCE->Get<Shader>(L"standardVS")->GetBlob(), 
+		RESOURCE->Get<Shader>(L"opaquePS")->GetBlob(),
 		_backBufferFormat, _depthStencilFormat, _PSOs);
 
 	if (_appDesc.app != nullptr)
@@ -771,8 +772,10 @@ void Graphic::BuildShaderAndInputLayout()
 {
 	HRESULT hr = S_OK;
 
-	_shaders["standardVS"] = DXUtil::CompileShader(L"Shaders\\Default.hlsl", nullptr, "VS", "vs_5_1");
-	_shaders["opaquePS"] = DXUtil::CompileShader(L"Shaders\\Default.hlsl", nullptr, "PS", "ps_5_1");
+	auto stdVS = make_shared<Shader>(L"Default.hlsl", ShaderType::VS);
+	RESOURCE->Add<Shader>(L"standardVS", stdVS);
+	auto opaquePS = make_shared<Shader>(L"Default.hlsl", ShaderType::PS);
+	RESOURCE->Add<Shader>(L"opaquePS", opaquePS);
 
 	_inputLayout =
 	{

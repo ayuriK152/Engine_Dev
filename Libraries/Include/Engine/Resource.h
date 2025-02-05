@@ -5,7 +5,9 @@ enum class ResourceType
 	Undefined,
 	Mesh,
 	Texture,
+	Shader,
 	Material,
+	
 
 	End
 };
@@ -28,6 +30,9 @@ public:
 
 	void SetPath(wstring path) { _path = path; }
 	wstring GetPath() { return _path; }
+
+protected:
+	virtual void Load(const wstring& path) { }
 
 protected:
 	ResourceType _type;

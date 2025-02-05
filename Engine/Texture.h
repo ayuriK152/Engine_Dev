@@ -5,11 +5,13 @@ class Texture : public Resource
 {
 	using Super = Resource;
 public:
-	Texture();
+	Texture(wstring fileName);
 	virtual ~Texture();
 
+	virtual void Load(const wstring& path) override;
+
 public:
-	ComPtr<ID3D12Resource> Resource = nullptr;
-	ComPtr<ID3D12Resource> UploadHeap = nullptr;
+	ComPtr<ID3D12Resource> resource = nullptr;
+	ComPtr<ID3D12Resource> uploadHeap = nullptr;
 };
 

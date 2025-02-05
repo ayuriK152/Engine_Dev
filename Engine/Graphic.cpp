@@ -115,6 +115,8 @@ bool Graphic::Initialize()
 
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
+	// 여기 아래를 전부 쪼개자
+
 	LoadTextures();
 
 	BuildRootSignature();
@@ -122,7 +124,6 @@ bool Graphic::Initialize()
 	BuildObjectGeometry();
 	BuildFrameResources();
 	BuildDescriptorHeaps();
-	//BuildConstantBuffers();
 	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature,
 		RESOURCE->Get<Shader>(L"standardVS")->GetBlob(), 
 		RESOURCE->Get<Shader>(L"opaquePS")->GetBlob(),
@@ -614,7 +615,8 @@ bool Graphic::InitDirect3D()
 
 void Graphic::LoadTextures()
 {
-	TEXTURE->LoadTexture(L"whiteTex", L"Textures\\white1x1.dds");
+	auto tex = make_shared<Texture>(L"white1x1.dds");
+	RESOURCE->Add<Texture>(L"whiteTex", tex);
 }
 
 void Graphic::BuildCommandObjects()
@@ -676,7 +678,7 @@ void Graphic::BuildDescriptorHeaps()
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(_srvHeap->GetCPUDescriptorHandleForHeapStart());
 
-	auto whiteTex = TEXTURE->GetTexture(L"whiteTex")->Resource;
+	auto whiteTex = RESOURCE->Get<Texture>(L"whiteTex")->resource;
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Format = whiteTex->GetDesc().Format;

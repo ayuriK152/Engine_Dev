@@ -47,9 +47,6 @@
     <ClInclude Include="Geometry.h">
       <Filter>02. GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
@@ -65,7 +62,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="Material.h">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -76,6 +72,9 @@
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="Texture.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -141,9 +140,6 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>02. GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
@@ -159,7 +155,6 @@
     <ClCompile Include="Resource.cpp">
       <Filter>Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Material.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -170,5 +165,8 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="Texture.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

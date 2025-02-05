@@ -41,7 +41,6 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniversalUtils.h" />
     <ClInclude Include="UploadBuffer.h" />
@@ -70,7 +69,6 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="UniversalUtils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

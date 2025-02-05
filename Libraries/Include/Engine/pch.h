@@ -63,7 +63,6 @@ using namespace Microsoft::WRL;
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"
-#include "TextureManager.h"
 #include "ResourceManager.h"
 
 #include "GameTimer.h"

@@ -16,5 +16,7 @@ public:
 private:
 	void UpdateMainCB();
 
+private:
+
 };
 

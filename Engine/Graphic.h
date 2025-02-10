@@ -115,11 +115,9 @@ private:
 	DXGI_FORMAT _backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	unordered_map<string, ComPtr<ID3DBlob>> _shaders;
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
 
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
-	unordered_map<string, unique_ptr<Geometry>> _geometrys;
 
 	vector<shared_ptr<GameObject>> _objects;
 
@@ -132,17 +130,19 @@ private:
 
 	//===========================리팩토링 필수!!!!!!!!============
 
+	// 얘네는 카메라로 분할==========
 	XMFLOAT4X4 _world = MathHelper::Identity4x4();
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();
 	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
 
 	Vector3 _cameraPos = { 0.0f, 3.0f, -5.0f };
 
+	Vector3 _eyePos;
+	// ============================
+
 	UINT _passCbvOffset = 0;
 
 	PassConstants _mainPassCB;
-
-	Vector3 _eyePos;
 
 	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 };

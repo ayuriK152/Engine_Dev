@@ -1,8 +1,5 @@
 #pragma once
 
-// Device, Command 관련은 메소드로 Graphic.h에서 받아오고
-// 나눠서 관리할 수 있는 모든 것을 이식하기
-
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
@@ -16,5 +13,9 @@ public:
 private:
 	void UpdateMainCB();
 
+private:
+	ComPtr<ID3D12RootSignature> _rootSignature;
+	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 };
 

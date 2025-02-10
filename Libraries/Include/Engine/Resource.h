@@ -40,4 +40,3 @@ protected:
 	wstring _path;
 	UINT32 _id = 0;
 };
-

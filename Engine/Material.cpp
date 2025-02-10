@@ -29,3 +29,8 @@ Material::~Material()
 {
 
 }
+
+void Material::SetTexture(shared_ptr<Texture> texture)
+{
+	diffuseSrvHeapIndex = texture->GetSRVHeapIndex();
+}

@@ -1,6 +1,8 @@
 #pragma once
 #include "Resource.h"
 
+class Texture;
+
 struct MaterialConstants
 {
 	Color diffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -17,6 +19,9 @@ public:
 	Material();
 	Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex);
 	virtual ~Material();
+
+public:
+	void SetTexture(shared_ptr<Texture> texture);
 
 public:
 	string name;

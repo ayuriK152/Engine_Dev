@@ -1,8 +1,12 @@
 #include "pch.h"
 #include "Material.h"
 
+int Material::_count = 0;
+
 Material::Material() : Super(ResourceType::Material)
 {
+	_count++;
+
 	matCBIndex = -1;
 	diffuseSrvHeapIndex = -1;
 	normalSrvHeapIndex = -1;

@@ -8,10 +8,16 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::CreateDefaultResources()
 {
+	//==========Shader==========
+	auto stdVS = make_shared<Shader>(L"Default.hlsl", ShaderType::VS);
+	Add<Shader>(L"standardVS", stdVS);
+	auto opaquePS = make_shared<Shader>(L"Default.hlsl", ShaderType::PS);
+	Add<Shader>(L"opaquePS", opaquePS);
+
+
 	//==========Texture==========
 	auto tex = make_shared<Texture>(L"white1x1.dds");
-	RESOURCE->Add<Texture>(L"Tex_Default", tex);
-
+	Add<Texture>(L"Tex_Default", tex);
 
 
 	//==========Mesh==========

@@ -100,6 +100,24 @@ vector<shared_ptr<GameObject>>& Graphic::GetObjects()
 {
 	return _objects;
 }
+
+ID3D12Resource* Graphic::GetCurrentBackBuffer()const
+{
+	return _swapChainBuffer[_currBackBuffer].Get();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetCurrentBackBufferView()const
+{
+	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+		_currBackBuffer,
+		_rtvDescriptorSize);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetDepthStencilView()const
+{
+	return _dsvHeap->GetCPUDescriptorHandleForHeapStart();
+}
 #pragma endregion
 
 
@@ -707,13 +725,6 @@ void Graphic::BuildRootSignature()
 
 void Graphic::BuildShaderAndInputLayout()
 {
-	HRESULT hr = S_OK;
-
-	auto stdVS = make_shared<Shader>(L"Default.hlsl", ShaderType::VS);
-	RESOURCE->Add<Shader>(L"standardVS", stdVS);
-	auto opaquePS = make_shared<Shader>(L"Default.hlsl", ShaderType::PS);
-	RESOURCE->Add<Shader>(L"opaquePS", opaquePS);
-
 	_inputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -727,7 +738,7 @@ void Graphic::BuildFrameResources()
 	for (int i = 0; i < _numFrameResources; ++i)
 	{
 		_frameResources.push_back(make_unique<FrameResource>(_device.Get(), 1,
-			(UINT)_objects.size(), _materials.size()));
+			(UINT)_objects.size(), Material::GetCount()));
 	}
 }
 
@@ -746,24 +757,6 @@ void Graphic::FlushCommandQueue()
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
-}
-
-ID3D12Resource* Graphic::GetCurrentBackBuffer()const
-{
-	return _swapChainBuffer[_currBackBuffer].Get();
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetCurrentBackBufferView()const
-{
-	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
-		_currBackBuffer,
-		_rtvDescriptorSize);
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetDepthStencilView()const
-{
-	return _dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
 void Graphic::CalculateFrameStats()

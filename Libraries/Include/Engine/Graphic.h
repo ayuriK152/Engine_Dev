@@ -145,8 +145,5 @@ private:
 	Vector3 _eyePos;
 
 	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-
-	unordered_map<string, unique_ptr<Texture>> _textures;
-	unordered_map<string, shared_ptr<Material>> _materials;
 };
 

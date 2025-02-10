@@ -23,6 +23,8 @@ public:
 public:
 	void SetTexture(shared_ptr<Texture> texture);
 
+	static int GetCount() { return _count; }
+
 public:
 	string name;
 	int matCBIndex;
@@ -34,5 +36,8 @@ public:
 	ColorRGB fresnel;
 	float roughness;
 	XMFLOAT4X4 matTransform;
+
+private:
+	static int _count;
 };
 

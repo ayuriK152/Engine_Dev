@@ -117,11 +117,13 @@ bool Graphic::Initialize()
 
 	// 여기 아래를 전부 쪼개자
 
-	LoadTextures();
-
 	BuildRootSignature();
 	BuildShaderAndInputLayout();
-	BuildObjectGeometry();
+
+	RESOURCE->CreateDefaultResources();
+	if (_appDesc.app != nullptr)
+		_appDesc.app->Init();
+
 	BuildFrameResources();
 	BuildDescriptorHeaps();
 	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature,
@@ -129,8 +131,6 @@ bool Graphic::Initialize()
 		RESOURCE->Get<Shader>(L"opaquePS")->GetBlob(),
 		_backBufferFormat, _depthStencilFormat, _PSOs);
 
-	if (_appDesc.app != nullptr)
-		_appDesc.app->Init();
 
 	ThrowIfFailed(_commandList->Close());
 	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
@@ -661,12 +661,6 @@ void Graphic::BuildRtvAndDsvDescriptorHeaps()
 }
 
 
-void Graphic::LoadTextures()
-{
-	auto tex = make_shared<Texture>(L"white1x1.dds");
-	RESOURCE->Add<Texture>(L"whiteTex", tex);
-}
-
 void Graphic::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
@@ -738,40 +732,6 @@ void Graphic::BuildShaderAndInputLayout()
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
-}
-
-void Graphic::BuildObjectGeometry()
-{
-	shared_ptr<Mesh> boxMesh = make_shared<Mesh>();
-	boxMesh->CreateBasicCube();
-	RESOURCE->Add<Mesh>(L"Mesh_BasicBox", boxMesh);
-	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>();
-	sphereMesh->CreateBasicSphere();
-	RESOURCE->Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
-
-	//================
-
-	auto defaultMat = make_shared<Material>("default", 0, 0, -1);
-	_materials[defaultMat->name] = defaultMat;
-
-	//================
-
-	auto box = make_shared<GameObject>();
-	box->meshName = "box";
-	box->AddComponent(make_shared<MeshRenderer>());
-	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-	box->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
-	auto boxInstance = AddGameObject(box);
-
-	auto sphere = make_shared<GameObject>();
-	sphere->meshName = "sphere";
-	sphere->AddComponent(make_shared<MeshRenderer>());
-	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	sphere->GetComponent<MeshRenderer>()->SetMaterial(defaultMat);
-	auto sphereInstance = AddGameObject(sphere);
-
-	XMStoreFloat4x4(&boxInstance->world, XMMatrixTranslation(0.0f, -5.0f, 10.0f));
-	XMStoreFloat4x4(&sphereInstance->world, XMMatrixTranslation(0.0f, -10.0f, 10.0f));
 }
 
 void Graphic::BuildFrameResources()

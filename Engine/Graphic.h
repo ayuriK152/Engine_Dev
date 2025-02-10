@@ -53,8 +53,6 @@ private:
 	bool InitMainWindow();
 	bool InitDirect3D();
 
-	void LoadTextures();
-
 	void BuildCommandObjects();
 	void BuildSwapChain();
 	void BuildRtvAndDsvDescriptorHeaps();
@@ -62,7 +60,6 @@ private:
 	void BuildDescriptorHeaps();
 	void BuildRootSignature();
 	void BuildShaderAndInputLayout();
-	void BuildObjectGeometry();
 	void BuildFrameResources();
 
 	void FlushCommandQueue();

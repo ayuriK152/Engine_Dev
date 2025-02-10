@@ -17,6 +17,8 @@ public:
 	template<typename T>
 	ResourceType GetResourceType();
 
+	void CreateDefaultResources();
+
 private:
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;

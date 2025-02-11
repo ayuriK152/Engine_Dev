@@ -59,7 +59,9 @@ using namespace Microsoft::WRL;
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+
 #include "MeshRenderer.h"
+#include "Transform.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"

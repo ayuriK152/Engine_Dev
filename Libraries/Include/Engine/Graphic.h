@@ -142,11 +142,11 @@ private:
 
 	//===========================리팩토링 필수!!!!!!!!============
 
-	// 얘네는 카메라로 분할==========
 	XMFLOAT4X4 _world = MathHelper::Identity4x4();
 	XMFLOAT4X4 _view = MathHelper::Identity4x4();
 	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
 
+	// 얘네는 카메라로 분할==========
 	Vector3 _cameraPos = { 0.0f, 3.0f, -5.0f };
 
 	Vector3 _eyePos;

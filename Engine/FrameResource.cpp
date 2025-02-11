@@ -23,7 +23,7 @@ void FrameResource::Update()
 	{
 		if (o->numFramesDirty > 0)
 		{
-			XMMATRIX world = XMLoadFloat4x4(&o->world);
+			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
 
 			ObjectConstants objConstants;
 			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));

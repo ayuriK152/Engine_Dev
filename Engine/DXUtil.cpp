@@ -95,3 +95,77 @@ void DXUtil::BuildPSO(
 	psoDesc.DSVFormat = depthStencilFormat;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&PSOs[name])));
 }
+
+void DXUtil::LogAdapters()
+{
+	UINT i = 0;
+	IDXGIAdapter* adapter = nullptr;
+	vector<IDXGIAdapter*> adapterList;
+	while (GRAPHIC->GetDXGIFactory()->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_ADAPTER_DESC desc;
+		adapter->GetDesc(&desc);
+
+		wstring text = L"***Adapter: ";
+		text += desc.Description;
+		text += L"\n";
+
+		OutputDebugString(text.c_str());
+
+		adapterList.push_back(adapter);
+
+		++i;
+	}
+
+	for (size_t i = 0; i < adapterList.size(); ++i)
+	{
+		LogAdapterOutputs(adapterList[i]);
+		ReleaseCom(adapterList[i]);
+	}
+}
+
+void DXUtil::LogAdapterOutputs(IDXGIAdapter* adapter)
+{
+	UINT i = 0;
+	IDXGIOutput* output = nullptr;
+	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_OUTPUT_DESC desc;
+		output->GetDesc(&desc);
+
+		wstring text = L"***Output: ";
+		text += desc.DeviceName;
+		text += L"\n";
+		OutputDebugString(text.c_str());
+
+		LogOutputDisplayModes(output, GRAPHIC->GetBackBufferFormat());
+
+		ReleaseCom(output);
+
+		++i;
+	}
+}
+
+void DXUtil::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
+{
+	UINT count = 0;
+	UINT flags = 0;
+
+	output->GetDisplayModeList(format, flags, &count, nullptr);
+
+	vector<DXGI_MODE_DESC> modeList(count);
+	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
+
+	for (auto& x : modeList)
+	{
+		UINT n = x.RefreshRate.Numerator;
+		UINT d = x.RefreshRate.Denominator;
+		wstring text =
+			L"Width = " + to_wstring(x.Width) + L" " +
+			L"Height = " + to_wstring(x.Height) + L" " +
+			L"Refresh = " + to_wstring(n) + L"/" + to_wstring(d) +
+			L"\n";
+
+		OutputDebugString(text.c_str());
+	}
+}

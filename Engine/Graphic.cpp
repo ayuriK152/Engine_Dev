@@ -14,113 +14,6 @@ Graphic::~Graphic()
 }
 
 
-#pragma region GetterSetter
-HWND Graphic::GetMainWnd() const
-{
-	return _hMainWnd;
-}
-
-float Graphic::GetAspectRatio() const
-{
-	return static_cast<float>(_appDesc.clientWidth) / _appDesc.clientHeight;
-}
-
-bool Graphic::Get4xMsaaState()const
-{
-	return _appDesc._4xMsaaState;
-}
-
-void Graphic::Set4xMsaaState(bool value)
-{
-	if (_appDesc._4xMsaaState != value)
-	{
-		_appDesc._4xMsaaState = value;
-
-		BuildSwapChain();
-		OnResize();
-	}
-}
-
-AppDesc Graphic::GetAppDesc() const
-{
-	return _appDesc;
-}
-
-void Graphic::SetAppDesc(AppDesc appDesc)
-{
-	_appDesc = appDesc;
-}
-
-int Graphic::GetNumFrameResources()const
-{
-	return _numFrameResources;
-}
-
-FrameResource* Graphic::GetCurrFrameResource() const
-{
-	return _currFrameResource;
-}
-
-int Graphic::GetCurrFrameResourceIndex() const
-{
-	return _currFrameResourceIndex;
-}
-
-ComPtr<ID3D12Device> Graphic::GetDevice() const
-{
-	return _device;
-}
-
-ComPtr<ID3D12GraphicsCommandList> Graphic::GetCommandList()const
-{
-	return _commandList;
-}
-
-ComPtr<ID3D12CommandQueue> Graphic::GetCommandQueue() const
-{
-	return _commandQueue;
-}
-
-ComPtr<ID3D12DescriptorHeap> Graphic::GetConstantBufferHeap() const
-{
-	return _cbvHeap;
-}
-
-ComPtr<ID3D12DescriptorHeap> Graphic::GetShaderResourceViewHeap() const
-{
-	return _srvHeap;
-}
-
-UINT Graphic::GetCBVSRVDescriptorSize() const
-{
-	return _cbvSrvUavDescriptorSize;
-}
-
-vector<shared_ptr<GameObject>>& Graphic::GetObjects()
-{
-	return _objects;
-}
-
-ID3D12Resource* Graphic::GetCurrentBackBuffer()const
-{
-	return _swapChainBuffer[_currBackBuffer].Get();
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetCurrentBackBufferView()const
-{
-	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
-		_currBackBuffer,
-		_rtvDescriptorSize);
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetDepthStencilView()const
-{
-	return _dsvHeap->GetCPUDescriptorHandleForHeapStart();
-}
-#pragma endregion
-
-
 bool Graphic::Initialize()
 {
 	if (!InitMainWindow())
@@ -249,6 +142,7 @@ void Graphic::OnResize()
 
 void Graphic::Update()
 {
+	UniversalUtils::CalculateFrameStats();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Update();
 
@@ -600,7 +494,7 @@ bool Graphic::InitDirect3D()
 	assert(_appDesc._4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
 #ifdef _DEBUG
-	LogAdapters();
+	DXUtil::LogAdapters();
 #endif
 
 	BuildCommandObjects();
@@ -756,106 +650,6 @@ void Graphic::FlushCommandQueue()
 
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
-	}
-}
-
-void Graphic::CalculateFrameStats()
-{
-	static int frameCnt = 0;
-	static float timeElapsed = 0.0f;
-
-	frameCnt++;
-
-	if ((TIME->TotalTime() - timeElapsed) >= 1.0f)
-	{
-		float fps = (float)frameCnt;
-		float mspf = 1000.0f / fps;
-
-		wstring fpsStr = to_wstring(fps);
-		wstring mspfStr = to_wstring(mspf);
-
-		wstring windowText = _appDesc.mainWndCaption +
-			L"    fps: " + fpsStr +
-			L"   mspf: " + mspfStr;
-
-		SetWindowText(_hMainWnd, windowText.c_str());
-
-		frameCnt = 0;
-		timeElapsed += 1.0f;
-	}
-}
-
-void Graphic::LogAdapters()
-{
-	UINT i = 0;
-	IDXGIAdapter* adapter = nullptr;
-	vector<IDXGIAdapter*> adapterList;
-	while (_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_ADAPTER_DESC desc;
-		adapter->GetDesc(&desc);
-
-		wstring text = L"***Adapter: ";
-		text += desc.Description;
-		text += L"\n";
-
-		OutputDebugString(text.c_str());
-
-		adapterList.push_back(adapter);
-
-		++i;
-	}
-
-	for (size_t i = 0; i < adapterList.size(); ++i)
-	{
-		LogAdapterOutputs(adapterList[i]);
-		ReleaseCom(adapterList[i]);
-	}
-}
-
-void Graphic::LogAdapterOutputs(IDXGIAdapter* adapter)
-{
-	UINT i = 0;
-	IDXGIOutput* output = nullptr;
-	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_OUTPUT_DESC desc;
-		output->GetDesc(&desc);
-
-		wstring text = L"***Output: ";
-		text += desc.DeviceName;
-		text += L"\n";
-		OutputDebugString(text.c_str());
-
-		LogOutputDisplayModes(output, _backBufferFormat);
-
-		ReleaseCom(output);
-
-		++i;
-	}
-}
-
-void Graphic::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
-{
-	UINT count = 0;
-	UINT flags = 0;
-
-	output->GetDisplayModeList(format, flags, &count, nullptr);
-
-	vector<DXGI_MODE_DESC> modeList(count);
-	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
-
-	for (auto& x : modeList)
-	{
-		UINT n = x.RefreshRate.Numerator;
-		UINT d = x.RefreshRate.Denominator;
-		wstring text =
-			L"Width = " + to_wstring(x.Width) + L" " +
-			L"Height = " + to_wstring(x.Height) + L" " +
-			L"Refresh = " + to_wstring(n) + L"/" + to_wstring(d) +
-			L"\n";
-
-		::OutputDebugString(text.c_str());
 	}
 }
 

@@ -11,30 +11,52 @@ private:
 	friend class GameApplication;
 
 public:
-	HWND GetMainWnd()const;
+	HWND GetMainWnd()const { return _hMainWnd; }
+	ComPtr<IDXGIFactory4> GetDXGIFactory()const { return _dxgiFactory; }
 
-	float GetAspectRatio()const;
+	float GetAspectRatio()const { return static_cast<float>(_appDesc.clientWidth) / _appDesc.clientHeight; }
 
-	bool Get4xMsaaState()const;
-	void Set4xMsaaState(bool value);
+	bool Get4xMsaaState()const { return _appDesc._4xMsaaState; }
+	void Set4xMsaaState(bool value) {
+		if (_appDesc._4xMsaaState != value)
+		{
+			_appDesc._4xMsaaState = value;
 
-	AppDesc GetAppDesc()const;
-	void SetAppDesc(AppDesc appDesc);
+			BuildSwapChain();
+			OnResize();
+		}
+	}
 
-	int GetNumFrameResources()const;
-	FrameResource* GetCurrFrameResource()const;
-	int GetCurrFrameResourceIndex()const;
+	AppDesc GetAppDesc()const { return _appDesc; }
+	void SetAppDesc(AppDesc appDesc) { _appDesc = appDesc; }
 
-	ComPtr<ID3D12Device> GetDevice()const;
-	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const;
-	ComPtr<ID3D12CommandQueue> GetCommandQueue()const;
-	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const;
-	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const;
+	int GetNumFrameResources()const { return _numFrameResources; }
+	FrameResource* GetCurrFrameResource()const { return _currFrameResource; }
+	int GetCurrFrameResourceIndex()const { return _currFrameResourceIndex; }
 
-	UINT GetCBVSRVDescriptorSize()const;
+	ComPtr<ID3D12Device> GetDevice()const { return _device; }
+	ComPtr<ID3D12GraphicsCommandList> GetCommandList()const { return _commandList; }
+	ComPtr<ID3D12CommandQueue> GetCommandQueue()const { return _commandQueue; }
 
-	vector<shared_ptr<GameObject>>& GetObjects();
+	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const { return _cbvHeap; }
+	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const { return _srvHeap; }
 
+	ID3D12Resource* GetCurrentBackBuffer()const { return _swapChainBuffer[_currBackBuffer].Get(); }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView()const {
+		return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+			_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+			_currBackBuffer,
+			_rtvDescriptorSize);
+	}
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView()const { return _dsvHeap->GetCPUDescriptorHandleForHeapStart(); }
+
+	UINT GetCBVSRVDescriptorSize()const { return _cbvSrvUavDescriptorSize; }
+
+	DXGI_FORMAT GetBackBufferFormat()const { return _backBufferFormat; }
+
+	vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
+
+public:
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -63,16 +85,6 @@ private:
 	void BuildFrameResources();
 
 	void FlushCommandQueue();
-
-	ID3D12Resource* GetCurrentBackBuffer()const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView()const;
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView()const;
-
-	void CalculateFrameStats();
-
-	void LogAdapters();
-	void LogAdapterOutputs(IDXGIAdapter* adapter);
-	void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
 	//=========================
 

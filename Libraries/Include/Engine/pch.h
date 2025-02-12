@@ -62,6 +62,7 @@ using namespace Microsoft::WRL;
 
 #include "MeshRenderer.h"
 #include "Transform.h"
+#include "Camera.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"

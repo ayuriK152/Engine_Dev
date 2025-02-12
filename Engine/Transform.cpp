@@ -99,6 +99,18 @@ void Transform::SetScale(const Vector3& worldScale)
 	}
 }
 
+Vector3 Transform::GetLook()
+{
+	Vector3 look(_matWorld._13, _matWorld._23, _matWorld._33);
+	return look;
+}
+
+Vector3 Transform::GetUp()
+{
+	Vector3 up(_matWorld._12, _matWorld._22, _matWorld._32);
+	return up;
+}
+
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	if (HasParent())

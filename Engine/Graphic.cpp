@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Graphic.h"
+#include "Camera.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -134,9 +135,6 @@ void Graphic::OnResize()
 	_screenViewport.MaxDepth = 1.0f;
 
 	_scissorRect = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
-
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetAspectRatio(), 1.0f, 1000.0f);
-	XMStoreFloat4x4(&_proj, P);
 }
 
 
@@ -145,8 +143,6 @@ void Graphic::Update()
 	UniversalUtils::CalculateFrameStats();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Update();
-
-	UpdateCamera();
 
 	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
 	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
@@ -165,21 +161,10 @@ void Graphic::Update()
 		o->Update();
 }
 
-
-void Graphic::UpdateCamera()
-{
-	XMVECTOR pos = XMVectorSet(_cameraPos.x, _cameraPos.y, _cameraPos.z, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&_view, view);
-}
-
 void Graphic::UpdateMainCB()
 {
-	XMMATRIX view = XMLoadFloat4x4(&_view);
-	XMMATRIX proj = XMLoadFloat4x4(&_proj);
+	XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
 
 	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);

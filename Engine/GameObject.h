@@ -6,6 +6,7 @@ class Material;
 class Component;
 class MeshRenderer;
 class Transform;
+class Camera;
 #pragma endregion
 
 
@@ -60,6 +61,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::MeshRenderer;
 	if (is_same_v<T, Transform>)
 		return ComponentType::Transform;
+	if (is_same_v<T, Camera>)
+		return ComponentType::Camera;
 
 	return ComponentType::Undefined;
 }

@@ -25,6 +25,9 @@ public:
 	Vector3 GetScale() { return _scale; }
 	void SetScale(const Vector3& worldScale);
 
+	Vector3 GetLook();
+	Vector3 GetUp();
+
 	XMFLOAT4X4 GetWorldMatrix();
 
 	bool HasParent() { return _parent != nullptr; }

@@ -1,11 +1,12 @@
 #pragma once
-
 #include "DirectXMath.h"
 
-using Vector4		= DirectX::XMFLOAT4;
-using Vector3		= DirectX::XMFLOAT3;
-using Vector2		= DirectX::XMFLOAT2;
+using namespace DirectX;
 
-using ColorRGBA		= DirectX::XMFLOAT4;
+using Vector4		= XMFLOAT4;
+using Vector3		= XMFLOAT3;
+using Vector2		= XMFLOAT2;
+
+using ColorRGBA		= XMFLOAT4;
 using Color			= ColorRGBA;
-using ColorRGB		= DirectX::XMFLOAT3;
+using ColorRGB		= XMFLOAT3;

@@ -1,12 +1,46 @@
 #include "pch.h"
 #include "Camera.h"
 
+XMFLOAT4X4 Camera::_mainMatView = MathHelper::Identity4x4();
+XMFLOAT4X4 Camera::_mainMatProj = MathHelper::Identity4x4();
+
+Camera::Camera() : Super(ComponentType::Camera)
+{
+
+}
+
+Camera::~Camera()
+{
+
+}
+
 void Camera::Init()
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	_aspectRatio = GRAPHIC->GetAspectRatio();
 }
 
 void Camera::Update()
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
+	XMVECTOR targetPos = { 0.0f, 0.0f, 0.0f };
+	//XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
+	XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
+
+	XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
+	XMStoreFloat4x4(&_matView, matView);
+
+	{
+		_mainMatView = _matView;
+	}
+
+	if (_aspectRatio != GRAPHIC->GetAspectRatio())
+	{
+		_aspectRatio = GRAPHIC->GetAspectRatio();
+		XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, 1.0f, 1000.0f);
+		XMStoreFloat4x4(&_matProj, P);
+
+		{
+			_mainMatProj = _matProj;
+		}
+	}
 }

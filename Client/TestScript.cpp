@@ -17,8 +17,9 @@ void TestScript::Init()
 	sphere->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	auto sphereInstance = GRAPHIC->AddGameObject(sphere);
 
-	XMStoreFloat4x4(&boxInstance->GetTransform()->GetWorldMatrix(), XMMatrixTranslation(0.0f, -5.0f, 10.0f));
-	XMStoreFloat4x4(&sphereInstance->GetTransform()->GetWorldMatrix(), XMMatrixTranslation(0.0f, -10.0f, 10.0f));
+	boxInstance->GetTransform()->SetPosition(Vector3(0.0f, -5.0f, 10.0f));
+	boxInstance->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+	sphereInstance->GetTransform()->SetPosition(Vector3(0.0f, -10.0f, 10.0f));
 }
 
 void TestScript::Update()

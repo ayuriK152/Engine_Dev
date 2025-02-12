@@ -12,18 +12,18 @@ public:
 	void UpdateTransform();
 
 	Vector3 GetLocalPosition() { return _localPosition; }
-	void SetLocalPosition(Vector3 position) { _localPosition = position; UpdateTransform(); }
+	void SetLocalPosition(const Vector3& position) { _localPosition = position; UpdateTransform(); }
 	Vector3 GetLocalRotation() { return _localRotation; }
-	void SetLocalRotation(Vector3 rotation) { _localRotation = rotation; UpdateTransform(); }
+	void SetLocalRotation(const Vector3& rotation) { _localRotation = rotation; UpdateTransform(); }
 	Vector3 GetLocalScale() { return _localScale; }
-	void SetLocalScale(Vector3 scale) { _localScale = scale; UpdateTransform(); }
+	void SetLocalScale(const Vector3& scale) { _localScale = scale; UpdateTransform(); }
 
 	Vector3 GetPosition() { return _position; }
-	void SetPosition(Vector3 position) { _position = position; }
+	void SetPosition(const Vector3& worldPosition);
 	Vector3 GetRotation() { return _rotation; }
-	void SetRotation(Vector3 rotation) { _rotation = rotation; }
+	void SetRotation(const Vector3& worldRotation);
 	Vector3 GetScale() { return _scale; }
-	void SetScale(Vector3 scale) { _scale = scale; }
+	void SetScale(const Vector3& worldScale);
 
 	XMFLOAT4X4 GetWorldMatrix();
 

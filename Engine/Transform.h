@@ -28,6 +28,13 @@ public:
 	Vector3 GetLook();
 	Vector3 GetUp();
 
+	void Rotate(const Vector3& angle);
+	void Rotate(const XMVECTOR& angle);
+	void RotateRadian(const Vector3& angle);
+	void RotateRadian(const XMVECTOR& angle);
+
+	void LookAt(const Vector3& targetPos);
+
 	XMFLOAT4X4 GetWorldMatrix();
 
 	bool HasParent() { return _parent != nullptr; }

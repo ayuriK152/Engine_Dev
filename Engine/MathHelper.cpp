@@ -43,3 +43,25 @@ Vector3 MathHelper::ConvertQuaternionToEuler(const XMVECTOR& quat)
 	XMStoreFloat4(&quatConvert, quat);
 	return ConvertQuaternionToEuler(quatConvert);
 }
+
+Vector3 MathHelper::VectorSubtract(const Vector3& va, const Vector3& vb)
+{
+	Vector3 result;
+	result.x = va.x - vb.x;
+	result.y = va.y - vb.y;
+	result.z = va.z - vb.z;
+	return result;
+}
+
+Vector2 MathHelper::VectorSubtract(const Vector2& va, const Vector2& vb)
+{
+	Vector2 result;
+	result.x = va.x - vb.x;
+	result.y = va.y - vb.y;
+	return result;
+}
+
+float MathHelper::CCW(const Vector2& va, const Vector2& vb)
+{
+	return va.x * vb.y - va.y * vb.x;
+}

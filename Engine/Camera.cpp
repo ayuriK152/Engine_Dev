@@ -22,8 +22,7 @@ void Camera::Init()
 void Camera::Update()
 {
 	XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
-	XMVECTOR targetPos = { 0.0f, 0.0f, 0.0f };
-	//XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
+	XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
 	XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
 
 	XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);

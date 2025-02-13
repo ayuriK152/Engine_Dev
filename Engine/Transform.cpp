@@ -20,9 +20,9 @@ Transform::~Transform()
 void Transform::UpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
-	XMMATRIX matRotation = XMMatrixRotationX(_localRotation.x / 180.0f * MathHelper::Pi);
-	matRotation *= XMMatrixRotationY(_localRotation.y / 180.0f * MathHelper::Pi);
-	matRotation *= XMMatrixRotationZ(_localRotation.z / 180.0f * MathHelper::Pi);
+	XMMATRIX matRotation = XMMatrixRotationX(XMConvertToRadians(_localRotation.x));
+	matRotation *= XMMatrixRotationY(XMConvertToRadians(_localRotation.y));
+	matRotation *= XMMatrixRotationZ(XMConvertToRadians(_localRotation.z));
 	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
 
 	XMStoreFloat4x4(&_matLocal, matScale * matRotation * matTranslation);
@@ -109,6 +109,59 @@ Vector3 Transform::GetUp()
 {
 	Vector3 up(_matWorld._12, _matWorld._22, _matWorld._32);
 	return up;
+}
+
+void Transform::Rotate(const Vector3& angle)
+{
+	_localRotation.x += angle.x;
+	_localRotation.y += angle.y;
+	_localRotation.z += angle.z;
+	UpdateTransform();
+}
+
+void Transform::Rotate(const XMVECTOR& angle)
+{
+	XMFLOAT3 f3_angle;
+	XMStoreFloat3(&f3_angle, angle);
+	Rotate(f3_angle);
+}
+
+void Transform::RotateRadian(const Vector3& angle)
+{
+	_localRotation.x += XMConvertToDegrees(angle.x);
+	_localRotation.y += XMConvertToDegrees(angle.y);
+	_localRotation.z += XMConvertToDegrees(angle.z);
+	UpdateTransform();
+}
+
+void Transform::RotateRadian(const XMVECTOR& angle)
+{
+	XMFLOAT3 f3_angle;
+	XMStoreFloat3(&f3_angle, angle);
+	RotateRadian(f3_angle);
+}
+
+void Transform::LookAt(const Vector3& targetPos)
+{
+	Vector3 lookVec = GetLook();
+	XMVECTOR lookVec_yz = XMLoadFloat2(&Vector2(lookVec.y, lookVec.z));
+	XMVECTOR lookVec_xz = XMLoadFloat2(&Vector2(lookVec.x, lookVec.z));
+
+	Vector3 targetVec = MathHelper::VectorSubtract(targetPos, _position);
+	XMVECTOR targetVec_yz = XMLoadFloat2(&Vector2(targetVec.y, targetVec.z));
+	XMVECTOR targetVec_xz = XMLoadFloat2(&Vector2(targetVec.x, targetVec.z));
+
+	Vector3 angle;
+	angle.x = XMVector2AngleBetweenVectors(lookVec_yz, targetVec_yz).m128_f32[0];
+	angle.y = XMVector2AngleBetweenVectors(lookVec_xz, targetVec_xz).m128_f32[0];
+	angle.z = 0.0f;
+
+	if (MathHelper::CCW(Vector2(lookVec.y, lookVec.z), MathHelper::VectorSubtract(Vector2(targetVec.y, targetVec.z), Vector2(lookVec.y, lookVec.z))) > 0.0f)
+		angle.x = -angle.x;
+	if (MathHelper::CCW(Vector2(lookVec.x, lookVec.z), MathHelper::VectorSubtract(Vector2(targetVec.x, targetVec.z), Vector2(lookVec.x, lookVec.z))) < 0.0f)
+		angle.y = -angle.y;
+	
+	RotateRadian(angle);
 }
 
 XMFLOAT4X4 Transform::GetWorldMatrix()

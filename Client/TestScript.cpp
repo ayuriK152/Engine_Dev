@@ -21,10 +21,11 @@ void TestScript::Init()
 	sphere->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	auto sphereInstance = GRAPHIC->AddGameObject(sphere);
 
-	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -5.0f));
-	boxInstance->GetTransform()->SetPosition(Vector3(0.0f, -5.0f, 10.0f));
-	boxInstance->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
-	sphereInstance->GetTransform()->SetPosition(Vector3(0.0f, -10.0f, 10.0f));
+	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
+	camera->GetTransform()->SetRotation(Vector3(0.0f, -80.0f, 0.0f));
+	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
+	boxInstance->GetTransform()->SetPosition(Vector3(-3.0f, 0.0f, 10.0f));
+	sphereInstance->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
 }
 
 void TestScript::Update()

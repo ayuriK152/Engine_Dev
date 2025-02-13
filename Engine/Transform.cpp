@@ -20,9 +20,9 @@ Transform::~Transform()
 void Transform::UpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
-	XMMATRIX matRotation = XMMatrixRotationX(XMConvertToRadians(_localRotation.x));
-	matRotation *= XMMatrixRotationY(XMConvertToRadians(_localRotation.y));
-	matRotation *= XMMatrixRotationZ(XMConvertToRadians(_localRotation.z));
+	XMMATRIX matRotation = XMMatrixRotationX(_localRotation.x);
+	matRotation *= XMMatrixRotationY(_localRotation.y);
+	matRotation *= XMMatrixRotationZ(_localRotation.z);
 	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
 
 	XMStoreFloat4x4(&_matLocal, matScale * matRotation * matTranslation);
@@ -161,7 +161,7 @@ void Transform::LookAt(const Vector3& targetPos)
 	if (MathHelper::CCW(Vector2(lookVec.x, lookVec.z), MathHelper::VectorSubtract(Vector2(targetVec.x, targetVec.z), Vector2(lookVec.x, lookVec.z))) < 0.0f)
 		angle.y = -angle.y;
 	
-	RotateRadian(angle);
+	Rotate(angle);
 }
 
 XMFLOAT4X4 Transform::GetWorldMatrix()

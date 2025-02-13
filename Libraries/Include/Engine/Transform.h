@@ -14,7 +14,12 @@ public:
 	Vector3 GetLocalPosition() { return _localPosition; }
 	void SetLocalPosition(const Vector3& position) { _localPosition = position; UpdateTransform(); }
 	Vector3 GetLocalRotation() { return _localRotation; }
-	void SetLocalRotation(const Vector3& rotation) { _localRotation = rotation; UpdateTransform(); }
+	void SetLocalRotation(const Vector3& rotation) { 
+		_localRotation.x = XMConvertToRadians(rotation.x);
+		_localRotation.x = XMConvertToRadians(rotation.y);
+		_localRotation.x = XMConvertToRadians(rotation.z);
+		UpdateTransform(); 
+	}
 	Vector3 GetLocalScale() { return _localScale; }
 	void SetLocalScale(const Vector3& scale) { _localScale = scale; UpdateTransform(); }
 

@@ -19,11 +19,11 @@ FrameResource::~FrameResource()
 
 void FrameResource::Update()
 {
-	for (auto& o : GRAPHIC->GetObjects())
+	for (auto& o : RENDER->GetObjects())
 	{
 		if (o->numFramesDirty > 0)
 		{
-			XMMATRIX world = XMLoadFloat4x4(&o->world);
+			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
 
 			ObjectConstants objConstants;
 			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));

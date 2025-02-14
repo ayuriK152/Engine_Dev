@@ -40,7 +40,7 @@ void MeshRenderer::Render()
 	GRAPHIC->GetCommandList().Get()->IASetIndexBuffer(&_mesh->IndexBufferView());
 	GRAPHIC->GetCommandList().Get()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(GRAPHIC->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
+	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 	tex.Offset(_material->diffuseSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 
 	UINT objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));

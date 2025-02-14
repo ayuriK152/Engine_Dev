@@ -66,9 +66,10 @@ void GameApplication::Update()
 
 	if (!_appStatus.appPaused)
 	{
-		GRAPHIC->CalculateFrameStats();
 		GRAPHIC->Update();
-		GRAPHIC->Render();
+		GRAPHIC->RenderBegin();
+		RENDER->Render();
+		GRAPHIC->RenderEnd();
 	}
 	else
 	{

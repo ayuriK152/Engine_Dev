@@ -2,13 +2,16 @@
 
 #pragma region 전방선언
 class GameObject;
+class Transform;
+class Camera;
 #pragma endregion
 
 enum class ComponentType
 {
 	Undefined,
 	Transform,
-	MeshRenderer
+	MeshRenderer,
+	Camera
 };
 
 class Component
@@ -22,6 +25,7 @@ public:
 	virtual void Render() { }
 
 	shared_ptr<GameObject> GetGameObject();
+	shared_ptr<Transform> GetTransform();
 
 public:
 	ComponentType type;

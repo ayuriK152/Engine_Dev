@@ -32,4 +32,10 @@ public:
 		DXGI_FORMAT depthStencilFormat,
 		unordered_map<string, ComPtr<ID3D12PipelineState>>& PSOs
 	);
+
+	static void LogAdapters();
+
+private:
+	static void LogAdapterOutputs(IDXGIAdapter* adapter);
+	static void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 };

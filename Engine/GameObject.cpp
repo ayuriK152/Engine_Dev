@@ -3,7 +3,7 @@
 
 GameObject::GameObject()
 {
-	world = MathHelper::Identity4x4();
+	//world = MathHelper::Identity4x4();
 
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -42,4 +42,14 @@ void GameObject::AddComponent(shared_ptr<Component> component)
 {
 	component->SetGameObject(shared_from_this());
 	components.insert({component->type, component});
+}
+
+shared_ptr<Transform> GameObject::GetTransform()
+{
+	auto transform = GetComponent<Transform>();
+	if (transform == nullptr) {
+		transform = make_shared<Transform>();
+		AddComponent(transform);
+	}
+	return transform;
 }

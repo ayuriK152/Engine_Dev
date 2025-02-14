@@ -5,6 +5,8 @@ class Geometry;
 class Material;
 class Component;
 class MeshRenderer;
+class Transform;
+class Camera;
 #pragma endregion
 
 
@@ -18,6 +20,7 @@ public:
 	void Render();
 
 	void AddComponent(shared_ptr<Component> component);
+	shared_ptr<Transform> GetTransform();
 
 	template<typename T>
 	shared_ptr<T> GetComponent();
@@ -26,7 +29,7 @@ public:
 	ComponentType GetComponentType();
 
 public:
-	XMFLOAT4X4 world;
+	//XMFLOAT4X4 world;
 
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
@@ -45,7 +48,10 @@ public:
 template<typename T>
 shared_ptr<T> GameObject::GetComponent()
 {
-	return static_pointer_cast<T>(components[GetComponentType<T>()]);
+	if (components.contains(GetComponentType<T>()))
+		return static_pointer_cast<T>(components[GetComponentType<T>()]);
+	else
+		return nullptr;
 }
 
 template<typename T>
@@ -53,6 +59,10 @@ ComponentType GameObject::GetComponentType()
 {
 	if (is_same_v<T, MeshRenderer>)
 		return ComponentType::MeshRenderer;
+	if (is_same_v<T, Transform>)
+		return ComponentType::Transform;
+	if (is_same_v<T, Camera>)
+		return ComponentType::Camera;
 
 	return ComponentType::Undefined;
 }

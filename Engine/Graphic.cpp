@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Graphic.h"
+#include "Camera.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -14,113 +15,6 @@ Graphic::~Graphic()
 }
 
 
-#pragma region GetterSetter
-HWND Graphic::GetMainWnd() const
-{
-	return _hMainWnd;
-}
-
-float Graphic::GetAspectRatio() const
-{
-	return static_cast<float>(_appDesc.clientWidth) / _appDesc.clientHeight;
-}
-
-bool Graphic::Get4xMsaaState()const
-{
-	return _appDesc._4xMsaaState;
-}
-
-void Graphic::Set4xMsaaState(bool value)
-{
-	if (_appDesc._4xMsaaState != value)
-	{
-		_appDesc._4xMsaaState = value;
-
-		BuildSwapChain();
-		OnResize();
-	}
-}
-
-AppDesc Graphic::GetAppDesc() const
-{
-	return _appDesc;
-}
-
-void Graphic::SetAppDesc(AppDesc appDesc)
-{
-	_appDesc = appDesc;
-}
-
-int Graphic::GetNumFrameResources()const
-{
-	return _numFrameResources;
-}
-
-FrameResource* Graphic::GetCurrFrameResource() const
-{
-	return _currFrameResource;
-}
-
-int Graphic::GetCurrFrameResourceIndex() const
-{
-	return _currFrameResourceIndex;
-}
-
-ComPtr<ID3D12Device> Graphic::GetDevice() const
-{
-	return _device;
-}
-
-ComPtr<ID3D12GraphicsCommandList> Graphic::GetCommandList()const
-{
-	return _commandList;
-}
-
-ComPtr<ID3D12CommandQueue> Graphic::GetCommandQueue() const
-{
-	return _commandQueue;
-}
-
-ComPtr<ID3D12DescriptorHeap> Graphic::GetConstantBufferHeap() const
-{
-	return _cbvHeap;
-}
-
-ComPtr<ID3D12DescriptorHeap> Graphic::GetShaderResourceViewHeap() const
-{
-	return _srvHeap;
-}
-
-UINT Graphic::GetCBVSRVDescriptorSize() const
-{
-	return _cbvSrvUavDescriptorSize;
-}
-
-vector<shared_ptr<GameObject>>& Graphic::GetObjects()
-{
-	return _objects;
-}
-
-ID3D12Resource* Graphic::GetCurrentBackBuffer()const
-{
-	return _swapChainBuffer[_currBackBuffer].Get();
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetCurrentBackBufferView()const
-{
-	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
-		_currBackBuffer,
-		_rtvDescriptorSize);
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Graphic::GetDepthStencilView()const
-{
-	return _dsvHeap->GetCPUDescriptorHandleForHeapStart();
-}
-#pragma endregion
-
-
 bool Graphic::Initialize()
 {
 	if (!InitMainWindow())
@@ -133,22 +27,11 @@ bool Graphic::Initialize()
 
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
-	// 여기 아래를 전부 쪼개자
-
-	BuildRootSignature();
-	BuildShaderAndInputLayout();
-	BuildDescriptorHeaps();
-
-	RESOURCE->CreateDefaultResources();
+	RENDER->Init();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
 
 	BuildFrameResources();
-	DXUtil::BuildPSO("opaque", _inputLayout, _rootSignature,
-		RESOURCE->Get<Shader>(L"standardVS")->GetBlob(), 
-		RESOURCE->Get<Shader>(L"opaquePS")->GetBlob(),
-		_backBufferFormat, _depthStencilFormat, _PSOs);
-
 
 	ThrowIfFailed(_commandList->Close());
 	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
@@ -241,18 +124,14 @@ void Graphic::OnResize()
 	_screenViewport.MaxDepth = 1.0f;
 
 	_scissorRect = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
-
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetAspectRatio(), 1.0f, 1000.0f);
-	XMStoreFloat4x4(&_proj, P);
 }
 
 
 void Graphic::Update()
 {
+	UniversalUtils::CalculateFrameStats();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Update();
-
-	UpdateCamera();
 
 	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
 	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
@@ -266,78 +145,8 @@ void Graphic::Update()
 	}
 
 	_currFrameResource->Update();
-	UpdateMainCB();
-	for (auto& o : _objects)
-		o->Update();
+	RENDER->Update();
 }
-
-
-void Graphic::UpdateCamera()
-{
-	XMVECTOR pos = XMVectorSet(_cameraPos.x, _cameraPos.y, _cameraPos.z, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&_view, view);
-}
-
-void Graphic::UpdateMainCB()
-{
-	XMMATRIX view = XMLoadFloat4x4(&_view);
-	XMMATRIX proj = XMLoadFloat4x4(&_proj);
-
-	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
-
-	XMStoreFloat4x4(&_mainPassCB.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&_mainPassCB.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4(&_mainPassCB.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4(&_mainPassCB.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4(&_mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4(&_mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
-	_mainPassCB.EyePosW = _eyePos;
-	_mainPassCB.RenderTargetSize = XMFLOAT2((float)_appDesc.clientWidth, (float)_appDesc.clientHeight);
-	_mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / _appDesc.clientWidth, 1.0f / _appDesc.clientHeight);
-	_mainPassCB.NearZ = 1.0f;
-	_mainPassCB.FarZ = 1000.0f;
-	_mainPassCB.TotalTime = TIME->TotalTime();
-	_mainPassCB.DeltaTime = TIME->DeltaTime();
-	_mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	_mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	_mainPassCB.Lights[0].Strength = { 0.8f, 0.8f, 0.8f };
-	_mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	_mainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
-	_mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	_mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
-
-	auto currPassCB = _currFrameResource->passCB.get();
-	currPassCB->CopyData(0, _mainPassCB);
-}
-
-void Graphic::Render()
-{
-	RenderBegin();
-
-	//================
-	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
-	_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-	_commandList->SetGraphicsRootSignature(_rootSignature.Get());
-
-	auto passCB = _currFrameResource->passCB->GetResource();
-	_commandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
-	
-	for (int i = 0; i < _objects.size(); i++)
-		_objects[i]->Render();
-
-	//=================
-
-	RenderEnd();
-}
-
 
 void Graphic::RenderBegin()
 {
@@ -348,7 +157,7 @@ void Graphic::RenderBegin()
 
 	ThrowIfFailed(cmdListAlloc->Reset());
 
-	ThrowIfFailed(_commandList->Reset(cmdListAlloc.Get(), _PSOs["opaque"].Get()));
+	ThrowIfFailed(_commandList->Reset(cmdListAlloc.Get(), RENDER->GetCurrPSO().Get()));
 
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
@@ -500,15 +309,6 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
-shared_ptr<GameObject> Graphic::AddGameObject(shared_ptr<GameObject> obj)
-{
-	obj->objCBIndex = _objects.size();
-	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-	_objects.push_back(move(obj));
-	return _objects[_objects.size() - 1];
-}
-
 // 윈도우 초기화
 bool Graphic::InitMainWindow()
 {
@@ -600,12 +400,12 @@ bool Graphic::InitDirect3D()
 	assert(_appDesc._4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
 #ifdef _DEBUG
-	LogAdapters();
+	DXUtil::LogAdapters();
 #endif
 
 	BuildCommandObjects();
 	BuildSwapChain();
-	BuildRtvAndDsvDescriptorHeaps();
+	BuildDescriptorHeaps();
 
 	return true;
 }
@@ -658,8 +458,9 @@ void Graphic::BuildSwapChain()
 		_swapChain.GetAddressOf()));
 }
 
-void Graphic::BuildRtvAndDsvDescriptorHeaps()
+void Graphic::BuildDescriptorHeaps()
 {
+	// Render Target View
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 	rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -668,7 +469,7 @@ void Graphic::BuildRtvAndDsvDescriptorHeaps()
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
 
-
+	// Depth Stencil View
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
@@ -679,66 +480,12 @@ void Graphic::BuildRtvAndDsvDescriptorHeaps()
 }
 
 
-void Graphic::BuildDescriptorHeaps()
-{
-	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 1;
-	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	ThrowIfFailed(_device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
-}
-
-void Graphic::BuildRootSignature()
-{
-	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-
-	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
-
-	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[1].InitAsConstantBufferView(0);
-	slotRootParameter[2].InitAsConstantBufferView(1);
-	slotRootParameter[3].InitAsConstantBufferView(2);
-
-	auto staticSamplers = GetStaticSamplers();
-	
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(4, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-	ComPtr<ID3DBlob> serializedRootSig = nullptr;
-	ComPtr<ID3DBlob> errorBlob = nullptr;
-	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
-		serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
-
-	if (errorBlob != nullptr)
-	{
-		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-	}
-	ThrowIfFailed(hr);
-
-	ThrowIfFailed(_device->CreateRootSignature(
-		0,
-		serializedRootSig->GetBufferPointer(),
-		serializedRootSig->GetBufferSize(),
-		IID_PPV_ARGS(_rootSignature.GetAddressOf())));
-}
-
-void Graphic::BuildShaderAndInputLayout()
-{
-	_inputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-}
-
 void Graphic::BuildFrameResources()
 {
 	for (int i = 0; i < _numFrameResources; ++i)
 	{
 		_frameResources.push_back(make_unique<FrameResource>(_device.Get(), 1,
-			(UINT)_objects.size(), Material::GetCount()));
+			(UINT)RENDER->GetObjects().size(), Material::GetCount()));
 	}
 }
 
@@ -757,161 +504,4 @@ void Graphic::FlushCommandQueue()
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
-}
-
-void Graphic::CalculateFrameStats()
-{
-	static int frameCnt = 0;
-	static float timeElapsed = 0.0f;
-
-	frameCnt++;
-
-	if ((TIME->TotalTime() - timeElapsed) >= 1.0f)
-	{
-		float fps = (float)frameCnt;
-		float mspf = 1000.0f / fps;
-
-		wstring fpsStr = to_wstring(fps);
-		wstring mspfStr = to_wstring(mspf);
-
-		wstring windowText = _appDesc.mainWndCaption +
-			L"    fps: " + fpsStr +
-			L"   mspf: " + mspfStr;
-
-		SetWindowText(_hMainWnd, windowText.c_str());
-
-		frameCnt = 0;
-		timeElapsed += 1.0f;
-	}
-}
-
-void Graphic::LogAdapters()
-{
-	UINT i = 0;
-	IDXGIAdapter* adapter = nullptr;
-	vector<IDXGIAdapter*> adapterList;
-	while (_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_ADAPTER_DESC desc;
-		adapter->GetDesc(&desc);
-
-		wstring text = L"***Adapter: ";
-		text += desc.Description;
-		text += L"\n";
-
-		OutputDebugString(text.c_str());
-
-		adapterList.push_back(adapter);
-
-		++i;
-	}
-
-	for (size_t i = 0; i < adapterList.size(); ++i)
-	{
-		LogAdapterOutputs(adapterList[i]);
-		ReleaseCom(adapterList[i]);
-	}
-}
-
-void Graphic::LogAdapterOutputs(IDXGIAdapter* adapter)
-{
-	UINT i = 0;
-	IDXGIOutput* output = nullptr;
-	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_OUTPUT_DESC desc;
-		output->GetDesc(&desc);
-
-		wstring text = L"***Output: ";
-		text += desc.DeviceName;
-		text += L"\n";
-		OutputDebugString(text.c_str());
-
-		LogOutputDisplayModes(output, _backBufferFormat);
-
-		ReleaseCom(output);
-
-		++i;
-	}
-}
-
-void Graphic::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
-{
-	UINT count = 0;
-	UINT flags = 0;
-
-	output->GetDisplayModeList(format, flags, &count, nullptr);
-
-	vector<DXGI_MODE_DESC> modeList(count);
-	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
-
-	for (auto& x : modeList)
-	{
-		UINT n = x.RefreshRate.Numerator;
-		UINT d = x.RefreshRate.Denominator;
-		wstring text =
-			L"Width = " + to_wstring(x.Width) + L" " +
-			L"Height = " + to_wstring(x.Height) + L" " +
-			L"Refresh = " + to_wstring(n) + L"/" + to_wstring(d) +
-			L"\n";
-
-		::OutputDebugString(text.c_str());
-	}
-}
-
-array<const CD3DX12_STATIC_SAMPLER_DESC, 6> Graphic::GetStaticSamplers()
-{
-	// Applications usually only need a handful of samplers.  So just define them all up front
-	// and keep them available as part of the root signature.  
-
-	const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
-		0, // shaderRegister
-		D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
-
-	const CD3DX12_STATIC_SAMPLER_DESC pointClamp(
-		1, // shaderRegister
-		D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
-
-	const CD3DX12_STATIC_SAMPLER_DESC linearWrap(
-		2, // shaderRegister
-		D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
-
-	const CD3DX12_STATIC_SAMPLER_DESC linearClamp(
-		3, // shaderRegister
-		D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
-
-	const CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
-		4, // shaderRegister
-		D3D12_FILTER_ANISOTROPIC, // filter
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressW
-		0.0f,                             // mipLODBias
-		8);                               // maxAnisotropy
-
-	const CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
-		5, // shaderRegister
-		D3D12_FILTER_ANISOTROPIC, // filter
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressW
-		0.0f,                              // mipLODBias
-		8);                                // maxAnisotropy
-
-	return {
-		pointWrap, pointClamp,
-		linearWrap, linearClamp,
-		anisotropicWrap, anisotropicClamp };
 }

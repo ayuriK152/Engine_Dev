@@ -59,11 +59,15 @@ using namespace Microsoft::WRL;
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+
 #include "MeshRenderer.h"
+#include "Transform.h"
+#include "Camera.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"
 #include "ResourceManager.h"
+#include "RenderManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

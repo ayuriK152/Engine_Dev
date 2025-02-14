@@ -1,5 +1,20 @@
 #pragma once
 
+class UniversalUtils
+{
+public:
+	static void CalculateFrameStats();
+};
+
+#ifndef ThrowIfFailed
+#define ThrowIfFailed(x)												\
+{																		\
+	HRESULT hr__ = (x);													\
+	wstring wfn = AnsiToWString(__FILE__);								\
+	if (FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); }	\
+}
+#endif
+
 class DxException
 {
 public:
@@ -21,11 +36,3 @@ inline wstring AnsiToWString(const std::string& str)
 	return wstring(buffer);
 }
 
-#ifndef ThrowIfFailed
-#define ThrowIfFailed(x)												\
-{																		\
-	HRESULT hr__ = (x);													\
-	wstring wfn = AnsiToWString(__FILE__);								\
-	if (FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); }	\
-}
-#endif

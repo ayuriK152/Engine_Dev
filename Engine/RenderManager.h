@@ -9,11 +9,22 @@ public:
 public:
 	void Init();
 	void Update();
+	void Render();
+
+public:
+	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const { return _srvHeap; }
+	
+	vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
+	ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
+	void AddPSO(string name, wstring vsName, wstring psName);
+	void SetCurrPSO(string name);
+
+	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
 private:
 	void BuildRootSignature();
 	void BuildInputLayout();
-	void BuildDescriptorHeaps();
+	void BuildSRVDescriptorHeap();
 
 	void UpdateMainCB();
 
@@ -23,7 +34,11 @@ private:
 	ComPtr<ID3D12RootSignature> _rootSignature;
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
+	ComPtr<ID3D12PipelineState> _currPSO;
+
 	PassConstants _mainPassCB;
+	vector<shared_ptr<GameObject>> _objects;
 };
 

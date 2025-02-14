@@ -77,8 +77,10 @@
     <ClInclude Include="Geometry.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="Transform.h">
+      <Filter>02. GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -173,8 +175,10 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Transform.cpp">
+      <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>

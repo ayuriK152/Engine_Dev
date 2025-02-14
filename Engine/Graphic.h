@@ -39,7 +39,6 @@ public:
 	ComPtr<ID3D12CommandQueue> GetCommandQueue()const { return _commandQueue; }
 
 	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const { return _cbvHeap; }
-	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const { return _srvHeap; }
 
 	ID3D12Resource* GetCurrentBackBuffer()const { return _swapChainBuffer[_currBackBuffer].Get(); }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView()const {
@@ -53,21 +52,15 @@ public:
 	UINT GetCBVSRVDescriptorSize()const { return _cbvSrvUavDescriptorSize; }
 
 	DXGI_FORMAT GetBackBufferFormat()const { return _backBufferFormat; }
-
-	vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
+	DXGI_FORMAT GetDepthStencilFormat()const { return _depthStencilFormat; }
 
 public:
 	bool Initialize();
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
-
 private:
 	void OnResize();
 	void Update();
-	void UpdateCamera();
-	void UpdateMainCB();
-	void Render();
 	void RenderBegin();
 	void RenderEnd();
 
@@ -77,18 +70,10 @@ private:
 
 	void BuildCommandObjects();
 	void BuildSwapChain();
-	void BuildRtvAndDsvDescriptorHeaps();
-
 	void BuildDescriptorHeaps();
-	void BuildRootSignature();
-	void BuildShaderAndInputLayout();
 	void BuildFrameResources();
 
 	void FlushCommandQueue();
-
-	//=========================
-
-	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 
 private:
 	HWND      _hMainWnd = nullptr;
@@ -109,12 +94,9 @@ private:
 	ComPtr<ID3D12Resource> _swapChainBuffer[_SwapChainBufferCount];
 	ComPtr<ID3D12Resource> _depthStencilBuffer;
 
-	ComPtr<ID3D12RootSignature> _rootSignature;
-
 	ComPtr<ID3D12DescriptorHeap> _rtvHeap;
 	ComPtr<ID3D12DescriptorHeap> _dsvHeap;
 	ComPtr<ID3D12DescriptorHeap> _cbvHeap;
-	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 
 	D3D12_VIEWPORT _screenViewport;
 	D3D12_RECT _scissorRect;
@@ -127,12 +109,6 @@ private:
 	DXGI_FORMAT _backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
-
-	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
-
-	vector<shared_ptr<GameObject>> _objects;
-
 	static const int _numFrameResources = 3;
 	int _currFrameResourceIndex = 0;
 	FrameResource* _currFrameResource = nullptr;
@@ -142,19 +118,7 @@ private:
 
 	//===========================리팩토링 필수!!!!!!!!============
 
-	XMFLOAT4X4 _world = MathHelper::Identity4x4();
-	XMFLOAT4X4 _view = MathHelper::Identity4x4();
-	XMFLOAT4X4 _proj = MathHelper::Identity4x4();
-
-	// 얘네는 카메라로 분할==========
-	Vector3 _cameraPos = { 0.0f, 3.0f, -5.0f };
-
-	Vector3 _eyePos;
-	// ============================
-
 	UINT _passCbvOffset = 0;
-
-	PassConstants _mainPassCB;
 
 	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 };

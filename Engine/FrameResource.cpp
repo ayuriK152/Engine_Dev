@@ -19,7 +19,7 @@ FrameResource::~FrameResource()
 
 void FrameResource::Update()
 {
-	for (auto& o : GRAPHIC->GetObjects())
+	for (auto& o : RENDER->GetObjects())
 	{
 		if (o->numFramesDirty > 0)
 		{

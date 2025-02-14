@@ -67,7 +67,9 @@ void GameApplication::Update()
 	if (!_appStatus.appPaused)
 	{
 		GRAPHIC->Update();
-		GRAPHIC->Render();
+		GRAPHIC->RenderBegin();
+		RENDER->Render();
+		GRAPHIC->RenderEnd();
 	}
 	else
 	{

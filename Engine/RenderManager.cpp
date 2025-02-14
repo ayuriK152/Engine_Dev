@@ -10,12 +10,53 @@ void RenderManager::Init()
 {
 	BuildRootSignature();
 	BuildInputLayout();
-	BuildDescriptorHeaps();
+	BuildSRVDescriptorHeap();
+	RESOURCE->CreateDefaultResources();
+	AddPSO("opaque", L"standardVS", L"opaquePS");
+	_currPSO = _PSOs["opaque"];
 }
 
 void RenderManager::Update()
 {
-	
+	for (auto& o : _objects)
+		o->Update();
+	UpdateMainCB();
+}
+
+void RenderManager::Render()
+{
+	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
+	GRAPHIC->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	GRAPHIC->GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
+
+	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
+
+	for (int i = 0; i < _objects.size(); i++)
+		_objects[i]->Render();
+}
+
+void RenderManager::AddPSO(string name, wstring vsName, wstring psName)
+{
+	DXUtil::BuildPSO(name, _inputLayout, _rootSignature,
+		RESOURCE->Get<Shader>(vsName)->GetBlob(),
+		RESOURCE->Get<Shader>(psName)->GetBlob(),
+		GRAPHIC->GetBackBufferFormat(), GRAPHIC->GetDepthStencilFormat(), _PSOs);
+}
+
+void RenderManager::SetCurrPSO(string name)
+{
+	_currPSO = _PSOs[name];
+}
+
+shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
+{
+	obj->objCBIndex = _objects.size();
+	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	_objects.push_back(move(obj));
+	return _objects[_objects.size() - 1];
 }
 
 void RenderManager::BuildRootSignature()
@@ -63,7 +104,7 @@ void RenderManager::BuildInputLayout()
 	};
 }
 
-void RenderManager::BuildDescriptorHeaps()
+void RenderManager::BuildSRVDescriptorHeap()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.NumDescriptors = 1;
@@ -74,37 +115,38 @@ void RenderManager::BuildDescriptorHeaps()
 
 void RenderManager::UpdateMainCB()
 {
-	//XMMATRIX view = XMLoadFloat4x4(&_view);
-	//XMMATRIX proj = XMLoadFloat4x4(&_proj);
+	XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
 
-	//XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-	//XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-	//XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-	//XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
 
-	//XMStoreFloat4x4(&_mainPassCB.View, XMMatrixTranspose(view));
-	//XMStoreFloat4x4(&_mainPassCB.InvView, XMMatrixTranspose(invView));
-	//XMStoreFloat4x4(&_mainPassCB.Proj, XMMatrixTranspose(proj));
-	//XMStoreFloat4x4(&_mainPassCB.InvProj, XMMatrixTranspose(invProj));
-	//XMStoreFloat4x4(&_mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
-	//XMStoreFloat4x4(&_mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
-	//_mainPassCB.EyePosW = _eyePos;
-	//_mainPassCB.RenderTargetSize = XMFLOAT2((float)_appDesc.clientWidth, (float)_appDesc.clientHeight);
-	//_mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / _appDesc.clientWidth, 1.0f / _appDesc.clientHeight);
-	//_mainPassCB.NearZ = 1.0f;
-	//_mainPassCB.FarZ = 1000.0f;
-	//_mainPassCB.TotalTime = TIME->TotalTime();
-	//_mainPassCB.DeltaTime = TIME->DeltaTime();
-	//_mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	//_mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	//_mainPassCB.Lights[0].Strength = { 0.8f, 0.8f, 0.8f };
-	//_mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	//_mainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
-	//_mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	//_mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
+	XMStoreFloat4x4(&_mainPassCB.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&_mainPassCB.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4(&_mainPassCB.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&_mainPassCB.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&_mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4(&_mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
+	_mainPassCB.EyePosW = Camera::GetEyePos();
+	_mainPassCB.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
+	_mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
+	_mainPassCB.NearZ = 1.0f;
+	_mainPassCB.FarZ = 1000.0f;
+	_mainPassCB.TotalTime = TIME->TotalTime();
+	_mainPassCB.DeltaTime = TIME->DeltaTime();
 
-	//auto currPassCB = _currFrameResource->passCB.get();
-	//currPassCB->CopyData(0, _mainPassCB);
+	_mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	_mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	_mainPassCB.Lights[0].Strength = { 0.8f, 0.8f, 0.8f };
+	_mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	_mainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
+	_mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	_mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
+
+	auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
+	currPassCB->CopyData(0, _mainPassCB);
 }
 
 std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> RenderManager::GetStaticSamplers()

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Camera.h"
 
+XMFLOAT3 Camera::_eyePos(0.0f, 0.0f, 0.0f);
 XMFLOAT4X4 Camera::_mainMatView = MathHelper::Identity4x4();
 XMFLOAT4X4 Camera::_mainMatProj = MathHelper::Identity4x4();
 
@@ -21,7 +22,8 @@ void Camera::Init()
 
 void Camera::Update()
 {
-	XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
+	_eyePos = GetTransform()->GetPosition();
+	XMVECTOR eyePos = XMLoadFloat3(&_eyePos);
 	XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
 	XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
 

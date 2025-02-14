@@ -19,5 +19,5 @@ public:									\
 #define GAMEAPP		GET_SINGLE(GameApplication)
 #define GRAPHIC		GET_SINGLE(Graphic)
 #define TIME		GET_SINGLE(GameTimer)
-#define TEXTURE		GET_SINGLE(TextureManager)
 #define RESOURCE	GET_SINGLE(ResourceManager)
+#define RENDER		GET_SINGLE(RenderManager)

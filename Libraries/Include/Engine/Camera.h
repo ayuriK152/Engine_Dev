@@ -12,10 +12,12 @@ public:
 
 	void Update() override;
 
+	static XMFLOAT3& GetEyePos() { return _eyePos; }
 	static XMFLOAT4X4& GetViewMatrix() { return _mainMatView; }
 	static XMFLOAT4X4& GetProjMatrix() { return _mainMatProj; }
 	
 private:
+	static XMFLOAT3 _eyePos;
 	static XMFLOAT4X4 _mainMatView;
 	static XMFLOAT4X4 _mainMatProj;
 

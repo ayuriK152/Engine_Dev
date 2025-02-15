@@ -81,3 +81,8 @@ void GameApplication::Update()
 		Sleep(100);
 	}
 }
+
+void GameApplication::ExitApplication()
+{
+	PostQuitMessage(0);
+}

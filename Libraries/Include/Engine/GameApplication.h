@@ -15,6 +15,8 @@ public:
 	bool Initialize();
 	void Update();
 
+	void ExitApplication();
+
 private:
 	HINSTANCE _hAppInst = nullptr; // application instance handle
 

@@ -12,9 +12,9 @@ struct AppDesc
 
 struct AppStatus
 {
-	bool      appPaused = false;  // is the application paused?
-	bool      minimized = false;  // is the application minimized?
-	bool      maximized = false;  // is the application maximized?
-	bool      resizing = false;   // are the resize bars being dragged?
-	bool      fullscreenState = false;// fullscreen enabled
+	bool		appPaused = false;
+	bool		minimized = false;
+	bool		maximized = false;
+	bool		resizing = false;
+	bool		fullscreenState = false;
 };

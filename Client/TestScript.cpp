@@ -38,4 +38,6 @@ void TestScript::Update()
 		camera->GetComponent<Transform>()->Translate(Vector3(-5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
 	if (INPUTM->IsKeyPress(KeyValue::D))
 		camera->GetComponent<Transform>()->Translate(Vector3(5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
+	if (INPUTM->IsKeyPress(KeyValue::ESC))
+		GAMEAPP->ExitApplication();
 }

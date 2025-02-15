@@ -5,7 +5,8 @@ enum KeyValue
 	A = 'A',
 	D = 'D',
 	S = 'S',
-	W = 'W'
+	W = 'W',
+	ESC = VK_ESCAPE
 };
 
 enum KeyState

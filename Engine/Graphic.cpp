@@ -145,7 +145,6 @@ void Graphic::Update()
 	}
 
 	_currFrameResource->Update();
-	RENDER->Update();
 }
 
 void Graphic::RenderBegin()

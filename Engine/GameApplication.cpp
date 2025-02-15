@@ -57,6 +57,8 @@ bool GameApplication::Initialize()
 	if (!GRAPHIC->Initialize())
 		return false;
 
+	INPUTM->Initialize();
+
 	return true;
 }
 
@@ -66,7 +68,10 @@ void GameApplication::Update()
 
 	if (!_appStatus.appPaused)
 	{
+		INPUTM->Update();
 		GRAPHIC->Update();
+		RENDER->Update();
+
 		GRAPHIC->RenderBegin();
 		RENDER->Render();
 		GRAPHIC->RenderEnd();

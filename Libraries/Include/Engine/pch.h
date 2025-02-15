@@ -37,6 +37,9 @@ using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+// External Libararies
+#include "magic_enum/magic_enum.hpp"
+
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -68,6 +71,7 @@ using namespace Microsoft::WRL;
 #include "FrameResource.h"
 #include "ResourceManager.h"
 #include "RenderManager.h"
+#include "InputManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

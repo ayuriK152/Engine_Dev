@@ -83,6 +83,9 @@
     <ClInclude Include="Camera.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -180,6 +183,9 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

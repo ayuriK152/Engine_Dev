@@ -6,5 +6,8 @@ public:
 	void Init() override;
 
 	void Update() override;
+
+private:
+	shared_ptr<GameObject> camera;
 };
 

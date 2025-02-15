@@ -21,3 +21,4 @@ public:									\
 #define TIME		GET_SINGLE(GameTimer)
 #define RESOURCE	GET_SINGLE(ResourceManager)
 #define RENDER		GET_SINGLE(RenderManager)
+#define INPUTM		GET_SINGLE(InputManager)

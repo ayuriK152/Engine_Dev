@@ -111,6 +111,12 @@ Vector3 Transform::GetUp()
 	return up;
 }
 
+void Transform::Translate(const Vector3& moveVec)
+{
+	_localPosition = MathHelper::VectorAddition(_localPosition, moveVec);
+	UpdateTransform();
+}
+
 void Transform::Rotate(const Vector3& angle)
 {
 	_localRotation.x += angle.x;

@@ -44,6 +44,14 @@ Vector3 MathHelper::ConvertQuaternionToEuler(const XMVECTOR& quat)
 	return ConvertQuaternionToEuler(quatConvert);
 }
 
+Vector2 MathHelper::VectorSubtract(const Vector2& va, const Vector2& vb)
+{
+	Vector2 result;
+	result.x = va.x - vb.x;
+	result.y = va.y - vb.y;
+	return result;
+}
+
 Vector3 MathHelper::VectorSubtract(const Vector3& va, const Vector3& vb)
 {
 	Vector3 result;
@@ -53,11 +61,20 @@ Vector3 MathHelper::VectorSubtract(const Vector3& va, const Vector3& vb)
 	return result;
 }
 
-Vector2 MathHelper::VectorSubtract(const Vector2& va, const Vector2& vb)
+Vector2 MathHelper::VectorAddition(const Vector2& va, const Vector2& vb)
 {
 	Vector2 result;
-	result.x = va.x - vb.x;
-	result.y = va.y - vb.y;
+	result.x = va.x + vb.x;
+	result.y = va.y + vb.y;
+	return result;
+}
+
+Vector3 MathHelper::VectorAddition(const Vector3& va, const Vector3& vb)
+{
+	Vector3 result;
+	result.x = va.x + vb.x;
+	result.y = va.y + vb.y;
+	result.z = va.z + vb.z;
 	return result;
 }
 

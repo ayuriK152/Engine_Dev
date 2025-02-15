@@ -33,6 +33,8 @@ public:
 	Vector3 GetLook();
 	Vector3 GetUp();
 
+	void Translate(const Vector3& moveVec);
+
 	void Rotate(const Vector3& angle);
 	void Rotate(const XMVECTOR& angle);
 	void RotateRadian(const Vector3& angle);

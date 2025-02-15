@@ -30,5 +30,12 @@ void TestScript::Init()
 
 void TestScript::Update()
 {
-
+	if (INPUTM->IsKeyPress(KeyValue::W))
+		camera->GetComponent<Transform>()->Translate(Vector3(0.0f, 0.0f, 5.0f * TIME->DeltaTime()));
+	if (INPUTM->IsKeyPress(KeyValue::S))
+		camera->GetComponent<Transform>()->Translate(Vector3(0.0f, 0.0f, -5.0f * TIME->DeltaTime()));
+	if (INPUTM->IsKeyPress(KeyValue::A))
+		camera->GetComponent<Transform>()->Translate(Vector3(-5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
+	if (INPUTM->IsKeyPress(KeyValue::D))
+		camera->GetComponent<Transform>()->Translate(Vector3(5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
 }

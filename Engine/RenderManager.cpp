@@ -12,8 +12,15 @@ void RenderManager::Init()
 	BuildInputLayout();
 	BuildSRVDescriptorHeap();
 	RESOURCE->CreateDefaultResources();
-	BuildPSO("opaque", L"standardVS", L"opaquePS");
-	SetCurrPSO("opaque");
+
+	{
+		auto opaqueSolid = CreatePSODesc(L"standardVS", L"opaquePS");
+		auto opaqueWireframe = opaqueSolid;
+		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		BuildPSO("opaque_Solid", opaqueSolid);
+		BuildPSO("opaque_Wireframe", opaqueWireframe);
+		SetCurrPSO("opaque_Solid");
+	}
 }
 
 void RenderManager::Update()
@@ -37,7 +44,7 @@ void RenderManager::Render()
 		_objects[i]->Render();
 }
 
-void RenderManager::BuildPSO(string name, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
+D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
 	AppDesc appDesc = GRAPHIC->GetAppDesc();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
@@ -102,6 +109,12 @@ void RenderManager::BuildPSO(string name, wstring vsName, wstring psName, wstrin
 	psoDesc.SampleDesc.Quality = appDesc._4xMsaaState ? (appDesc._4xMsaaQuality - 1) : 0;
 	psoDesc.DSVFormat = GRAPHIC->GetDepthStencilFormat();
 
+	return psoDesc;
+	//ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
+}
+
+void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
+{
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
 }
 

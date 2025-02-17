@@ -6,6 +6,7 @@ enum KeyValue
 	D = 'D',
 	S = 'S',
 	W = 'W',
+	V = 'V',
 	ESC = VK_ESCAPE
 };
 

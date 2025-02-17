@@ -13,7 +13,7 @@ Mesh::~Mesh()
 
 void Mesh::CreateBasicCube()
 {
-	CreateBasicCube(1.5f, 0.5f, 1.5f, 3);
+	CreateBasicCube(1.5f, 1.5f, 1.5f, 3);
 }
 
 void Mesh::CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions)

@@ -62,6 +62,8 @@ ResourceType ResourceManager::GetResourceType()
 		return ResourceType::Texture;
 	if (is_same_v<T, Material>)
 		return ResourceType::Material;
+	if (is_same_v<T, Shader>)
+		return ResourceType::Shader;
 
 	return ResourceType::Undefined;
 }

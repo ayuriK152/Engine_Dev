@@ -12,8 +12,8 @@ void RenderManager::Init()
 	BuildInputLayout();
 	BuildSRVDescriptorHeap();
 	RESOURCE->CreateDefaultResources();
-	AddPSO("opaque", L"standardVS", L"opaquePS");
-	_currPSO = _PSOs["opaque"];
+	BuildPSO("opaque", L"standardVS", L"opaquePS");
+	SetCurrPSO("opaque");
 }
 
 void RenderManager::Update()
@@ -37,12 +37,72 @@ void RenderManager::Render()
 		_objects[i]->Render();
 }
 
-void RenderManager::AddPSO(string name, wstring vsName, wstring psName)
+void RenderManager::BuildPSO(string name, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
-	DXUtil::BuildPSO(name, _inputLayout, _rootSignature,
-		RESOURCE->Get<Shader>(vsName)->GetBlob(),
-		RESOURCE->Get<Shader>(psName)->GetBlob(),
-		GRAPHIC->GetBackBufferFormat(), GRAPHIC->GetDepthStencilFormat(), _PSOs);
+	AppDesc appDesc = GRAPHIC->GetAppDesc();
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	psoDesc.InputLayout = { _inputLayout.data(), (UINT)_inputLayout.size() };
+	psoDesc.pRootSignature = _rootSignature.Get();
+
+	// VS, PS is necessary!!!!!!!!
+	auto vertexShader = RESOURCE->Get<Shader>(vsName)->GetBlob();
+	psoDesc.VS =
+	{
+		reinterpret_cast<BYTE*>(vertexShader->GetBufferPointer()),
+		vertexShader->GetBufferSize()
+	};
+
+	auto pixelShader = RESOURCE->Get<Shader>(psName)->GetBlob();
+	psoDesc.PS = 
+	{
+		reinterpret_cast<BYTE*>(pixelShader->GetBufferPointer()),
+		pixelShader->GetBufferSize()
+	};
+
+	if (!dsName.empty())
+	{
+		auto domainShader = RESOURCE->Get<Shader>(dsName)->GetBlob();
+		psoDesc.DS =
+		{
+			reinterpret_cast<BYTE*>(domainShader->GetBufferPointer()),
+			domainShader->GetBufferSize()
+		};
+	}
+
+	if (!hsName.empty())
+	{
+		auto hullShader = RESOURCE->Get<Shader>(hsName)->GetBlob();
+		psoDesc.HS =
+		{
+			reinterpret_cast<BYTE*>(hullShader->GetBufferPointer()),
+			hullShader->GetBufferSize()
+		};
+	}
+
+	if (!gsName.empty())
+	{
+		auto geoShader = RESOURCE->Get<Shader>(gsName)->GetBlob();
+		psoDesc.GS =
+		{
+			reinterpret_cast<BYTE*>(geoShader->GetBufferPointer()),
+			geoShader->GetBufferSize()
+		};
+	}
+
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	psoDesc.SampleMask = UINT_MAX;
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	psoDesc.NumRenderTargets = 1;
+	psoDesc.RTVFormats[0] = GRAPHIC->GetBackBufferFormat();
+	psoDesc.SampleDesc.Count = appDesc._4xMsaaState ? 4 : 1;
+	psoDesc.SampleDesc.Quality = appDesc._4xMsaaState ? (appDesc._4xMsaaQuality - 1) : 0;
+	psoDesc.DSVFormat = GRAPHIC->GetDepthStencilFormat();
+
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
 }
 
 void RenderManager::SetCurrPSO(string name)

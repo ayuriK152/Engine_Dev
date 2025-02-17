@@ -24,7 +24,7 @@ void Mesh::CreateBasicCube(float width, float height, float depth, UINT32 numSub
 
 void Mesh::CreateBasicSphere()
 {
-	return CreateBasicSphere(1.0f, 3);
+	return CreateBasicSphere(1.0f, 0);
 }
 
 void Mesh::CreateBasicSphere(float radius, UINT32 numSubdivisions)

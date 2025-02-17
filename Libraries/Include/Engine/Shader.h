@@ -2,8 +2,9 @@
 
 enum class ShaderType
 {
-	VS,
-	PS
+	VS,		// Vertex Shader
+	PS,		// Pixel Shader
+	GS		// Geometry Shader
 };
 
 class Shader : public Resource

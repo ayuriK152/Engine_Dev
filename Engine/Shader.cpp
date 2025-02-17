@@ -20,7 +20,9 @@ ComPtr<ID3DBlob> Shader::GetBlob()
 void Shader::Load(const wstring& path)
 {
 	if (_shaderType == ShaderType::VS)
-		_blob = DXUtil::CompileShader(path, nullptr, "VS", "vs_5_1");
+		_blob = DXUtil::CompileShader(path, nullptr, "VS", "vs_5_0");
 	if (_shaderType == ShaderType::PS)
-		_blob = DXUtil::CompileShader(path, nullptr, "PS", "ps_5_1");
+		_blob = DXUtil::CompileShader(path, nullptr, "PS", "ps_5_0");
+	if (_shaderType == ShaderType::GS)
+		_blob = DXUtil::CompileShader(path, nullptr, "GS", "gs_5_0");
 }

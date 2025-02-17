@@ -16,7 +16,7 @@ public:
 	
 	vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
-	void AddPSO(string name, wstring vsName, wstring psName);
+	void BuildPSO(string name, wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	void SetCurrPSO(string name);
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);

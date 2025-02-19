@@ -18,6 +18,7 @@ public:
 	void CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions);
 	void CreateBasicSphere();
 	void CreateBasicSphere(float radius, UINT32 numSubdivisions);
+	void CreateBasicQuad();
 
 	D3D12_VERTEX_BUFFER_VIEW VertexBufferView()const
 	{

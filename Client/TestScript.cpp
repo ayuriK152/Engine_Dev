@@ -21,11 +21,18 @@ void TestScript::Init()
 	sphere->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(sphere);
 
+	auto quad = make_shared<GameObject>();
+	quad->meshName = "quad";
+	quad->AddComponent(make_shared<MeshRenderer>());
+	quad->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicQuad"));
+	quad->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
+	RENDER->AddGameObject(quad);
+
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
-	camera->GetTransform()->SetRotation(Vector3(0.0f, -180.0f, 0.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
 	box->GetTransform()->SetPosition(Vector3(-3.0f, 0.0f, 10.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
+	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
 }
 
 void TestScript::Update()

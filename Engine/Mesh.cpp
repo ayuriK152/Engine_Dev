@@ -24,12 +24,18 @@ void Mesh::CreateBasicCube(float width, float height, float depth, UINT32 numSub
 
 void Mesh::CreateBasicSphere()
 {
-	return CreateBasicSphere(1.0f, 0);
+	return CreateBasicSphere(1.0f, 1);
 }
 
 void Mesh::CreateBasicSphere(float radius, UINT32 numSubdivisions)
 {
 	_geometry = GeometryGenerator::CreateGeosphere(radius, numSubdivisions);
+	CreateBuffer();
+}
+
+void Mesh::CreateBasicQuad()
+{
+	_geometry = GeometryGenerator::CreateQuad();
 	CreateBuffer();
 }
 

@@ -3,7 +3,6 @@
 
 shared_ptr<Geometry> GeometryGenerator::CreateBox(float width, float height, float depth, UINT32 numSubdivisions)
 {
-	shared_ptr<Mesh> mesh = make_shared<Mesh>();
 	shared_ptr<Geometry> geometry = make_shared<Geometry>();
 
 	Vertex v[24];
@@ -82,12 +81,6 @@ shared_ptr<Geometry> GeometryGenerator::CreateBox(float width, float height, flo
 
 	geometry->GetIndices().assign(&i[0], &i[36]);
 
-	// Put a cap on the number of subdivisions.
-	numSubdivisions = std::min<UINT32>(numSubdivisions, 6u);
-
-	for (UINT32 i = 0; i < numSubdivisions; ++i)
-		Subdivide(geometry);
-
 	return geometry;
 }
 
@@ -162,6 +155,28 @@ shared_ptr<Geometry> GeometryGenerator::CreateGeosphere(float radius, UINT32 num
 		XMVECTOR T = XMLoadFloat3(&geometry->GetVertices()[i].Tangent);
 		XMStoreFloat3(&geometry->GetVertices()[i].Tangent, XMVector3Normalize(T));
 	}
+
+	return geometry;
+}
+
+shared_ptr<Geometry> GeometryGenerator::CreateQuad()
+{
+	shared_ptr<Geometry> geometry = make_shared<Geometry>();
+
+	Vertex v[4];
+	v[0] = Vertex(-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[1] = Vertex(-1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[2] = Vertex(+1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[3] = Vertex(+1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+
+	geometry->GetVertices().assign(&v[0], &v[4]);
+
+	UINT32 i[6];
+
+	i[0] = 0; i[1] = 1; i[2] = 2;
+	i[3] = 0; i[4] = 2; i[5] = 3;
+
+	geometry->GetIndices().assign(&i[0], &i[6]);
 
 	return geometry;
 }

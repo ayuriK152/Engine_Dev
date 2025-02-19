@@ -24,9 +24,14 @@ void ResourceManager::CreateDefaultResources()
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>();
 	boxMesh->CreateBasicCube();
 	Add<Mesh>(L"Mesh_BasicBox", boxMesh);
+
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>();
 	sphereMesh->CreateBasicSphere();
 	Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
+
+	shared_ptr<Mesh> quadMesh = make_shared<Mesh>();
+	quadMesh->CreateBasicQuad();
+	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
 
 
 	//==========Material==========

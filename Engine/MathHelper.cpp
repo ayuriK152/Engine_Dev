@@ -87,6 +87,15 @@ Vector3 MathHelper::VectorMultiply(const Vector3& va, const Vector3& vb)
 	return result;
 }
 
+Vector3 MathHelper::VectorMultiply(const Vector3& va, const float& vb)
+{
+	Vector3 result;
+	result.x = va.x * vb;
+	result.y = va.y * vb;
+	result.z = va.z * vb;
+	return result;
+}
+
 Vector3 MathHelper::RadianToDegree(const Vector3& radian)
 {
 	Vector3 result;

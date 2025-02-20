@@ -99,10 +99,16 @@ void Transform::SetScale(const Vector3& worldScale)
 	}
 }
 
-Vector3 Transform::GetLook()
+Vector3 Transform::GetRight()
 {
-	Vector3 look(-_matWorld._13, -_matWorld._23, _matWorld._33);
-	return look;
+	Vector3 right(-_matWorld._11, -_matWorld._21, _matWorld._31);
+	return right;
+}
+
+Vector3 Transform::GetLeft()
+{
+	Vector3 left(_matWorld._11, _matWorld._21, -_matWorld._31);
+	return left;
 }
 
 Vector3 Transform::GetUp()
@@ -111,17 +117,37 @@ Vector3 Transform::GetUp()
 	return up;
 }
 
+Vector3 Transform::GetDown()
+{
+	Vector3 down(-_matWorld._12, -_matWorld._22, -_matWorld._32);
+	return down;
+}
+
+Vector3 Transform::GetLook()
+{
+	Vector3 look(-_matWorld._13, -_matWorld._23, _matWorld._33);
+	return look;
+}
+
+Vector3 Transform::GetBack()
+{
+	Vector3 look(_matWorld._13, _matWorld._23, -_matWorld._33);
+	return look;
+}
+
 void Transform::Translate(const Vector3& moveVec)
 {
 	_localPosition = MathHelper::VectorAddition(_localPosition, moveVec);
 	UpdateTransform();
+	GetGameObject()->numFramesDirty++;
 }
 
+// 반드시 수정이 필요함
 void Transform::Rotate(const Vector3& angle)
 {
-	_localRotation.x += angle.x;
-	_localRotation.y += angle.y;
-	_localRotation.z += angle.z;
+	_localRotation.x += XMConvertToRadians(angle.x);
+	_localRotation.y += XMConvertToRadians(angle.y);
+	_localRotation.z += XMConvertToRadians(angle.z);
 	UpdateTransform();
 }
 

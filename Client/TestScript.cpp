@@ -29,7 +29,6 @@ void TestScript::Init()
 	RENDER->AddGameObject(quad);
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
-	//camera->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
 	box->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
 	box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
@@ -39,17 +38,16 @@ void TestScript::Init()
 
 void TestScript::Update()
 {
-	Vector3 look = box->GetComponent<Transform>()->GetLook();
-	box->GetComponent<Transform>()->Translate(Vector3(look.x * TIME->DeltaTime() * 5.0f, look.y * TIME->DeltaTime() * 5.0f, look.z * TIME->DeltaTime() * 5.0f));
-	box->numFramesDirty++;
+	Vector3 look = camera->GetComponent<Transform>()->GetLook();
+	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 	if (INPUTM->IsKeyPress(KeyValue::W))
-		box->GetComponent<Transform>()->Translate(Vector3(look.x * TIME->DeltaTime() * 5.0f, look.y * TIME->DeltaTime() * 5.0f, look.z * TIME->DeltaTime() * 5.0f));
+		camera->GetComponent<Transform>()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
 	if (INPUTM->IsKeyPress(KeyValue::S))
-		box->GetComponent<Transform>()->Translate(Vector3(-look.x * TIME->DeltaTime() * 5.0f, -look.y * TIME->DeltaTime() * 5.0f, -look.z * TIME->DeltaTime() * 5.0f));
+		camera->GetComponent<Transform>()->Translate(MathHelper::VectorMultiply(look, -TIME->DeltaTime() * 5.0f));
 	if (INPUTM->IsKeyPress(KeyValue::A))
-		camera->GetComponent<Transform>()->Translate(Vector3(-5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
+		camera->GetComponent<Transform>()->Translate(MathHelper::VectorMultiply(right, TIME->DeltaTime() * 5.0f));
 	if (INPUTM->IsKeyPress(KeyValue::D))
-		camera->GetComponent<Transform>()->Translate(Vector3(5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
+		camera->GetComponent<Transform>()->Translate(MathHelper::VectorMultiply(right, -TIME->DeltaTime() * 5.0f));
 	
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();

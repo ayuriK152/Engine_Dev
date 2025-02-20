@@ -20,6 +20,7 @@ public:
 	static Vector3 VectorAddition(const Vector3& va, const Vector3& vb);
 
 	static Vector3 VectorMultiply(const Vector3& va, const Vector3& vb);
+	static Vector3 VectorMultiply(const Vector3& va, const float& vb);
 
 	static Vector3 RadianToDegree(const Vector3& radian);
 	static Vector3 DegreeToRadian(const Vector3& degree);

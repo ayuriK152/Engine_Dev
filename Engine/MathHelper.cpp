@@ -78,6 +78,33 @@ Vector3 MathHelper::VectorAddition(const Vector3& va, const Vector3& vb)
 	return result;
 }
 
+Vector3 MathHelper::VectorMultiply(const Vector3& va, const Vector3& vb)
+{
+	Vector3 result;
+	result.x = va.x * vb.x;
+	result.y = va.y * vb.y;
+	result.z = va.z * vb.z;
+	return result;
+}
+
+Vector3 MathHelper::RadianToDegree(const Vector3& radian)
+{
+	Vector3 result;
+	result.x = XMConvertToDegrees(radian.x);
+	result.y = XMConvertToDegrees(radian.y);
+	result.z = XMConvertToDegrees(radian.z);
+	return result;
+}
+
+Vector3 MathHelper::DegreeToRadian(const Vector3& degree)
+{
+	Vector3 result;
+	result.x = XMConvertToRadians(degree.x);
+	result.y = XMConvertToRadians(degree.y);
+	result.z = XMConvertToRadians(degree.z);
+	return result;
+}
+
 float MathHelper::CCW(const Vector2& va, const Vector2& vb)
 {
 	return va.x * vb.y - va.y * vb.x;

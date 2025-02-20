@@ -7,7 +7,7 @@ void TestScript::Init()
 	camera->AddComponent(make_shared<Camera>());
 	RENDER->AddGameObject(camera);
 
-	auto box = make_shared<GameObject>();
+	box = make_shared<GameObject>();
 	box->meshName = "box";
 	box->AddComponent(make_shared<MeshRenderer>());
 	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
@@ -29,18 +29,23 @@ void TestScript::Init()
 	RENDER->AddGameObject(quad);
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
+	//camera->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
-	box->GetTransform()->SetPosition(Vector3(-3.0f, 0.0f, 10.0f));
+	box->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
+	box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
 	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
 }
 
 void TestScript::Update()
 {
+	Vector3 look = box->GetComponent<Transform>()->GetLook();
+	box->GetComponent<Transform>()->Translate(Vector3(look.x * TIME->DeltaTime() * 5.0f, look.y * TIME->DeltaTime() * 5.0f, look.z * TIME->DeltaTime() * 5.0f));
+	box->numFramesDirty++;
 	if (INPUTM->IsKeyPress(KeyValue::W))
-		camera->GetComponent<Transform>()->Translate(Vector3(0.0f, 0.0f, 5.0f * TIME->DeltaTime()));
+		box->GetComponent<Transform>()->Translate(Vector3(look.x * TIME->DeltaTime() * 5.0f, look.y * TIME->DeltaTime() * 5.0f, look.z * TIME->DeltaTime() * 5.0f));
 	if (INPUTM->IsKeyPress(KeyValue::S))
-		camera->GetComponent<Transform>()->Translate(Vector3(0.0f, 0.0f, -5.0f * TIME->DeltaTime()));
+		box->GetComponent<Transform>()->Translate(Vector3(-look.x * TIME->DeltaTime() * 5.0f, -look.y * TIME->DeltaTime() * 5.0f, -look.z * TIME->DeltaTime() * 5.0f));
 	if (INPUTM->IsKeyPress(KeyValue::A))
 		camera->GetComponent<Transform>()->Translate(Vector3(-5.0f * TIME->DeltaTime(), 0.0f, 0.0f));
 	if (INPUTM->IsKeyPress(KeyValue::D))

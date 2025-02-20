@@ -13,11 +13,15 @@ public:
 
 	Vector3 GetLocalPosition() { return _localPosition; }
 	void SetLocalPosition(const Vector3& position) { _localPosition = position; UpdateTransform(); }
-	Vector3 GetLocalRotation() { return _localRotation; }
-	void SetLocalRotation(const Vector3& rotation) { 
-		_localRotation.x = XMConvertToRadians(rotation.x);
-		_localRotation.y = XMConvertToRadians(rotation.y);
-		_localRotation.z = XMConvertToRadians(rotation.z);
+	Vector3 GetLocalRotation() { return MathHelper::RadianToDegree(_localRotation); }
+	void SetLocalRotation(const Vector3& rotation) {
+		SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation));
+	}
+	Vector3 GetLocalRotationRadian() { return _localRotation; }
+	void SetLocalRotationRadian(const Vector3& rotation) { 
+		_localRotation.x = rotation.x;
+		_localRotation.y = rotation.y;
+		_localRotation.z = rotation.z;
 		UpdateTransform(); 
 	}
 	Vector3 GetLocalScale() { return _localScale; }
@@ -25,8 +29,10 @@ public:
 
 	Vector3 GetPosition() { return _position; }
 	void SetPosition(const Vector3& worldPosition);
-	Vector3 GetRotation() { return _rotation; }
-	void SetRotation(const Vector3& worldRotation);
+	Vector3 GetRotation() { return MathHelper::RadianToDegree(_rotation); }
+	void SetRotation(const Vector3& worldRotation) { SetRotationRadian(MathHelper::DegreeToRadian(worldRotation)); }
+	Vector3 GetRotationRadian() { return _rotation; }
+	void SetRotationRadian(const Vector3& worldRotation);
 	Vector3 GetScale() { return _scale; }
 	void SetScale(const Vector3& worldScale);
 
@@ -37,8 +43,6 @@ public:
 
 	void Rotate(const Vector3& angle);
 	void Rotate(const XMVECTOR& angle);
-	void RotateRadian(const Vector3& angle);
-	void RotateRadian(const XMVECTOR& angle);
 
 	void LookAt(const Vector3& targetPos);
 

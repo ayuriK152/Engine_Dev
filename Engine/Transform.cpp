@@ -65,7 +65,7 @@ void Transform::SetPosition(const Vector3& worldPosition)
 	}
 }
 
-void Transform::SetRotation(const Vector3& worldRotation)
+void Transform::SetRotationRadian(const Vector3& worldRotation)
 {
 	if (HasParent())
 	{
@@ -73,11 +73,11 @@ void Transform::SetRotation(const Vector3& worldRotation)
 		Vector3 rotation;
 		XMStoreFloat3(&rotation, XMVector3TransformNormal(XMLoadFloat3(&worldRotation), inverseWorldMat));
 		
-		SetLocalRotation(rotation);
+		SetLocalRotationRadian(rotation);
 	}
 	else
 	{
-		SetLocalRotation(worldRotation);
+		SetLocalRotationRadian(worldRotation);
 	}
 }
 
@@ -101,7 +101,7 @@ void Transform::SetScale(const Vector3& worldScale)
 
 Vector3 Transform::GetLook()
 {
-	Vector3 look(_matWorld._13, _matWorld._23, _matWorld._33);
+	Vector3 look(-_matWorld._13, -_matWorld._23, _matWorld._33);
 	return look;
 }
 
@@ -132,42 +132,23 @@ void Transform::Rotate(const XMVECTOR& angle)
 	Rotate(f3_angle);
 }
 
-void Transform::RotateRadian(const Vector3& angle)
-{
-	_localRotation.x += XMConvertToDegrees(angle.x);
-	_localRotation.y += XMConvertToDegrees(angle.y);
-	_localRotation.z += XMConvertToDegrees(angle.z);
-	UpdateTransform();
-}
-
-void Transform::RotateRadian(const XMVECTOR& angle)
-{
-	XMFLOAT3 f3_angle;
-	XMStoreFloat3(&f3_angle, angle);
-	RotateRadian(f3_angle);
-}
-
 void Transform::LookAt(const Vector3& targetPos)
 {
-	Vector3 lookVec = GetLook();
-	XMVECTOR lookVec_yz = XMLoadFloat2(&Vector2(lookVec.y, lookVec.z));
-	XMVECTOR lookVec_xz = XMLoadFloat2(&Vector2(lookVec.x, lookVec.z));
-
-	Vector3 targetVec = MathHelper::VectorSubtract(targetPos, _position);
-	XMVECTOR targetVec_yz = XMLoadFloat2(&Vector2(targetVec.y, targetVec.z));
-	XMVECTOR targetVec_xz = XMLoadFloat2(&Vector2(targetVec.x, targetVec.z));
-
-	Vector3 angle;
-	angle.x = XMVector2AngleBetweenVectors(lookVec_yz, targetVec_yz).m128_f32[0];
-	angle.y = XMVector2AngleBetweenVectors(lookVec_xz, targetVec_xz).m128_f32[0];
-	angle.z = 0.0f;
-
-	if (MathHelper::CCW(Vector2(lookVec.y, lookVec.z), MathHelper::VectorSubtract(Vector2(targetVec.y, targetVec.z), Vector2(lookVec.y, lookVec.z))) > 0.0f)
-		angle.x = -angle.x;
-	if (MathHelper::CCW(Vector2(lookVec.x, lookVec.z), MathHelper::VectorSubtract(Vector2(targetVec.x, targetVec.z), Vector2(lookVec.x, lookVec.z))) < 0.0f)
-		angle.y = -angle.y;
+	XMVECTOR targetVec = XMLoadFloat3(&MathHelper::VectorSubtract(targetPos, _position));
 	
-	Rotate(angle);
+	XMVECTOR sideVec = XMVector3Normalize(XMVector3Cross(targetVec, XMVECTOR({ 0.0f, 1.0f, 0.0f })));
+	XMVECTOR upVec = XMVector3Normalize(XMVector3Cross(targetVec, sideVec));
+	if (upVec.m128_f32[1] < 0.0f)
+		upVec = -upVec;
+
+	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&_position), XMLoadFloat3(&targetPos), upVec);
+	
+	viewMat = XMMatrixTranspose(viewMat);
+	XMVECTOR quat = XMQuaternionRotationMatrix(viewMat);
+
+	Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
+	SetRotationRadian(euler);
+	UpdateTransform();
 }
 
 XMFLOAT4X4 Transform::GetWorldMatrix()

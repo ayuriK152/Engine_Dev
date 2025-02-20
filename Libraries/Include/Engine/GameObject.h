@@ -63,6 +63,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Transform;
 	if (is_same_v<T, Camera>)
 		return ComponentType::Camera;
+	if (is_same_v<T, Rigidbody>)
+		return ComponentType::Rigidbody;
 
 	return ComponentType::Undefined;
 }

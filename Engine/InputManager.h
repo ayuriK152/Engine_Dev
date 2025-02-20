@@ -25,6 +25,7 @@ public:
 	void Initialize();
 	void Update();
 
+	bool IsKeyDown(KeyValue key);
 	bool IsKeyPress(KeyValue key);
 
 private:

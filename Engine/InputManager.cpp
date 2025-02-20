@@ -21,7 +21,8 @@ void InputManager::Update()
 		{
 			if (_keyStates[keyEnum.value()] == KeyState::Idle)
 				_keyStates[keyEnum.value()] = KeyState::Down;
-			_keyStates[keyEnum.value()] = KeyState::Press;
+			else if (_keyStates[keyEnum.value()] == KeyState::Down)
+				_keyStates[keyEnum.value()] = KeyState::Press;
 		}
 		else
 		{
@@ -32,6 +33,11 @@ void InputManager::Update()
 				_keyStates[keyEnum.value()] = KeyState::Idle;
 		}
 	}
+}
+
+bool InputManager::IsKeyDown(KeyValue key)
+{
+	return _keyStates[key] == KeyState::Down;
 }
 
 bool InputManager::IsKeyPress(KeyValue key)

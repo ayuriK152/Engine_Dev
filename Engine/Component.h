@@ -11,7 +11,8 @@ enum class ComponentType
 	Undefined,
 	Transform,
 	MeshRenderer,
-	Camera
+	Camera,
+	Rigidbody
 };
 
 class Component

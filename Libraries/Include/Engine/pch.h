@@ -1,4 +1,5 @@
 #pragma once
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -66,6 +67,8 @@ using namespace Microsoft::WRL;
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "Collider.h"
+#include "BoxCollider.h"
 #include "Rigidbody.h"
 
 #include "UploadBuffer.h"

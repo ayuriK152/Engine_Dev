@@ -11,6 +11,7 @@ void TestScript::Init()
 	box->meshName = "box";
 	box->AddComponent(make_shared<MeshRenderer>());
 	box->AddComponent(make_shared<Rigidbody>());
+	box->AddComponent(make_shared<BoxCollider>());
 	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 	box->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(box);
@@ -35,12 +36,14 @@ void TestScript::Init()
 	box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
 	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
+	//quad->GetTransform()->SetScale(Vector3(30.0f, 30.0f, 1.0f));
 
 	box->GetComponent<Rigidbody>()->isGravity = true;
 }
 
 void TestScript::Update()
 {
+	camera->GetTransform()->LookAt(box->GetTransform()->GetPosition());
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 	if (INPUTM->IsKeyPress(KeyValue::W))

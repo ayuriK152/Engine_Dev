@@ -12,6 +12,7 @@ enum class ComponentType
 	Transform,
 	MeshRenderer,
 	Camera,
+	Collider,
 	Rigidbody
 };
 

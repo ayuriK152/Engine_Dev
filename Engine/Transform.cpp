@@ -113,13 +113,13 @@ Vector3 Transform::GetLeft()
 
 Vector3 Transform::GetUp()
 {
-	Vector3 up(_matWorld._12, _matWorld._22, _matWorld._32);
+	Vector3 up(_matWorld._12, _matWorld._22, -_matWorld._32);
 	return up;
 }
 
 Vector3 Transform::GetDown()
 {
-	Vector3 down(-_matWorld._12, -_matWorld._22, -_matWorld._32);
+	Vector3 down(-_matWorld._12, -_matWorld._22, _matWorld._32);
 	return down;
 }
 
@@ -164,6 +164,7 @@ void Transform::LookAt(const Vector3& targetPos)
 	
 	XMVECTOR sideVec = XMVector3Normalize(XMVector3Cross(targetVec, XMVECTOR({ 0.0f, 1.0f, 0.0f })));
 	XMVECTOR upVec = XMVector3Normalize(XMVector3Cross(targetVec, sideVec));
+
 	if (upVec.m128_f32[1] < 0.0f)
 		upVec = -upVec;
 

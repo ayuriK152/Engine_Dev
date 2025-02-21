@@ -89,6 +89,12 @@
     <ClInclude Include="Rigidbody.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>02. GameObject\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>02. GameObject\Components\Colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -117,6 +123,9 @@
     </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{38dbe0b3-50ad-4805-ae19-483510901584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Components\Colliders">
+      <UniqueIdentifier>{8bb58b28-1335-4c2a-8060-d0f1c386fe42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +201,12 @@
     </ClCompile>
     <ClCompile Include="Rigidbody.cpp">
       <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>02. GameObject\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>02. GameObject\Components\Colliders</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

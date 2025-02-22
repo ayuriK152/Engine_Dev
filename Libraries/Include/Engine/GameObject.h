@@ -16,6 +16,7 @@ public:
 	GameObject();
 	~GameObject();
 
+	void Init();
 	void Update();
 	void Render();
 
@@ -43,6 +44,9 @@ public:
 	int numFramesDirty;
 
 	map<ComponentType, shared_ptr<Component>> components;
+
+private:
+	bool _isInitialized;
 };
 
 template<typename T>

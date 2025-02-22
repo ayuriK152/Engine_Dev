@@ -16,7 +16,7 @@ enum class ComponentType
 	Rigidbody
 };
 
-class Component
+class Component : public enable_shared_from_this<Component>
 {
 public:
 	Component(ComponentType type);

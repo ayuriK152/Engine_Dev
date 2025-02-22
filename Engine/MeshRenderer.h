@@ -13,6 +13,7 @@ public:
 	void Update() override;
 	void Render() override;
 
+	shared_ptr<Mesh> GetMesh() { return _mesh; }
 	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
 	void SetMaterial(shared_ptr<Material> material) { _material = material; }
 

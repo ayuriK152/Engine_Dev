@@ -8,6 +8,9 @@ public:
 	BoxCollider();
 	virtual ~BoxCollider();
 
+	virtual void Init()override;
+	virtual void Update()override;
+
 public:
 	virtual bool IsCollide(shared_ptr<Collider>& other)override;
 

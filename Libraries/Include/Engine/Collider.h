@@ -20,5 +20,6 @@ public:
 
 protected:
 	ColliderType _colliderType;
+	static vector<shared_ptr<Collider>> _colliders;
 };
 

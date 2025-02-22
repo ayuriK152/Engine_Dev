@@ -14,6 +14,10 @@ public:
 
 	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
 
+	vector<Vertex>& GetVertices() { return _geometry->GetVertices(); }
+	void* GetVertexData() { return _geometry->GetVertices().data(); }
+	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
+
 	void CreateBasicCube();
 	void CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions);
 	void CreateBasicSphere();

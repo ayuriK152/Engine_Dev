@@ -10,3 +10,5 @@ Collider::~Collider()
 {
 
 }
+
+vector<shared_ptr<Collider>> Collider::_colliders;

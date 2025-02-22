@@ -15,6 +15,7 @@ GameObject::GameObject()
 	baseVertexLocation = 0;
 
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_isInitialized = false;
 }
 
 GameObject::~GameObject()
@@ -22,8 +23,20 @@ GameObject::~GameObject()
 
 }
 
+void GameObject::Init()
+{
+	for (auto& c : components)
+	{
+		c.second->Init();
+	}
+}
+
 void GameObject::Update()
 {
+	if (!_isInitialized) {
+		Init();
+		_isInitialized = true;
+	}
 	for (auto& c : components)
 	{
 		c.second->Update();

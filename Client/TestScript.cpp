@@ -26,6 +26,7 @@ void TestScript::Init()
 	auto quad = make_shared<GameObject>();
 	quad->meshName = "quad";
 	quad->AddComponent(make_shared<MeshRenderer>());
+	quad->AddComponent(make_shared<BoxCollider>());
 	quad->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicQuad"));
 	quad->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(quad);
@@ -35,15 +36,16 @@ void TestScript::Init()
 	box->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
 	box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
+	quad->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
 	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
-	//quad->GetTransform()->SetScale(Vector3(30.0f, 30.0f, 1.0f));
+	quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
 	box->GetComponent<Rigidbody>()->isGravity = true;
 }
 
 void TestScript::Update()
 {
-	camera->GetTransform()->LookAt(box->GetTransform()->GetPosition());
+	//camera->GetTransform()->LookAt(box->GetTransform()->GetPosition());
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 	if (INPUTM->IsKeyPress(KeyValue::W))

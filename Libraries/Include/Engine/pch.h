@@ -35,6 +35,10 @@ using namespace std;
 #include <DirectXCollision.h>
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/ResourceUploadBatch.h"
+#include "DirectXTK/PrimitiveBatch.h"
+#include "DirectXTK/VertexTypes.h"
+#include "DirectXTK/Effects.h"
+#include "DirectXTK/CommonStates.h"
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -50,6 +54,7 @@ using namespace Microsoft::WRL;
 #include "DataStructures.h"
 #include "UniversalUtils.h"
 #include "MathHelper.h"
+#include "DebugHelper.h"
 #include "DXUtil.h"
 #include "GeometryGenerator.h"
 

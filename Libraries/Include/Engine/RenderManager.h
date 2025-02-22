@@ -26,6 +26,7 @@ private:
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
+	void BuildPrimitiveBatch();
 
 	void UpdateMainCB();
 
@@ -35,6 +36,9 @@ private:
 	ComPtr<ID3D12RootSignature> _rootSignature;
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+
+	unique_ptr<PrimitiveBatch<DirectX::VertexPositionColor>> _primitiveBatch;
+	unique_ptr<BasicEffect> _lineEffect;
 
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	ComPtr<ID3D12PipelineState> _currPSO;

@@ -95,6 +95,7 @@
     <ClInclude Include="Collider.h">
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClInclude>
+    <ClInclude Include="DebugHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -208,5 +209,6 @@
     <ClCompile Include="Collider.cpp">
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="DebugHelper.cpp" />
   </ItemGroup>
 </Project>

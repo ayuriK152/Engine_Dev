@@ -21,6 +21,7 @@ void RenderManager::Init()
 		BuildPSO("opaque_Wireframe", opaqueWireframe);
 		SetCurrPSO("opaque_Solid");
 	}
+	//BuildPrimitiveBatch();
 }
 
 void RenderManager::Update()
@@ -40,8 +41,16 @@ void RenderManager::Render()
 	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
 
+	//For Debug-------------
+	//_lineEffect->Apply(GRAPHIC->GetCommandList().Get());
+
+	//_primitiveBatch->Begin(GRAPHIC->GetCommandList().Get());
+	//----------------------
+
 	for (int i = 0; i < _objects.size(); i++)
 		_objects[i]->Render();
+
+	//_primitiveBatch->End();
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
@@ -110,7 +119,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(wstring vsName, 
 	psoDesc.DSVFormat = GRAPHIC->GetDepthStencilFormat();
 
 	return psoDesc;
-	//ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
 }
 
 void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
@@ -184,6 +192,33 @@ void RenderManager::BuildSRVDescriptorHeap()
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
+}
+
+void RenderManager::BuildPrimitiveBatch()
+{
+	auto device = GRAPHIC->GetDevice().Get();
+	_primitiveBatch = make_unique<PrimitiveBatch<DirectX::VertexPositionColor>>(device);
+	
+	// Initialize LineEffect
+	RenderTargetState rtState(GRAPHIC->GetBackBufferFormat(),
+		GRAPHIC->GetDepthStencilFormat());
+
+	const EffectPipelineStateDescription pd(
+		&VertexPositionColor::InputLayout,
+		CommonStates::Opaque,
+		CommonStates::DepthDefault,
+		CommonStates::CullNone,
+		rtState,
+		D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+
+	_lineEffect = make_unique<BasicEffect>(device,
+		EffectFlags::VertexColor,
+		pd);
+
+	_lineEffect->SetProjection(XMMatrixOrthographicOffCenterLH(0,
+		GRAPHIC->GetAppDesc().clientWidth,
+		GRAPHIC->GetAppDesc().clientHeight,
+		0, 0, 1));
 }
 
 void RenderManager::UpdateMainCB()

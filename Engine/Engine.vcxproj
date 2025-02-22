@@ -23,6 +23,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="Descriptors.h" />
     <ClInclude Include="DXUtil.h" />
@@ -57,6 +58,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="GameApplication.cpp" />

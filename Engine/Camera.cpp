@@ -18,6 +18,12 @@ Camera::~Camera()
 void Camera::Init()
 {
 	_aspectRatio = GRAPHIC->GetAspectRatio();
+	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, 1.0f, 1000.0f);
+	XMStoreFloat4x4(&_matProj, P);
+
+	{
+		_mainMatProj = _matProj;
+	}
 }
 
 void Camera::Update()
@@ -26,7 +32,6 @@ void Camera::Update()
 	XMVECTOR eyePos = XMLoadFloat3(&_eyePos);
 	XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
 	XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
-	cout << "Camera: " << upVec.m128_f32[0] << " " << upVec.m128_f32[1] << " " << upVec.m128_f32[2] << endl << endl;
 
 	XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
 	XMStoreFloat4x4(&_matView, matView);

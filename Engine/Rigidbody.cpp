@@ -25,9 +25,8 @@ void Rigidbody::FixedUpdate()
 	{
 		if (collider->IsOnColliding())
 		{
-			_velocity.x = -_velocity.x * _elasticModulus;
-			_velocity.y = -_velocity.y * _elasticModulus;
-			_velocity.z = -_velocity.z * _elasticModulus;
+			//_velocity = MathHelper::VectorReverseSign(MathHelper::VectorMultiply(_velocity, _elasticModulus));
+			_velocity = MathHelper::VectorReflect(MathHelper::VectorMultiply(_velocity, _elasticModulus), collider->GetCollidingVector());
 			_acceleration.y = 0;
 		}
 	}

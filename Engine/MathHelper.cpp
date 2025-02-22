@@ -96,6 +96,25 @@ Vector3 MathHelper::VectorMultiply(const Vector3& va, const float& vb)
 	return result;
 }
 
+Vector3 MathHelper::VectorReverseSign(const Vector3& v)
+{
+	return { -v.x, -v.y, -v.z };
+}
+
+Vector3 MathHelper::VectorNormalize(const Vector3& v)
+{
+	Vector3 result;
+	XMStoreFloat3(&result, XMVector3Normalize(XMLoadFloat3(&v)));
+	return result;
+}
+
+Vector3 MathHelper::VectorReflect(const Vector3& v, const Vector3& vn)
+{
+	Vector3 result;
+	XMStoreFloat3(&result, XMVector3Reflect(XMLoadFloat3(&v), XMLoadFloat3(&vn)));
+	return result;
+}
+
 Vector3 MathHelper::RadianToDegree(const Vector3& radian)
 {
 	Vector3 result;

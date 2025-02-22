@@ -44,7 +44,6 @@ void BoxCollider::FixedUpdate()
 			cout << "Colliding" << endl;
 		}
 	}
-	cout << _collidingVec.x << " " << _collidingVec.y << " " << _collidingVec.z << endl;
 }
 
 void BoxCollider::Update()
@@ -60,6 +59,7 @@ bool BoxCollider::IsCollide(shared_ptr<Collider>& other)
 		auto boundary = static_pointer_cast<BoxCollider>(other)->GetBoundingBox();
 		if (_boundingBox.Intersects(boundary)) {
 			_collidingVec = MathHelper::VectorAddition(_collidingVec, MathHelper::VectorSubtract(_boundingBox.Center, boundary.Center));
+			_collidingVec = MathHelper::VectorNormalize(_collidingVec);
 			_isOnColliding = true;
 			return true;
 		}

@@ -42,6 +42,7 @@ int GameApplication::Run()
 		// Otherwise, do animation/game stuff.
 		else
 		{
+			FixedUpdate();
 			Update();
 		}
 	}
@@ -60,6 +61,11 @@ bool GameApplication::Initialize()
 	INPUTM->Initialize();
 
 	return true;
+}
+
+void GameApplication::FixedUpdate()
+{
+	RENDER->FixedUpdate();
 }
 
 void GameApplication::Update()

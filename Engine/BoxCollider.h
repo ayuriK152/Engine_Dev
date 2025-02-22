@@ -9,6 +9,7 @@ public:
 	virtual ~BoxCollider();
 
 	virtual void Init()override;
+	virtual void FixedUpdate()override;
 	virtual void Update()override;
 
 public:
@@ -17,7 +18,6 @@ public:
 	BoundingOrientedBox GetBoundingBox() { return _boundingBox; }
 
 private:
-	
 	BoundingOrientedBox _boundingBox;
 };
 

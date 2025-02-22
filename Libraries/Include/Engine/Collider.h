@@ -17,9 +17,14 @@ public:
 	virtual bool IsCollide(shared_ptr<Collider>& other) = 0;
 
 	ColliderType GetColliderType() { return _colliderType; }
+	Vector3 GetCollidingVector() { return _collidingVec; }
+	bool IsOnColliding() { return _isOnColliding; }
 
 protected:
 	ColliderType _colliderType;
 	static vector<shared_ptr<Collider>> _colliders;
+
+	Vector3 _collidingVec;
+	bool _isOnColliding;
 };
 

@@ -8,6 +8,7 @@ public:
 
 public:
 	void Init();
+	void FixedUpdate();
 	void Update();
 	void Render();
 

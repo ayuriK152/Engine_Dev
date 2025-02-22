@@ -33,7 +33,7 @@ void TestScript::Init()
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
-	box->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
+	box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 5.0f));
 	box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
 	quad->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));

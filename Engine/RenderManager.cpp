@@ -24,6 +24,12 @@ void RenderManager::Init()
 	//BuildPrimitiveBatch();
 }
 
+void RenderManager::FixedUpdate()
+{
+	for (auto& o : _objects)
+		o->FixedUpdate();
+}
+
 void RenderManager::Update()
 {
 	for (auto& o : _objects)

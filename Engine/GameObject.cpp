@@ -31,6 +31,14 @@ void GameObject::Init()
 	}
 }
 
+void GameObject::FixedUpdate()
+{
+	for (auto& c : components)
+	{
+		c.second->FixedUpdate();
+	}
+}
+
 void GameObject::Update()
 {
 	if (!_isInitialized) {

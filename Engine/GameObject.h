@@ -17,6 +17,7 @@ public:
 	~GameObject();
 
 	void Init();
+	void FixedUpdate();
 	void Update();
 	void Render();
 
@@ -69,6 +70,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Camera;
 	if (is_same_v<T, Rigidbody>)
 		return ComponentType::Rigidbody;
+	if (is_same_v<T, Collider>)
+		return ComponentType::Collider;
 
 	return ComponentType::Undefined;
 }

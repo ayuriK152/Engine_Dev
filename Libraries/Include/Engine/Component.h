@@ -23,6 +23,7 @@ public:
 	virtual ~Component();
 
 	virtual void Init() { }
+	virtual void FixedUpdate() { }
 	virtual void Update() { }
 	virtual void Render() { }
 

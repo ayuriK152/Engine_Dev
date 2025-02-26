@@ -34,9 +34,9 @@ void TestScript::Init()
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
 	box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 5.0f));
-	box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+	box->GetTransform()->SetRotation(Vector3(45.0f, 0.0f, 0.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
-	quad->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.5f));
+	quad->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
 	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
 	quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
@@ -60,8 +60,8 @@ void TestScript::Update()
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 
-	if (INPUTM->IsKeyDown(KeyValue::V))
-		box->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 5.0f, 0.0f));
+	//if (INPUTM->IsKeyDown(KeyValue::V))
+	//	box->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 5.0f, 0.0f));
 
 	//if (INPUTM->IsKeyPress(KeyValue::V))
 	//	RENDER->SetCurrPSO("opaque_Wireframe");

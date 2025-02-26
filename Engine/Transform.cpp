@@ -149,6 +149,7 @@ void Transform::Rotate(const Vector3& angle)
 	_localRotation.y += XMConvertToRadians(angle.y);
 	_localRotation.z += XMConvertToRadians(angle.z);
 	UpdateTransform();
+	GetGameObject()->numFramesDirty++;
 }
 
 void Transform::Rotate(const XMVECTOR& angle)

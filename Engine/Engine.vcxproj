@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="DataStructures.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -140,6 +142,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Libraries\Lib\Engine\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Configuration)\</IntDir>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,6 +182,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

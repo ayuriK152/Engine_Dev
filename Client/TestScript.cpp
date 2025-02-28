@@ -3,6 +3,9 @@
 
 void TestScript::Init()
 {
+	assetLoader = make_shared<AssetLoader>();
+	assetLoader->ReadAssetFile(L"Miyu/miyu.fbx");
+
 	camera = make_shared <GameObject>();
 	camera->AddComponent(make_shared<Camera>());
 	RENDER->AddGameObject(camera);

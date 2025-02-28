@@ -40,3 +40,10 @@ void UniversalUtils::CalculateFrameStats()
 		timeElapsed += 1.0f;
 	}
 }
+
+string UniversalUtils::ToString(wstring s)
+{
+	string result;
+	result.assign(s.begin(), s.end());
+	return result;
+}

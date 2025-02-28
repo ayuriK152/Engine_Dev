@@ -4,6 +4,7 @@ class UniversalUtils
 {
 public:
 	static void CalculateFrameStats();
+	static string ToString(wstring s);
 };
 
 #ifndef ThrowIfFailed

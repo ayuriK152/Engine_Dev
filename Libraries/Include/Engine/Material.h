@@ -5,7 +5,8 @@ class Texture;
 
 struct MaterialConstants
 {
-	Color diffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Color ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Color diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 	ColorRGB fresnel = { 0.01f, 0.01f, 0.01f };
 	float roughness = 0.25f;
 
@@ -32,7 +33,8 @@ public:
 	int normalSrvHeapIndex;
 	int numFramesDirty;
 
-	Color diffuseAlbedo;
+	Color ambient;
+	Color diffuse;
 	ColorRGB fresnel;
 	float roughness;
 	XMFLOAT4X4 matTransform;

@@ -63,6 +63,7 @@ cbuffer cbPass : register(b1)
 
 cbuffer cbMaterial : register(b2)
 {
+    float4   gAmbient;
 	float4   gDiffuseAlbedo;
     float3   gFresnelR0;
     float    gRoughness;

@@ -23,7 +23,7 @@ void MeshRenderer::Update()
 		XMMATRIX matTransform = XMLoadFloat4x4(&_material->matTransform);
 
 		MaterialConstants matConstants;
-		matConstants.diffuseAlbedo = _material->diffuseAlbedo;
+		matConstants.diffuse = _material->diffuse;
 		matConstants.fresnel = _material->fresnel;
 		matConstants.roughness = _material->roughness;
 		XMStoreFloat4x4(&matConstants.matTransform, XMMatrixTranspose(matTransform));

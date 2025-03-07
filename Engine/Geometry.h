@@ -21,6 +21,9 @@ public:
 	void* GetIndexData() { return _indices.data(); }
 	UINT GetIndexCount() { return _indices.size(); }
 
+	void SetVertices(vector<Vertex> vertices);
+	void SetIndices(vector<UINT16> indices);
+
 public:
 	string name;
 

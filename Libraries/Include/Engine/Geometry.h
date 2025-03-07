@@ -13,6 +13,11 @@ public:
 class Geometry
 {
 public:
+	Geometry();
+	Geometry(vector<Vertex> vertices, vector<UINT16> indices);
+	~Geometry() = default;
+
+public:
 	vector<Vertex>& GetVertices() { return _vertices; }
 	void* GetVertexData() { return _vertices.data(); }
 	UINT GetVertexCount() { return _vertices.size(); }
@@ -24,6 +29,12 @@ public:
 	void SetVertices(vector<Vertex> vertices);
 	void SetIndices(vector<UINT16> indices);
 
+	UINT GetVertexOffset() { return _submeshVertexOffset; }
+	UINT GetIndexOffset() { return _submeshIndexOffset; }
+
+	void SetVertexOffset(UINT offset) { _submeshVertexOffset = offset; }
+	void SetIndexOffset(UINT offset) { _submeshIndexOffset = offset; }
+
 public:
 	string name;
 
@@ -31,6 +42,6 @@ private:
 	vector<Vertex> _vertices;
 	vector<UINT16> _indices;
 
-	UINT _submeshIndexOffset = 0;
 	UINT _submeshVertexOffset = 0;
+	UINT _submeshIndexOffset = 0;
 };

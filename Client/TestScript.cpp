@@ -5,16 +5,24 @@ void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
 	assetLoader->ReadAssetFile(L"Miyu/miyu.fbx");
+	RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
 
 	camera = make_shared <GameObject>();
 	camera->AddComponent(make_shared<Camera>());
 	RENDER->AddGameObject(camera);
 
+	miyu = make_shared<GameObject>();
+	miyu->meshName = "miyu";
+	miyu->AddComponent(make_shared<MeshRenderer>());
+	miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
+	miyu->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
+	RENDER->AddGameObject(miyu);
+
 	box = make_shared<GameObject>();
 	box->meshName = "box";
 	box->AddComponent(make_shared<MeshRenderer>());
-	box->AddComponent(make_shared<Rigidbody>());
-	box->AddComponent(make_shared<BoxCollider>());
+	//box->AddComponent(make_shared<Rigidbody>());
+	//box->AddComponent(make_shared<BoxCollider>());
 	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 	box->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(box);
@@ -29,7 +37,7 @@ void TestScript::Init()
 	auto quad = make_shared<GameObject>();
 	quad->meshName = "quad";
 	quad->AddComponent(make_shared<MeshRenderer>());
-	quad->AddComponent(make_shared<BoxCollider>());
+	//quad->AddComponent(make_shared<BoxCollider>());
 	quad->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicQuad"));
 	quad->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(quad);
@@ -43,7 +51,9 @@ void TestScript::Init()
 	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
 	quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
-	box->GetComponent<Rigidbody>()->isGravity = true;
+	miyu->GetTransform()->SetScale(Vector3(0.1f, 0.1f, 0.1f));
+
+	//box->GetComponent<Rigidbody>()->isGravity = true;
 }
 
 void TestScript::Update()
@@ -66,8 +76,8 @@ void TestScript::Update()
 	//if (INPUTM->IsKeyDown(KeyValue::V))
 	//	box->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 5.0f, 0.0f));
 
-	//if (INPUTM->IsKeyPress(KeyValue::V))
-	//	RENDER->SetCurrPSO("opaque_Wireframe");
-	//else
-	//	RENDER->SetCurrPSO("opaque_Solid");
+	if (INPUTM->IsKeyPress(KeyValue::V))
+		RENDER->SetCurrPSO("opaque_Wireframe");
+	else
+		RENDER->SetCurrPSO("opaque_Solid");
 }

@@ -6,6 +6,18 @@ Mesh::Mesh() : Super(ResourceType::Mesh)
 
 }
 
+Mesh::Mesh(vector<shared_ptr<Geometry>> geometry) : Super(ResourceType::Mesh)
+{
+	for (auto& geo : geometry)
+	{
+		shared_ptr<SubMesh> submesh = make_shared<SubMesh>(geo);
+		_submeshes.push_back(submesh);
+
+		_indexCount += submesh->GetIndexCount();
+		_vertices.insert(_vertices.begin(), submesh->GetVertices().begin(), submesh->GetVertices().end());
+	}
+}
+
 Mesh::~Mesh()
 {
 
@@ -16,10 +28,12 @@ void Mesh::CreateBasicCube()
 	CreateBasicCube(1.5f, 1.5f, 1.5f, 3);
 }
 
-void Mesh::CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions)
+void Mesh::CreateBasicCube(float width, float height, float depth, UINT numSubdivisions)
 {
-	_geometry = GeometryGenerator::CreateBox(width, height, depth, numSubdivisions);
-	CreateBuffer();
+	shared_ptr<Geometry> geo = GeometryGenerator::CreateBox(width, height, depth, numSubdivisions);
+	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
+	subMesh->CreateBuffer();
+	_submeshes.push_back(subMesh);
 }
 
 void Mesh::CreateBasicSphere()
@@ -27,19 +41,33 @@ void Mesh::CreateBasicSphere()
 	return CreateBasicSphere(1.0f, 1);
 }
 
-void Mesh::CreateBasicSphere(float radius, UINT32 numSubdivisions)
+void Mesh::CreateBasicSphere(float radius, UINT numSubdivisions)
 {
-	_geometry = GeometryGenerator::CreateGeosphere(radius, numSubdivisions);
-	CreateBuffer();
+	shared_ptr<Geometry> geo = GeometryGenerator::CreateGeosphere(radius, numSubdivisions);
+	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
+	subMesh->CreateBuffer();
+	_submeshes.push_back(subMesh);
 }
 
 void Mesh::CreateBasicQuad()
 {
-	_geometry = GeometryGenerator::CreateQuad();
+	shared_ptr<Geometry> geo = GeometryGenerator::CreateQuad();
+	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
+	subMesh->CreateBuffer();
+	_submeshes.push_back(subMesh);
+}
+
+SubMesh::SubMesh()
+{
+
+}
+
+SubMesh::SubMesh(shared_ptr<Geometry> geo) : _geometry(geo)
+{
 	CreateBuffer();
 }
 
-void Mesh::CreateBuffer()
+void SubMesh::CreateBuffer()
 {
 	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)_geometry->GetIndexCount() * sizeof(UINT16);

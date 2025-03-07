@@ -5,24 +5,19 @@
 struct Vertex;
 #pragma endregion
 
-class Mesh : public Resource
+class SubMesh
 {
-	using Super = Resource;
 public:
-	Mesh();
-	virtual ~Mesh();
+	SubMesh();
+	SubMesh(shared_ptr<Geometry> geo);
+	~SubMesh() = default;
 
+public:
 	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
 
 	vector<Vertex>& GetVertices() { return _geometry->GetVertices(); }
 	void* GetVertexData() { return _geometry->GetVertices().data(); }
 	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
-
-	void CreateBasicCube();
-	void CreateBasicCube(float width, float height, float depth, UINT32 numSubdivisions);
-	void CreateBasicSphere();
-	void CreateBasicSphere(float radius, UINT32 numSubdivisions);
-	void CreateBasicQuad();
 
 	D3D12_VERTEX_BUFFER_VIEW VertexBufferView()const
 	{
@@ -62,3 +57,32 @@ private:
 	shared_ptr<Geometry> _geometry;
 };
 
+class Mesh : public Resource
+{
+	using Super = Resource;
+public:
+	Mesh();
+	Mesh(vector<shared_ptr<Geometry>> geometry);
+	virtual ~Mesh();
+
+public:
+	UINT GetIndexCount() { return _indexCount; }
+
+	vector<Vertex>& GetVertices() { return _vertices; }
+	void* GetVertexData() { return _vertices.data(); }
+	UINT GetVertexCount() { return _vertices.size(); }
+
+	void CreateBasicCube();
+	void CreateBasicCube(float width, float height, float depth, UINT numSubdivisions);
+	void CreateBasicSphere();
+	void CreateBasicSphere(float radius, UINT numSubdivisions);
+	void CreateBasicQuad();
+
+	const vector<shared_ptr<SubMesh>> GetSubmeshes() { return _submeshes; }
+
+private:
+	vector<shared_ptr<SubMesh>> _submeshes;
+
+	UINT _indexCount = 0;
+	vector<Vertex> _vertices;
+};

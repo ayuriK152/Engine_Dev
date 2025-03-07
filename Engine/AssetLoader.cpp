@@ -29,7 +29,10 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	assert(_scene != nullptr);
 
+	_submeshVertexOffset = 0;
+	_submeshIndexOffset = 0;
 	ProcessNodes(_scene->mRootNode, _scene);
+	_mesh = make_shared<Mesh>(_geometry);
 }
 
 void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene)
@@ -37,7 +40,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene)
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		_geometrys.push_back(ProcessMesh(mesh, scene));
+		_geometry.push_back(ProcessMesh(mesh, scene));
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
@@ -84,5 +87,9 @@ shared_ptr<Geometry> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 
 	geometry->SetVertices(vertices);
 	geometry->SetIndices(indices);
+	geometry->SetVertexOffset(_submeshVertexOffset);
+	geometry->SetIndexOffset(_submeshIndexOffset);
+	_submeshVertexOffset += geometry->GetVertexCount();
+	_submeshIndexOffset += geometry->GetIndexCount();
 	return geometry;
 }

@@ -9,6 +9,8 @@ Transform::Transform() : Super(ComponentType::Transform)
 
 	_parent = nullptr;
 
+	_texTransform = MathHelper::Identity4x4();		// 반드시 수정
+
 	UpdateTransform();
 }
 

@@ -47,3 +47,10 @@ string UniversalUtils::ToString(wstring s)
 	result.assign(s.begin(), s.end());
 	return result;
 }
+
+wstring UniversalUtils::ToWString(string s)
+{
+	wstring result;
+	result.assign(s.begin(), s.end());
+	return result;
+}

@@ -24,9 +24,12 @@ void FrameResource::Update()
 		if (o->numFramesDirty > 0)
 		{
 			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
+			XMMATRIX texTransform = XMLoadFloat4x4(&o->GetTransform()->GetTexTransform());
+			texTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 
 			ObjectConstants objConstants;
 			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&objConstants.TexTransform, XMMatrixTranspose(texTransform));
 
 			objectCB->CopyData(o->objCBIndex, objConstants);
 

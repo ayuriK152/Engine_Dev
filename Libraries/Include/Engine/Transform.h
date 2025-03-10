@@ -58,6 +58,7 @@ public:
 	void LookAt(const Vector3& targetPos);
 
 	XMFLOAT4X4 GetWorldMatrix();
+	XMFLOAT4X4 GetTexTransform() { return _texTransform; }		// 반드시 수정
 
 	bool HasParent() { return _parent != nullptr; }
 
@@ -72,6 +73,7 @@ private:
 
 	XMFLOAT4X4 _matLocal;
 	XMFLOAT4X4 _matWorld;
+	XMFLOAT4X4 _texTransform;
 
 	shared_ptr<Transform> _parent;
 	vector<shared_ptr<Transform>> _childs;

@@ -4,8 +4,11 @@
 void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
-	assetLoader->ReadAssetFile(L"Miyu/miyu.fbx");
-	RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
+	{
+		assetLoader->ReadAssetFile(L"Miyu/miyu.fbx");
+		RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
+		//RESOURCE->Get<Material>(L"Miyu_Head")->SetTexture();
+	}
 
 	camera = make_shared <GameObject>();
 	camera->AddComponent(make_shared<Camera>());
@@ -15,7 +18,7 @@ void TestScript::Init()
 	miyu->meshName = "miyu";
 	miyu->AddComponent(make_shared<MeshRenderer>());
 	miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
-	miyu->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
+	miyu->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Miyu_Head"));
 	RENDER->AddGameObject(miyu);
 
 	box = make_shared<GameObject>();
@@ -51,7 +54,7 @@ void TestScript::Init()
 	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
 	quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
-	miyu->GetTransform()->SetScale(Vector3(0.1f, 0.1f, 0.1f));
+	miyu->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 
 	//box->GetComponent<Rigidbody>()->isGravity = true;
 }

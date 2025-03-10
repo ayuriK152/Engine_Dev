@@ -15,6 +15,7 @@ public:
 	int GetSRVHeapIndex() { return _srvHeapIndex; }
 
 	static int GetCount() { return _count; }
+	static bool IsTextureExists(wstring& fileName);
 
 public:
 	static int _count;

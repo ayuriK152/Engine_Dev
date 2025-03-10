@@ -10,6 +10,7 @@ public:
 
 public:
 	void ReadAssetFile(wstring file);
+	void ProcessMaterials(const aiScene* scene);
 	void ProcessNodes(aiNode* node, const aiScene* scene);
 	shared_ptr<Geometry> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 

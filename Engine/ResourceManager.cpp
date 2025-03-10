@@ -16,6 +16,7 @@ void ResourceManager::CreateDefaultResources()
 
 
 	//==========Texture==========
+	//auto tex = make_shared<Texture>(L"WoodCrate02.dds");
 	auto tex = make_shared<Texture>(L"white1x1.dds");
 	Add<Texture>(L"Tex_Default", tex);
 

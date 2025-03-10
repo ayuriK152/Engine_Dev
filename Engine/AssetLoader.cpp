@@ -31,8 +31,29 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	_submeshVertexOffset = 0;
 	_submeshIndexOffset = 0;
+	ProcessMaterials(_scene);
 	ProcessNodes(_scene->mRootNode, _scene);
 	_mesh = make_shared<Mesh>(_geometry);
+}
+
+void AssetLoader::ProcessMaterials(const aiScene* scene)
+{
+	for (UINT i = 0; i < scene->mNumMaterials; i++)
+	{
+		wstring matName;
+
+		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
+		matName = UniversalUtils::ToWString(matNameStr);
+
+		shared_ptr<Material> mat = make_shared<Material>(matNameStr, 0, 0, -1);
+		if (Texture::IsTextureExists(matName + L".dds"))
+		{
+			shared_ptr<Texture> texture = make_shared<Texture>(matName + L".dds");
+			RESOURCE->Add<Texture>(matName, texture);
+			mat->SetTexture(RESOURCE->Get<Texture>(matName));
+		}
+		RESOURCE->Add<Material>(matName, mat);
+	}
 }
 
 void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene)

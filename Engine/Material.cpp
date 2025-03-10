@@ -22,6 +22,8 @@ Material::Material() : Super(ResourceType::Material)
 Material::Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex) : Super(ResourceType::Material),
 	name(name), matCBIndex(matCBIndex), diffuseSrvHeapIndex(diffuseSrvHeapIndex), normalSrvHeapIndex(normalSrvHeapIndex)
 {
+	_count++;
+
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 
 	diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };

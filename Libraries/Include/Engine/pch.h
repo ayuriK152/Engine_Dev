@@ -15,6 +15,7 @@
 #include <map>
 #include <unordered_map>
 #include <algorithm>
+#include <filesystem> 
 using namespace std;
 
 // Win
@@ -44,11 +45,15 @@ using namespace Microsoft::WRL;
 
 // External Libararies
 #include "magic_enum/magic_enum.hpp"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "DirectXTK/DirectXTK12.lib")
+#pragma comment(lib, "assimp/assimp-vc143-mtd.lib")
 
 #include "Descriptors.h"
 #include "DataStructures.h"
@@ -57,6 +62,7 @@ using namespace Microsoft::WRL;
 #include "DebugHelper.h"
 #include "DXUtil.h"
 #include "GeometryGenerator.h"
+#include "AssetLoader.h"
 
 #include "IExecute.h"
 #include "Component.h"

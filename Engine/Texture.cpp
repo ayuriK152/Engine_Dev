@@ -1,13 +1,21 @@
 #include "pch.h"
 #include "Texture.h"
 
+bool Texture::IsTextureExists(wstring& fileName)
+{
+	if (filesystem::exists(L"..\\Resources\\Textures\\" + fileName))
+		return true;
+	else
+		return false;
+}
+
 int Texture::_count = 0;
 
 Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 {
  	_srvHeapIndex = _count++;
 	_name = fileName;
-	_path = L"Textures\\" + fileName;
+	_path = L"..\\Resources\\Textures\\" + fileName;
 	Load(_path);
 	CreateSRV();
 }

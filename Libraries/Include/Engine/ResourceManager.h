@@ -15,6 +15,9 @@ public:
 	shared_ptr<T> Get(const wstring& key);
 
 	template<typename T>
+	const map<wstring, shared_ptr<Resource>> GetByType();
+
+	template<typename T>
 	ResourceType GetResourceType();
 
 	void CreateDefaultResources();
@@ -51,6 +54,20 @@ ResourceManager::Get(const wstring& key)
 		return static_pointer_cast<T>(keyObjMap[key]);
 
 	return nullptr;
+}
+
+template<typename T>
+const map<wstring, shared_ptr<Resource>>
+ResourceManager::GetByType()
+{
+	ResourceType type = GetResourceType<T>();
+	return _resources[static_cast<UINT8>(type)];
+	/*
+	if (type != ResourceType::Undefined)
+		return _resources[static_cast<UINT8>(type)];
+
+	return nullptr;
+	*/
 }
 
 template<typename T>

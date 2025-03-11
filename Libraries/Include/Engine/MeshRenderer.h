@@ -15,12 +15,8 @@ public:
 
 	shared_ptr<Mesh> GetMesh() { return _mesh; }
 	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
-	void SetMaterial(shared_ptr<Material> material) { _material = material; }
 
 private:
 	shared_ptr<Mesh> _mesh;
-	shared_ptr<Material> _material;
-
-	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 };
 

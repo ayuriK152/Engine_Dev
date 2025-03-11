@@ -5,9 +5,9 @@ int Material::_count = 0;
 
 Material::Material() : Super(ResourceType::Material)
 {
-	_count++;
+	//_count++;
+	matCBIndex = _count++;
 
-	matCBIndex = -1;
 	diffuseSrvHeapIndex = -1;
 	normalSrvHeapIndex = -1;
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
@@ -22,7 +22,8 @@ Material::Material() : Super(ResourceType::Material)
 Material::Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex) : Super(ResourceType::Material),
 	name(name), matCBIndex(matCBIndex), diffuseSrvHeapIndex(diffuseSrvHeapIndex), normalSrvHeapIndex(normalSrvHeapIndex)
 {
-	_count++;
+	//_count++;
+	matCBIndex = _count++;
 
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 

@@ -21,6 +21,11 @@ void ResourceManager::CreateDefaultResources()
 	Add<Texture>(L"Tex_Default", tex);
 
 
+	//==========Material==========
+	auto defaultMat = make_shared<Material>("Default", 0, 0, -1);
+	Add<Material>(L"Mat_Default", defaultMat);
+
+
 	//==========Mesh==========
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>();
 	boxMesh->CreateBasicCube();
@@ -33,9 +38,4 @@ void ResourceManager::CreateDefaultResources()
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>();
 	quadMesh->CreateBasicQuad();
 	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
-
-
-	//==========Material==========
-	auto defaultMat = make_shared<Material>("Default", 0, 0, -1);
-	Add<Material>(L"Mat_Default", defaultMat);
 }

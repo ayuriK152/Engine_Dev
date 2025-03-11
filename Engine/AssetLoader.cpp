@@ -33,17 +33,15 @@ void AssetLoader::ReadAssetFile(wstring file)
 	_submeshIndexOffset = 0;
 	ProcessMaterials(_scene);
 	ProcessNodes(_scene->mRootNode, _scene);
-	_mesh = make_shared<Mesh>(_geometry);
+	_mesh = make_shared<Mesh>(_subMeshes);
 }
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
 {
 	for (UINT i = 0; i < scene->mNumMaterials; i++)
 	{
-		wstring matName;
-
 		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
-		matName = UniversalUtils::ToWString(matNameStr);
+		wstring matName = GetAIMaterialName(scene, i);
 
 		shared_ptr<Material> mat = make_shared<Material>(matNameStr, 0, 0, -1);
 		if (Texture::IsTextureExists(matName + L".dds"))
@@ -61,7 +59,8 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene)
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		_geometry.push_back(ProcessMesh(mesh, scene));
+		//_geometry.push_back(ProcessMesh(mesh, scene));
+		_subMeshes.push_back(ProcessMesh(mesh, scene));
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
@@ -70,7 +69,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene)
 	}
 }
 
-shared_ptr<Geometry> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
 	shared_ptr<Geometry> geometry = make_shared<Geometry>();
 
@@ -112,5 +111,14 @@ shared_ptr<Geometry> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 	geometry->SetIndexOffset(_submeshIndexOffset);
 	_submeshVertexOffset += geometry->GetVertexCount();
 	_submeshIndexOffset += geometry->GetIndexCount();
-	return geometry;
+
+	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geometry);
+	subMesh->SetMaterial(RESOURCE->Get<Material>(GetAIMaterialName(scene, mesh->mMaterialIndex)));
+	return subMesh;
+}
+
+wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
+{
+	string matNameStr(scene->mMaterials[index]->GetName().C_Str());
+	return UniversalUtils::ToWString(matNameStr);
 }

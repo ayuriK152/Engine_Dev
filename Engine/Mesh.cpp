@@ -18,6 +18,11 @@ Mesh::Mesh(vector<shared_ptr<Geometry>> geometry) : Super(ResourceType::Mesh)
 	}
 }
 
+Mesh::Mesh(vector<shared_ptr<SubMesh>> subMeshes) : Super(ResourceType::Mesh), _submeshes(subMeshes)
+{
+
+}
+
 Mesh::~Mesh()
 {
 
@@ -59,11 +64,12 @@ void Mesh::CreateBasicQuad()
 
 SubMesh::SubMesh()
 {
-
+	_material = RESOURCE->Get<Material>(L"Mat_Default");
 }
 
 SubMesh::SubMesh(shared_ptr<Geometry> geo) : _geometry(geo)
 {
+	_material = RESOURCE->Get<Material>(L"Mat_Default");
 	CreateBuffer();
 }
 

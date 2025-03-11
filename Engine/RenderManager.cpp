@@ -21,6 +21,7 @@ void RenderManager::Init()
 		BuildPSO("opaque_Wireframe", opaqueWireframe);
 		SetCurrPSO("opaque_Solid");
 	}
+	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
 	//BuildPrimitiveBatch();
 }
 
@@ -35,6 +36,7 @@ void RenderManager::Update()
 	for (auto& o : _objects)
 		o->Update();
 	UpdateMainCB();
+	UpdateMaterialCB();
 }
 
 void RenderManager::Render()
@@ -262,6 +264,29 @@ void RenderManager::UpdateMainCB()
 
 	auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
 	currPassCB->CopyData(0, _mainPassCB);
+}
+
+void RenderManager::UpdateMaterialCB()
+{
+	auto materials = RESOURCE->GetByType<Material>();
+	for (auto& m : materials)
+	{
+		shared_ptr<Material> mat = static_pointer_cast<Material>(m.second);
+		if (mat->numFramesDirty > 0)
+		{
+			XMMATRIX matTransform = XMLoadFloat4x4(&mat->matTransform);
+
+			MaterialConstants matConstants;
+			matConstants.diffuse = mat->diffuse;
+			matConstants.fresnel = mat->fresnel;
+			matConstants.roughness = mat->roughness;
+			XMStoreFloat4x4(&matConstants.matTransform, XMMatrixTranspose(matTransform));
+
+			_materialCB->CopyData(mat->matCBIndex, matConstants);
+
+			mat->numFramesDirty--;
+		}
+	}
 }
 
 std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> RenderManager::GetStaticSamplers()

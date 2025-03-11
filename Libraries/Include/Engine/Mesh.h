@@ -19,6 +19,9 @@ public:
 	void* GetVertexData() { return _geometry->GetVertices().data(); }
 	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
 
+	void SetMaterial(shared_ptr<Material> mat) { _material = mat; }
+	const shared_ptr<Material> GetMaterial() { return _material; }
+
 	D3D12_VERTEX_BUFFER_VIEW VertexBufferView()const
 	{
 		D3D12_VERTEX_BUFFER_VIEW vbv;
@@ -55,6 +58,7 @@ public:
 
 private:
 	shared_ptr<Geometry> _geometry;
+	shared_ptr<Material> _material;
 };
 
 class Mesh : public Resource
@@ -63,6 +67,7 @@ class Mesh : public Resource
 public:
 	Mesh();
 	Mesh(vector<shared_ptr<Geometry>> geometry);
+	Mesh(vector<shared_ptr<SubMesh>> subMeshes);
 	virtual ~Mesh();
 
 public:

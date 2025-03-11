@@ -17,6 +17,8 @@ public:
 	
 	vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
+	unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
+
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void SetCurrPSO(string name);
@@ -30,6 +32,7 @@ private:
 	void BuildPrimitiveBatch();
 
 	void UpdateMainCB();
+	void UpdateMaterialCB();
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 
@@ -45,6 +48,7 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	PassConstants _mainPassCB;
+	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 	vector<shared_ptr<GameObject>> _objects;
 };
 

@@ -3,7 +3,7 @@
 
 MeshRenderer::MeshRenderer() : Super(ComponentType::MeshRenderer)
 {
-	//_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)1, true);
+
 }
 
 MeshRenderer::~MeshRenderer()
@@ -18,27 +18,7 @@ void MeshRenderer::Init()
 
 void MeshRenderer::Update()
 {
-	/*
-	auto materials = RESOURCE->GetByType<Material>();
-	for (auto& m : materials)
-	{
-		shared_ptr<Material> mat = static_pointer_cast<Material>(m.second);
-		if (mat->numFramesDirty > 0)
-		{
-			XMMATRIX matTransform = XMLoadFloat4x4(&mat->matTransform);
 
-			MaterialConstants matConstants;
-			matConstants.diffuse = mat->diffuse;
-			matConstants.fresnel = mat->fresnel;
-			matConstants.roughness = mat->roughness;
-			XMStoreFloat4x4(&matConstants.matTransform, XMMatrixTranspose(matTransform));
-
-			_materialCB->CopyData(mat->matCBIndex, matConstants);
-
-			mat->numFramesDirty--;
-		}
-	}
-	*/
 }
 
 void MeshRenderer::Render()

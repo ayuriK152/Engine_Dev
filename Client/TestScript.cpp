@@ -18,7 +18,6 @@ void TestScript::Init()
 	miyu->meshName = "miyu";
 	miyu->AddComponent(make_shared<MeshRenderer>());
 	miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
-	//miyu->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Miyu_Head"));
 	RENDER->AddGameObject(miyu);
 
 	box = make_shared<GameObject>();
@@ -27,14 +26,12 @@ void TestScript::Init()
 	//box->AddComponent(make_shared<Rigidbody>());
 	//box->AddComponent(make_shared<BoxCollider>());
 	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-	box->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(box);
 
 	auto sphere = make_shared<GameObject>();
 	sphere->meshName = "sphere";
 	sphere->AddComponent(make_shared<MeshRenderer>());
 	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	sphere->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(sphere);
 
 	auto quad = make_shared<GameObject>();
@@ -42,7 +39,6 @@ void TestScript::Init()
 	quad->AddComponent(make_shared<MeshRenderer>());
 	//quad->AddComponent(make_shared<BoxCollider>());
 	quad->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicQuad"));
-	quad->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
 	RENDER->AddGameObject(quad);
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));

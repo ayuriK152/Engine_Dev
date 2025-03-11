@@ -43,7 +43,7 @@ void Mesh::CreateBasicCube(float width, float height, float depth, UINT numSubdi
 
 void Mesh::CreateBasicSphere()
 {
-	return CreateBasicSphere(1.0f, 1);
+	return CreateBasicSphere(1.0f, 3);
 }
 
 void Mesh::CreateBasicSphere(float radius, UINT numSubdivisions)

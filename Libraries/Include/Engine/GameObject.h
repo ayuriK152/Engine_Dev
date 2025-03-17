@@ -48,6 +48,7 @@ public:
 
 private:
 	bool _isInitialized;
+	string _psoName;
 };
 
 template<typename T>

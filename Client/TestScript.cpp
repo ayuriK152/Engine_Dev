@@ -76,7 +76,7 @@ void TestScript::Update()
 	//	box->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 5.0f, 0.0f));
 
 	if (INPUTM->IsKeyPress(KeyValue::V))
-		RENDER->SetCurrPSO("opaque_Wireframe");
+		RENDER->SetCurrPSO(WIREFRAME);
 	else
-		RENDER->SetCurrPSO("opaque_Solid");
+		RENDER->SetCurrPSO(OPAQUE_SOLID);
 }

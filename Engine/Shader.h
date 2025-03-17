@@ -11,7 +11,7 @@ class Shader : public Resource
 {
 	using Super = Resource;
 public:
-	Shader(wstring fileName, ShaderType shaderType);
+	Shader(wstring fileName, D3D_SHADER_MACRO* macros, ShaderType shaderType);
 	~Shader();
 
 	ComPtr<ID3DBlob> GetBlob();
@@ -19,6 +19,7 @@ public:
 	virtual void Load(const wstring& path) override;
 
 private:
+	D3D_SHADER_MACRO* _macros;
 	ShaderType _shaderType;
 	ComPtr<ID3DBlob> _blob;
 };

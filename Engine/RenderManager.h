@@ -1,5 +1,9 @@
 #pragma once
 
+#define		OPAQUE_SOLID	"opaque_solid"
+#define		OPAQUE_SKINNED	"opaque_skinned"
+#define		WIREFRAME		"wireframe"
+
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
@@ -19,9 +23,10 @@ public:
 	ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
 	unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void SetCurrPSO(string name);
+	void SetDefaultPSO();
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
@@ -40,10 +45,12 @@ private:
 	ComPtr<ID3D12RootSignature> _rootSignature;
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 
 	unique_ptr<PrimitiveBatch<DirectX::VertexPositionColor>> _primitiveBatch;
 	unique_ptr<BasicEffect> _lineEffect;
 
+	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	ComPtr<ID3D12PipelineState> _currPSO;
 

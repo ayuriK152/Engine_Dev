@@ -14,12 +14,14 @@ void RenderManager::Init()
 	RESOURCE->CreateDefaultResources();
 
 	{
-		auto opaqueSolid = CreatePSODesc(L"standardVS", L"opaquePS");
+		auto opaqueSolid = CreatePSODesc(_inputLayout, L"standardVS", L"opaquePS");
+		auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, L"skinnedVS", L"opaquePS");
 		auto opaqueWireframe = opaqueSolid;
 		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-		BuildPSO("opaque_Solid", opaqueSolid);
-		BuildPSO("opaque_Wireframe", opaqueWireframe);
-		SetCurrPSO("opaque_Solid");
+		BuildPSO(OPAQUE_SOLID, opaqueSolid);
+		BuildPSO(OPAQUE_SKINNED, opaqueSkinned);
+		BuildPSO(WIREFRAME, opaqueWireframe);
+		SetDefaultPSO();
 	}
 	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
 	//BuildPrimitiveBatch();
@@ -61,12 +63,12 @@ void RenderManager::Render()
 	//_primitiveBatch->End();
 }
 
-D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
+D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
 	AppDesc appDesc = GRAPHIC->GetAppDesc();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	psoDesc.InputLayout = { _inputLayout.data(), (UINT)_inputLayout.size() };
+	psoDesc.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
 	psoDesc.pRootSignature = _rootSignature.Get();
 
 	// VS, PS is necessary!!!!!!!!
@@ -137,6 +139,13 @@ void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC pso
 void RenderManager::SetCurrPSO(string name)
 {
 	_currPSO = _PSOs[name];
+	_isPSOFixed = true;
+}
+
+void RenderManager::SetDefaultPSO()
+{
+	_currPSO = _PSOs[OPAQUE_SOLID];
+	_isPSOFixed = false;
 }
 
 shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
@@ -153,12 +162,13 @@ void RenderManager::BuildRootSignature()
 	CD3DX12_DESCRIPTOR_RANGE texTable;
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[5];
 
 	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[1].InitAsConstantBufferView(0);
 	slotRootParameter[2].InitAsConstantBufferView(1);
 	slotRootParameter[3].InitAsConstantBufferView(2);
+	slotRootParameter[4].InitAsConstantBufferView(3);
 
 	auto staticSamplers = GetStaticSamplers();
 
@@ -191,6 +201,16 @@ void RenderManager::BuildInputLayout()
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+
+	_skinnedInputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "BONEINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 

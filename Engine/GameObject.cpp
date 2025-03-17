@@ -41,6 +41,7 @@ void GameObject::FixedUpdate()
 
 void GameObject::Update()
 {
+	
 	if (!_isInitialized) {
 		Init();
 		_isInitialized = true;

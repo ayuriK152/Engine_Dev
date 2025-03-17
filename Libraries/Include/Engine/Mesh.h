@@ -45,6 +45,8 @@ public:
 	void CreateBuffer();
 
 public:
+	string name;
+
 	ComPtr<ID3D12Resource> vertexBufferGPU = nullptr;
 	ComPtr<ID3D12Resource> indexBufferGPU = nullptr;
 
@@ -85,8 +87,12 @@ public:
 
 	const vector<shared_ptr<SubMesh>> GetSubmeshes() { return _submeshes; }
 
+	void SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones);
+
 private:
 	vector<shared_ptr<SubMesh>> _submeshes;
+	map<string, shared_ptr<Node>> _nodes;
+	map<string, shared_ptr<Bone>> _bones;
 
 	UINT _indexCount = 0;
 	vector<Vertex> _vertices;

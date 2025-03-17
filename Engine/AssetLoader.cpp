@@ -31,9 +31,15 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	_submeshVertexOffset = 0;
 	_submeshIndexOffset = 0;
+	auto anim = _scene->mAnimations;
 	ProcessMaterials(_scene);
-	ProcessNodes(_scene->mRootNode, _scene);
+	ProcessNodes(_scene->mRootNode, _scene, nullptr);
 	_mesh = make_shared<Mesh>(_subMeshes);
+	if (_bones.size() > 0)
+	{
+		MapBones();
+		_mesh->SetSkinnedMeshData(_nodes, _bones);
+	}
 }
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
@@ -54,18 +60,60 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 	}
 }
 
-void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene)
+void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode)
 {
+	// 노드 저장
+	shared_ptr<Node> currNode = make_shared<Node>();
+	currNode->name = node->mName.C_Str();
+	currNode->id = _nodes.size();
+	currNode->parent = parentNode;
+	currNode->transform = ConvertToXMFLOAT4X4(node->mTransformation);
+	if (currNode->parent != nullptr)
+	{
+		// 부모 트랜스폼 곱해주는 기능 추가
+	}
+	
+	_nodes.insert({ currNode->name, currNode });
+
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
+		// 메시 기하정보 로드
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		//_geometry.push_back(ProcessMesh(mesh, scene));
+		currNode->submeshIndices.push_back(_subMeshes.size());
 		_subMeshes.push_back(ProcessMesh(mesh, scene));
+
+		// 메시 본 로드 (있는 경우에만)
+		if (mesh->HasBones())
+		{
+			for (int i = 0; i < mesh->mNumBones; i++)
+			{
+				aiBone* currentBone = mesh->mBones[i];
+				// 본 중복 확인, 본 이름과 노드 검증
+				if (!_bones.contains(currentBone->mName.C_Str()))
+				{
+					shared_ptr<Bone> bone = make_shared<Bone>();
+					bone->name = mesh->mBones[i]->mName.C_Str();
+					bone->transform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
+					_bones.insert({ bone->name, bone });
+				}
+			}
+		}
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNodes(node->mChildren[i], scene);
+		ProcessNodes(node->mChildren[i], scene, currNode);
+	}
+}
+
+void AssetLoader::MapBones()
+{
+	for (auto bone = _bones.begin(); bone != _bones.end(); bone++)
+	{
+		shared_ptr<Node> node = _nodes[bone->first];
+		if (node == nullptr)
+			bone->second->node = node;
+		bone->second->node = node;
 	}
 }
 
@@ -105,6 +153,25 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 
+	// 본 가중치 여부 확인 후 추가
+	if (mesh->HasBones())
+	{
+		vector<BoneWeight> weights;
+		for (int i = 0; i < mesh->mNumBones; i++)
+		{
+			aiBone* currentBone = mesh->mBones[i];
+			for (int j = 0; j < currentBone->mNumWeights; j++)
+			{
+				BoneWeight weight;
+				weight.vertexIndex = currentBone->mWeights[j].mVertexId;
+				weight.weight = currentBone->mWeights[j].mWeight;
+				vertices[currentBone->mWeights[j].mVertexId].AddWeights(weight);
+
+				weights.push_back(weight);
+			}
+		}
+	}
+
 	geometry->SetVertices(vertices);
 	geometry->SetIndices(indices);
 	geometry->SetVertexOffset(_submeshVertexOffset);
@@ -113,10 +180,10 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	_submeshIndexOffset += geometry->GetIndexCount();
 
 	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geometry);
+	subMesh->name = mesh->mName.C_Str();
 	subMesh->SetMaterial(RESOURCE->Get<Material>(GetAIMaterialName(scene, mesh->mMaterialIndex)));
 	return subMesh;
 }
-
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 {
 	string matNameStr(scene->mMaterials[index]->GetName().C_Str());

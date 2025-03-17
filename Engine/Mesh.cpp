@@ -62,6 +62,12 @@ void Mesh::CreateBasicQuad()
 	_submeshes.push_back(subMesh);
 }
 
+void Mesh::SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones)
+{
+	_nodes = nodes;
+	_bones = bones;
+}
+
 SubMesh::SubMesh()
 {
 	_material = RESOURCE->Get<Material>(L"Mat_Default");

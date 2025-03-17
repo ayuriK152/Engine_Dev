@@ -76,6 +76,10 @@ struct VertexIn
     float3 NormalL : NORMAL;
     float3 Tangent : TANGENT;
 	float2 TexC    : TEXCOORD;
+#ifdef SKINNED
+    float4 BoneWeights : WEIGHTS;
+    uint4 BoneIndices  : BONEINDICES;
+#endif
 };
 
 struct VertexOut
@@ -89,6 +93,12 @@ struct VertexOut
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout = (VertexOut)0.0f;
+
+#ifdef SKINNED
+    float3 posL = float3(0.0f, 0.0f, 0.0f);
+    float3 normalL = float3(0.0f, 0.0f, 0.0f);
+    float3 tangentL = float3(0.0f, 0.0f, 0.0f);
+#endif
 	
     // Transform to world space.
     float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);

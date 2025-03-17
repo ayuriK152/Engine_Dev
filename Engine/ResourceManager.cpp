@@ -9,9 +9,16 @@ ResourceManager::~ResourceManager()
 void ResourceManager::CreateDefaultResources()
 {
 	//==========Shader==========
-	auto stdVS = make_shared<Shader>(L"Default.hlsl", ShaderType::VS);
+	D3D_SHADER_MACRO skinnedDefines[] =
+	{
+		"SKINNED", "1", NULL, NULL
+	};
+
+	auto stdVS = make_shared<Shader>(L"Default.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"standardVS", stdVS);
-	auto opaquePS = make_shared<Shader>(L"Default.hlsl", ShaderType::PS);
+	auto skinnedVS = make_shared<Shader>(L"Default.hlsl", skinnedDefines, ShaderType::VS);
+	Add<Shader>(L"skinnedVS", skinnedVS);
+	auto opaquePS = make_shared<Shader>(L"Default.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"opaquePS", opaquePS);
 
 

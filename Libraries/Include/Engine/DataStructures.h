@@ -3,6 +3,30 @@
 
 class Geometry;
 
+struct Node
+{
+	string name;
+	UINT id;
+	shared_ptr<Node> parent;
+	XMFLOAT4X4 transform;
+	XMFLOAT4X4 parentTransform;
+
+	vector<UINT> submeshIndices;
+};
+
+struct Bone
+{
+	string name;
+	shared_ptr<Node> node;
+	XMFLOAT4X4 transform;
+};
+
+struct BoneWeight
+{
+	UINT vertexIndex;
+	float weight;
+};
+
 struct Vertex
 {
 	Vertex() {}
@@ -25,8 +49,23 @@ struct Vertex
 		Tangent(tx, ty, tz),
 		TexC(u, v) {}
 
+	void AddWeights(BoneWeight weight)
+	{
+		boneIndices.w = boneIndices.z;
+		boneIndices.z = boneIndices.y;
+		boneIndices.y = boneIndices.x;
+
+		boneWeights.w = boneWeights.z;
+		boneWeights.z = boneWeights.y;
+		boneWeights.y = boneWeights.x;
+
+		boneWeights.x = weight.weight;
+	}
+
 	Vector3 Position;
 	Vector3 Normal;
 	Vector3 Tangent;
 	Vector2 TexC;
+	Vector4 boneIndices;
+	Vector4 boneWeights;
 };

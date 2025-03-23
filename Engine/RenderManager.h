@@ -1,8 +1,8 @@
 #pragma once
 
-#define		OPAQUE_SOLID	"opaque_solid"
-#define		OPAQUE_SKINNED	"opaque_skinned"
-#define		WIREFRAME		"wireframe"
+#define		PSO_OPAQUE_SOLID	"opaque_solid"
+#define		PSO_OPAQUE_SKINNED	"opaque_skinned"
+#define		PSO_WIREFRAME		"wireframe"
 
 class RenderManager
 {

@@ -18,13 +18,12 @@ void RenderManager::Init()
 		auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, L"skinnedVS", L"opaquePS");
 		auto opaqueWireframe = opaqueSolid;
 		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-		BuildPSO(OPAQUE_SOLID, opaqueSolid);
-		BuildPSO(OPAQUE_SKINNED, opaqueSkinned);
-		BuildPSO(WIREFRAME, opaqueWireframe);
+		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
+		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
+		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 		SetDefaultPSO();
 	}
 	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
-	//BuildPrimitiveBatch();
 }
 
 void RenderManager::FixedUpdate()
@@ -51,16 +50,28 @@ void RenderManager::Render()
 	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
 
-	//For Debug-------------
-	//_lineEffect->Apply(GRAPHIC->GetCommandList().Get());
-
-	//_primitiveBatch->Begin(GRAPHIC->GetCommandList().Get());
-	//----------------------
-
-	for (int i = 0; i < _objects.size(); i++)
-		_objects[i]->Render();
-
-	//_primitiveBatch->End();
+	if (_isPSOFixed)
+	{
+		GRAPHIC->GetCommandList()->SetPipelineState(_currPSO.Get());
+		for (int i = 0; i < _objects.size(); i++)
+			_objects[i]->Render();
+	}
+	else
+	{
+		map<string, vector<shared_ptr<GameObject>>> sortedObjects;
+		for (int i = 0; i < _objects.size(); i++)
+		{
+			if (!sortedObjects.contains(_objects[i]->psoName))
+				sortedObjects.insert({ _objects[i]->psoName, { } });
+			sortedObjects[_objects[i]->psoName].push_back(_objects[i]);
+		}
+		for (auto& p : sortedObjects)
+		{
+			GRAPHIC->GetCommandList()->SetPipelineState(_PSOs[p.first].Get());
+			for (int i = 0; i < p.second.size(); i++)
+				p.second[i]->Render();
+		}
+	}
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
@@ -144,7 +155,7 @@ void RenderManager::SetCurrPSO(string name)
 
 void RenderManager::SetDefaultPSO()
 {
-	_currPSO = _PSOs[OPAQUE_SOLID];
+	_currPSO = _PSOs[PSO_OPAQUE_SOLID];
 	_isPSOFixed = false;
 }
 
@@ -162,13 +173,12 @@ void RenderManager::BuildRootSignature()
 	CD3DX12_DESCRIPTOR_RANGE texTable;
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[5];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
 
 	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[1].InitAsConstantBufferView(0);
 	slotRootParameter[2].InitAsConstantBufferView(1);
 	slotRootParameter[3].InitAsConstantBufferView(2);
-	slotRootParameter[4].InitAsConstantBufferView(3);
 
 	auto staticSamplers = GetStaticSamplers();
 
@@ -209,15 +219,15 @@ void RenderManager::BuildInputLayout()
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "BONEINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 
 void RenderManager::BuildSRVDescriptorHeap()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 20;
+	srvHeapDesc.NumDescriptors = 30;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));

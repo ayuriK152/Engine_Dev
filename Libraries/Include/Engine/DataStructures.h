@@ -51,9 +51,9 @@ struct Vertex
 
 	void AddWeights(BoneWeight weight)
 	{
-		boneIndices.w = boneIndices.z;
-		boneIndices.z = boneIndices.y;
-		boneIndices.y = boneIndices.x;
+		for (int i = 3; i > 0; i--)
+			boneIndices[i] = boneIndices[i - 1];
+		boneIndices[0] = weight.vertexIndex;
 
 		boneWeights.w = boneWeights.z;
 		boneWeights.z = boneWeights.y;
@@ -66,6 +66,6 @@ struct Vertex
 	Vector3 Normal;
 	Vector3 Tangent;
 	Vector2 TexC;
-	Vector4 boneIndices;
 	Vector4 boneWeights;
+	UINT boneIndices[4];
 };

@@ -7,6 +7,8 @@ class Component;
 class MeshRenderer;
 class Transform;
 class Camera;
+class Rigidbody;
+class Collider;
 #pragma endregion
 
 
@@ -36,6 +38,7 @@ public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
 	string meshName;
+	string psoName;
 
 	UINT objCBIndex;
 	UINT indexCount;
@@ -48,7 +51,6 @@ public:
 
 private:
 	bool _isInitialized;
-	string _psoName;
 };
 
 template<typename T>

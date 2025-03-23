@@ -3,11 +3,10 @@
 
 GameObject::GameObject()
 {
-	//world = MathHelper::Identity4x4();
-
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	meshName = "";
+	psoName = PSO_OPAQUE_SOLID;
 
 	objCBIndex = -1;
 	indexCount = 0;

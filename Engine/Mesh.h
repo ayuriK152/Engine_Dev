@@ -46,12 +46,16 @@ public:
 
 public:
 	string name;
+	UINT id;
 
 	ComPtr<ID3D12Resource> vertexBufferGPU = nullptr;
 	ComPtr<ID3D12Resource> indexBufferGPU = nullptr;
 
 	ComPtr<ID3D12Resource> vertexBufferUploader = nullptr;
 	ComPtr<ID3D12Resource> indexBufferUploader = nullptr;
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 	UINT vertexByteStride = 0;
 	UINT vertexBufferByteSize = 0;
@@ -61,6 +65,8 @@ public:
 private:
 	shared_ptr<Geometry> _geometry;
 	shared_ptr<Material> _material;
+
+	static long _totalByte;
 };
 
 class Mesh : public Resource

@@ -16,6 +16,7 @@ void TestScript::Init()
 
 	miyu = make_shared<GameObject>();
 	miyu->meshName = "miyu";
+	miyu->psoName = PSO_OPAQUE_SKINNED;
 	miyu->AddComponent(make_shared<MeshRenderer>());
 	miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
 	RENDER->AddGameObject(miyu);
@@ -25,30 +26,30 @@ void TestScript::Init()
 	box->AddComponent(make_shared<MeshRenderer>());
 	//box->AddComponent(make_shared<Rigidbody>());
 	//box->AddComponent(make_shared<BoxCollider>());
-	box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-	RENDER->AddGameObject(box);
+	//box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+	//RENDER->AddGameObject(box);
 
 	auto sphere = make_shared<GameObject>();
 	sphere->meshName = "sphere";
 	sphere->AddComponent(make_shared<MeshRenderer>());
-	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	RENDER->AddGameObject(sphere);
+	//sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+	//RENDER->AddGameObject(sphere);
 
 	auto quad = make_shared<GameObject>();
 	quad->meshName = "quad";
 	quad->AddComponent(make_shared<MeshRenderer>());
 	//quad->AddComponent(make_shared<BoxCollider>());
-	quad->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicQuad"));
-	RENDER->AddGameObject(quad);
+	//quad->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicQuad"));
+	//RENDER->AddGameObject(quad);
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 0.0f, 10.0f));
-	box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 5.0f));
-	box->GetTransform()->SetRotation(Vector3(45.0f, 0.0f, 0.0f));
-	sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
-	quad->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
-	quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
-	quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+	//box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 5.0f));
+	//box->GetTransform()->SetRotation(Vector3(45.0f, 0.0f, 0.0f));
+	//sphere->GetTransform()->SetPosition(Vector3(3.0f, 0.0f, 10.0f));
+	//quad->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 5.0f));
+	//quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
+	//quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
 	miyu->GetTransform()->SetScale(Vector3(0.02f, 0.02f, 0.02f));
 
@@ -58,6 +59,7 @@ void TestScript::Init()
 void TestScript::Update()
 {
 	//camera->GetTransform()->LookAt(box->GetTransform()->GetPosition());
+	//miyu->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 	if (INPUTM->IsKeyPress(KeyValue::W))
@@ -76,7 +78,7 @@ void TestScript::Update()
 	//	box->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 5.0f, 0.0f));
 
 	if (INPUTM->IsKeyPress(KeyValue::V))
-		RENDER->SetCurrPSO(WIREFRAME);
+		RENDER->SetCurrPSO(PSO_WIREFRAME);
 	else
-		RENDER->SetCurrPSO(OPAQUE_SOLID);
+		RENDER->SetDefaultPSO();
 }

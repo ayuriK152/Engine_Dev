@@ -181,6 +181,7 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geometry);
 	subMesh->name = mesh->mName.C_Str();
+	subMesh->id = _subMeshes.size();
 	subMesh->SetMaterial(RESOURCE->Get<Material>(GetAIMaterialName(scene, mesh->mMaterialIndex)));
 	return subMesh;
 }

@@ -100,4 +100,18 @@ void SubMesh::CreateBuffer()
 	vertexBufferByteSize = vbByteSize;
 	indexFormat = DXGI_FORMAT_R16_UINT;
 	indexBufferByteSize = ibByteSize;
+
+	vertexBufferView.BufferLocation = vertexBufferGPU->GetGPUVirtualAddress();
+	vertexBufferView.StrideInBytes = vertexByteStride;
+	vertexBufferView.SizeInBytes = vertexBufferByteSize;
+
+	indexBufferView.BufferLocation = indexBufferGPU->GetGPUVirtualAddress();
+	indexBufferView.Format = indexFormat;
+	indexBufferView.SizeInBytes = indexBufferByteSize;
+
+	_totalByte += indexBufferByteSize;
+	cout << name << endl;
+	cout << _totalByte << endl << endl;
 }
+
+long SubMesh::_totalByte = 0;

@@ -37,7 +37,6 @@ void Mesh::CreateBasicCube(float width, float height, float depth, UINT numSubdi
 {
 	shared_ptr<Geometry> geo = GeometryGenerator::CreateBox(width, height, depth, numSubdivisions);
 	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
-	subMesh->CreateBuffer();
 	_submeshes.push_back(subMesh);
 }
 
@@ -50,7 +49,6 @@ void Mesh::CreateBasicSphere(float radius, UINT numSubdivisions)
 {
 	shared_ptr<Geometry> geo = GeometryGenerator::CreateGeosphere(radius, numSubdivisions);
 	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
-	subMesh->CreateBuffer();
 	_submeshes.push_back(subMesh);
 }
 
@@ -58,7 +56,6 @@ void Mesh::CreateBasicQuad()
 {
 	shared_ptr<Geometry> geo = GeometryGenerator::CreateQuad();
 	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
-	subMesh->CreateBuffer();
 	_submeshes.push_back(subMesh);
 }
 
@@ -96,22 +93,15 @@ void SubMesh::CreateBuffer()
 	indexBufferGPU = DXUtil::CreateDefaultBuffer(GRAPHIC->GetDevice().Get(),
 		GRAPHIC->GetCommandList().Get(), _geometry->GetIndexData(), ibByteSize, indexBufferUploader);
 
-	vertexByteStride = sizeof(Vertex);
-	vertexBufferByteSize = vbByteSize;
-	indexFormat = DXGI_FORMAT_R16_UINT;
-	indexBufferByteSize = ibByteSize;
+	{	// Vertex Buffer View Setting
+		vertexBufferView.BufferLocation = vertexBufferGPU->GetGPUVirtualAddress();
+		vertexBufferView.StrideInBytes = sizeof(Vertex);
+		vertexBufferView.SizeInBytes = vbByteSize;
+	}
 
-	vertexBufferView.BufferLocation = vertexBufferGPU->GetGPUVirtualAddress();
-	vertexBufferView.StrideInBytes = vertexByteStride;
-	vertexBufferView.SizeInBytes = vertexBufferByteSize;
-
-	indexBufferView.BufferLocation = indexBufferGPU->GetGPUVirtualAddress();
-	indexBufferView.Format = indexFormat;
-	indexBufferView.SizeInBytes = indexBufferByteSize;
-
-	_totalByte += indexBufferByteSize;
-	cout << name << endl;
-	cout << _totalByte << endl << endl;
+	{	// Index Buffer View Setting
+		indexBufferView.BufferLocation = indexBufferGPU->GetGPUVirtualAddress();
+		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
+		indexBufferView.SizeInBytes = ibByteSize;
+	}
 }
-
-long SubMesh::_totalByte = 0;

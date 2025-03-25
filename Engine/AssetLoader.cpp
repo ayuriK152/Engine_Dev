@@ -41,6 +41,8 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	assert(_scene != nullptr);
 
+	ImportModelFormat(file);
+
 	_submeshVertexOffset = 0;
 	_submeshIndexOffset = 0;
 	auto anim = _scene->mAnimations;
@@ -65,6 +67,9 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 {
 	for (UINT i = 0; i < scene->mNumMaterials; i++)
 	{
+		aiMaterial* aiMat = scene->mMaterials[i];
+		int texCnt = aiMat->mNumProperties;
+		aiMat->mProperties[0];
 		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
 		wstring matName = GetAIMaterialName(scene, i);
 
@@ -165,9 +170,21 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		Vertex v;
 		v.Position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
+		v.Normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
 		
-		if (mesh->mTextureCoords[0])
-			v.TexC = {(float)mesh->mTextureCoords[0][i].x, (float)mesh->mTextureCoords[0][i].y};
+		for (int j = 0; j < mesh->GetNumUVChannels(); j++)
+		{
+			switch (_modelType)
+			{
+			case ModelFormat::FBX:
+				v.TexC = { (float)mesh->mTextureCoords[j][i].x, (float)mesh->mTextureCoords[j][i].y };
+				break;
+			case ModelFormat::GLTF:
+				v.TexC = { (float)mesh->mTextureCoords[j][i].x, 1.0f - (float)mesh->mTextureCoords[j][i].y };
+				break;
+			}
+		}
+
 		vertices.push_back(v);
 	}
 
@@ -197,6 +214,9 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			aiBone* currentBone = mesh->mBones[i];
 			for (int j = 0; j < currentBone->mNumWeights; j++)
 			{
+				if (currentBone->mWeights[j].mWeight == 0)
+					continue;
+
 				BoneWeight weight;
 				weight.vertexIndex = currentBone->mWeights[j].mVertexId;
 				weight.weight = currentBone->mWeights[j].mWeight;
@@ -222,4 +242,18 @@ wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 {
 	string matNameStr(scene->mMaterials[index]->GetName().C_Str());
 	return UniversalUtils::ToWString(matNameStr);
+}
+
+void AssetLoader::ImportModelFormat(wstring fileName)
+{
+	istringstream ss(UniversalUtils::ToString(fileName));
+	string format;
+	while (getline(ss, format, '.'));
+
+	if (format == "fbx")
+		_modelType = ModelFormat::FBX;
+	else if (format == "gltf")
+		_modelType = ModelFormat::GLTF;
+	else
+		_modelType = ModelFormat::UNKOWN;
 }

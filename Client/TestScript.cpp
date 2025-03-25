@@ -5,7 +5,7 @@ void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
 	{
-		assetLoader->ReadAssetFile(L"Miyu/miyu.fbx");
+		assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
 		RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
 		//RESOURCE->Get<Material>(L"Miyu_Head")->SetTexture();
 	}
@@ -51,7 +51,7 @@ void TestScript::Init()
 	//quad->GetTransform()->SetRotation(Vector3(90.0f, 0.0f, 0.0f));
 	//quad->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
-	miyu->GetTransform()->SetScale(Vector3(0.02f, 0.02f, 0.02f));
+	miyu->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 
 	//box->GetComponent<Rigidbody>()->isGravity = true;
 }

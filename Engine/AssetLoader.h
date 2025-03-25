@@ -3,6 +3,13 @@ class Geometry;
 class SubMesh;
 class Mesh;
 
+enum ModelFormat
+{
+	UNKOWN = -1,
+	FBX,
+	GLTF
+};
+
 class AssetLoader
 {
 public:
@@ -33,11 +40,13 @@ public:
 
 private:
 	wstring GetAIMaterialName(const aiScene* scene, UINT index);
+	void ImportModelFormat(wstring fileName);
 
 private:
 	shared_ptr<Assimp::Importer> _importer;
 
 	const aiScene* _scene;
+	ModelFormat _modelType;
 
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, shared_ptr<Bone>> _bones;

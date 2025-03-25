@@ -21,18 +21,34 @@ ComPtr<ID3D12Resource> DXUtil::CreateDefaultBuffer(ID3D12Device* device, ID3D12G
 		nullptr,
 		IID_PPV_ARGS(uploadBuffer.GetAddressOf())));
 
+	UpdateBuffer(defaultBuffer, uploadBuffer, initData, byteSize);
+
+	//D3D12_SUBRESOURCE_DATA subResourceData = {};
+	//subResourceData.pData = initData;
+	//subResourceData.RowPitch = byteSize;
+	//subResourceData.SlicePitch = subResourceData.RowPitch;
+
+	//cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+	//	D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+	//UpdateSubresources<1>(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+	//cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+	//	D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+
+	return defaultBuffer;
+}
+
+void DXUtil::UpdateBuffer(ComPtr<ID3D12Resource>& buffer, ComPtr<ID3D12Resource>& uploadBuffer, const void* initData, UINT64 byteSize)
+{
 	D3D12_SUBRESOURCE_DATA subResourceData = {};
 	subResourceData.pData = initData;
 	subResourceData.RowPitch = byteSize;
 	subResourceData.SlicePitch = subResourceData.RowPitch;
 
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+	GRAPHIC->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(buffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
-	UpdateSubresources<1>(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+	UpdateSubresources<1>(GRAPHIC->GetCommandList().Get(), buffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+	GRAPHIC->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(buffer.Get(),
 		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
-
-	return defaultBuffer;
 }
 
 ComPtr<ID3DBlob> DXUtil::CompileShader(const wstring& filename, const D3D_SHADER_MACRO* defines, const string& entrypoint, const string& target)

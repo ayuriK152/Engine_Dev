@@ -21,3 +21,11 @@ void Geometry::SetIndices(vector<UINT16> indices)
 {
 	_indices.assign(indices.begin(), indices.end());
 }
+
+void Geometry::SetWeights(UINT boneId, vector<BoneWeight>& weights)
+{
+	for (int i = 0; i < weights.size(); i++)
+	{
+		_vertices[weights[i].vertexIndex].AddWeight(boneId, weights[i].weight);
+	}
+}

@@ -22,6 +22,8 @@ public:
 	void SetMaterial(shared_ptr<Material> mat) { _material = mat; }
 	const shared_ptr<Material> GetMaterial() { return _material; }
 
+	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
+
 private:
 	void CreateBuffer();
 
@@ -58,6 +60,9 @@ public:
 	vector<Vertex>& GetVertices() { return _vertices; }
 	void* GetVertexData() { return _vertices.data(); }
 	UINT GetVertexCount() { return _vertices.size(); }
+
+	bool HasBones() { return _bones.size() > 0; }
+	map<string, shared_ptr<Bone>> GetBones() { return _bones; }
 
 	void CreateBasicCube();
 	void CreateBasicCube(float width, float height, float depth, UINT numSubdivisions);

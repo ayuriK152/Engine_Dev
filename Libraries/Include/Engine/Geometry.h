@@ -35,6 +35,8 @@ public:
 	void SetVertexOffset(UINT offset) { _submeshVertexOffset = offset; }
 	void SetIndexOffset(UINT offset) { _submeshIndexOffset = offset; }
 
+	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
+
 public:
 	string name;
 

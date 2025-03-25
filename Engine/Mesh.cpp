@@ -76,6 +76,15 @@ SubMesh::SubMesh(shared_ptr<Geometry> geo) : _geometry(geo)
 	CreateBuffer();
 }
 
+void SubMesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
+{
+	_geometry->SetWeights(boneId, weights);
+
+	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);
+
+	DXUtil::UpdateBuffer(vertexBufferGPU, vertexBufferUploader, _geometry->GetVertexData(), vbByteSize);
+}
+
 void SubMesh::CreateBuffer()
 {
 	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);

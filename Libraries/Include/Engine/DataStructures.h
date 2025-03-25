@@ -17,8 +17,10 @@ struct Node
 struct Bone
 {
 	string name;
+	UINT id;
 	shared_ptr<Node> node;
 	XMFLOAT4X4 transform;
+	vector<UINT> vertexIndices;
 };
 
 struct BoneWeight
@@ -49,17 +51,17 @@ struct Vertex
 		Tangent(tx, ty, tz),
 		TexC(u, v) {}
 
-	void AddWeights(BoneWeight weight)
+	void AddWeight(UINT index, float weight)
 	{
 		for (int i = 3; i > 0; i--)
 			boneIndices[i] = boneIndices[i - 1];
-		boneIndices[0] = weight.vertexIndex;
+		boneIndices[0] = index;
 
 		boneWeights.w = boneWeights.z;
 		boneWeights.z = boneWeights.y;
 		boneWeights.y = boneWeights.x;
 
-		boneWeights.x = weight.weight;
+		boneWeights.x = weight;
 	}
 
 	Vector3 Position;
@@ -67,5 +69,5 @@ struct Vertex
 	Vector3 Tangent;
 	Vector2 TexC;
 	Vector4 boneWeights;
-	UINT boneIndices[4];
+	INT boneIndices[4] = { -1, -1, -1, -1 };
 };

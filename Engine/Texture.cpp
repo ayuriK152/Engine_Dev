@@ -13,7 +13,7 @@ int Texture::_count = 0;
 
 Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 {
- 	_srvHeapIndex = _count++;
+ 	//_srvHeapIndex = _count++;
 	_name = fileName;
 	_path = L"..\\Resources\\Textures\\" + fileName;
 	Load(_path);
@@ -40,6 +40,7 @@ void Texture::Load(const wstring& path)
 
 void Texture::CreateSRV()
 {
+	_srvHeapIndex = RENDER->GetAndIncreaseSRVHeapIndex();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(RENDER->GetShaderResourceViewHeap()->GetCPUDescriptorHandleForHeapStart());
 	hDescriptor.Offset(_srvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 

@@ -18,8 +18,13 @@
 // Include structures and functions for lighting.
 #include "LightingUtil.hlsl"
 
-Texture2D    gDiffuseMap : register(t0);
+struct BoneTransform
+{
+    float4x4 transform;
+};
 
+Texture2D    gDiffuseMap : register(t0);
+StructuredBuffer<float4x4> gBoneTransforms: register(t1);
 
 SamplerState gsamPointWrap        : register(s0);
 SamplerState gsamPointClamp       : register(s1);
@@ -78,7 +83,7 @@ struct VertexIn
 	float2 TexC    : TEXCOORD;
 #ifdef SKINNED
     float4 BoneWeights : WEIGHTS;
-    uint4 BoneIndices  : BONEINDICES;
+    int4 BoneIndices  : BONEINDICES;
 #endif
 };
 
@@ -98,6 +103,19 @@ VertexOut VS(VertexIn vin)
     float3 posL = float3(0.0f, 0.0f, 0.0f);
     float3 normalL = float3(0.0f, 0.0f, 0.0f);
     float3 tangentL = float3(0.0f, 0.0f, 0.0f);
+
+    for (int i = 0; i < 4; i++)
+    {
+        if (vin.BoneIndices[i] == -1)
+        {
+            if (i == 0)
+                posL = vin.PosL;
+            break;
+        }
+        posL += vin.BoneWeights[i] * mul(float4(vin.PosL, 1.0f), gBoneTransforms[vin.BoneIndices[i]]).xyz;
+    }
+
+    vin.PosL = posL;
 #endif
 	
     // Transform to world space.

@@ -18,5 +18,9 @@ public:
 
 private:
 	shared_ptr<Mesh> _mesh;
+
+	UINT _srvHeapIndex = 0;
+	//unique_ptr<UploadBuffer<vector<XMFLOAT4X4>>> _boneTransformBuffer = nullptr;
+	ComPtr<ID3D12Resource> _boneTransformBuffer = nullptr;
 };
 

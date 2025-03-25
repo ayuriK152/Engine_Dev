@@ -10,9 +10,12 @@ public:
 	~AssetLoader();
 
 public:
+	void InitializeFields();
+
 	void ReadAssetFile(wstring file);
 	void ProcessMaterials(const aiScene* scene);
 	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
+	void MapWeights();
 	void MapBones();
 	shared_ptr<SubMesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
@@ -41,6 +44,8 @@ private:
 	vector<shared_ptr<Geometry>> _geometry;
 	vector<shared_ptr<SubMesh>> _subMeshes;
 	shared_ptr<Mesh> _mesh;
+
+	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 
 	UINT _submeshVertexOffset = 0;
 	UINT _submeshIndexOffset = 0;

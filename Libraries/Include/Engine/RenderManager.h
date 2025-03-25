@@ -28,6 +28,8 @@ public:
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
 
+	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
+
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
 private:
@@ -43,7 +45,10 @@ private:
 
 private:
 	ComPtr<ID3D12RootSignature> _rootSignature;
+
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
+	UINT _srvHeapIndex = 0;
+
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 

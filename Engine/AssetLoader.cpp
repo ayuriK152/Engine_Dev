@@ -11,6 +11,18 @@ AssetLoader::~AssetLoader()
 
 }
 
+void AssetLoader::InitializeFields()
+{
+	_nodes.clear();
+	_bones.clear();
+	_geometry.clear();
+	_subMeshes.clear();
+	_tempBoneWeights.clear();
+
+	_submeshVertexOffset = 0;
+	_submeshIndexOffset = 0;
+}
+
 void AssetLoader::ReadAssetFile(wstring file)
 {
 	wstring fileStr = _assetPath + file;
@@ -34,12 +46,19 @@ void AssetLoader::ReadAssetFile(wstring file)
 	auto anim = _scene->mAnimations;
 	ProcessMaterials(_scene);
 	ProcessNodes(_scene->mRootNode, _scene, nullptr);
-	_mesh = make_shared<Mesh>(_subMeshes);
 	if (_bones.size() > 0)
 	{
+		MapWeights();
 		MapBones();
+		_mesh = make_shared<Mesh>(_subMeshes);
 		_mesh->SetSkinnedMeshData(_nodes, _bones);
 	}
+	else
+	{
+		_mesh = make_shared<Mesh>(_subMeshes);
+	}
+
+	InitializeFields();
 }
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
@@ -68,9 +87,12 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	currNode->id = _nodes.size();
 	currNode->parent = parentNode;
 	currNode->transform = ConvertToXMFLOAT4X4(node->mTransformation);
+
+	// 부모 노드 존재시 행렬 계산
 	if (currNode->parent != nullptr)
 	{
-		// 부모 트랜스폼 곱해주는 기능 추가
+		XMMATRIX multipliedMat = XMLoadFloat4x4(&parentNode->transform) * XMLoadFloat4x4(&currNode->transform);
+		XMStoreFloat4x4(&currNode->transform, multipliedMat);
 	}
 	
 	_nodes.insert({ currNode->name, currNode });
@@ -93,6 +115,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 				{
 					shared_ptr<Bone> bone = make_shared<Bone>();
 					bone->name = mesh->mBones[i]->mName.C_Str();
+					bone->id = _bones.size();
 					bone->transform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
 					_bones.insert({ bone->name, bone });
 				}
@@ -106,13 +129,25 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	}
 }
 
+void AssetLoader::MapWeights()
+{
+	for (auto& weight : _tempBoneWeights)
+	{
+		int subMeshIndex = weight.first.first;
+		string boneName = weight.first.second;
+		UINT boneId = _bones[boneName]->id;
+		shared_ptr<SubMesh> subMesh = _subMeshes[subMeshIndex];
+		subMesh->SetWeights(boneId, weight.second);
+	}
+}
+
 void AssetLoader::MapBones()
 {
 	for (auto bone = _bones.begin(); bone != _bones.end(); bone++)
 	{
 		shared_ptr<Node> node = _nodes[bone->first];
 		if (node == nullptr)
-			bone->second->node = node;
+			continue;
 		bone->second->node = node;
 	}
 }
@@ -156,18 +191,16 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	// 본 가중치 여부 확인 후 추가
 	if (mesh->HasBones())
 	{
-		vector<BoneWeight> weights;
 		for (int i = 0; i < mesh->mNumBones; i++)
 		{
+			// 현재 서브메시에 대한 본별 가중치 임시 저장
 			aiBone* currentBone = mesh->mBones[i];
 			for (int j = 0; j < currentBone->mNumWeights; j++)
 			{
 				BoneWeight weight;
 				weight.vertexIndex = currentBone->mWeights[j].mVertexId;
 				weight.weight = currentBone->mWeights[j].mWeight;
-				vertices[currentBone->mWeights[j].mVertexId].AddWeights(weight);
-
-				weights.push_back(weight);
+				_tempBoneWeights[{ _subMeshes.size(), currentBone->mName.C_Str() }].push_back(weight);
 			}
 		}
 	}

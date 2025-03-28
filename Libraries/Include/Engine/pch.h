@@ -48,6 +48,8 @@ using namespace Microsoft::WRL;
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include "tinyxml2/tinyxml2.h"
+using namespace tinyxml2;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -87,6 +89,7 @@ using namespace Microsoft::WRL;
 #include "ResourceManager.h"
 #include "RenderManager.h"
 #include "InputManager.h"
+#include "DataParseManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

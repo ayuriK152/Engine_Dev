@@ -99,6 +99,7 @@
     <ClInclude Include="AssetLoader.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="DataParseManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -216,5 +217,6 @@
     <ClCompile Include="AssetLoader.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="DataParseManager.cpp" />
   </ItemGroup>
 </Project>

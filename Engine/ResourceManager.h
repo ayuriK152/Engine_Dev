@@ -6,7 +6,9 @@ class Mesh;
 class ResourceManager
 {
 	DECLARE_SINGLE(ResourceManager);
-	~ResourceManager();
+public:
+	~ResourceManager() = default;
+
 public:
 	template<typename T>
 	bool Add(const wstring& key, shared_ptr<T> resource);

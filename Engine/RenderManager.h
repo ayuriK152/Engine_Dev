@@ -8,7 +8,7 @@ class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
 public:
-	~RenderManager();
+	~RenderManager() = default;
 
 public:
 	void Init();

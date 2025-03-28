@@ -43,6 +43,9 @@ class InputManager
 {
 	DECLARE_SINGLE(InputManager);
 public:
+	~InputManager() = default;
+
+public:
 	void Initialize();
 	void Update();
 

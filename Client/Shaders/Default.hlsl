@@ -4,7 +4,7 @@
 
 // Defaults for number of lights.
 #ifndef NUM_DIR_LIGHTS
-    #define NUM_DIR_LIGHTS 3
+    #define NUM_DIR_LIGHTS 1
 #endif
 
 #ifndef NUM_POINT_LIGHTS
@@ -23,57 +23,51 @@ struct BoneTransform
     float4x4 transform;
 };
 
-Texture2D    gDiffuseMap : register(t0);
-StructuredBuffer<float4x4> gBoneTransforms: register(t1);
+Texture2D    DiffuseMap : register(t0);
+StructuredBuffer<float4x4> BoneTransforms: register(t1);
 
-SamplerState gsamPointWrap        : register(s0);
-SamplerState gsamPointClamp       : register(s1);
-SamplerState gsamLinearWrap       : register(s2);
-SamplerState gsamLinearClamp      : register(s3);
-SamplerState gsamAnisotropicWrap  : register(s4);
-SamplerState gsamAnisotropicClamp : register(s5);
+SamplerState samPointWrap        : register(s0);
+SamplerState samPointClamp       : register(s1);
+SamplerState samLinearWrap       : register(s2);
+SamplerState samLinearClamp      : register(s3);
+SamplerState samAnisotropicWrap  : register(s4);
+SamplerState samAnisotropicClamp : register(s5);
 
 // Constant data that varies per frame.
 cbuffer cbPerObject : register(b0)
 {
-    float4x4 gWorld;
-	float4x4 gTexTransform;
+    float4x4 World;
+	float4x4 TexTransform;
 };
 
 // Constant data that varies per material.
 cbuffer cbPass : register(b1)
 {
-    float4x4 gView;
-    float4x4 gInvView;
-    float4x4 gProj;
-    float4x4 gInvProj;
-    float4x4 gViewProj;
-    float4x4 gInvViewProj;
-    float3 gEyePosW;
-    float cbPerObjectPad1;
-    float2 gRenderTargetSize;
-    float2 gInvRenderTargetSize;
-    float gNearZ;
-    float gFarZ;
-    float gTotalTime;
-    float gDeltaTime;
-    float4 gAmbientLight;
+    float4 AmbientLight;
 
-    // Indices [0, NUM_DIR_LIGHTS) are directional lights;
-    // indices [NUM_DIR_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHTS) are point lights;
-    // indices [NUM_DIR_LIGHTS+NUM_POINT_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHT+NUM_SPOT_LIGHTS)
-    // are spot lights for a maximum of MaxLights per object.
-    Light gLights[MaxLights];
+    Light Lights[MaxLights];
 };
 
 cbuffer cbMaterial : register(b2)
 {
-    float4   gAmbient;
-	float4   gDiffuseAlbedo;
-    float3   gFresnelR0;
-    float    gRoughness;
-	float4x4 gMatTransform;
+    float4   Ambient;
+	float4   DiffuseAlbedo;
+    float3   FresnelR0;
+    float    Roughness;
+	float4x4 MatTransform;
 };
+
+cbuffer cbCamera : register(b3)
+{
+    float4x4 View;
+    float4x4 ViewInv;
+    float4x4 Proj;
+    float4x4 ProjInv;
+    float4x4 ViewProj;
+    float4x4 ViewProjInv;
+    float2 RenderTargetSize;
+    float2 InvRenderTargetSize;
+}
 
 struct VertexIn
 {
@@ -95,6 +89,11 @@ struct VertexOut
 	float2 TexC    : TEXCOORD;
 };
 
+float3 GetCameraPosition()
+{
+    return ViewInv._41_42_43;
+}
+
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout = (VertexOut)0.0f;
@@ -103,7 +102,7 @@ VertexOut VS(VertexIn vin)
     float3 posL = float3(0.0f, 0.0f, 0.0f);
     float3 normalL = float3(0.0f, 0.0f, 0.0f);
     float3 tangentL = float3(0.0f, 0.0f, 0.0f);
-
+    
     for (int i = 0; i < 4; i++)
     {
         if (vin.BoneIndices[i] == -1)
@@ -112,54 +111,41 @@ VertexOut VS(VertexIn vin)
                 posL = vin.PosL;
             break;
         }
-        posL += vin.BoneWeights[i] * mul(float4(vin.PosL, 1.0f), gBoneTransforms[vin.BoneIndices[i]]).xyz;
+        posL += vin.BoneWeights[i] * mul(float4(vin.PosL, 1.0f), BoneTransforms[vin.BoneIndices[i]]).xyz;
     }
 
     vin.PosL = posL;
 #endif
 	
-    // Transform to world space.
-    float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
+    float4 posW = mul(float4(vin.PosL, 1.0f), World);
     vout.PosW = posW.xyz;
 
-    // Assumes nonuniform scaling; otherwise, need to use inverse-transpose of world matrix.
-    vout.NormalW = mul(vin.NormalL, (float3x3)gWorld);
+    vout.NormalW = mul(vin.NormalL, (float3x3)World);
 
-    // Transform to homogeneous clip space.
-    vout.PosH = mul(posW, gViewProj);
+    vout.PosH = mul(posW, ViewProj);
 	
-	// Output vertex attributes for interpolation across triangle.
-	float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), gTexTransform);
-	vout.TexC = mul(texC, gMatTransform).xy;
+	float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), TexTransform);
+	vout.TexC = mul(texC, MatTransform).xy;
 	
     return vout;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
-    float4 diffuseAlbedo = gDiffuseMap.Sample(gsamAnisotropicWrap, pin.TexC) * gDiffuseAlbedo;
+    float3 eyePos = GetCameraPosition();
+    float4 diffuseAlbedo = DiffuseMap.Sample(samAnisotropicWrap, pin.TexC) * DiffuseAlbedo;
 	
-    // Interpolating normal can unnormalize it, so renormalize it.
     pin.NormalW = normalize(pin.NormalW);
 
-    // Vector from point being lit to eye. 
-    float3 toEyeW = normalize(gEyePosW - pin.PosW);
+    float3 toEyeW = normalize(eyePos - pin.PosW);
 
-    // Light terms.
-    float4 ambient = gAmbientLight*diffuseAlbedo;
+    float4 ambient = AmbientLight*diffuseAlbedo;
 
-    const float shininess = 1.0f - gRoughness;
-    Material mat = { diffuseAlbedo, gFresnelR0, shininess };
+    const float shininess = 1.0f - Roughness;
     float3 shadowFactor = 1.0f;
-    float4 directLight = ComputeLighting(gLights, mat, pin.PosW,
-        pin.NormalW, toEyeW, shadowFactor);
 
-    float4 litColor = ambient + directLight;
-
-    // Common convention to take alpha from diffuse albedo.
+    float4 litColor = ambient;
     litColor.a = diffuseAlbedo.a;
 
     return litColor;
 }
-
-

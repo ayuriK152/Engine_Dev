@@ -32,7 +32,6 @@ void MeshRenderer::Init()
 		{
 			XMFLOAT4X4 transform;
 			XMStoreFloat4x4(&transform, (XMLoadFloat4x4(&sortedBones[i]->node->transform) * XMLoadFloat4x4(&sortedBones[i]->transform)));
-			//boneTransforms.push_back(sortedBones[i]->transform);
 			boneTransforms.push_back(transform);
 		}
 
@@ -97,7 +96,7 @@ void MeshRenderer::Render()
 		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 		bone.Offset(_srvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 
-		cmdList->SetGraphicsRootDescriptorTable(4, bone);
+		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_BONE_SB, bone);
 	}
 
 	for (auto& submesh : submeshes)
@@ -118,9 +117,9 @@ void MeshRenderer::Render()
 		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + GetGameObject()->objCBIndex * objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + submesh->GetMaterial()->matCBIndex * matCBByteSize;
 
-		cmdList->SetGraphicsRootDescriptorTable(0, tex);
-		cmdList->SetGraphicsRootConstantBufferView(1, objCBAddress);
-		cmdList->SetGraphicsRootConstantBufferView(3, matCBAddress);
+		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_TEXTURE_SR, tex);
+		cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_OBJECT_CB, objCBAddress);
+		cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MATERIAL_CB, matCBAddress);
 
 
 		cmdList->DrawIndexedInstanced(submesh->GetIndexCount(), 1, 0, 0, 0);

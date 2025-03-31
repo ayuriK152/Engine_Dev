@@ -40,15 +40,7 @@ cbuffer cbPerObject : register(b0)
 	float4x4 TexTransform;
 };
 
-// Constant data that varies per material.
-cbuffer cbPass : register(b1)
-{
-    float4 AmbientLight;
-
-    Light Lights[MaxLights];
-};
-
-cbuffer cbMaterial : register(b2)
+cbuffer cbMaterial : register(b1)
 {
     float4   Ambient;
 	float4   DiffuseAlbedo;
@@ -57,7 +49,7 @@ cbuffer cbMaterial : register(b2)
 	float4x4 MatTransform;
 };
 
-cbuffer cbCamera : register(b3)
+cbuffer cbCamera : register(b2)
 {
     float4x4 View;
     float4x4 ViewInv;
@@ -67,7 +59,14 @@ cbuffer cbCamera : register(b3)
     float4x4 ViewProjInv;
     float2 RenderTargetSize;
     float2 InvRenderTargetSize;
-}
+};
+
+cbuffer cbPass : register(b3)
+{
+    float4 AmbientLight;
+
+    Light Lights[MaxLights];
+};
 
 struct VertexIn
 {

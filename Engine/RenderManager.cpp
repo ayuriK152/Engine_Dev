@@ -47,9 +47,9 @@ void RenderManager::Render()
 
 
 	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MAIN_CB, passCB->GetGPUVirtualAddress());
 
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(5, _cameraCBUploadBuffer->GetResource()->GetGPUVirtualAddress());
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCBUploadBuffer->GetResource()->GetGPUVirtualAddress());
 
 	if (_isPSOFixed)
 	{
@@ -145,6 +145,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 
 
 #pragma region Setters
+
 void RenderManager::SetCurrPSO(string name)
 {
 	_currPSO = _PSOs[name];
@@ -165,10 +166,12 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	_objects.push_back(move(obj));
 	return _objects[_objects.size() - 1];
 }
+
 #pragma endregion
 
 
 #pragma region Build_Render_Components
+
 void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
 {
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
@@ -183,12 +186,12 @@ void RenderManager::BuildRootSignature()
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[6];
 
-	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[1].InitAsConstantBufferView(0);
-	slotRootParameter[2].InitAsConstantBufferView(1);
-	slotRootParameter[3].InitAsConstantBufferView(2);
-	slotRootParameter[4].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);
-	slotRootParameter[5].InitAsConstantBufferView(3);
+	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);	// TextureSR
+	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);	// BoneSB
+	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(0);	// ObjectCB
+	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(1);	// MaterialCB
+	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(2);	// CameraCB
+	slotRootParameter[ROOT_PARAMETER_MAIN_CB].InitAsConstantBufferView(3);	// MainCB, 이름이든 뭐든 바꿔야함. 삭제 고려.
 
 	auto staticSamplers = GetStaticSamplers();
 
@@ -269,10 +272,12 @@ void RenderManager::BuildPrimitiveBatch()
 		GRAPHIC->GetAppDesc().clientHeight,
 		0, 0, 1));
 }
+
 #pragma endregion
 
 
 #pragma region Update_Constant_Buffers
+
 void RenderManager::UpdateMainCB()
 {
 	// 얘는 라이트 버퍼로
@@ -328,7 +333,14 @@ void RenderManager::UpdateCameraCB()
 
 	_cameraCBUploadBuffer->CopyData(0, _cameraCB);
 }
+
+void RenderManager::UpdateLightCB()
+{
+
+}
+
 #pragma endregion
+
 
 std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> RenderManager::GetStaticSamplers()
 {

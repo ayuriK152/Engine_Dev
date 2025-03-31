@@ -24,6 +24,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="DataParseManager.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Defines.h" />

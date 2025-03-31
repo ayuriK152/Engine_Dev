@@ -100,6 +100,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="DataParseManager.h" />
+    <ClInclude Include="Constants.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">

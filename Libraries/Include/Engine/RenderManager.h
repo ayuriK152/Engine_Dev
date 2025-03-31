@@ -4,17 +4,12 @@
 #define		PSO_OPAQUE_SKINNED	"opaque_skinned"
 #define		PSO_WIREFRAME		"wireframe"
 
-struct CameraConstants
-{
-	XMFLOAT4X4 View = MathHelper::Identity4x4();
-	XMFLOAT4X4 InvView = MathHelper::Identity4x4();
-	XMFLOAT4X4 Proj = MathHelper::Identity4x4();
-	XMFLOAT4X4 InvProj = MathHelper::Identity4x4();
-	XMFLOAT4X4 ViewProj = MathHelper::Identity4x4();
-	XMFLOAT4X4 InvViewProj = MathHelper::Identity4x4();
-	XMFLOAT2 RenderTargetSize = { 0.0f, 0.0f };
-	XMFLOAT2 InvRenderTargetSize = { 0.0f, 0.0f };
-};
+#define		ROOT_PARAMETER_TEXTURE_SR	0
+#define		ROOT_PARAMETER_BONE_SB		1
+#define		ROOT_PARAMETER_OBJECT_CB	2
+#define		ROOT_PARAMETER_MATERIAL_CB	3
+#define		ROOT_PARAMETER_CAMERA_CB	4
+#define		ROOT_PARAMETER_MAIN_CB		5
 
 class RenderManager
 {
@@ -53,6 +48,7 @@ private:
 	void UpdateMainCB();
 	void UpdateMaterialCB();
 	void UpdateCameraCB();
+	void UpdateLightCB();
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 

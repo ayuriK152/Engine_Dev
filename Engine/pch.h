@@ -3,9 +3,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-#include "Types.h"
-#include "Defines.h"
-
 // STL
 #include <memory>
 #include <iostream>
@@ -57,14 +54,19 @@ using namespace tinyxml2;
 #pragma comment(lib, "DirectXTK/DirectXTK12.lib")
 #pragma comment(lib, "assimp/assimp-vc143-mtd.lib")
 
+#include "Types.h"
+#include "Defines.h"
 #include "Descriptors.h"
 #include "DataStructures.h"
+
 #include "UniversalUtils.h"
 #include "MathHelper.h"
 #include "DebugHelper.h"
 #include "DXUtil.h"
 #include "GeometryGenerator.h"
 #include "AssetLoader.h"
+
+#include "Constants.h"
 
 #include "IExecute.h"
 #include "Component.h"

@@ -35,3 +35,9 @@ struct LightConstants
 	float SpotPower = 0.0f;
 	int padding = 0;
 };
+
+struct PassConstants
+{
+	XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
+	LightConstants Lights[1];
+};

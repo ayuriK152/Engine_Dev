@@ -1,11 +1,5 @@
 #pragma once
 
-struct PassConstants
-{
-	XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
-	LightConstants Lights[1];
-};
-
 struct FrameResource
 {
 public:

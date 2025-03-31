@@ -43,7 +43,6 @@ private:
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
-	void BuildPrimitiveBatch();
 
 	void UpdateMainCB();
 	void UpdateMaterialCB();
@@ -60,9 +59,6 @@ private:
 
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
-
-	unique_ptr<PrimitiveBatch<DirectX::VertexPositionColor>> _primitiveBatch;
-	unique_ptr<BasicEffect> _lineEffect;
 
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;

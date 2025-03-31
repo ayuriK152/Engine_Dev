@@ -26,7 +26,6 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DataParseManager.h" />
-    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="Descriptors.h" />
     <ClInclude Include="DXUtil.h" />
@@ -63,7 +62,6 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DataParseManager.cpp" />
-    <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="GameApplication.cpp" />

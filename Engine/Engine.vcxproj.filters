@@ -95,7 +95,6 @@
     <ClInclude Include="Collider.h">
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="AssetLoader.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -216,7 +215,6 @@
     <ClCompile Include="Collider.cpp">
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="AssetLoader.cpp">
       <Filter>Utils</Filter>
     </ClCompile>

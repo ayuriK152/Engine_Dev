@@ -246,33 +246,6 @@ void RenderManager::BuildSRVDescriptorHeap()
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
 }
 
-void RenderManager::BuildPrimitiveBatch()
-{
-	auto device = GRAPHIC->GetDevice().Get();
-	_primitiveBatch = make_unique<PrimitiveBatch<DirectX::VertexPositionColor>>(device);
-	
-	// Initialize LineEffect
-	RenderTargetState rtState(GRAPHIC->GetBackBufferFormat(),
-		GRAPHIC->GetDepthStencilFormat());
-
-	const EffectPipelineStateDescription pd(
-		&VertexPositionColor::InputLayout,
-		CommonStates::Opaque,
-		CommonStates::DepthDefault,
-		CommonStates::CullNone,
-		rtState,
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
-
-	_lineEffect = make_unique<BasicEffect>(device,
-		EffectFlags::VertexColor,
-		pd);
-
-	_lineEffect->SetProjection(XMMatrixOrthographicOffCenterLH(0,
-		GRAPHIC->GetAppDesc().clientWidth,
-		GRAPHIC->GetAppDesc().clientHeight,
-		0, 0, 1));
-}
-
 #pragma endregion
 
 

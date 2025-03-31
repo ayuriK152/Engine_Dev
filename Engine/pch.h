@@ -61,7 +61,6 @@ using namespace tinyxml2;
 
 #include "UniversalUtils.h"
 #include "MathHelper.h"
-#include "DebugHelper.h"
 #include "DXUtil.h"
 #include "GeometryGenerator.h"
 #include "AssetLoader.h"

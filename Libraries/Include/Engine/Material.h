@@ -3,16 +3,6 @@
 
 class Texture;
 
-struct MaterialConstants
-{
-	Color ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
-	Color diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
-	ColorRGB fresnel = { 0.01f, 0.01f, 0.01f };
-	float roughness = 0.25f;
-
-	XMFLOAT4X4 matTransform = MathHelper::Identity4x4();
-};
-
 class Material : public Resource
 {
 	using Super = Resource;
@@ -33,11 +23,12 @@ public:
 	int normalSrvHeapIndex;
 	int numFramesDirty;
 
+	XMFLOAT4X4 matTransform;
 	Color ambient;
 	Color diffuse;
-	ColorRGB fresnel;
+	Color specular;
+	Color emissive;
 	float roughness;
-	XMFLOAT4X4 matTransform;
 
 private:
 	static int _count;

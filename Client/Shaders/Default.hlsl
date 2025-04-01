@@ -2,20 +2,6 @@
 // Default.hlsl by Frank Luna (C) 2015 All Rights Reserved.
 //***************************************************************************************
 
-// Defaults for number of lights.
-#ifndef NUM_DIR_LIGHTS
-    #define NUM_DIR_LIGHTS 1
-#endif
-
-#ifndef NUM_POINT_LIGHTS
-    #define NUM_POINT_LIGHTS 0
-#endif
-
-#ifndef NUM_SPOT_LIGHTS
-    #define NUM_SPOT_LIGHTS 0
-#endif
-
-// Include structures and functions for lighting.
 #include "LightingUtil.hlsl"
 
 struct BoneTransform
@@ -33,7 +19,7 @@ SamplerState samLinearClamp      : register(s3);
 SamplerState samAnisotropicWrap  : register(s4);
 SamplerState samAnisotropicClamp : register(s5);
 
-// Constant data that varies per frame.
+// Consider about delete this one
 cbuffer cbPerObject : register(b0)
 {
     float4x4 World;
@@ -42,11 +28,12 @@ cbuffer cbPerObject : register(b0)
 
 cbuffer cbMaterial : register(b1)
 {
-    float4   Ambient;
-	float4   DiffuseAlbedo;
-    float3   FresnelR0;
-    float    Roughness;
 	float4x4 MatTransform;
+    float4   Ambient;
+	float4   Diffuse;
+    float4   Specular;
+    float4   Emissive;
+    float    Shiness;
 };
 
 cbuffer cbCamera : register(b2)
@@ -63,15 +50,13 @@ cbuffer cbCamera : register(b2)
 
 cbuffer cbPass : register(b3)
 {
-    float4 AmbientLight;
-
     Light Lights[MaxLights];
 };
 
 struct VertexIn
 {
-	float3 PosL    : POSITION;
-    float3 NormalL : NORMAL;
+	float3 Pos    : POSITION;
+    float3 Normal : NORMAL;
     float3 Tangent : TANGENT;
 	float2 TexC    : TEXCOORD;
 #ifdef SKINNED
@@ -82,10 +67,10 @@ struct VertexIn
 
 struct VertexOut
 {
-	float4 PosH    : SV_POSITION;
-    float3 PosW    : POSITION;
-    float3 NormalW : NORMAL;
-	float2 TexC    : TEXCOORD;
+	float4 position    : SV_POSITION;
+    float3 positionWorld    : POSITION;
+    float3 normal : NORMAL;
+	float2 texUV    : TEXCOORD;
 };
 
 float3 GetCameraPosition()
@@ -107,44 +92,38 @@ VertexOut VS(VertexIn vin)
         if (vin.BoneIndices[i] == -1)
         {
             if (i == 0)
-                posL = vin.PosL;
+                posL = vin.Pos;
             break;
         }
-        posL += vin.BoneWeights[i] * mul(float4(vin.PosL, 1.0f), BoneTransforms[vin.BoneIndices[i]]).xyz;
+        posL += vin.BoneWeights[i] * mul(float4(vin.Pos, 1.0f), BoneTransforms[vin.BoneIndices[i]]).xyz;
     }
 
-    vin.PosL = posL;
+    vin.Pos = posL;
 #endif
 	
-    float4 posW = mul(float4(vin.PosL, 1.0f), World);
-    vout.PosW = posW.xyz;
+    float4 posW = mul(float4(vin.Pos, 1.0f), World);
+    vout.positionWorld = posW.xyz;
 
-    vout.NormalW = mul(vin.NormalL, (float3x3)World);
+    vout.normal = mul(vin.Normal, (float3x3)World);
 
-    vout.PosH = mul(posW, ViewProj);
+    vout.position = mul(posW, ViewProj);
 	
 	float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), TexTransform);
-	vout.TexC = mul(texC, MatTransform).xy;
+	vout.texUV = mul(texC, MatTransform).xy;
 	
     return vout;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
+    float4 totalResult;
     float3 eyePos = GetCameraPosition();
-    float4 diffuseAlbedo = DiffuseMap.Sample(samAnisotropicWrap, pin.TexC) * DiffuseAlbedo;
-	
-    pin.NormalW = normalize(pin.NormalW);
+    float4 albedo = DiffuseMap.Sample(samAnisotropicWrap, pin.texUV);
+    float3 eyeDir = normalize(eyePos - pin.positionWorld);
+    pin.normal = normalize(pin.normal);
 
-    float3 toEyeW = normalize(eyePos - pin.PosW);
+    Material mat = { Ambient, Diffuse, Specular, Emissive, Shiness };
+    totalResult = ComputeLight(Lights[0], mat, albedo, pin.normal, eyeDir);
 
-    float4 ambient = AmbientLight*diffuseAlbedo;
-
-    const float shininess = 1.0f - Roughness;
-    float3 shadowFactor = 1.0f;
-
-    float4 litColor = ambient;
-    litColor.a = diffuseAlbedo.a;
-
-    return litColor;
+    return totalResult;
 }

@@ -18,8 +18,9 @@ void RenderManager::Init()
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 		SetDefaultPSO();
 	}
+
 	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
-	_cameraCBUploadBuffer = make_unique<UploadBuffer<CameraConstants>>(GRAPHIC->GetDevice().Get(), 1, true);
+	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(GRAPHIC->GetDevice().Get(), 1, true);
 }
 
 void RenderManager::FixedUpdate()
@@ -49,7 +50,7 @@ void RenderManager::Render()
 	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MAIN_CB, passCB->GetGPUVirtualAddress());
 
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCBUploadBuffer->GetResource()->GetGPUVirtualAddress());
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	if (_isPSOFixed)
 	{
@@ -180,9 +181,9 @@ void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC pso
 void RenderManager::BuildRootSignature()
 {
 	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_TEXTURE_SR);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
-	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_BONE_SB);
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[6];
 
@@ -239,6 +240,7 @@ void RenderManager::BuildInputLayout()
 
 void RenderManager::BuildSRVDescriptorHeap()
 {
+	// Descriptor의 갯수를 50으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.NumDescriptors = 50;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -254,8 +256,12 @@ void RenderManager::BuildSRVDescriptorHeap()
 void RenderManager::UpdateMainCB()
 {
 	// 얘는 라이트 버퍼로
-	_mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	_mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	LightConstants light;
+	light.Ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
+	light.Diffuse = { 0.6f, 0.6f, 0.6f, 1.0f };
+	light.Specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+	light.Direction = { 1.0f, -1.0f, 1.0f };
+	_mainPassCB.Lights[0] = light;
 
 	auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
 	currPassCB->CopyData(0, _mainPassCB);
@@ -272,10 +278,12 @@ void RenderManager::UpdateMaterialCB()
 			XMMATRIX matTransform = XMLoadFloat4x4(&mat->matTransform);
 
 			MaterialConstants matConstants;
-			matConstants.diffuse = mat->diffuse;
-			matConstants.fresnel = mat->fresnel;
-			matConstants.roughness = mat->roughness;
 			XMStoreFloat4x4(&matConstants.matTransform, XMMatrixTranspose(matTransform));
+			matConstants.Ambient = mat->ambient;
+			matConstants.Diffuse = mat->diffuse;
+			matConstants.Specular = mat->specular;
+			matConstants.Emissive = mat->emissive;
+			matConstants.Shiness = mat->shiness;
 
 			_materialCB->CopyData(mat->matCBIndex, matConstants);
 
@@ -294,17 +302,17 @@ void RenderManager::UpdateCameraCB()
 	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
 	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
 
-	XMStoreFloat4x4(&_cameraCB.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&_cameraCB.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4(&_cameraCB.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4(&_cameraCB.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4(&_cameraCB.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4(&_cameraCB.InvViewProj, XMMatrixTranspose(invViewProj));
+	XMStoreFloat4x4(&_cameraConstants.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&_cameraConstants.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4(&_cameraConstants.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&_cameraConstants.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&_cameraConstants.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4(&_cameraConstants.InvViewProj, XMMatrixTranspose(invViewProj));
 
-	_cameraCB.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
-	_cameraCB.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
+	_cameraConstants.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
+	_cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
 
-	_cameraCBUploadBuffer->CopyData(0, _cameraCB);
+	_cameraCB->CopyData(0, _cameraConstants);
 }
 
 void RenderManager::UpdateLightCB()

@@ -64,12 +64,17 @@ private:
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	ComPtr<ID3D12PipelineState> _currPSO;
 
-	// Constant Buffers
-	PassConstants _mainPassCB;
-	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 	vector<shared_ptr<GameObject>> _objects;
 
-	CameraConstants _cameraCB;
-	unique_ptr<UploadBuffer<CameraConstants>> _cameraCBUploadBuffer = nullptr;
+	// Constant Buffers
+	PassConstants _mainPassCB;
+
+	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
+
+	CameraConstants _cameraConstants;
+	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
+
+	LightConstants _lightConstants;
+	unique_ptr<UploadBuffer<LightConstants>> _lightCB = nullptr;
 };
 

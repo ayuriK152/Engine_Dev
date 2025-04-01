@@ -5,6 +5,23 @@
 #define POINT_LIGHT		 1
 #define SPOT_LIGHT		 2
 
+struct ObjectConstants
+{
+	XMFLOAT4X4 World = MathHelper::Identity4x4();
+	XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
+};
+
+struct MaterialConstants
+{
+	XMFLOAT4X4 matTransform = MathHelper::Identity4x4();
+	Color Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Color Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Color Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
+	Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	float Shiness = 0.25f;
+};
+
 struct CameraConstants
 {
 	XMFLOAT4X4 View = MathHelper::Identity4x4();
@@ -15,12 +32,6 @@ struct CameraConstants
 	XMFLOAT4X4 InvViewProj = MathHelper::Identity4x4();
 	XMFLOAT2 RenderTargetSize = { 0.0f, 0.0f };
 	XMFLOAT2 InvRenderTargetSize = { 0.0f, 0.0f };
-};
-
-struct ObjectConstants
-{
-	XMFLOAT4X4 World = MathHelper::Identity4x4();
-	XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
 };
 
 struct LightConstants
@@ -38,6 +49,5 @@ struct LightConstants
 
 struct PassConstants
 {
-	XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
 	LightConstants Lights[1];
 };

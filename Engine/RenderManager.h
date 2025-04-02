@@ -6,10 +6,10 @@
 
 #define		ROOT_PARAMETER_TEXTURE_SR	0
 #define		ROOT_PARAMETER_BONE_SB		1
-#define		ROOT_PARAMETER_OBJECT_CB	2
-#define		ROOT_PARAMETER_MATERIAL_CB	3
-#define		ROOT_PARAMETER_CAMERA_CB	4
-#define		ROOT_PARAMETER_MAIN_CB		5
+#define		ROOT_PARAMETER_LIGHT_CB		2
+#define		ROOT_PARAMETER_OBJECT_CB	3
+#define		ROOT_PARAMETER_MATERIAL_CB	4
+#define		ROOT_PARAMETER_CAMERA_CB	5
 
 class RenderManager
 {
@@ -44,10 +44,9 @@ private:
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
 
-	void UpdateMainCB();
+	void UpdateLightCB();
 	void UpdateMaterialCB();
 	void UpdateCameraCB();
-	void UpdateLightCB();
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 
@@ -67,14 +66,14 @@ private:
 	vector<shared_ptr<GameObject>> _objects;
 
 	// Constant Buffers
-	PassConstants _mainPassCB;
+	LightGatherConstants _mainPassCB;
+
+	LightGatherConstants _lightConstants;
+	unique_ptr<UploadBuffer<LightGatherConstants>> _lightCB = nullptr;
 
 	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 
 	CameraConstants _cameraConstants;
 	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
-
-	LightConstants _lightConstants;
-	unique_ptr<UploadBuffer<LightConstants>> _lightCB = nullptr;
 };
 

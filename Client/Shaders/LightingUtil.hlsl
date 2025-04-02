@@ -1,4 +1,4 @@
-#define MaxLights 16
+#define MaxLights 20
 
 struct Light
 {
@@ -20,6 +20,12 @@ struct Material
     float4  Specular;
     float4  Emmissive;
     float   Shiness;
+};
+
+cbuffer cbLight : register(b0)
+{
+    Light GlobalLight;
+    Light Lights[MaxLights];
 };
 
 float4 ProcessAmbient(float4 ambient, float4 albedo)
@@ -67,16 +73,31 @@ float4 ProcessSpecular(float4 specular, float shiness, float3 lightDir, float3 n
     return totalSpecular;
 }
 
-float4 ComputeLight(Light light, Material mat, float4 albedo, float3 normal, float3 eyeDir)
+float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
 {
     float4 totalColor;
 
-    float4 ambient = ProcessAmbient(light.Ambient * mat.Ambient, albedo);
-    float4 diffuse = ProcessDiffuse(light.Diffuse * mat.Diffuse, albedo, light.Direction, normal);
-    float4 specular = ProcessSpecular(light.Specular * mat.Specular, mat.Shiness, light.Direction, normal, eyeDir);
+    // Global Light Process
+    {
+        float3 lightDir = normalize(GlobalLight.Direction);
 
-    //totalColor = ambient + diffuse + specular;
-    totalColor = ambient + diffuse;
+        float4 ambient = ProcessAmbient(GlobalLight.Ambient * mat.Ambient, albedo);
+        float4 diffuse = ProcessDiffuse(GlobalLight.Diffuse * mat.Diffuse, albedo, lightDir, normal);
+        float4 specular = ProcessSpecular(GlobalLight.Specular * mat.Specular, mat.Shiness, lightDir, normal, eyeDir);
+    
+        totalColor = ambient + diffuse + specular;
+    }
+
+    // General Light Process
+    {
+        for (int i = 0; i < MaxLights; i++)
+        {
+            float4 diffuse = ProcessDiffuse(Lights[i].Diffuse * mat.Diffuse, albedo, Lights[i].Direction, normal);
+            float4 specular = ProcessSpecular(Lights[i].Specular * mat.Specular, mat.Shiness, Lights[i].Direction, normal, eyeDir);
+        
+            totalColor += diffuse;
+        }
+    }
 
     return totalColor;
 }

@@ -20,13 +20,13 @@ SamplerState samAnisotropicWrap  : register(s4);
 SamplerState samAnisotropicClamp : register(s5);
 
 // Consider about delete this one
-cbuffer cbPerObject : register(b0)
+cbuffer cbPerObject : register(b1)
 {
     float4x4 World;
 	float4x4 TexTransform;
 };
 
-cbuffer cbMaterial : register(b1)
+cbuffer cbMaterial : register(b2)
 {
 	float4x4 MatTransform;
     float4   Ambient;
@@ -36,7 +36,7 @@ cbuffer cbMaterial : register(b1)
     float    Shiness;
 };
 
-cbuffer cbCamera : register(b2)
+cbuffer cbCamera : register(b3)
 {
     float4x4 View;
     float4x4 ViewInv;
@@ -46,11 +46,6 @@ cbuffer cbCamera : register(b2)
     float4x4 ViewProjInv;
     float2 RenderTargetSize;
     float2 InvRenderTargetSize;
-};
-
-cbuffer cbPass : register(b3)
-{
-    Light Lights[MaxLights];
 };
 
 struct VertexIn
@@ -123,7 +118,7 @@ float4 PS(VertexOut pin) : SV_Target
     pin.normal = normalize(pin.normal);
 
     Material mat = { Ambient, Diffuse, Specular, Emissive, Shiness };
-    totalResult = ComputeLight(Lights[0], mat, albedo, pin.normal, eyeDir);
+    totalResult = ComputeLight(mat, albedo, pin.normal, eyeDir);
 
     return totalResult;
 }

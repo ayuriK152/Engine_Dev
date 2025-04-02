@@ -19,6 +19,7 @@ void RenderManager::Init()
 		SetDefaultPSO();
 	}
 
+	_lightCB = make_unique<UploadBuffer<LightGatherConstants>>(GRAPHIC->GetDevice().Get(), CONSTANT_MAX_LIGHT + 1, true);
 	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(GRAPHIC->GetDevice().Get(), 1, true);
 }
@@ -34,7 +35,7 @@ void RenderManager::Update()
 	for (auto& o : _objects)
 		o->Update();
 
-	UpdateMainCB();
+	UpdateLightCB();
 	UpdateMaterialCB();
 	UpdateCameraCB();
 }
@@ -47,9 +48,10 @@ void RenderManager::Render()
 	GRAPHIC->GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
 
 
-	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MAIN_CB, passCB->GetGPUVirtualAddress());
+	//auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
+	//GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, passCB->GetGPUVirtualAddress());
 
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, _lightCB->GetResource()->GetGPUVirtualAddress());
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	if (_isPSOFixed)
@@ -189,10 +191,10 @@ void RenderManager::BuildRootSignature()
 
 	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);	// TextureSR
 	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);	// BoneSB
-	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(0);	// ObjectCB
-	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(1);	// MaterialCB
-	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(2);	// CameraCB
-	slotRootParameter[ROOT_PARAMETER_MAIN_CB].InitAsConstantBufferView(3);	// MainCB, 이름이든 뭐든 바꿔야함. 삭제 고려.
+	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsConstantBufferView(0);	// LightCB
+	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(1);	// ObjectCB
+	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(2);	// MaterialCB
+	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(3);	// CameraCB
 
 	auto staticSamplers = GetStaticSamplers();
 
@@ -253,7 +255,7 @@ void RenderManager::BuildSRVDescriptorHeap()
 
 #pragma region Update_Constant_Buffers
 
-void RenderManager::UpdateMainCB()
+void RenderManager::UpdateLightCB()
 {
 	// 얘는 라이트 버퍼로
 	LightConstants light;
@@ -261,10 +263,12 @@ void RenderManager::UpdateMainCB()
 	light.Diffuse = { 0.6f, 0.6f, 0.6f, 1.0f };
 	light.Specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 	light.Direction = { 1.0f, -1.0f, 1.0f };
-	_mainPassCB.Lights[0] = light;
+	_lightConstants.GlobalLight = light;
 
-	auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
-	currPassCB->CopyData(0, _mainPassCB);
+	//auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
+	//currPassCB->CopyData(0, _mainPassCB);
+
+	_lightCB->CopyData(0, _lightConstants);
 }
 
 void RenderManager::UpdateMaterialCB()
@@ -313,11 +317,6 @@ void RenderManager::UpdateCameraCB()
 	_cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
 
 	_cameraCB->CopyData(0, _cameraConstants);
-}
-
-void RenderManager::UpdateLightCB()
-{
-
 }
 
 #pragma endregion

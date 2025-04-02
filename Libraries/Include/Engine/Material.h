@@ -28,7 +28,7 @@ public:
 	Color diffuse;
 	Color specular;
 	Color emissive;
-	float roughness;
+	float shiness;
 
 private:
 	static int _count;

@@ -1,9 +1,11 @@
 #pragma once
 #include "pch.h"
 
-#define DIRECT_LIGHT	 0
-#define POINT_LIGHT		 1
-#define SPOT_LIGHT		 2
+#define		CONSTANT_MAX_LIGHT		20
+
+#define		DIRECT_LIGHT	 0
+#define		POINT_LIGHT		 1
+#define		SPOT_LIGHT		 2
 
 struct ObjectConstants
 {
@@ -19,7 +21,7 @@ struct MaterialConstants
 	Color Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
 	Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-	float roughness = 0.25f;
+	float Shiness = 0.25f;
 };
 
 struct CameraConstants
@@ -36,10 +38,10 @@ struct CameraConstants
 
 struct LightConstants
 {
-	XMFLOAT4 Ambient = { 0.0f, 0.0f, 0.0f, 1.0f };
-	XMFLOAT4 Diffuse = { 0.0f, 0.0f, 0.0f, 1.0f };
-	XMFLOAT4 Specular = { 0.0f, 0.0f, 0.0f, 1.0f };
-	XMFLOAT4 Emissive = { 0.0f, 0.0f, 0.0f, 1.0f };
+	XMFLOAT4 Ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
+	XMFLOAT4 Diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
+	XMFLOAT4 Specular = { 0.0f, 0.0f, 0.0f, 0.0f };
+	XMFLOAT4 Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT3 Direction = { 0.0f, 0.0f, 0.0f };
 	UINT LightType = DIRECT_LIGHT;
 	XMFLOAT2 FalloffInfo = { 0.0f, 0.0f };
@@ -47,7 +49,8 @@ struct LightConstants
 	int padding = 0;
 };
 
-struct PassConstants
+struct LightGatherConstants
 {
-	LightConstants Lights[1];
+	LightConstants GlobalLight;
+	LightConstants Lights[CONSTANT_MAX_LIGHT];
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-#define		CONSTANT_MAX_LIGHT		20
+#define		CONSTANT_MAX_GENERAL_LIGHT		20
 
 #define		DIRECT_LIGHT	 0
 #define		POINT_LIGHT		 1
@@ -52,5 +52,5 @@ struct LightConstants
 struct LightGatherConstants
 {
 	LightConstants GlobalLight;
-	LightConstants Lights[CONSTANT_MAX_LIGHT];
+	LightConstants Lights[CONSTANT_MAX_GENERAL_LIGHT];
 };

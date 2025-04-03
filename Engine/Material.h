@@ -8,7 +8,7 @@ class Material : public Resource
 	using Super = Resource;
 public:
 	Material();
-	Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex);
+	Material(string name, int diffuseSrvHeapIndex, int normalSrvHeapIndex);
 	virtual ~Material();
 
 public:

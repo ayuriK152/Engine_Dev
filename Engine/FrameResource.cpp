@@ -7,7 +7,7 @@ FrameResource::FrameResource(ID3D12Device* device, UINT passCount, UINT objectCo
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		IID_PPV_ARGS(cmdListAlloc.GetAddressOf())));
 
-	passCB = make_unique<UploadBuffer<LightGatherConstants>>(device, passCount, true);
+	lightCB = make_unique<UploadBuffer<LightGatherConstants>>(device, passCount, true);
 	if (objectCount > 0)
 		objectCB = make_unique<UploadBuffer<ObjectConstants>>(device, objectCount, true);
 }
@@ -18,6 +18,11 @@ FrameResource::~FrameResource()
 }
 
 void FrameResource::Update()
+{
+	UpdateObjectCB();
+}
+
+void FrameResource::UpdateObjectCB()
 {
 	for (auto& o : RENDER->GetObjects())
 	{
@@ -36,4 +41,9 @@ void FrameResource::Update()
 			o->numFramesDirty--;
 		}
 	}
+}
+
+void FrameResource::UpdateLightCB()
+{
+
 }

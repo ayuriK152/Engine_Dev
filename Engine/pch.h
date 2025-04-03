@@ -84,6 +84,8 @@ using namespace tinyxml2;
 #include "Collider.h"
 #include "BoxCollider.h"
 #include "Rigidbody.h"
+#include "Light.h"
+#include "DirectionalLight.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"

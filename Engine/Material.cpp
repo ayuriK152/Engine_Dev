@@ -20,7 +20,7 @@ Material::Material() : Super(ResourceType::Material)
 	matTransform = MathHelper::Identity4x4();
 }
 
-Material::Material(string name, int matCBIndex, int diffuseSrvHeapIndex, int normalSrvHeapIndex) : Super(ResourceType::Material),
+Material::Material(string name, int diffuseSrvHeapIndex, int normalSrvHeapIndex) : Super(ResourceType::Material),
 	name(name), matCBIndex(matCBIndex), diffuseSrvHeapIndex(diffuseSrvHeapIndex), normalSrvHeapIndex(normalSrvHeapIndex)
 {
 	matCBIndex = _count++;

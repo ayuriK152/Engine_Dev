@@ -9,6 +9,7 @@ public:
 
 private:
 	shared_ptr<GameObject> camera;
+	shared_ptr<GameObject> globalLight;
 	shared_ptr<GameObject> sphere;
 	shared_ptr<GameObject> miyu;
 

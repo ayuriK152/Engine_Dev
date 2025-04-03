@@ -7,12 +7,19 @@ void TestScript::Init()
 	{
 		assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
 		RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
-		//RESOURCE->Get<Material>(L"Miyu_Head")->SetTexture();
 	}
 
-	camera = make_shared <GameObject>();
+	camera = make_shared<GameObject>();
 	camera->AddComponent(make_shared<Camera>());
 	RENDER->AddGameObject(camera);
+
+	globalLight = make_shared<GameObject>();
+	XMFLOAT4 ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
+	XMFLOAT4 diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
+	XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+	XMFLOAT4 emissive = { 1.0f, 1.0f, 1.0f, 1.0f };
+	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular, emissive));
+	RENDER->AddGameObject(globalLight);
 
 	miyu = make_shared<GameObject>();
 	miyu->meshName = "miyu";

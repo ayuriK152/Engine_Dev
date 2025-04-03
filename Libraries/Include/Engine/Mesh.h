@@ -19,7 +19,10 @@ public:
 	void* GetVertexData() { return _geometry->GetVertices().data(); }
 	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
 
-	void SetMaterial(shared_ptr<Material> mat) { _material = mat; }
+	void SetMaterial(shared_ptr<Material> mat) { 
+		_material = mat;
+		cout << mat->matCBIndex << endl;
+	}
 	const shared_ptr<Material> GetMaterial() { return _material; }
 
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);

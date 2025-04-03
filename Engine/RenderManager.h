@@ -38,6 +38,8 @@ public:
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
+	void AddLight(Light* light) { _lights.push_back(light); }
+
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
@@ -64,10 +66,9 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	vector<shared_ptr<GameObject>> _objects;
+	vector<Light*> _lights;
 
 	// Constant Buffers
-	LightGatherConstants _mainPassCB;
-
 	LightGatherConstants _lightConstants;
 	unique_ptr<UploadBuffer<LightGatherConstants>> _lightCB = nullptr;
 

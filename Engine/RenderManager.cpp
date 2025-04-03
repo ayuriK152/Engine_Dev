@@ -19,8 +19,8 @@ void RenderManager::Init()
 		SetDefaultPSO();
 	}
 
-	_lightCB = make_unique<UploadBuffer<LightGatherConstants>>(GRAPHIC->GetDevice().Get(), CONSTANT_MAX_LIGHT + 1, true);
-	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
+	_lightCB = make_unique<UploadBuffer<LightGatherConstants>>(GRAPHIC->GetDevice().Get(), CONSTANT_MAX_GENERAL_LIGHT + 1, true);
+	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), 20, true);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(GRAPHIC->GetDevice().Get(), 1, true);
 }
 
@@ -46,7 +46,6 @@ void RenderManager::Render()
 	GRAPHIC->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	GRAPHIC->GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
-
 
 	//auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
 	//GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, passCB->GetGPUVirtualAddress());
@@ -132,7 +131,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 	}
 
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	//psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	psoDesc.SampleMask = UINT_MAX;
@@ -259,10 +258,11 @@ void RenderManager::UpdateLightCB()
 {
 	// 얘는 라이트 버퍼로
 	LightConstants light;
-	light.Ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
-	light.Diffuse = { 0.6f, 0.6f, 0.6f, 1.0f };
-	light.Specular = { 1.0f, 1.0f, 1.0f, 1.0f };
-	light.Direction = { 1.0f, -1.0f, 1.0f };
+	light = _lights[0]->GetLightConstants();
+	//light.Ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
+	//light.Diffuse = { 0.6f, 0.6f, 0.6f, 1.0f };
+	//light.Specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//light.Direction = { 1.0f, -1.0f, 1.0f };
 	_lightConstants.GlobalLight = light;
 
 	//auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();

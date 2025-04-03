@@ -13,7 +13,8 @@ enum class ComponentType
 	MeshRenderer,
 	Camera,
 	Collider,
-	Rigidbody
+	Rigidbody,
+	Light
 };
 
 class Component : public enable_shared_from_this<Component>

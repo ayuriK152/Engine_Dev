@@ -18,7 +18,10 @@ void RenderManager::Init()
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 		SetDefaultPSO();
 	}
-	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), (UINT)RESOURCE->GetByType<Material>().size(), true);
+
+	_lightCB = make_unique<UploadBuffer<LightGatherConstants>>(GRAPHIC->GetDevice().Get(), CONSTANT_MAX_GENERAL_LIGHT + 1, true);
+	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), 20, true);
+	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(GRAPHIC->GetDevice().Get(), 1, true);
 }
 
 void RenderManager::FixedUpdate()
@@ -31,8 +34,10 @@ void RenderManager::Update()
 {
 	for (auto& o : _objects)
 		o->Update();
-	UpdateMainCB();
+
+	UpdateLightCB();
 	UpdateMaterialCB();
+	UpdateCameraCB();
 }
 
 void RenderManager::Render()
@@ -42,8 +47,11 @@ void RenderManager::Render()
 
 	GRAPHIC->GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
 
-	auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
+	//auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
+	//GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, passCB->GetGPUVirtualAddress());
+
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, _lightCB->GetResource()->GetGPUVirtualAddress());
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	if (_isPSOFixed)
 	{
@@ -123,7 +131,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 	}
 
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	//psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	psoDesc.SampleMask = UINT_MAX;
@@ -137,10 +146,8 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 	return psoDesc;
 }
 
-void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
-{
-	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
-}
+
+#pragma region Setters
 
 void RenderManager::SetCurrPSO(string name)
 {
@@ -163,25 +170,35 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	return _objects[_objects.size() - 1];
 }
 
+#pragma endregion
+
+
+#pragma region Build_Render_Components
+
+void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
+{
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
+}
+
 void RenderManager::BuildRootSignature()
 {
 	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_TEXTURE_SR);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
-	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_BONE_SB);
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[5];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[6];
 
-	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[1].InitAsConstantBufferView(0);
-	slotRootParameter[2].InitAsConstantBufferView(1);
-	slotRootParameter[3].InitAsConstantBufferView(2);
-	slotRootParameter[4].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);
-	//slotRootParameter[4].InitAsShaderResourceView(1);
+	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);	// TextureSR
+	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);	// BoneSB
+	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsConstantBufferView(0);		// LightCB
+	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(1);	// ObjectCB
+	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(2);	// MaterialCB
+	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(3);	// CameraCB
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(5, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(6, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -225,6 +242,7 @@ void RenderManager::BuildInputLayout()
 
 void RenderManager::BuildSRVDescriptorHeap()
 {
+	// Descriptor의 갯수를 50으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.NumDescriptors = 50;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -232,67 +250,26 @@ void RenderManager::BuildSRVDescriptorHeap()
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
 }
 
-void RenderManager::BuildPrimitiveBatch()
+#pragma endregion
+
+
+#pragma region Update_Constant_Buffers
+
+void RenderManager::UpdateLightCB()
 {
-	auto device = GRAPHIC->GetDevice().Get();
-	_primitiveBatch = make_unique<PrimitiveBatch<DirectX::VertexPositionColor>>(device);
-	
-	// Initialize LineEffect
-	RenderTargetState rtState(GRAPHIC->GetBackBufferFormat(),
-		GRAPHIC->GetDepthStencilFormat());
+	// 얘는 라이트 버퍼로
+	LightConstants light;
+	light = _lights[0]->GetLightConstants();
+	//light.Ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
+	//light.Diffuse = { 0.6f, 0.6f, 0.6f, 1.0f };
+	//light.Specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//light.Direction = { 1.0f, -1.0f, 1.0f };
+	_lightConstants.GlobalLight = light;
 
-	const EffectPipelineStateDescription pd(
-		&VertexPositionColor::InputLayout,
-		CommonStates::Opaque,
-		CommonStates::DepthDefault,
-		CommonStates::CullNone,
-		rtState,
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+	//auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
+	//currPassCB->CopyData(0, _mainPassCB);
 
-	_lineEffect = make_unique<BasicEffect>(device,
-		EffectFlags::VertexColor,
-		pd);
-
-	_lineEffect->SetProjection(XMMatrixOrthographicOffCenterLH(0,
-		GRAPHIC->GetAppDesc().clientWidth,
-		GRAPHIC->GetAppDesc().clientHeight,
-		0, 0, 1));
-}
-
-void RenderManager::UpdateMainCB()
-{
-	XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
-	XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
-
-	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
-
-	XMStoreFloat4x4(&_mainPassCB.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&_mainPassCB.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4(&_mainPassCB.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4(&_mainPassCB.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4(&_mainPassCB.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4(&_mainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
-	_mainPassCB.EyePosW = Camera::GetEyePos();
-	_mainPassCB.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
-	_mainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
-	_mainPassCB.NearZ = 1.0f;
-	_mainPassCB.FarZ = 1000.0f;
-	_mainPassCB.TotalTime = TIME->TotalTime();
-	_mainPassCB.DeltaTime = TIME->DeltaTime();
-
-	_mainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	_mainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	_mainPassCB.Lights[0].Strength = { 0.8f, 0.8f, 0.8f };
-	_mainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	_mainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
-	_mainPassCB.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	_mainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
-
-	auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
-	currPassCB->CopyData(0, _mainPassCB);
+	_lightCB->CopyData(0, _lightConstants);
 }
 
 void RenderManager::UpdateMaterialCB()
@@ -306,10 +283,12 @@ void RenderManager::UpdateMaterialCB()
 			XMMATRIX matTransform = XMLoadFloat4x4(&mat->matTransform);
 
 			MaterialConstants matConstants;
-			matConstants.diffuse = mat->diffuse;
-			matConstants.fresnel = mat->fresnel;
-			matConstants.roughness = mat->roughness;
 			XMStoreFloat4x4(&matConstants.matTransform, XMMatrixTranspose(matTransform));
+			matConstants.Ambient = mat->ambient;
+			matConstants.Diffuse = mat->diffuse;
+			matConstants.Specular = mat->specular;
+			matConstants.Emissive = mat->emissive;
+			matConstants.Shiness = mat->shiness;
 
 			_materialCB->CopyData(mat->matCBIndex, matConstants);
 
@@ -317,6 +296,32 @@ void RenderManager::UpdateMaterialCB()
 		}
 	}
 }
+
+void RenderManager::UpdateCameraCB()
+{
+	XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+	XMStoreFloat4x4(&_cameraConstants.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&_cameraConstants.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4(&_cameraConstants.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&_cameraConstants.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&_cameraConstants.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4(&_cameraConstants.InvViewProj, XMMatrixTranspose(invViewProj));
+
+	_cameraConstants.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
+	_cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
+
+	_cameraCB->CopyData(0, _cameraConstants);
+}
+
+#pragma endregion
+
 
 std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> RenderManager::GetStaticSamplers()
 {

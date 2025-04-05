@@ -1,13 +1,16 @@
 #include "pch.h"
 #include "Camera.h"
 
-XMFLOAT3 Camera::_eyePos(0.0f, 0.0f, 0.0f);
-XMFLOAT4X4 Camera::_mainMatView = MathHelper::Identity4x4();
-XMFLOAT4X4 Camera::_mainMatProj = MathHelper::Identity4x4();
+Camera* Camera::_currentCamera = nullptr;
+UINT Camera::_cameraCount = 0;
 
 Camera::Camera() : Super(ComponentType::Camera)
 {
-
+	_cameraCount++;
+	if (_currentCamera == nullptr)
+	{
+		_currentCamera = this;
+	}
 }
 
 Camera::~Camera()
@@ -20,10 +23,6 @@ void Camera::Init()
 	_aspectRatio = GRAPHIC->GetAspectRatio();
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, 1.0f, 1000.0f);
 	XMStoreFloat4x4(&_matProj, P);
-
-	{
-		_mainMatProj = _matProj;
-	}
 }
 
 void Camera::Update()
@@ -36,18 +35,10 @@ void Camera::Update()
 	XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
 	XMStoreFloat4x4(&_matView, matView);
 
-	{
-		_mainMatView = _matView;
-	}
-
 	if (_aspectRatio != GRAPHIC->GetAspectRatio())
 	{
 		_aspectRatio = GRAPHIC->GetAspectRatio();
 		XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, 1.0f, 1000.0f);
 		XMStoreFloat4x4(&_matProj, P);
-
-		{
-			_mainMatProj = _matProj;
-		}
 	}
 }

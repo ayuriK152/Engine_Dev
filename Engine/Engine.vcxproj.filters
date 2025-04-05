@@ -95,11 +95,21 @@
     <ClInclude Include="Collider.h">
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="AssetLoader.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="DataParseManager.h" />
+    <ClInclude Include="Constants.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="DataParseManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>02. GameObject\Components\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>02. GameObject\Components\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -131,6 +141,9 @@
     </Filter>
     <Filter Include="02. GameObject\Components\Colliders">
       <UniqueIdentifier>{8bb58b28-1335-4c2a-8060-d0f1c386fe42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Components\Lights">
+      <UniqueIdentifier>{5f7195c8-cd84-4c3d-b226-554064946b1c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -213,10 +226,17 @@
     <ClCompile Include="Collider.cpp">
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="AssetLoader.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="DataParseManager.cpp" />
+    <ClCompile Include="DataParseManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>02. GameObject\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>02. GameObject\Components\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

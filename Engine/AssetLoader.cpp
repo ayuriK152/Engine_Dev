@@ -68,12 +68,21 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 	for (UINT i = 0; i < scene->mNumMaterials; i++)
 	{
 		aiMaterial* aiMat = scene->mMaterials[i];
-		int texCnt = aiMat->mNumProperties;
-		aiMat->mProperties[0];
 		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
 		wstring matName = GetAIMaterialName(scene, i);
 
-		shared_ptr<Material> mat = make_shared<Material>(matNameStr, 0, 0, -1);
+		shared_ptr<Material> mat = make_shared<Material>(matNameStr, 0, -1);
+
+		aiColor4D color;
+		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);
+		mat->ambient = { color.r, color.g, color.b, color.a };
+		aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+		mat->diffuse = { color.r, color.g, color.b, color.a };
+		aiMat->Get(AI_MATKEY_COLOR_SPECULAR, color);
+		mat->specular = { color.r, color.g, color.b, color.a };
+		aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, color);
+		mat->emissive = { color.r, color.g, color.b, color.a };
+
 		if (Texture::IsTextureExists(matName + L".dds"))
 		{
 			shared_ptr<Texture> texture = make_shared<Texture>(matName + L".dds");
@@ -235,7 +244,8 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geometry);
 	subMesh->name = mesh->mName.C_Str();
 	subMesh->id = _subMeshes.size();
-	subMesh->SetMaterial(RESOURCE->Get<Material>(GetAIMaterialName(scene, mesh->mMaterialIndex)));
+	auto mat = RESOURCE->Get<Material>(GetAIMaterialName(scene, mesh->mMaterialIndex));
+	subMesh->SetMaterial(mat);
 	return subMesh;
 }
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)

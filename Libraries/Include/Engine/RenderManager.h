@@ -4,6 +4,13 @@
 #define		PSO_OPAQUE_SKINNED	"opaque_skinned"
 #define		PSO_WIREFRAME		"wireframe"
 
+#define		ROOT_PARAMETER_TEXTURE_SR	0
+#define		ROOT_PARAMETER_BONE_SB		1
+#define		ROOT_PARAMETER_LIGHT_CB		2
+#define		ROOT_PARAMETER_OBJECT_CB	3
+#define		ROOT_PARAMETER_MATERIAL_CB	4
+#define		ROOT_PARAMETER_CAMERA_CB	5
+
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
@@ -24,7 +31,6 @@ public:
 	unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
-	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
 
@@ -32,14 +38,17 @@ public:
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
+	void AddLight(Light* light) { _lights.push_back(light); }
+
 private:
+	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
-	void BuildPrimitiveBatch();
 
-	void UpdateMainCB();
+	void UpdateLightCB();
 	void UpdateMaterialCB();
+	void UpdateCameraCB();
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 
@@ -52,15 +61,20 @@ private:
 	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 
-	unique_ptr<PrimitiveBatch<DirectX::VertexPositionColor>> _primitiveBatch;
-	unique_ptr<BasicEffect> _lineEffect;
-
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	ComPtr<ID3D12PipelineState> _currPSO;
 
-	PassConstants _mainPassCB;
-	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 	vector<shared_ptr<GameObject>> _objects;
+	vector<Light*> _lights;
+
+	// Constant Buffers
+	LightGatherConstants _lightConstants;
+	unique_ptr<UploadBuffer<LightGatherConstants>> _lightCB = nullptr;
+
+	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
+
+	CameraConstants _cameraConstants;
+	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
 };
 

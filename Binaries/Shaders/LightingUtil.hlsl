@@ -77,14 +77,14 @@ float4 ProcessEmissive(float4 emissive, float4 albedo)
 {
     float4 totalEmissive;
 
-    totalEmissive = emissive / 25.0f * albedo;
+    totalEmissive = emissive * albedo;
 
     return totalEmissive;
 }
 
 float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
 {
-    float4 totalColor;
+    float4 totalColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
     // Global Light Process
     {
@@ -96,7 +96,7 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
         float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
 
         //totalColor = ambient + diffuse + specular;
-        totalColor = ambient + diffuse + emissive;
+        totalColor = ambient + diffuse;
     }
 
     // General Light Process
@@ -105,11 +105,13 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
         {
             float4 diffuse = ProcessDiffuse(Lights[i].Diffuse * mat.Diffuse, albedo, Lights[i].Direction, normal);
             float4 specular = ProcessSpecular(Lights[i].Specular * mat.Specular, mat.Shiness, Lights[i].Direction, normal, eyeDir);
-            float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
         
-            totalColor += diffuse + emissive;
+            //totalColor += diffuse + emissive;
         }
     }
+
+    float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
+    totalColor += emissive;
 
     return totalColor;
 }

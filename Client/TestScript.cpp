@@ -36,6 +36,7 @@ void TestScript::Init()
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
+	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 3.0f, 3.0f));
 
 	miyu->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
@@ -43,7 +44,6 @@ void TestScript::Init()
 
 void TestScript::Update()
 {
-	//miyu->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 

@@ -3,7 +3,7 @@ template<typename T>
 class UploadBuffer
 {
 public:
-	UploadBuffer(ID3D12Device* device, UINT elementCount, bool isConstantBuffer) :
+	UploadBuffer(UINT elementCount, bool isConstantBuffer) :
 		_isConstantBuffer(isConstantBuffer)
 	{
 		_elementByteSize = sizeof(T);
@@ -11,7 +11,7 @@ public:
 		if (isConstantBuffer)
 			_elementByteSize = CalcConstantBufferByteSize(sizeof(T));
 
-		ThrowIfFailed(device->CreateCommittedResource(
+		ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(_elementByteSize * elementCount),

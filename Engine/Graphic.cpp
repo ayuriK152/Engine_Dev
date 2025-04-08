@@ -483,8 +483,7 @@ void Graphic::BuildFrameResources()
 {
 	for (int i = 0; i < _numFrameResources; ++i)
 	{
-		_frameResources.push_back(make_unique<FrameResource>(_device.Get(), 1,
-			(UINT)RENDER->GetObjects().size(), Material::GetCount()));
+		_frameResources.push_back(make_unique<FrameResource>((UINT)RENDER->GetObjects().size()));
 	}
 }
 

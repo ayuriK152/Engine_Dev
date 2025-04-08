@@ -27,3 +27,10 @@ Light::~Light()
 
 }
 
+// 불필요하게 데이터 값이 늘어나는 것 방지용
+void Light::IncreaseNumFramesDirty()
+{
+	if (numFramesDirty < GRAPHIC->GetNumFrameResources())
+		numFramesDirty++;
+}
+

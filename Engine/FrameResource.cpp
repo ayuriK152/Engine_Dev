@@ -1,15 +1,15 @@
 #include "pch.h"
 #include "FrameResource.h"
 
-FrameResource::FrameResource(ID3D12Device* device, UINT passCount, UINT objectCount, UINT materialCount)
+FrameResource::FrameResource(UINT objectCount)
 {
-	ThrowIfFailed(device->CreateCommandAllocator(
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		IID_PPV_ARGS(cmdListAlloc.GetAddressOf())));
 
-	lightCB = make_unique<UploadBuffer<LightGatherConstants>>(device, passCount, true);
+	lightCB = make_unique<UploadBuffer<LightGatherConstants>>(1, true);
 	if (objectCount > 0)
-		objectCB = make_unique<UploadBuffer<ObjectConstants>>(device, objectCount, true);
+		objectCB = make_unique<UploadBuffer<ObjectConstants>>(objectCount, true);
 }
 
 FrameResource::~FrameResource()
@@ -20,6 +20,7 @@ FrameResource::~FrameResource()
 void FrameResource::Update()
 {
 	UpdateObjectCB();
+	UpdateLightCB();
 }
 
 void FrameResource::UpdateObjectCB()
@@ -45,5 +46,34 @@ void FrameResource::UpdateObjectCB()
 
 void FrameResource::UpdateLightCB()
 {
+	bool flag = false;
+	LightGatherConstants lightConstants;
+	auto lights = RENDER->GetLights();
 
+	if (lights.size() == 0)
+		return;
+
+	// Global Light
+	if (lights[0]->numFramesDirty > 0)
+	{
+		lightConstants.GlobalLight = lights[0]->GetLightConstants();
+		lights[0]->numFramesDirty--;
+		flag = true;
+	}
+
+	// General Light
+	for (int i = 1; i < lights.size(); i++)
+	{
+		if (lights[i]->numFramesDirty > 0)
+		{
+			lightConstants.Lights[i - 1] = lights[i]->GetLightConstants();
+			lights[i]->numFramesDirty--;
+			flag = true;
+		}
+	}
+
+	if (flag)
+	{
+		lightCB->CopyData(0, lightConstants);
+	}
 }

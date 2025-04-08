@@ -38,6 +38,7 @@ public:
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
+	vector<Light*>& GetLights() { return _lights; }
 	void AddLight(Light* light) { _lights.push_back(light); }
 
 private:
@@ -46,7 +47,6 @@ private:
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
 
-	void UpdateLightCB();
 	void UpdateMaterialCB();
 	void UpdateCameraCB();
 
@@ -70,7 +70,6 @@ private:
 
 	// Constant Buffers
 	LightGatherConstants _lightConstants;
-	unique_ptr<UploadBuffer<LightGatherConstants>> _lightCB = nullptr;
 
 	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 

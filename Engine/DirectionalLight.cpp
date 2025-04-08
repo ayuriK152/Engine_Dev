@@ -30,7 +30,11 @@ void DirectionalLight::Init()
 
 void DirectionalLight::Update()
 {
-
+	if (GetGameObject()->numFramesDirty > 0)
+	{
+		direction = GetTransform()->GetLook();
+		IncreaseNumFramesDirty();
+	}
 }
 
 LightConstants DirectionalLight::GetLightConstants()

@@ -13,6 +13,8 @@ public:
 	virtual void Update() = 0;
 
 public:
+	void IncreaseNumFramesDirty();
+
 	virtual LightConstants GetLightConstants() = 0;
 
 public:

@@ -83,6 +83,14 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, color);
 		mat->emissive = { color.r, color.g, color.b, color.a };
 
+		// 텍스쳐 로드부분 수정해야함
+		/*
+		* 1. 모델 파일 자체에 텍스쳐 정보가 있는지 확인
+		* 2. 없다면 머터리얼과 같은 이름의 텍스쳐 파일이 있는지 확인
+		* 3. 없다면 기본 생성자 적용
+		* 
+		* 단, 텍스쳐 종류가 여러 가지 있는듯 하니 어떻게 적용할지 계획을 세워서 구현할 것
+		*/
 		if (Texture::IsTextureExists(matName + L".dds"))
 		{
 			shared_ptr<Texture> texture = make_shared<Texture>(matName + L".dds");

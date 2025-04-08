@@ -19,9 +19,8 @@ void RenderManager::Init()
 		SetDefaultPSO();
 	}
 
-	_lightCB = make_unique<UploadBuffer<LightGatherConstants>>(GRAPHIC->GetDevice().Get(), CONSTANT_MAX_GENERAL_LIGHT + 1, true);
-	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(GRAPHIC->GetDevice().Get(), 20, true);
-	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(GRAPHIC->GetDevice().Get(), 1, true);
+	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(20, true);
+	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
 }
 
 void RenderManager::FixedUpdate()
@@ -35,7 +34,6 @@ void RenderManager::Update()
 	for (auto& o : _objects)
 		o->Update();
 
-	UpdateLightCB();
 	UpdateMaterialCB();
 	UpdateCameraCB();
 }
@@ -49,8 +47,8 @@ void RenderManager::Render()
 
 	//auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
 	//GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, passCB->GetGPUVirtualAddress());
-
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, _lightCB->GetResource()->GetGPUVirtualAddress());
+	auto lightCB = GRAPHIC->GetCurrFrameResource()->lightCB->GetResource();
+	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, lightCB->GetGPUVirtualAddress());
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	if (_isPSOFixed)
@@ -254,23 +252,6 @@ void RenderManager::BuildSRVDescriptorHeap()
 
 
 #pragma region Update_Constant_Buffers
-
-void RenderManager::UpdateLightCB()
-{
-	// 얘는 라이트 버퍼로
-	LightConstants light;
-	light = _lights[0]->GetLightConstants();
-	//light.Ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
-	//light.Diffuse = { 0.6f, 0.6f, 0.6f, 1.0f };
-	//light.Specular = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//light.Direction = { 1.0f, -1.0f, 1.0f };
-	_lightConstants.GlobalLight = light;
-
-	//auto currPassCB = GRAPHIC->GetCurrFrameResource()->passCB.get();
-	//currPassCB->CopyData(0, _mainPassCB);
-
-	_lightCB->CopyData(0, _lightConstants);
-}
 
 void RenderManager::UpdateMaterialCB()
 {

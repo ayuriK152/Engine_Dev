@@ -78,6 +78,7 @@ float4 ProcessEmissive(float4 emissive, float4 albedo)
     float4 totalEmissive;
 
     totalEmissive = emissive * albedo;
+    totalEmissive.a = 0.0f;
 
     return totalEmissive;
 }
@@ -106,7 +107,7 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
             float4 diffuse = ProcessDiffuse(Lights[i].Diffuse * mat.Diffuse, albedo, Lights[i].Direction, normal);
             float4 specular = ProcessSpecular(Lights[i].Specular * mat.Specular, mat.Shiness, Lights[i].Direction, normal, eyeDir);
         
-            //totalColor += diffuse + emissive;
+            totalColor += diffuse;
         }
     }
 

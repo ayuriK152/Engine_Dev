@@ -9,8 +9,7 @@ public:
 	DirectionalLight(
 		XMFLOAT4 ambient,
 		XMFLOAT4 diffuse, 
-		XMFLOAT4 specular, 
-		XMFLOAT4 emissive);
+		XMFLOAT4 specular);
 	virtual ~DirectionalLight();
 
 	void Init() override;

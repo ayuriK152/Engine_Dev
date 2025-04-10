@@ -9,9 +9,8 @@ DirectionalLight::DirectionalLight() : Super()
 DirectionalLight::DirectionalLight(
 	XMFLOAT4 ambient, 
 	XMFLOAT4 diffuse, 
-	XMFLOAT4 specular,
-	XMFLOAT4 emissive) : 
-	Super(ambient, diffuse, specular, emissive)
+	XMFLOAT4 specular) : 
+	Super(ambient, diffuse, specular)
 {
 
 }
@@ -43,7 +42,6 @@ LightConstants DirectionalLight::GetLightConstants()
 	constants.Ambient = ambient;
 	constants.Diffuse = diffuse;
 	constants.Specular = specular;
-	constants.Emissive = emissive;
 	constants.Direction = direction;
 
 	return constants;

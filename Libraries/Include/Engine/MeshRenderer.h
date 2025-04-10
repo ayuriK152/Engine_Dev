@@ -15,7 +15,10 @@ public:
 
 public:
 	shared_ptr<Mesh> GetMesh() { return _mesh; }
-	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
+	void SetMesh(shared_ptr<Mesh> mesh);
+
+	void SetMaterial(shared_ptr<Material> mat) { _submeshMaterials[0] = mat; }
+	void SetMaterial(shared_ptr<Material> mat, int index) { _submeshMaterials[index] = mat; }
 
 private:
 	void LoadBoneData(UINT64 boneByteSize, vector<XMFLOAT4X4>& boneTransforms);
@@ -23,6 +26,7 @@ private:
 
 private:
 	shared_ptr<Mesh> _mesh;
+	vector<shared_ptr<Material>> _submeshMaterials;
 
 	UINT _boneSrvHeapIndex = 0;
 	ComPtr<ID3D12Resource> _boneTransformBuffer = nullptr;

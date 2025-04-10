@@ -21,7 +21,7 @@ Material::Material() : Super(ResourceType::Material)
 }
 
 Material::Material(string name, int diffuseSrvHeapIndex, int normalSrvHeapIndex) : Super(ResourceType::Material),
-	name(name), matCBIndex(matCBIndex), diffuseSrvHeapIndex(diffuseSrvHeapIndex), normalSrvHeapIndex(normalSrvHeapIndex)
+	name(name), diffuseSrvHeapIndex(diffuseSrvHeapIndex), normalSrvHeapIndex(normalSrvHeapIndex)
 {
 	matCBIndex = _count++;
 
@@ -33,6 +33,23 @@ Material::Material(string name, int diffuseSrvHeapIndex, int normalSrvHeapIndex)
 	emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	shiness = 0.25f;
 	matTransform = MathHelper::Identity4x4();
+}
+
+Material::Material(string name, wstring textureName) : Super(ResourceType::Material),
+	name(name)
+{
+	matCBIndex = _count++;
+
+	numFramesDirty = GRAPHIC->GetNumFrameResources();
+
+	ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+	diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+	specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+	emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
+	shiness = 0.25f;
+	matTransform = MathHelper::Identity4x4();
+
+	SetTexture(RESOURCE->Get<Texture>(textureName));
 }
 
 Material::~Material()

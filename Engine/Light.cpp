@@ -11,13 +11,11 @@ Light::Light() : Component(ComponentType::Light)
 Light::Light(
 	XMFLOAT4 ambient, 
 	XMFLOAT4 diffuse, 
-	XMFLOAT4 specular, 
-	XMFLOAT4 emissive) :
+	XMFLOAT4 specular) :
 	Component(ComponentType::Light),
 	ambient(ambient),
 	diffuse(diffuse),
-	specular(specular),
-	emissive(emissive)
+	specular(specular)
 {
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 }

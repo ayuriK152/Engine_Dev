@@ -11,7 +11,7 @@ void RenderManager::Init()
 	{
 		auto opaqueSolid = CreatePSODesc(_inputLayout, L"standardVS", L"opaquePS");
 		auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, L"skinnedVS", L"opaquePS");
-		auto opaqueWireframe = opaqueSolid;
+		auto opaqueWireframe = opaqueSkinned;
 		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);

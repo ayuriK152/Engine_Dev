@@ -9,6 +9,7 @@ class Material : public Resource
 public:
 	Material();
 	Material(string name, int diffuseSrvHeapIndex, int normalSrvHeapIndex);
+	Material(string name, wstring textureName);
 	virtual ~Material();
 
 public:

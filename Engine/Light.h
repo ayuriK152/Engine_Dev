@@ -6,7 +6,7 @@ class Light : public Component
 	using Super = Component;
 public:
 	Light();
-	Light(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular, XMFLOAT4 emissive);
+	Light(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular);
 	virtual ~Light();
 
 	virtual void Init() = 0;
@@ -21,7 +21,6 @@ public:
 	XMFLOAT4 ambient;
 	XMFLOAT4 diffuse;
 	XMFLOAT4 specular;
-	XMFLOAT4 emissive;
 
 	int numFramesDirty = 0;
 };

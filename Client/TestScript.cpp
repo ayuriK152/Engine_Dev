@@ -9,6 +9,12 @@ void TestScript::Init()
 		RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
 	}
 
+	skybox = make_shared<GameObject>();
+	skybox->AddComponent(make_shared<MeshRenderer>());
+	skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+	skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
+	RENDER->AddGameObject(skybox);
+
 	camera = make_shared<GameObject>();
 	camera->AddComponent(make_shared<Camera>());
 	RENDER->AddGameObject(camera);
@@ -17,8 +23,7 @@ void TestScript::Init()
 	XMFLOAT4 ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
-	XMFLOAT4 emissive = { 1.0f, 1.0f, 1.0f, 1.0f };
-	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular, emissive));
+	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
 	RENDER->AddGameObject(globalLight);
 
 	miyu = make_shared<GameObject>();

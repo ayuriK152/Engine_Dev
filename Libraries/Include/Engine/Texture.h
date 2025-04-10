@@ -1,11 +1,18 @@
 #pragma once
 #include "Resource.h"
 
+enum TextureType
+{
+	General,
+	Skybox
+};
+
 class Texture : public Resource
 {
 	using Super = Resource;
 public:
 	Texture(wstring fileName);
+	Texture(wstring fileName, TextureType type);
 	virtual ~Texture();
 
 	virtual void Load(const wstring& path) override;
@@ -14,11 +21,12 @@ public:
 
 	int GetSRVHeapIndex() { return _srvHeapIndex; }
 
-	static int GetCount() { return _count; }
+	static int GetCount() { return count; }
 	static bool IsTextureExists(wstring& fileName);
 
 public:
-	static int _count;
+	static int count;
+	TextureType textureType;
 	ComPtr<ID3D12Resource> resource = nullptr;
 	ComPtr<ID3D12Resource> uploadHeap = nullptr;
 

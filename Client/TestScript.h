@@ -8,6 +8,8 @@ public:
 	void Update() override;
 
 private:
+	shared_ptr<GameObject> skybox;
+
 	shared_ptr<GameObject> camera;
 	shared_ptr<GameObject> globalLight;
 	shared_ptr<GameObject> sphere;

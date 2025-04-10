@@ -41,7 +41,6 @@ struct LightConstants
 	XMFLOAT4 Ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT4 Diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT4 Specular = { 0.0f, 0.0f, 0.0f, 0.0f };
-	XMFLOAT4 Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT3 Direction = { 0.0f, 0.0f, 0.0f };
 	UINT LightType = DIRECT_LIGHT;
 	XMFLOAT2 FalloffInfo = { 0.0f, 0.0f };

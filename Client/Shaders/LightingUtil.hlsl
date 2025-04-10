@@ -5,7 +5,6 @@ struct Light
     float4  Ambient;
     float4  Diffuse;
     float4  Specular;
-    float4  Emissive;
     float3  Direction;
     int     LightType;
     float2  FalloffInfo;
@@ -47,7 +46,7 @@ float4 ProcessDiffuse(float4 diffuse, float4 albedo, float3 lightDir, float3 nor
     else
         diffuseValue = 0.4f;
 
-    totalDiffuse = diffuse * albedo * diffuseValue;
+    totalDiffuse = diffuse * albedo * diffuseValue * diffuse.a;
 
     return totalDiffuse;
 }
@@ -60,6 +59,7 @@ float4 ProcessSpecular(float4 specular, float shiness, float3 lightDir, float3 n
     float specularValue = saturate(dot(reflection, eyeDir));
     specularValue = pow(specularValue, 10);
     
+    // Toon Shading Part
     if (specularValue > 0.8f)
         specularValue = 0.8f;
     else if (specularValue > 0.1f)

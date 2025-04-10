@@ -2,14 +2,16 @@
 
 #define		PSO_OPAQUE_SOLID	"opaque_solid"
 #define		PSO_OPAQUE_SKINNED	"opaque_skinned"
+#define		PSO_SKYBOX			"skybox"
 #define		PSO_WIREFRAME		"wireframe"
 
-#define		ROOT_PARAMETER_TEXTURE_SR	0
-#define		ROOT_PARAMETER_BONE_SB		1
-#define		ROOT_PARAMETER_LIGHT_CB		2
-#define		ROOT_PARAMETER_OBJECT_CB	3
-#define		ROOT_PARAMETER_MATERIAL_CB	4
-#define		ROOT_PARAMETER_CAMERA_CB	5
+#define		ROOT_PARAMETER_SKYBOX_SR	0
+#define		ROOT_PARAMETER_TEXTURE_SR	1
+#define		ROOT_PARAMETER_BONE_SB		2
+#define		ROOT_PARAMETER_LIGHT_CB		3
+#define		ROOT_PARAMETER_OBJECT_CB	4
+#define		ROOT_PARAMETER_MATERIAL_CB	5
+#define		ROOT_PARAMETER_CAMERA_CB	6
 
 class RenderManager
 {
@@ -41,6 +43,11 @@ public:
 	vector<Light*>& GetLights() { return _lights; }
 	void AddLight(Light* light) { _lights.push_back(light); }
 
+	int GetSkyboxTexSRVHeapIndex() { return _skyboxTexSrvHeapIndex; }
+	void SetSkyboxTexture(shared_ptr<Texture> tex) {
+		_skyboxTexSrvHeapIndex = tex->GetSRVHeapIndex();
+	}
+
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
@@ -58,8 +65,9 @@ private:
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
 	UINT _srvHeapIndex = 0;
 
-	vector<D3D12_INPUT_ELEMENT_DESC> _inputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _solidInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _skyInputLayout;
 
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
@@ -68,9 +76,9 @@ private:
 	vector<shared_ptr<GameObject>> _objects;
 	vector<Light*> _lights;
 
-	// Constant Buffers
-	LightGatherConstants _lightConstants;
+	int _skyboxTexSrvHeapIndex = -1;
 
+	// Constant Buffers
 	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
 
 	CameraConstants _cameraConstants;

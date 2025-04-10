@@ -1,8 +1,4 @@
-//***************************************************************************************
-// Default.hlsl by Frank Luna (C) 2015 All Rights Reserved.
-//***************************************************************************************
-
-#include "LightingUtil.hlsl"
+#include "Common.hlsl"
 
 /************/
 /* Textures */
@@ -32,54 +28,3 @@ struct VertexOut
     float3 normal           : NORMAL;
 	float2 texUV            : TEXCOORD;
 };
-
-/***********/
-/* Buffers */
-/***********/
-
-Texture2D    DiffuseMap : register(t0);
-StructuredBuffer<float4x4> BoneTransforms: register(t1);
-
-SamplerState samPointWrap        : register(s0);
-SamplerState samPointClamp       : register(s1);
-SamplerState samLinearWrap       : register(s2);
-SamplerState samLinearClamp      : register(s3);
-SamplerState samAnisotropicWrap  : register(s4);
-SamplerState samAnisotropicClamp : register(s5);
-
-cbuffer cbPerObject : register(b1)
-{
-    float4x4 World;
-	float4x4 TexTransform;
-};
-
-cbuffer cbMaterial : register(b2)
-{
-	float4x4 MatTransform;
-    float4   Ambient;
-	float4   Diffuse;
-    float4   Specular;
-    float4   Emissive;
-    float    Shiness;
-};
-
-cbuffer cbCamera : register(b3)
-{
-    float4x4 View;
-    float4x4 ViewInv;
-    float4x4 Proj;
-    float4x4 ProjInv;
-    float4x4 ViewProj;
-    float4x4 ViewProjInv;
-    float2 RenderTargetSize;
-    float2 InvRenderTargetSize;
-};
-
-/*************/
-/* Functions */
-/*************/
-
-float3 GetCameraPosition()
-{
-    return ViewInv._41_42_43;
-}

@@ -79,6 +79,12 @@ void MeshRenderer::Render()
 		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + GetGameObject()->objCBIndex * objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + _submeshMaterials[i]->matCBIndex * matCBByteSize;
 
+		if (RENDER->GetSkyboxTexSRVHeapIndex() >= 0)
+		{
+			CD3DX12_GPU_DESCRIPTOR_HANDLE skyboxTex(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
+			skyboxTex.Offset(RENDER->GetSkyboxTexSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+			cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_SKYBOX_SR, skyboxTex);
+		}
 		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_TEXTURE_SR, tex);
 		cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_OBJECT_CB, objCBAddress);
 		cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MATERIAL_CB, matCBAddress);

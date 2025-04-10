@@ -13,7 +13,9 @@ void TestScript::Init()
 	skybox->AddComponent(make_shared<MeshRenderer>());
 	skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
+	skybox->psoName = PSO_SKYBOX;
 	RENDER->AddGameObject(skybox);
+	RENDER->SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
 
 	camera = make_shared<GameObject>();
 	camera->AddComponent(make_shared<Camera>());

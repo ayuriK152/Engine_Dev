@@ -9,13 +9,20 @@ void RenderManager::Init()
 	RESOURCE->CreateDefaultResources();
 
 	{
-		auto opaqueSolid = CreatePSODesc(_inputLayout, L"standardVS", L"opaquePS");
+		auto opaqueSolid = CreatePSODesc(_solidInputLayout, L"standardVS", L"opaquePS");
 		auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, L"skinnedVS", L"opaquePS");
+		
 		auto opaqueWireframe = opaqueSkinned;
 		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		
+		auto skybox = CreatePSODesc(_skyInputLayout, L"skyboxVS", L"skyboxPS");
+		skybox.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
+		BuildPSO(PSO_SKYBOX, skybox);
 		SetDefaultPSO();
 	}
 
@@ -51,27 +58,23 @@ void RenderManager::Render()
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, lightCB->GetGPUVirtualAddress());
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
-	if (_isPSOFixed)
+	// 이거 최적화할 필요 있을듯
+	map<string, vector<shared_ptr<GameObject>>> sortedObjects;
+	for (int i = 0; i < _objects.size(); i++)
 	{
-		GRAPHIC->GetCommandList()->SetPipelineState(_currPSO.Get());
-		for (int i = 0; i < _objects.size(); i++)
-			_objects[i]->Render();
+		if (!sortedObjects.contains(_objects[i]->psoName))
+			sortedObjects.insert({ _objects[i]->psoName, { } });
+		sortedObjects[_objects[i]->psoName].push_back(_objects[i]);
 	}
-	else
+
+	for (auto& p : sortedObjects)
 	{
-		map<string, vector<shared_ptr<GameObject>>> sortedObjects;
-		for (int i = 0; i < _objects.size(); i++)
-		{
-			if (!sortedObjects.contains(_objects[i]->psoName))
-				sortedObjects.insert({ _objects[i]->psoName, { } });
-			sortedObjects[_objects[i]->psoName].push_back(_objects[i]);
-		}
-		for (auto& p : sortedObjects)
-		{
+		if (_isPSOFixed && p.first != PSO_SKYBOX)
+			GRAPHIC->GetCommandList()->SetPipelineState(_currPSO.Get());
+		else
 			GRAPHIC->GetCommandList()->SetPipelineState(_PSOs[p.first].Get());
-			for (int i = 0; i < p.second.size(); i++)
-				p.second[i]->Render();
-		}
+		for (int i = 0; i < p.second.size(); i++)
+			p.second[i]->Render();
 	}
 }
 
@@ -180,15 +183,18 @@ void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC pso
 
 void RenderManager::BuildRootSignature()
 {
+	CD3DX12_DESCRIPTOR_RANGE cubemapTable;
+	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_SKYBOX_SR);
 	CD3DX12_DESCRIPTOR_RANGE texTable;
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_TEXTURE_SR);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_BONE_SB);
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[6];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[7];
 
-	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);	// TextureSR
-	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);	// BoneSB
+	slotRootParameter[ROOT_PARAMETER_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);	// CubemapSR
+	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);		// TextureSR
+	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);			// BoneSB
 	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsConstantBufferView(0);		// LightCB
 	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(1);	// ObjectCB
 	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(2);	// MaterialCB
@@ -196,7 +202,7 @@ void RenderManager::BuildRootSignature()
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(6, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(7, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -219,7 +225,7 @@ void RenderManager::BuildRootSignature()
 
 void RenderManager::BuildInputLayout()
 {
-	_inputLayout =
+	_solidInputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -235,6 +241,13 @@ void RenderManager::BuildInputLayout()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+
+	_skyInputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 

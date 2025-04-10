@@ -18,6 +18,12 @@ void ResourceManager::CreateDefaultResources()
 	auto opaquePS = make_shared<Shader>(L"DefaultPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"opaquePS", opaquePS);
 
+	auto skyboxPS = make_shared<Shader>(L"SkyboxPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"skyboxPS", skyboxPS);
+
+	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"skyboxVS", skyboxVS);
+
 
 	//==========Texture==========
 	auto defaultTex = make_shared<Texture>(L"white1x1.dds");

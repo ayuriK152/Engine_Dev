@@ -15,7 +15,7 @@ void RenderManager::Init()
 		auto opaqueWireframe = opaqueSkinned;
 		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 		
-		auto skybox = CreatePSODesc(_skyInputLayout, L"skyboxVS", L"skyboxPS");
+		auto skybox = CreatePSODesc(_solidInputLayout, L"skyboxVS", L"skyboxPS");
 		skybox.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
@@ -52,8 +52,6 @@ void RenderManager::Render()
 
 	GRAPHIC->GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
 
-	//auto passCB = GRAPHIC->GetCurrFrameResource()->passCB->GetResource();
-	//GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, passCB->GetGPUVirtualAddress());
 	auto lightCB = GRAPHIC->GetCurrFrameResource()->lightCB->GetResource();
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, lightCB->GetGPUVirtualAddress());
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
@@ -241,13 +239,6 @@ void RenderManager::BuildInputLayout()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-
-	_skyInputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 

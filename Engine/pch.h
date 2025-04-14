@@ -73,6 +73,9 @@ using namespace tinyxml2;
 #include "IExecute.h"
 #include "Component.h"
 
+/*************/
+/* Resources */
+/*************/
 #include "Resource.h"
 #include "GameObject.h"
 #include "Geometry.h"
@@ -81,6 +84,9 @@ using namespace tinyxml2;
 #include "Texture.h"
 #include "Shader.h"
 
+/**************/
+/* Components */
+/**************/
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
@@ -92,10 +98,15 @@ using namespace tinyxml2;
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"
+
+/************/
+/* Managers */
+/************/
 #include "ResourceManager.h"
 #include "RenderManager.h"
 #include "InputManager.h"
 #include "DataParseManager.h"
+#include "EngineGUIManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

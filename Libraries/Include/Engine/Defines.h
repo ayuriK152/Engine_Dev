@@ -22,3 +22,4 @@ public:									\
 #define RESOURCE	GET_SINGLE(ResourceManager)
 #define RENDER		GET_SINGLE(RenderManager)
 #define INPUTM		GET_SINGLE(InputManager)
+#define ENGINEGUI	GET_SINGLE(EngineGUIManager)

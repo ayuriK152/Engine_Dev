@@ -19,6 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imconfig.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_win32.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_internal.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_rectpack.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_textedit.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_truetype.h" />
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
@@ -58,6 +66,27 @@
     <ClInclude Include="DataStructures.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />

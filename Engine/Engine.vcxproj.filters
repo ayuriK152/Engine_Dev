@@ -2,32 +2,32 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Types.h">
-      <Filter>Defines</Filter>
+      <Filter>05. Defines</Filter>
     </ClInclude>
     <ClInclude Include="GameApplication.h">
       <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="IExecute.h">
-      <Filter>Interfaces</Filter>
+      <Filter>04. Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="MathHelper.h">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClInclude>
     <ClInclude Include="FrameResource.h">
       <Filter>01. EngineComponents</Filter>
     </ClInclude>
     <ClInclude Include="UniversalUtils.h">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClInclude>
     <ClInclude Include="Defines.h">
-      <Filter>Defines</Filter>
+      <Filter>05. Defines</Filter>
     </ClInclude>
     <ClInclude Include="Graphic.h">
       <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="Descriptors.h">
-      <Filter>Defines</Filter>
+      <Filter>05. Defines</Filter>
     </ClInclude>
     <ClInclude Include="UploadBuffer.h">
       <Filter>01. EngineComponents</Filter>
@@ -36,10 +36,10 @@
       <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="DXUtil.h">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClInclude>
     <ClInclude Include="DataStructures.h">
-      <Filter>Defines</Filter>
+      <Filter>05. Defines</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>02. GameObject</Filter>
@@ -48,34 +48,34 @@
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="GeometryGenerator.h">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Interfaces</Filter>
+      <Filter>04. Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Interfaces</Filter>
+      <Filter>04. Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="Geometry.h">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>02. GameObject\Components</Filter>
@@ -96,10 +96,10 @@
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="AssetLoader.h">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClInclude>
     <ClInclude Include="Constants.h">
-      <Filter>Defines</Filter>
+      <Filter>05. Defines</Filter>
     </ClInclude>
     <ClInclude Include="DataParseManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
@@ -110,19 +110,34 @@
     <ClInclude Include="Light.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imconfig.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_win32.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_internal.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_rectpack.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_textedit.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_truetype.h">
+      <Filter>99. ExtLibraries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
       <UniqueIdentifier>{e3f179bb-c9ad-466d-99f0-0b96dfee19eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Defines">
-      <UniqueIdentifier>{c33a9b82-f224-40b4-a39a-fae9bcd89d17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interfaces">
-      <UniqueIdentifier>{1dad3b72-7d91-4855-92cb-18c7b6020180}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject">
       <UniqueIdentifier>{c45e393e-2bc7-4ba4-842f-48371a4ee789}</UniqueIdentifier>
@@ -136,14 +151,26 @@
     <Filter Include="01. EngineComponents\01. Managers">
       <UniqueIdentifier>{dca9fbf7-1588-499f-9f07-24cfaeca83fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{38dbe0b3-50ad-4805-ae19-483510901584}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Components\Colliders">
       <UniqueIdentifier>{8bb58b28-1335-4c2a-8060-d0f1c386fe42}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Components\Lights">
       <UniqueIdentifier>{5f7195c8-cd84-4c3d-b226-554064946b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Defines">
+      <UniqueIdentifier>{c33a9b82-f224-40b4-a39a-fae9bcd89d17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Interfaces">
+      <UniqueIdentifier>{1dad3b72-7d91-4855-92cb-18c7b6020180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Resources">
+      <UniqueIdentifier>{38dbe0b3-50ad-4805-ae19-483510901584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Utils">
+      <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. ExtLibraries">
+      <UniqueIdentifier>{11dfefeb-d5b6-4043-93ac-cd663cc29962}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -152,16 +179,16 @@
     </ClCompile>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="IExecute.cpp">
-      <Filter>Interfaces</Filter>
+      <Filter>04. Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="FrameResource.cpp">
       <Filter>01. EngineComponents</Filter>
     </ClCompile>
     <ClCompile Include="UniversalUtils.cpp">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="Graphic.cpp">
       <Filter>00. Core</Filter>
@@ -170,7 +197,7 @@
       <Filter>00. Core</Filter>
     </ClCompile>
     <ClCompile Include="DXUtil.cpp">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>02. GameObject</Filter>
@@ -179,34 +206,34 @@
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
-      <Filter>Interfaces</Filter>
+      <Filter>04. Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="Resource.cpp">
-      <Filter>Interfaces</Filter>
+      <Filter>04. Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="Geometry.cpp">
-      <Filter>Resources</Filter>
+      <Filter>03. Resources</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>02. GameObject\Components</Filter>
@@ -227,7 +254,7 @@
       <Filter>02. GameObject\Components\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="AssetLoader.cpp">
-      <Filter>Utils</Filter>
+      <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="DataParseManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
@@ -237,6 +264,27 @@
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui.cpp">
+      <Filter>99. ExtLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_demo.cpp">
+      <Filter>99. ExtLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_draw.cpp">
+      <Filter>99. ExtLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.cpp">
+      <Filter>99. ExtLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_win32.cpp">
+      <Filter>99. ExtLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_tables.cpp">
+      <Filter>99. ExtLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_widgets.cpp">
+      <Filter>99. ExtLibraries</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

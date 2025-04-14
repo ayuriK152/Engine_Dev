@@ -90,5 +90,10 @@ void GameApplication::Update()
 
 void GameApplication::ExitApplication()
 {
+	// ImGUI test
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
 	PostQuitMessage(0);
 }

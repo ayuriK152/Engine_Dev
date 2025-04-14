@@ -51,7 +51,7 @@ void TestScript::Init()
 
 void TestScript::Update()
 {
-	globalLight->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
+	//globalLight->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 

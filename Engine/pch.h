@@ -1,5 +1,7 @@
 #pragma once
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+
+// Debuging Console
+// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -107,6 +109,7 @@ using namespace tinyxml2;
 #include "InputManager.h"
 #include "DataParseManager.h"
 #include "EngineGUIManager.h"
+#include "EngineStatusManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

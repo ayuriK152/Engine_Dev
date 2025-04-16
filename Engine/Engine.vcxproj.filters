@@ -134,7 +134,10 @@
     <ClInclude Include="..\Libraries\Include\ImGUI\imstb_truetype.h">
       <Filter>99. ExtLibraries</Filter>
     </ClInclude>
-    <ClInclude Include="EngineGUIManager.h" />
+    <ClInclude Include="EngineGUIManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineStatusManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -287,6 +290,9 @@
     <ClCompile Include="..\Libraries\Include\ImGUI\imgui_widgets.cpp">
       <Filter>99. ExtLibraries</Filter>
     </ClCompile>
-    <ClCompile Include="EngineGUIManager.cpp" />
+    <ClCompile Include="EngineGUIManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineStatusManager.cpp" />
   </ItemGroup>
 </Project>

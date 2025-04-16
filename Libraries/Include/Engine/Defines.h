@@ -23,3 +23,4 @@ public:									\
 #define RENDER		GET_SINGLE(RenderManager)
 #define INPUTM		GET_SINGLE(InputManager)
 #define ENGINEGUI	GET_SINGLE(EngineGUIManager)
+#define ENGINESTAT	GET_SINGLE(EngineStatusManager)

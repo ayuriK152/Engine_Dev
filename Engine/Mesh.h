@@ -21,7 +21,6 @@ public:
 
 	void SetMaterial(shared_ptr<Material> mat) { 
 		_material = mat;
-		cout << mat->matCBIndex << endl;
 	}
 	const shared_ptr<Material> GetMaterial() { return _material; }
 

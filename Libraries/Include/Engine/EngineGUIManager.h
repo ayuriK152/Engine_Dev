@@ -1,6 +1,9 @@
 #pragma once
 
-struct ExampleDescriptorHeapAllocator
+#define TOGGLEVALUE_GUI_DEMOWINDOW		"GUI_DemoWindow"
+#define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
+
+struct DescriptorHeapAllocator
 {
 	ID3D12DescriptorHeap* Heap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_TYPE  HeapType = D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES;
@@ -50,13 +53,23 @@ class EngineGUIManager
 public:
 	~EngineGUIManager();
 
-public:
 	void Init();
 	void FixedUpdate();
 	void Update();
 	void Render();
 
+public:
+	void ShowEngineStatus();
+
 private:
-	static ExampleDescriptorHeapAllocator _srvHeapDescAllocator;
+	void ToggleWindows();
+
+public:
+	bool isShowDemoWindow = true;
+
+private:
+	static DescriptorHeapAllocator _srvHeapDescAllocator;
+
+	map<string, bool> _guiToggleValues;
 };
 

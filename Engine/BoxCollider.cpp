@@ -41,7 +41,7 @@ void BoxCollider::FixedUpdate()
 			continue;
 
 		if (IsCollide(c)) {
-			//cout << "Colliding" << endl;
+
 		}
 	}
 }

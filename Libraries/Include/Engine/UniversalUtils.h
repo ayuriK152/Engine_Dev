@@ -3,7 +3,6 @@
 class UniversalUtils
 {
 public:
-	static void CalculateFrameStats();
 	static string ToString(wstring s);
 	static wstring ToWString(string s);
 };

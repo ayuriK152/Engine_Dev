@@ -2,6 +2,7 @@
 class Geometry;
 class SubMesh;
 class Mesh;
+class GameObject;
 
 enum ModelFormat
 {

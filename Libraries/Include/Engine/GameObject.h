@@ -32,18 +32,24 @@ public:
 	template<typename T>
 	ComponentType GetComponentType();
 
-public:
-	//XMFLOAT4X4 world;
+	shared_ptr<GameObject> GetParent() { return _parent; }
+	void SetParent(shared_ptr<GameObject> parent);
 
+	const vector<shared_ptr<GameObject>>& GetChilds() { return _childs; }
+	void AddChild(shared_ptr<GameObject> child) { 
+		child->SetParent(shared_from_this());
+		_childs.push_back(child);
+	}
+	bool RemoveChild(shared_ptr<GameObject> object);
+
+public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
+	string name;
 	string meshName;
 	string psoName;
 
 	UINT objCBIndex;
-	UINT indexCount;
-	UINT startIndexLocation;
-	int baseVertexLocation;
 
 	int numFramesDirty;
 
@@ -51,6 +57,9 @@ public:
 
 private:
 	bool _isInitialized;
+
+	shared_ptr<GameObject> _parent = nullptr;
+	vector<shared_ptr<GameObject>> _childs;
 };
 
 template<typename T>

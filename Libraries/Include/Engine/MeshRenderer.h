@@ -26,6 +26,9 @@ private:
 	void LoadBoneData(UINT64 boneByteSize, vector<XMFLOAT4X4>& boneTransforms);
 	void CreateBoneSRV(vector<XMFLOAT4X4>& boneTransforms);
 
+public:
+	shared_ptr<Transform> rootBone;
+
 private:
 	shared_ptr<Mesh> _mesh;
 	vector<shared_ptr<Material>> _submeshMaterials;

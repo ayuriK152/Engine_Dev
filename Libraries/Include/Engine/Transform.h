@@ -57,8 +57,17 @@ public:
 
 	void LookAt(const Vector3& targetPos);
 
+	XMFLOAT4X4 GetLocalMatrix() { return _matLocal; }
+	XMFLOAT4X4 GetThisWorldMatrix() { return _matWorld; }
 	XMFLOAT4X4 GetWorldMatrix();
 	XMFLOAT4X4 GetTexTransform() { return _texTransform; }		// 반드시 수정
+
+	shared_ptr<Transform> GetParent() { return _parent; }
+	void SetParent(shared_ptr<Transform> parent);
+
+	const vector<shared_ptr<Transform>>& GetChilds() { return _childs; }
+	void AddChild(shared_ptr<Transform> child);
+	//bool RemoveChild(shared_ptr<GameObject> object);
 
 	bool HasParent() { return _parent != nullptr; }
 

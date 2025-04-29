@@ -29,7 +29,7 @@ void FrameResource::UpdateObjectCB()
 	{
 		if (o->numFramesDirty > 0)
 		{
-			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
+			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetThisWorldMatrix());
 			XMMATRIX texTransform = XMLoadFloat4x4(&o->GetTransform()->GetTexTransform());
 			texTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 

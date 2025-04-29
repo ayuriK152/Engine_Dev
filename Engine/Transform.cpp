@@ -51,6 +51,12 @@ void Transform::UpdateTransform()
 	XMStoreFloat3(&_scale, scale);
 	_rotation = MathHelper::ConvertQuaternionToEuler(quaternion);
 	XMStoreFloat3(&_position, position);
+
+	for (auto& child : _childs)
+	{
+		child->UpdateTransform();
+		child->GetGameObject()->numFramesDirty++;
+	}
 }
 
 void Transform::SetPosition(const Vector3& worldPosition)
@@ -188,3 +194,38 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 	else
 		return _matWorld;
 }
+
+void Transform::SetParent(shared_ptr<Transform> parent)
+{
+	_parent = parent;
+
+	if (_parent != nullptr)
+		XMStoreFloat4x4(&_matLocal, XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())) * XMLoadFloat4x4(&_matWorld));
+	else
+		_matLocal = _matWorld;
+
+	XMVECTOR scale;
+	XMVECTOR quaternion;
+	XMVECTOR position;
+	XMMatrixDecompose(
+		&scale,
+		&quaternion,
+		&position,
+		XMLoadFloat4x4(&_matLocal));
+
+	XMStoreFloat3(&_localScale, scale);
+	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
+	XMStoreFloat3(&_localPosition, position);
+
+	_parent->AddChild(static_pointer_cast<Transform>(shared_from_this()));
+}
+
+void Transform::AddChild(shared_ptr<Transform> child)
+{
+	_childs.push_back(child);
+}
+
+//bool Transform::RemoveChild(shared_ptr<GameObject> object)
+//{
+//
+//}

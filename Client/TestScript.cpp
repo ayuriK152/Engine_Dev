@@ -41,19 +41,29 @@ void TestScript::Init()
 	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	RENDER->AddGameObject(sphere);
 
+	sphere2 = make_shared<GameObject>();
+	sphere2->meshName = "sphere2";
+	sphere2->AddComponent(make_shared<MeshRenderer>());
+	sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+	RENDER->AddGameObject(sphere2);
+
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
-	sphere->GetTransform()->SetPosition(Vector3(3.0f, 3.0f, 3.0f));
+	sphere->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 3.0f));
+	sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+	sphere2->GetTransform()->SetParent(sphere->GetTransform());
 
-	miyu->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+	//miyu->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 void TestScript::Update()
 {
-	//globalLight->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
+
+	sphere->GetTransform()->Rotate(Vector3(0.0f, 40.0f * TIME->DeltaTime(), 0.0f));
+	//sphere2->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
 
 	if (INPUTM->IsKeyPress(KeyValue::W))
 		camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));

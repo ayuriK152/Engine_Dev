@@ -12,8 +12,6 @@ GameObject::GameObject()
 
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 	_isInitialized = false;
-
-	_parent = nullptr;
 }
 
 GameObject::~GameObject()
@@ -72,30 +70,4 @@ shared_ptr<Transform> GameObject::GetTransform()
 		AddComponent(transform);
 	}
 	return transform;
-}
-
-void GameObject::SetParent(shared_ptr<GameObject> parent)
-{
-	if (_parent != nullptr)
-	{
-		_parent->RemoveChild(shared_from_this());
-	}
-
-	_parent = parent;
-}
-
-bool GameObject::RemoveChild(shared_ptr<GameObject> object)
-{
-	for (int i = 0; i < _childs.size(); i++)
-	{
-		if (_childs[i] == object)
-		{
-			_childs.erase(_childs.begin() + i);
-
-			object->SetParent(nullptr);
-			return true;
-		}
-	}
-
-	return false;
 }

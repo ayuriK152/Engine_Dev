@@ -83,13 +83,13 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, color);
 		mat->emissive = { color.r, color.g, color.b, color.a };
 
-		// ÅØ½ºÃÄ ·ÎµåºÎºĞ ¼öÁ¤ÇØ¾ßÇÔ
+		// í…ìŠ¤ì³ ë¡œë“œë¶€ë¶„ ìˆ˜ì •í•´ì•¼í•¨
 		/*
-		* 1. ¸ğµ¨ ÆÄÀÏ ÀÚÃ¼¿¡ ÅØ½ºÃÄ Á¤º¸°¡ ÀÖ´ÂÁö È®ÀÎ
-		* 2. ¾ø´Ù¸é ¸ÓÅÍ¸®¾ó°ú °°Àº ÀÌ¸§ÀÇ ÅØ½ºÃÄ ÆÄÀÏÀÌ ÀÖ´ÂÁö È®ÀÎ
-		* 3. ¾ø´Ù¸é ±âº» »ı¼ºÀÚ Àû¿ë
-		* 
-		* ´Ü, ÅØ½ºÃÄ Á¾·ù°¡ ¿©·¯ °¡Áö ÀÖ´Âµí ÇÏ´Ï ¾î¶»°Ô Àû¿ëÇÒÁö °èÈ¹À» ¼¼¿ö¼­ ±¸ÇöÇÒ °Í
+		* 1. ëª¨ë¸ íŒŒì¼ ìì²´ì— í…ìŠ¤ì³ ì •ë³´ê°€ ìˆëŠ”ì§€ í™•ì¸
+		* 2. ì—†ë‹¤ë©´ ë¨¸í„°ë¦¬ì–¼ê³¼ ê°™ì€ ì´ë¦„ì˜ í…ìŠ¤ì³ íŒŒì¼ì´ ìˆëŠ”ì§€ í™•ì¸
+		* 3. ì—†ë‹¤ë©´ ê¸°ë³¸ ìƒì„±ì ì ìš©
+		*
+		* ë‹¨, í…ìŠ¤ì³ ì¢…ë¥˜ê°€ ì—¬ëŸ¬ ê°€ì§€ ìˆëŠ”ë“¯ í•˜ë‹ˆ ì–´ë–»ê²Œ ì ìš©í• ì§€ ê³„íšì„ ì„¸ì›Œì„œ êµ¬í˜„í•  ê²ƒ
 		*/
 		if (Texture::IsTextureExists(matName + L".dds"))
 		{
@@ -103,14 +103,14 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 
 void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode)
 {
-	// ³ëµå ÀúÀå
+	// ë…¸ë“œ ì €ì¥
 	shared_ptr<Node> currNode = make_shared<Node>();
 	currNode->name = node->mName.C_Str();
 	currNode->id = _nodes.size();
 	currNode->parent = parentNode;
 	currNode->transform = ConvertToXMFLOAT4X4(node->mTransformation);
 
-	// ºÎ¸ğ ³ëµå Á¸Àç½Ã Çà·Ä °è»ê
+	// ë¶€ëª¨ ë…¸ë“œ ì¡´ì¬ì‹œ í–‰ë ¬ ê³„ì‚°
 	if (currNode->parent != nullptr)
 	{
 		XMMATRIX multipliedMat = XMLoadFloat4x4(&parentNode->transform) * XMLoadFloat4x4(&currNode->transform);
@@ -121,18 +121,18 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
-		// ¸Ş½Ã ±âÇÏÁ¤º¸ ·Îµå
+		// ë©”ì‹œ ê¸°í•˜ì •ë³´ ë¡œë“œ
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		currNode->submeshIndices.push_back(_subMeshes.size());
 		_subMeshes.push_back(ProcessMesh(mesh, scene));
 
-		// ¸Ş½Ã º» ·Îµå (ÀÖ´Â °æ¿ì¿¡¸¸)
+		// ë©”ì‹œ ë³¸ ë¡œë“œ (ìˆëŠ” ê²½ìš°ì—ë§Œ)
 		if (mesh->HasBones())
 		{
 			for (int i = 0; i < mesh->mNumBones; i++)
 			{
 				aiBone* currentBone = mesh->mBones[i];
-				// º» Áßº¹ È®ÀÎ, º» ÀÌ¸§°ú ³ëµå °ËÁõ
+				// ë³¸ ì¤‘ë³µ í™•ì¸, ë³¸ ì´ë¦„ê³¼ ë…¸ë“œ ê²€ì¦
 				if (!_bones.contains(currentBone->mName.C_Str()))
 				{
 					shared_ptr<Bone> bone = make_shared<Bone>();
@@ -222,12 +222,12 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 
-	// º» °¡ÁßÄ¡ ¿©ºÎ È®ÀÎ ÈÄ Ãß°¡
+	// ë³¸ ê°€ì¤‘ì¹˜ ì—¬ë¶€ í™•ì¸ í›„ ì¶”ê°€
 	if (mesh->HasBones())
 	{
 		for (int i = 0; i < mesh->mNumBones; i++)
 		{
-			// ÇöÀç ¼­ºê¸Ş½Ã¿¡ ´ëÇÑ º»º° °¡ÁßÄ¡ ÀÓ½Ã ÀúÀå
+			// í˜„ì¬ ì„œë¸Œë©”ì‹œì— ëŒ€í•œ ë³¸ë³„ ê°€ì¤‘ì¹˜ ì„ì‹œ ì €ì¥
 			aiBone* currentBone = mesh->mBones[i];
 			for (int j = 0; j < currentBone->mNumWeights; j++)
 			{

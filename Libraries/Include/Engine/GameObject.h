@@ -33,17 +33,13 @@ public:
 	ComponentType GetComponentType();
 
 public:
-	//XMFLOAT4X4 world;
-
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
+	string name;
 	string meshName;
 	string psoName;
 
 	UINT objCBIndex;
-	UINT indexCount;
-	UINT startIndexLocation;
-	int baseVertexLocation;
 
 	int numFramesDirty;
 

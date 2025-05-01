@@ -9,9 +9,6 @@ GameObject::GameObject()
 	psoName = PSO_OPAQUE_SOLID;
 
 	objCBIndex = -1;
-	indexCount = 0;
-	startIndexLocation = 0;
-	baseVertexLocation = 0;
 
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 	_isInitialized = false;

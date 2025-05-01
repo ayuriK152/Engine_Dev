@@ -1,15 +1,5 @@
 #pragma once
 
-class Submesh
-{
-public:
-	UINT indexCount = 0;
-	UINT startIndexLocation = 0;
-	INT baseVertexLocation = 0;
-
-	BoundingBox bounds;
-};
-
 class Geometry
 {
 public:

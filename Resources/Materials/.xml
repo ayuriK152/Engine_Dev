@@ -1,0 +1,8 @@
+<Material>
+    <Name></Name>
+    <Ambient r="0" g="0" b="0" a="0"/>
+    <Diffuse r="1" g="1" b="1" a="1"/>
+    <Specular r="1" g="1" b="1" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName></TextureName>
+</Material>

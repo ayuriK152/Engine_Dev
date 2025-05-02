@@ -109,37 +109,37 @@ void Transform::SetScale(const Vector3& worldScale)
 
 Vector3 Transform::GetRight()
 {
-	Vector3 right(-_matWorld._11, -_matWorld._21, _matWorld._31);
+	Vector3 right(-_matLocal._11, -_matLocal._21, _matLocal._31);
 	return right;
 }
 
 Vector3 Transform::GetLeft()
 {
-	Vector3 left(_matWorld._11, _matWorld._21, -_matWorld._31);
+	Vector3 left(_matLocal._11, _matLocal._21, -_matLocal._31);
 	return left;
 }
 
 Vector3 Transform::GetUp()
 {
-	Vector3 up(_matWorld._12, _matWorld._22, -_matWorld._32);
+	Vector3 up(_matLocal._12, _matLocal._22, -_matLocal._32);
 	return up;
 }
 
 Vector3 Transform::GetDown()
 {
-	Vector3 down(-_matWorld._12, -_matWorld._22, _matWorld._32);
+	Vector3 down(-_matLocal._12, -_matLocal._22, _matLocal._32);
 	return down;
 }
 
 Vector3 Transform::GetLook()
 {
-	Vector3 look(-_matWorld._13, -_matWorld._23, _matWorld._33);
+	Vector3 look(-_matLocal._13, -_matLocal._23, _matLocal._33);
 	return look;
 }
 
 Vector3 Transform::GetBack()
 {
-	Vector3 look(_matWorld._13, _matWorld._23, -_matWorld._33);
+	Vector3 look(_matLocal._13, _matLocal._23, -_matLocal._33);
 	return look;
 }
 

@@ -110,34 +110,37 @@
     <ClInclude Include="Light.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imconfig.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imgui.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_win32.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_internal.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_rectpack.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_textedit.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_truetype.h">
-      <Filter>99. ExtLibraries</Filter>
-    </ClInclude>
     <ClInclude Include="EngineGUIManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="EngineStatusManager.h" />
+    <ClInclude Include="..\Libraries\Include\ImGUI\imconfig.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_impl_win32.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_internal.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_rectpack.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_textedit.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imstb_truetype.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\Include\tinyxml2\tinyxml2.h">
+      <Filter>99. ExtLibraries\tinyxml2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -175,6 +178,12 @@
     </Filter>
     <Filter Include="99. ExtLibraries">
       <UniqueIdentifier>{11dfefeb-d5b6-4043-93ac-cd663cc29962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. ExtLibraries\imgui">
+      <UniqueIdentifier>{278193b3-1eac-4d1a-8442-8b90e4896c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. ExtLibraries\tinyxml2">
+      <UniqueIdentifier>{91de3027-70a4-498d-a84a-0c72b4580e38}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -269,30 +278,33 @@
     <ClCompile Include="Light.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_demo.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_draw.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_win32.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_tables.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_widgets.cpp">
-      <Filter>99. ExtLibraries</Filter>
-    </ClCompile>
     <ClCompile Include="EngineGUIManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="EngineStatusManager.cpp" />
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_demo.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_draw.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_dx12.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_impl_win32.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_tables.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_widgets.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\tinyxml2\tinyxml2.cpp">
+      <Filter>99. ExtLibraries\tinyxml2</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

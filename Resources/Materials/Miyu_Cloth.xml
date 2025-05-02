@@ -1,0 +1,8 @@
+<Material>
+    <Name>Miyu_Cloth</Name>
+    <Ambient r="0" g="0" b="0" a="0"/>
+    <Diffuse r="0.75708812" g="0.75708812" b="0.75708812" a="1"/>
+    <Specular r="0.75708812" g="0.75708812" b="0.75708812" a="1"/>
+    <Emissive r="0.58237547" g="0.58237547" b="0.58237547" a="1"/>
+    <TextureName>Miyu_Cloth.dds</TextureName>
+</Material>

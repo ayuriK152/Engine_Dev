@@ -1,5 +1,7 @@
 #pragma once
 
+#define MATERIAL_PATH "Materials/"
+
 class DataParseManager
 {
 	DECLARE_SINGLE(DataParseManager);
@@ -10,7 +12,7 @@ public:
 	template <typename T>
 	void SaveData(T data, const wstring& name);
 
-	void XMLFromMaterial(Material* material, const wstring& name);
+	void XMLFromMaterial(shared_ptr<Material> material, const wstring& name);
 };
 
 template <typename T>

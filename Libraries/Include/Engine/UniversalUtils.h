@@ -5,6 +5,7 @@ class UniversalUtils
 public:
 	static string ToString(wstring s);
 	static wstring ToWString(string s);
+	static char* ToChar(wstring s);
 };
 
 #ifndef ThrowIfFailed

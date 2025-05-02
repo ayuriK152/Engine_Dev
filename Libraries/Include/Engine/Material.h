@@ -19,6 +19,7 @@ public:
 
 public:
 	string name;
+	string textureName;
 	int matCBIndex;
 	int diffuseSrvHeapIndex;
 	int normalSrvHeapIndex;

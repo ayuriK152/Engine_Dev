@@ -1,0 +1,8 @@
+<Material>
+    <Name>LBS_Outline_Material</Name>
+    <Ambient r="0" g="0" b="0" a="0"/>
+    <Diffuse r="0.064367816" g="0.064367816" b="0.064367816" a="1"/>
+    <Specular r="0.064367816" g="0.064367816" b="0.064367816" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName></TextureName>
+</Material>

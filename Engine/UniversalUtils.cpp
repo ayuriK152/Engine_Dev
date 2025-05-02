@@ -28,3 +28,14 @@ wstring UniversalUtils::ToWString(string s)
 	result.assign(s.begin(), s.end());
 	return result;
 }
+
+char* UniversalUtils::ToChar(wstring s)
+{
+	const wchar_t* input = s.c_str();
+	size_t size = (wcslen(input) + 1) * sizeof(wchar_t);
+	char* buffer = new char[size];
+	size_t convertedSize;
+	wcstombs_s(&convertedSize, buffer, size, input, size);
+
+	return buffer;
+}

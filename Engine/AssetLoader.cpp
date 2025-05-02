@@ -98,6 +98,8 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 			mat->SetTexture(RESOURCE->Get<Texture>(matName));
 		}
 		RESOURCE->Add<Material>(matName, mat);
+
+		DATA->XMLFromMaterial(mat, matName);
 	}
 }
 

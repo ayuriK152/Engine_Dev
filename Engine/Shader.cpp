@@ -4,7 +4,7 @@
 Shader::Shader(wstring fileName, D3D_SHADER_MACRO* macros, ShaderType shaderType) : Super(ResourceType::Shader),
 	_macros(macros), _shaderType(shaderType)
 {
-	Load(L"Shaders\\" + fileName);
+	Load(L"..\\Resources\\Shaders\\" + fileName);
 }
 
 Shader::~Shader()

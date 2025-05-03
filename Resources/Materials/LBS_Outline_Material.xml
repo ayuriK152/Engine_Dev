@@ -4,5 +4,5 @@
     <Diffuse r="0.064367816" g="0.064367816" b="0.064367816" a="1"/>
     <Specular r="0.064367816" g="0.064367816" b="0.064367816" a="1"/>
     <Emissive r="0" g="0" b="0" a="1"/>
-    <TextureName></TextureName>
+    <TextureName>white1x1.dds</TextureName>
 </Material>

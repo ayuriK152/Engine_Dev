@@ -8,11 +8,16 @@ class DataParseManager
 public:
 	~DataParseManager() = default;
 
+	void Init();
+
 public:
 	template <typename T>
 	void SaveData(T data, const wstring& name);
 
 	void XMLFromMaterial(shared_ptr<Material> material, const wstring& name);
+
+	void LoadTextures();
+	void LoadMaterials();
 };
 
 template <typename T>

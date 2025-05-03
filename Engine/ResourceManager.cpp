@@ -34,7 +34,7 @@ void ResourceManager::CreateDefaultResources()
 
 
 	//==========Material==========
-	auto defaultMat = make_shared<Material>("Default", 0, -1);
+	auto defaultMat = make_shared<Material>("Default");
 	Add<Material>(L"Mat_Default", defaultMat);
 
 	auto defaultSkyboxMat = make_shared<Material>("DefaultSkybox", L"Tex_DefaultSkybox");

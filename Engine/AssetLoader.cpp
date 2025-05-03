@@ -71,7 +71,10 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
 		wstring matName = GetAIMaterialName(scene, i);
 
-		shared_ptr<Material> mat = make_shared<Material>(matNameStr, 0, -1);
+		if (RESOURCE->Get<Material>(matName) != nullptr)
+			continue;
+
+		shared_ptr<Material> mat = make_shared<Material>(matNameStr);
 
 		aiColor4D color;
 		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);

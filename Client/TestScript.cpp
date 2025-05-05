@@ -5,8 +5,8 @@ void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
 	{
-		assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
-		RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
+		//assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
+		//RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
 	}
 
 	skybox = make_shared<GameObject>();
@@ -28,12 +28,12 @@ void TestScript::Init()
 	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
 	RENDER->AddGameObject(globalLight);
 
-	miyu = make_shared<GameObject>();
-	miyu->meshName = "miyu";
-	miyu->psoName = PSO_OPAQUE_SKINNED;
-	miyu->AddComponent(make_shared<MeshRenderer>());
-	miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
-	RENDER->AddGameObject(miyu);
+	//miyu = make_shared<GameObject>();
+	//miyu->meshName = "miyu";
+	//miyu->psoName = PSO_OPAQUE_SKINNED;
+	//miyu->AddComponent(make_shared<MeshRenderer>());
+	//miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
+	//RENDER->AddGameObject(miyu);
 
 	sphere = make_shared<GameObject>();
 	sphere->meshName = "sphere";

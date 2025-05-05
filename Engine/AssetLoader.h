@@ -1,6 +1,5 @@
 #pragma once
 class Geometry;
-class SubMesh;
 class Mesh;
 class GameObject;
 
@@ -25,7 +24,7 @@ public:
 	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
 	void MapWeights();
 	void MapBones();
-	shared_ptr<SubMesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
 	shared_ptr<Mesh> GetLoadedMesh() { return _mesh; }
 
@@ -52,13 +51,14 @@ private:
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, shared_ptr<Bone>> _bones;
 	vector<shared_ptr<Geometry>> _geometry;
-	vector<shared_ptr<SubMesh>> _subMeshes;
+	//vector<shared_ptr<SubMesh>> _subMeshes;	// legacy
+
+	vector<shared_ptr<Mesh>> _meshes;
 	shared_ptr<Mesh> _mesh;
 
-	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
+	shared_ptr<GameObject> _loadedObject;
 
-	UINT _submeshVertexOffset = 0;
-	UINT _submeshIndexOffset = 0;
+	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 
 private:
 	wstring _assetPath = L"../Resources/Assets/";

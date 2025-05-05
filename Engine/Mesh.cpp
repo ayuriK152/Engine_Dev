@@ -1,62 +1,15 @@
 #include "pch.h"
 #include "Mesh.h"
 
-Mesh::Mesh() : Super(ResourceType::Mesh)
+Mesh::Mesh(shared_ptr<Geometry> geometry) : Super(ResourceType::Mesh), _geometry(geometry)
 {
-
-}
-
-Mesh::Mesh(vector<shared_ptr<Geometry>> geometry) : Super(ResourceType::Mesh)
-{
-	for (auto& geo : geometry)
-	{
-		shared_ptr<SubMesh> submesh = make_shared<SubMesh>(geo);
-		_submeshes.push_back(submesh);
-
-		_indexCount += submesh->GetIndexCount();
-		_vertices.insert(_vertices.begin(), submesh->GetVertices().begin(), submesh->GetVertices().end());
-	}
-}
-
-Mesh::Mesh(vector<shared_ptr<SubMesh>> subMeshes) : Super(ResourceType::Mesh), _submeshes(subMeshes)
-{
-
+	_material = RESOURCE->Get<Material>(L"Mat_Default");
+	CreateBuffer();
 }
 
 Mesh::~Mesh()
 {
 
-}
-
-void Mesh::CreateBasicCube()
-{
-	CreateBasicCube(1.5f, 1.5f, 1.5f, 3);
-}
-
-void Mesh::CreateBasicCube(float width, float height, float depth, UINT numSubdivisions)
-{
-	shared_ptr<Geometry> geo = GeometryGenerator::CreateBox(width, height, depth, numSubdivisions);
-	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
-	_submeshes.push_back(subMesh);
-}
-
-void Mesh::CreateBasicSphere()
-{
-	return CreateBasicSphere(1.0f, 3);
-}
-
-void Mesh::CreateBasicSphere(float radius, UINT numSubdivisions)
-{
-	shared_ptr<Geometry> geo = GeometryGenerator::CreateGeosphere(radius, numSubdivisions);
-	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
-	_submeshes.push_back(subMesh);
-}
-
-void Mesh::CreateBasicQuad()
-{
-	shared_ptr<Geometry> geo = GeometryGenerator::CreateQuad();
-	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geo);
-	_submeshes.push_back(subMesh);
 }
 
 void Mesh::SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones)
@@ -65,18 +18,7 @@ void Mesh::SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, s
 	_bones = bones;
 }
 
-SubMesh::SubMesh()
-{
-	_material = RESOURCE->Get<Material>(L"Mat_Default");
-}
-
-SubMesh::SubMesh(shared_ptr<Geometry> geo) : _geometry(geo)
-{
-	_material = RESOURCE->Get<Material>(L"Mat_Default");
-	CreateBuffer();
-}
-
-void SubMesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
+void Mesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
 {
 	_geometry->SetWeights(boneId, weights);
 
@@ -85,7 +27,7 @@ void SubMesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
 	DXUtil::UpdateBuffer(vertexBufferGPU, vertexBufferUploader, _geometry->GetVertexData(), vbByteSize);
 }
 
-void SubMesh::CreateBuffer()
+void Mesh::CreateBuffer()
 {
 	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)_geometry->GetIndexCount() * sizeof(UINT16);

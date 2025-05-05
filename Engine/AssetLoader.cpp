@@ -16,11 +16,7 @@ void AssetLoader::InitializeFields()
 	_nodes.clear();
 	_bones.clear();
 	_geometry.clear();
-	_subMeshes.clear();
 	_tempBoneWeights.clear();
-
-	_submeshVertexOffset = 0;
-	_submeshIndexOffset = 0;
 }
 
 void AssetLoader::ReadAssetFile(wstring file)
@@ -43,8 +39,6 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	ImportModelFormat(file);
 
-	_submeshVertexOffset = 0;
-	_submeshIndexOffset = 0;
 	auto anim = _scene->mAnimations;
 	ProcessMaterials(_scene);
 	ProcessNodes(_scene->mRootNode, _scene, nullptr);
@@ -52,12 +46,12 @@ void AssetLoader::ReadAssetFile(wstring file)
 	{
 		MapWeights();
 		MapBones();
-		_mesh = make_shared<Mesh>(_subMeshes);
+		//_mesh = make_shared<Mesh>(_subMeshes);
 		_mesh->SetSkinnedMeshData(_nodes, _bones);
 	}
 	else
 	{
-		_mesh = make_shared<Mesh>(_subMeshes);
+		//_mesh = make_shared<Mesh>(_subMeshes);
 	}
 
 	InitializeFields();
@@ -128,8 +122,8 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	{
 		// 메시 기하정보 로드
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		currNode->submeshIndices.push_back(_subMeshes.size());
-		_subMeshes.push_back(ProcessMesh(mesh, scene));
+		//currNode->submeshIndices.push_back(_meshes.size());
+		_meshes.push_back(ProcessMesh(mesh, scene));
 
 		// 메시 본 로드 (있는 경우에만)
 		if (mesh->HasBones())
@@ -163,8 +157,8 @@ void AssetLoader::MapWeights()
 		int subMeshIndex = weight.first.first;
 		string boneName = weight.first.second;
 		UINT boneId = _bones[boneName]->id;
-		shared_ptr<SubMesh> subMesh = _subMeshes[subMeshIndex];
-		subMesh->SetWeights(boneId, weight.second);
+		shared_ptr<Mesh> mesh = _meshes[subMeshIndex];
+		mesh->SetWeights(boneId, weight.second);
 	}
 }
 
@@ -179,7 +173,7 @@ void AssetLoader::MapBones()
 	}
 }
 
-shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 {
 	shared_ptr<Geometry> geometry = make_shared<Geometry>();
 
@@ -187,22 +181,22 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	vector<UINT16> indices;
 
 	// Get Vertices
-	vertices.reserve(mesh->mNumVertices);
-	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	vertices.reserve(aimesh->mNumVertices);
+	for (UINT i = 0; i < aimesh->mNumVertices; i++)
 	{
 		Vertex v;
-		v.Position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
-		v.Normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
+		v.Position = { aimesh->mVertices[i].x, aimesh->mVertices[i].y, aimesh->mVertices[i].z };
+		v.Normal = { aimesh->mNormals[i].x, aimesh->mNormals[i].y, aimesh->mNormals[i].z };
 		
-		for (int j = 0; j < mesh->GetNumUVChannels(); j++)
+		for (int j = 0; j < aimesh->GetNumUVChannels(); j++)
 		{
 			switch (_modelType)
 			{
 			case ModelFormat::FBX:
-				v.TexC = { (float)mesh->mTextureCoords[j][i].x, (float)mesh->mTextureCoords[j][i].y };
+				v.TexC = { (float)aimesh->mTextureCoords[j][i].x, (float)aimesh->mTextureCoords[j][i].y };
 				break;
 			case ModelFormat::GLTF:
-				v.TexC = { (float)mesh->mTextureCoords[j][i].x, 1.0f - (float)mesh->mTextureCoords[j][i].y };
+				v.TexC = { (float)aimesh->mTextureCoords[j][i].x, 1.0f - (float)aimesh->mTextureCoords[j][i].y };
 				break;
 			}
 		}
@@ -212,15 +206,15 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	// Get Indices
 	UINT numIndices = 0;
-	for (UINT i = 0; i < mesh->mNumFaces; i++)
+	for (UINT i = 0; i < aimesh->mNumFaces; i++)
 	{
-		numIndices += mesh->mFaces[i].mNumIndices;
+		numIndices += aimesh->mFaces[i].mNumIndices;
 	}
 
 	indices.reserve(numIndices);
-	for (UINT i = 0; i < mesh->mNumFaces; i++)
+	for (UINT i = 0; i < aimesh->mNumFaces; i++)
 	{
-		aiFace face = mesh->mFaces[i];
+		aiFace face = aimesh->mFaces[i];
 		for (UINT j = 0; j < face.mNumIndices; j++)
 		{
 			indices.push_back(face.mIndices[j]);
@@ -228,12 +222,12 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// 본 가중치 여부 확인 후 추가
-	if (mesh->HasBones())
+	if (aimesh->HasBones())
 	{
-		for (int i = 0; i < mesh->mNumBones; i++)
+		for (int i = 0; i < aimesh->mNumBones; i++)
 		{
 			// 현재 서브메시에 대한 본별 가중치 임시 저장
-			aiBone* currentBone = mesh->mBones[i];
+			aiBone* currentBone = aimesh->mBones[i];
 			for (int j = 0; j < currentBone->mNumWeights; j++)
 			{
 				if (currentBone->mWeights[j].mWeight == 0)
@@ -242,24 +236,20 @@ shared_ptr<SubMesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 				BoneWeight weight;
 				weight.vertexIndex = currentBone->mWeights[j].mVertexId;
 				weight.weight = currentBone->mWeights[j].mWeight;
-				_tempBoneWeights[{ _subMeshes.size(), currentBone->mName.C_Str() }].push_back(weight);
+				//_tempBoneWeights[{ _subMeshes.size(), currentBone->mName.C_Str() }].push_back(weight);
 			}
 		}
 	}
 
 	geometry->SetVertices(vertices);
 	geometry->SetIndices(indices);
-	geometry->SetVertexOffset(_submeshVertexOffset);
-	geometry->SetIndexOffset(_submeshIndexOffset);
-	_submeshVertexOffset += geometry->GetVertexCount();
-	_submeshIndexOffset += geometry->GetIndexCount();
 
-	shared_ptr<SubMesh> subMesh = make_shared<SubMesh>(geometry);
-	subMesh->name = mesh->mName.C_Str();
-	subMesh->id = _subMeshes.size();
-	auto mat = RESOURCE->Get<Material>(GetAIMaterialName(scene, mesh->mMaterialIndex));
-	subMesh->SetMaterial(mat);
-	return subMesh;
+	shared_ptr<Mesh> mesh = make_shared<Mesh>(geometry);
+	mesh->name = aimesh->mName.C_Str();
+	//mesh->id = _subMeshes.size();
+	auto mat = RESOURCE->Get<Material>(GetAIMaterialName(scene, aimesh->mMaterialIndex));
+	mesh->SetMaterial(mat);
+	return mesh;
 }
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 {

@@ -7,6 +7,11 @@ void DataParseManager::Init()
 	LoadMaterials();
 }
 
+void DataParseManager::XMLFromMesh(shared_ptr<Mesh> mesh, const wstring& name)
+{
+
+}
+
 void DataParseManager::XMLFromMaterial(shared_ptr<Material> material, const wstring& name)
 {
 	if (filesystem::exists(RESOURCE_PATH_MATERIALW + name + L".xml"))

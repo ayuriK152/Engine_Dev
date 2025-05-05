@@ -11,7 +11,7 @@ struct Node
 	XMFLOAT4X4 transform;
 	XMFLOAT4X4 parentTransform;
 
-	vector<UINT> submeshIndices;
+	//vector<UINT> submeshIndices;
 };
 
 struct Bone

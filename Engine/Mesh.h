@@ -5,13 +5,20 @@
 struct Vertex;
 #pragma endregion
 
-class SubMesh
+class Mesh : public Resource
 {
+	using Super = Resource;
 public:
-	SubMesh();
-	SubMesh(shared_ptr<Geometry> geo);
-	~SubMesh() = default;
+	Mesh(shared_ptr<Geometry> geometry);
+	virtual ~Mesh();
 
+public:
+	bool HasBones() { return _bones.size() > 0; }
+	map<string, shared_ptr<Bone>> GetBones() { return _bones; }
+
+	void SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones);
+
+// refactoring
 public:
 	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
 
@@ -19,16 +26,18 @@ public:
 	void* GetVertexData() { return _geometry->GetVertices().data(); }
 	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
 
-	void SetMaterial(shared_ptr<Material> mat) { 
+	void SetMaterial(shared_ptr<Material> mat) {
 		_material = mat;
 	}
 	const shared_ptr<Material> GetMaterial() { return _material; }
 
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
 
+// refactoring
 private:
 	void CreateBuffer();
 
+// refactoring
 public:
 	string name;
 	UINT id;
@@ -43,44 +52,13 @@ public:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 private:
-	shared_ptr<Geometry> _geometry;
-	shared_ptr<Material> _material;
-};
-
-class Mesh : public Resource
-{
-	using Super = Resource;
-public:
-	Mesh();
-	Mesh(vector<shared_ptr<Geometry>> geometry);
-	Mesh(vector<shared_ptr<SubMesh>> subMeshes);
-	virtual ~Mesh();
-
-public:
-	UINT GetIndexCount() { return _indexCount; }
-
-	vector<Vertex>& GetVertices() { return _vertices; }
-	void* GetVertexData() { return _vertices.data(); }
-	UINT GetVertexCount() { return _vertices.size(); }
-
-	bool HasBones() { return _bones.size() > 0; }
-	map<string, shared_ptr<Bone>> GetBones() { return _bones; }
-
-	void CreateBasicCube();
-	void CreateBasicCube(float width, float height, float depth, UINT numSubdivisions);
-	void CreateBasicSphere();
-	void CreateBasicSphere(float radius, UINT numSubdivisions);
-	void CreateBasicQuad();
-
-	const vector<shared_ptr<SubMesh>> GetSubmeshes() { return _submeshes; }
-
-	void SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones);
-
-private:
-	vector<shared_ptr<SubMesh>> _submeshes;
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, shared_ptr<Bone>> _bones;
 
 	UINT _indexCount = 0;
-	vector<Vertex> _vertices;
+
+	//============================
+	// refactoring
+	shared_ptr<Geometry> _geometry;
+	shared_ptr<Material> _material;
 };

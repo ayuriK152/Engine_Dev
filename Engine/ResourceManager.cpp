@@ -42,15 +42,12 @@ void ResourceManager::CreateDefaultResources()
 
 
 	//==========Mesh==========
-	shared_ptr<Mesh> boxMesh = make_shared<Mesh>();
-	boxMesh->CreateBasicCube();
+	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
 	Add<Mesh>(L"Mesh_BasicBox", boxMesh);
 
-	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>();
-	sphereMesh->CreateBasicSphere();
+	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(1.0f, 3));
 	Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
 
-	shared_ptr<Mesh> quadMesh = make_shared<Mesh>();
-	quadMesh->CreateBasicQuad();
+	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
 	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
 }

@@ -19,12 +19,6 @@ public:
 	void SetVertices(vector<Vertex> vertices);
 	void SetIndices(vector<UINT16> indices);
 
-	UINT GetVertexOffset() { return _submeshVertexOffset; }
-	UINT GetIndexOffset() { return _submeshIndexOffset; }
-
-	void SetVertexOffset(UINT offset) { _submeshVertexOffset = offset; }
-	void SetIndexOffset(UINT offset) { _submeshIndexOffset = offset; }
-
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
 
 public:
@@ -33,7 +27,4 @@ public:
 private:
 	vector<Vertex> _vertices;
 	vector<UINT16> _indices;
-
-	UINT _submeshVertexOffset = 0;
-	UINT _submeshIndexOffset = 0;
 };

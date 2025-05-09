@@ -19,6 +19,22 @@ Transform::~Transform()
 
 }
 
+void Transform::Update()
+{
+	for (auto& c : _childs)
+	{
+		c->GetGameObject()->Update();
+	}
+}
+
+void Transform::Render()
+{
+	for (auto& c : _childs)
+	{
+		c->GetGameObject()->Render();
+	}
+}
+
 void Transform::UpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
@@ -187,6 +203,51 @@ void Transform::LookAt(const Vector3& targetPos)
 	UpdateTransform();
 }
 
+void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
+{
+	_matLocal = mat;
+
+	XMVECTOR scale;
+	XMVECTOR quaternion;
+	XMVECTOR position;
+	XMMatrixDecompose(
+		&scale,
+		&quaternion,
+		&position,
+		XMLoadFloat4x4(&_matLocal));
+
+	XMStoreFloat3(&_localScale, scale);
+	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
+	XMStoreFloat3(&_localPosition, position);
+
+	UpdateTransform();
+}
+
+void Transform::SetObjectWorldMatrix(XMFLOAT4X4 mat)
+{
+	_matWorld = mat;
+
+	if (HasParent())
+		XMStoreFloat4x4(&_matLocal, XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())) * XMLoadFloat4x4(&_matWorld));
+	else
+		_matLocal = _matWorld;
+
+	XMVECTOR scale;
+	XMVECTOR quaternion;
+	XMVECTOR position;
+	XMMatrixDecompose(
+		&scale,
+		&quaternion,
+		&position,
+		XMLoadFloat4x4(&_matLocal));
+
+	XMStoreFloat3(&_localScale, scale);
+	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
+	XMStoreFloat3(&_localPosition, position);
+
+	UpdateTransform();
+}
+
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	if (HasParent())
@@ -199,7 +260,7 @@ void Transform::SetParent(shared_ptr<Transform> parent)
 {
 	_parent = parent;
 
-	if (_parent != nullptr)
+	if (HasParent())
 		XMStoreFloat4x4(&_matLocal, XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())) * XMLoadFloat4x4(&_matWorld));
 	else
 		_matLocal = _matWorld;

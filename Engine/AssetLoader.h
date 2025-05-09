@@ -2,6 +2,7 @@
 class Geometry;
 class Mesh;
 class GameObject;
+class MeshRenderer;
 
 enum ModelFormat
 {
@@ -24,9 +25,10 @@ public:
 	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
 	void MapWeights();
 	void MapBones();
+	void BuildBones();
 	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
-	shared_ptr<Mesh> GetLoadedMesh() { return _mesh; }
+	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject; }
 
 	XMFLOAT4X4 ConvertToXMFLOAT4X4(aiMatrix4x4 mat) {
 		XMFLOAT4X4 ret(
@@ -51,10 +53,10 @@ private:
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, shared_ptr<Bone>> _bones;
 	vector<shared_ptr<Geometry>> _geometry;
-	//vector<shared_ptr<SubMesh>> _subMeshes;	// legacy
-
+	vector<shared_ptr<GameObject>> _meshObjs;
+	vector<shared_ptr<GameObject>> _boneObjs;
+	vector<shared_ptr<MeshRenderer>> _meshRenderers;
 	vector<shared_ptr<Mesh>> _meshes;
-	shared_ptr<Mesh> _mesh;
 
 	shared_ptr<GameObject> _loadedObject;
 

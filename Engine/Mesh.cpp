@@ -12,12 +12,6 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones)
-{
-	_nodes = nodes;
-	_bones = bones;
-}
-
 void Mesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
 {
 	_geometry->SetWeights(boneId, weights);

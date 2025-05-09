@@ -16,6 +16,8 @@ private:
 	shared_ptr<GameObject> sphere2;
 	shared_ptr<GameObject> miyu;
 
+	vector<shared_ptr<GameObject>> gameObjects;
+
 	shared_ptr<AssetLoader> assetLoader;
 };
 

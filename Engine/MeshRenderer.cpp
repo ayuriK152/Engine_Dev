@@ -14,29 +14,22 @@ MeshRenderer::~MeshRenderer()
 void MeshRenderer::Init()
 {
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
-	if (_mesh->HasBones())
+	if (rootBone != nullptr)
 	{
-		// id 순으로 정렬해서 업로드
 		UINT64 boneByteSize;
-		vector<shared_ptr<Bone>> sortedBones;
 		vector<XMFLOAT4X4> boneTransforms;
 
-		sortedBones.reserve(_mesh->GetBones().size());
-		boneTransforms.reserve(_mesh->GetBones().size());
-		boneByteSize = sizeof(XMFLOAT4X4) * _mesh->GetBones().size();
-
-		for (auto& bone : _mesh->GetBones())
-			sortedBones.push_back(bone.second);
-
-		sort(sortedBones.begin(), sortedBones.end(), [](shared_ptr<Bone> a, shared_ptr<Bone> b) { return a->id < b->id; });
-
-		for (int i = 0; i < sortedBones.size(); i++)
+		vector<shared_ptr<Transform>> boneQueue;
+		boneQueue.push_back(rootBone);
+		while (boneQueue.size() > 0)
 		{
-			XMFLOAT4X4 transform;
-			XMStoreFloat4x4(&transform, (XMLoadFloat4x4(&sortedBones[i]->node->transform) * XMLoadFloat4x4(&sortedBones[i]->transform)));
-			boneTransforms.push_back(transform);
+			boneTransforms.push_back(boneQueue[0]->GetWorldMatrix());
+			for (auto& t : boneQueue[0]->GetChilds())
+				boneQueue.push_back(t);
+			boneQueue.erase(boneQueue.begin());
 		}
 
+		boneByteSize = sizeof(XMFLOAT4X4) * boneTransforms.size();
 		LoadBoneData(boneByteSize, boneTransforms);
 		CreateBoneSRV(boneTransforms);
 	}
@@ -52,7 +45,7 @@ void MeshRenderer::Render()
 	auto matCB = RENDER->GetMaterialCB()->GetResource();
 	auto cmdList = GRAPHIC->GetCommandList().Get();
 
-	if (_mesh->HasBones())
+	if (rootBone != nullptr)
 	{
 		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 		bone.Offset(_boneSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());

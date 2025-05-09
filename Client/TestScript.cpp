@@ -5,7 +5,7 @@ void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
 	{
-		//assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
+		assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
 		//RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
 	}
 
@@ -14,38 +14,39 @@ void TestScript::Init()
 	skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
 	skybox->psoName = PSO_SKYBOX;
-	RENDER->AddGameObject(skybox);
+	gameObjects.push_back(skybox);
 	RENDER->SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
 
 	camera = make_shared<GameObject>();
 	camera->AddComponent(make_shared<Camera>());
-	RENDER->AddGameObject(camera);
+	gameObjects.push_back(camera);
 
 	globalLight = make_shared<GameObject>();
 	XMFLOAT4 ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
-	RENDER->AddGameObject(globalLight);
+	gameObjects.push_back(globalLight);
 
+	miyu = assetLoader->GetLoadedObject();
 	//miyu = make_shared<GameObject>();
 	//miyu->meshName = "miyu";
 	//miyu->psoName = PSO_OPAQUE_SKINNED;
 	//miyu->AddComponent(make_shared<MeshRenderer>());
 	//miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
-	//RENDER->AddGameObject(miyu);
+	gameObjects.push_back(miyu);
 
 	sphere = make_shared<GameObject>();
 	sphere->meshName = "sphere";
 	sphere->AddComponent(make_shared<MeshRenderer>());
 	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	RENDER->AddGameObject(sphere);
+	gameObjects.push_back(sphere);
 
 	sphere2 = make_shared<GameObject>();
 	sphere2->meshName = "sphere2";
 	sphere2->AddComponent(make_shared<MeshRenderer>());
 	sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	RENDER->AddGameObject(sphere2);
+	gameObjects.push_back(sphere2);
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
@@ -55,6 +56,17 @@ void TestScript::Init()
 	sphere2->GetTransform()->SetParent(sphere->GetTransform());
 
 	//miyu->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+
+	
+	while (gameObjects.size() > 0)
+	{
+		RENDER->AddGameObject(gameObjects[0]);
+		for (auto& t : gameObjects[0]->GetTransform()->GetChilds())
+		{
+			gameObjects.push_back(t->GetGameObject());
+		}
+		gameObjects.erase(gameObjects.begin());
+	}
 }
 
 void TestScript::Update()

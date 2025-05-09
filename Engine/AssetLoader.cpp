@@ -38,6 +38,7 @@ void AssetLoader::ReadAssetFile(wstring file)
 	assert(_scene != nullptr);
 
 	ImportModelFormat(file);
+	_loadedObject = make_shared<GameObject>();
 
 	auto anim = _scene->mAnimations;
 	ProcessMaterials(_scene);
@@ -46,13 +47,11 @@ void AssetLoader::ReadAssetFile(wstring file)
 	{
 		MapWeights();
 		MapBones();
-		//_mesh = make_shared<Mesh>(_subMeshes);
-		_mesh->SetSkinnedMeshData(_nodes, _bones);
+		BuildBones();
 	}
-	else
-	{
-		//_mesh = make_shared<Mesh>(_subMeshes);
-	}
+
+	assert(_loadedObject != nullptr);
+	auto asdf = _loadedObject->GetTransform();
 
 	InitializeFields();
 }
@@ -122,8 +121,16 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	{
 		// 메시 기하정보 로드
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		//currNode->submeshIndices.push_back(_meshes.size());
-		_meshes.push_back(ProcessMesh(mesh, scene));
+		shared_ptr<Mesh> m = ProcessMesh(mesh, scene);
+		RESOURCE->Add<Mesh>(UniversalUtils::ToWString(node->mName.C_Str()), m);
+		_meshes.push_back(m);
+
+		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
+		meshObj->AddComponent(make_shared<MeshRenderer>());
+		meshObj->GetComponent<MeshRenderer>()->SetMesh(m);
+		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
+		_meshRenderers.push_back(meshObj->GetComponent<MeshRenderer>());
+		_meshObjs.push_back(meshObj);
 
 		// 메시 본 로드 (있는 경우에만)
 		if (mesh->HasBones())
@@ -137,7 +144,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 					shared_ptr<Bone> bone = make_shared<Bone>();
 					bone->name = mesh->mBones[i]->mName.C_Str();
 					bone->id = _bones.size();
-					bone->transform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
+					bone->offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
 					_bones.insert({ bone->name, bone });
 				}
 			}
@@ -171,6 +178,48 @@ void AssetLoader::MapBones()
 			continue;
 		bone->second->node = node;
 	}
+}
+
+void AssetLoader::BuildBones()
+{
+	vector<shared_ptr<Bone>> sortedBones;
+	sortedBones.reserve(_bones.size());
+	for (auto& b : _bones)
+		sortedBones.push_back(b.second);
+
+	sort(sortedBones.begin(), sortedBones.end(), [](shared_ptr<Bone> a, shared_ptr<Bone> b) { return a->id < b->id; });
+
+	for (auto& b : sortedBones)
+	{
+		shared_ptr<GameObject> foundObj = nullptr;
+		shared_ptr<Node> currentParent = b->node->parent;
+		while (true)
+		{
+			if (currentParent == nullptr)
+				break;
+			if (_bones.contains(currentParent->name))
+			{
+				foundObj = _bones[currentParent->name]->instancedObj;
+				break;
+			}
+			currentParent = currentParent->parent;
+		}
+		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
+		boneObj->name = b->name;
+		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
+		if (foundObj != nullptr)
+			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
+		_boneObjs.push_back(boneObj);
+		b->instancedObj = boneObj;
+	}
+
+	for (auto& renderer : _meshRenderers)
+	{
+		renderer->rootBone = _boneObjs[0]->GetTransform();
+	}
+
+	_boneObjs[0]->GetTransform()->SetParent(_loadedObject->GetTransform());
+	assert(_boneObjs.size() != 0);
 }
 
 shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
@@ -236,7 +285,7 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 				BoneWeight weight;
 				weight.vertexIndex = currentBone->mWeights[j].mVertexId;
 				weight.weight = currentBone->mWeights[j].mWeight;
-				//_tempBoneWeights[{ _subMeshes.size(), currentBone->mName.C_Str() }].push_back(weight);
+				_tempBoneWeights[{ _meshes.size(), currentBone->mName.C_Str() }].push_back(weight);
 			}
 		}
 	}
@@ -246,7 +295,7 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 
 	shared_ptr<Mesh> mesh = make_shared<Mesh>(geometry);
 	mesh->name = aimesh->mName.C_Str();
-	//mesh->id = _subMeshes.size();
+	mesh->id = _meshes.size();
 	auto mat = RESOURCE->Get<Material>(GetAIMaterialName(scene, aimesh->mMaterialIndex));
 	mesh->SetMaterial(mat);
 	return mesh;

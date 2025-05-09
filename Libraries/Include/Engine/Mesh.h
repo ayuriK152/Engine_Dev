@@ -12,12 +12,6 @@ public:
 	Mesh(shared_ptr<Geometry> geometry);
 	virtual ~Mesh();
 
-public:
-	bool HasBones() { return _bones.size() > 0; }
-	map<string, shared_ptr<Bone>> GetBones() { return _bones; }
-
-	void SetSkinnedMeshData(map<string, shared_ptr<Node>> nodes, map<string, shared_ptr<Bone>> bones);
-
 // refactoring
 public:
 	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
@@ -52,9 +46,6 @@ public:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 private:
-	map<string, shared_ptr<Node>> _nodes;
-	map<string, shared_ptr<Bone>> _bones;
-
 	UINT _indexCount = 0;
 
 	//============================

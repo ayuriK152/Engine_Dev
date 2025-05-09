@@ -162,6 +162,11 @@ void RenderManager::SetDefaultPSO()
 
 shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 {
+	for (auto& o : _objects)
+	{
+		if (obj == o)
+			return nullptr;
+	}
 	obj->objCBIndex = _objects.size();
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 

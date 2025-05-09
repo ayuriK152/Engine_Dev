@@ -2,6 +2,7 @@
 #include "pch.h"
 
 class Geometry;
+class GameObject;
 
 struct Node
 {
@@ -19,7 +20,8 @@ struct Bone
 	string name;
 	UINT id;
 	shared_ptr<Node> node;
-	XMFLOAT4X4 transform;
+	shared_ptr<GameObject> instancedObj;
+	XMFLOAT4X4 offsetTransform;
 	vector<UINT> vertexIndices;
 };
 

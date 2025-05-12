@@ -42,3 +42,5 @@ public:									\
 #define RESOURCE_PATH_SHADERW		L"..\\Resources\\Shaders\\"
 #define RESOURCE_PATH_TEXTURE		"..\\Resources\\Textures\\"
 #define RESOURCE_PATH_TEXTUREW		L"..\\Resources\\Textures\\"
+#define RESOURCE_PATH_MESH			"..\\Resources\\Meshes\\"
+#define RESOURCE_PATH_MESHW			L"..\\Resources\\Meshes\\"

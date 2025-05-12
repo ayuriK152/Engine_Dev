@@ -49,10 +49,10 @@ private:
 
 	const aiScene* _scene;
 	ModelFormat _modelType;
+	wstring _assetName;
 
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, shared_ptr<Bone>> _bones;
-	vector<shared_ptr<Geometry>> _geometry;
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
 	vector<shared_ptr<MeshRenderer>> _meshRenderers;

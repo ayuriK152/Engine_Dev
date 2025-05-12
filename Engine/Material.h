@@ -18,7 +18,6 @@ public:
 	static int GetCount() { return _count; }
 
 public:
-	string name;
 	string textureName;
 	int matCBIndex;
 	int diffuseSrvHeapIndex;

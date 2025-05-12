@@ -29,10 +29,7 @@ void Transform::Update()
 
 void Transform::Render()
 {
-	for (auto& c : _childs)
-	{
-		c->GetGameObject()->Render();
-	}
+
 }
 
 void Transform::UpdateTransform()

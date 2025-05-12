@@ -15,7 +15,10 @@ void AssetLoader::InitializeFields()
 {
 	_nodes.clear();
 	_bones.clear();
-	_geometry.clear();
+	//_meshObjs.clear();
+	//_boneObjs.clear();
+	_meshRenderers.clear();
+
 	_tempBoneWeights.clear();
 }
 
@@ -25,7 +28,6 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	auto p = filesystem::path(fileStr);
 	assert(filesystem::exists(p));
-
 	_scene = _importer->ReadFile(
 		UniversalUtils::ToString(fileStr),
 		aiProcess_ConvertToLeftHanded |
@@ -37,10 +39,9 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	assert(_scene != nullptr);
 
-	ImportModelFormat(file);
+	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
 	_loadedObject = make_shared<GameObject>();
 
-	auto anim = _scene->mAnimations;
 	ProcessMaterials(_scene);
 	ProcessNodes(_scene->mRootNode, _scene, nullptr);
 	if (_bones.size() > 0)
@@ -49,9 +50,6 @@ void AssetLoader::ReadAssetFile(wstring file)
 		MapBones();
 		BuildBones();
 	}
-
-	assert(_loadedObject != nullptr);
-	auto asdf = _loadedObject->GetTransform();
 
 	InitializeFields();
 }
@@ -95,7 +93,7 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		}
 		RESOURCE->Add<Material>(matName, mat);
 
-		DATA->XMLFromMaterial(mat, matName);
+		DATA->XMLFromMaterial(mat, _assetName);
 	}
 }
 
@@ -235,7 +233,8 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 	{
 		Vertex v;
 		v.Position = { aimesh->mVertices[i].x, aimesh->mVertices[i].y, aimesh->mVertices[i].z };
-		v.Normal = { aimesh->mNormals[i].x, aimesh->mNormals[i].y, aimesh->mNormals[i].z };
+		if (aimesh->HasNormals())
+			v.Normal = { aimesh->mNormals[i].x, aimesh->mNormals[i].y, aimesh->mNormals[i].z };
 		
 		for (int j = 0; j < aimesh->GetNumUVChannels(); j++)
 		{
@@ -308,6 +307,9 @@ wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 
 void AssetLoader::ImportModelFormat(wstring fileName)
 {
+	_assetName = fileName;
+	_assetName.erase(_assetName.find_last_of(L"."), wstring::npos);
+
 	istringstream ss(UniversalUtils::ToString(fileName));
 	string format;
 	while (getline(ss, format, '.'));

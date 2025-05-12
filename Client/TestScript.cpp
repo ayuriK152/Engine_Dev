@@ -5,11 +5,11 @@ void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
 	{
-		assetLoader->ReadAssetFile(L"Miyu/miyu.gltf");
-		//RESOURCE->Add<Mesh>(L"Mesh_Miyu", assetLoader->GetLoadedMesh());
+		assetLoader->ReadAssetFile(L"Y Bot\\Y Bot.fbx");
 	}
 
 	skybox = make_shared<GameObject>();
+	skybox->name = "skybox";
 	skybox->AddComponent(make_shared<MeshRenderer>());
 	skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
@@ -18,6 +18,7 @@ void TestScript::Init()
 	RENDER->SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
 
 	camera = make_shared<GameObject>();
+	camera->name = "camera";
 	camera->AddComponent(make_shared<Camera>());
 	gameObjects.push_back(camera);
 
@@ -28,22 +29,19 @@ void TestScript::Init()
 	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
 	gameObjects.push_back(globalLight);
 
-	miyu = assetLoader->GetLoadedObject();
-	//miyu = make_shared<GameObject>();
-	//miyu->meshName = "miyu";
-	//miyu->psoName = PSO_OPAQUE_SKINNED;
-	//miyu->AddComponent(make_shared<MeshRenderer>());
-	//miyu->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_Miyu"));
-	gameObjects.push_back(miyu);
+	model = assetLoader->GetLoadedObject();
+	model->name = "model";
+	model->psoName = PSO_OPAQUE_SKINNED;
+	gameObjects.push_back(model);
 
 	sphere = make_shared<GameObject>();
-	sphere->meshName = "sphere";
+	sphere->name = "sphere";
 	sphere->AddComponent(make_shared<MeshRenderer>());
 	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	gameObjects.push_back(sphere);
 
 	sphere2 = make_shared<GameObject>();
-	sphere2->meshName = "sphere2";
+	sphere2->name = "sphere2";
 	sphere2->AddComponent(make_shared<MeshRenderer>());
 	sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	gameObjects.push_back(sphere2);
@@ -54,8 +52,7 @@ void TestScript::Init()
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 3.0f));
 	sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 	sphere2->GetTransform()->SetParent(sphere->GetTransform());
-
-	//miyu->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+	model->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 
 	
 	while (gameObjects.size() > 0)

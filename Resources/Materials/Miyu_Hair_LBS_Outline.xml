@@ -1,8 +1,0 @@
-<Material>
-    <Name>Miyu_Hair_LBS_Outline</Name>
-    <Ambient r="0" g="0" b="0" a="0"/>
-    <Diffuse r="0.10021824" g="0.019260602" b="0.019260602" a="0.43218392"/>
-    <Specular r="0.10021824" g="0.019260602" b="0.019260602" a="0.43218392"/>
-    <Emissive r="0" g="0" b="0" a="1"/>
-    <TextureName>white1x1.dds</TextureName>
-</Material>

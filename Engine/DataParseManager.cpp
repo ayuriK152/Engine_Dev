@@ -9,15 +9,32 @@ void DataParseManager::Init()
 
 void DataParseManager::XMLFromMesh(shared_ptr<Mesh> mesh, const wstring& name)
 {
+	if (!filesystem::exists(RESOURCE_PATH_MESHW + name))
+		filesystem::create_directory(RESOURCE_PATH_MESHW + name);
+	if (filesystem::exists(RESOURCE_PATH_MESHW + name + L"\\" + mesh->GetName() + L".xml"))
+		return;
+
+	tinyxml2::XMLDocument doc;
+
+	XMLNode* node = doc.NewElement("Mesh");
+	doc.InsertFirstChild(node);
+
+	XMLElement* element = doc.NewElement("Vertices");
+	for (auto& v : mesh->GetVertices())
+	{
+		XMLElement* vertex = element->InsertNewChildElement("Vertex");
+	}
 
 }
 
 void DataParseManager::XMLFromMaterial(shared_ptr<Material> material, const wstring& name)
 {
-	if (filesystem::exists(RESOURCE_PATH_MATERIALW + name + L".xml"))
+	if (!filesystem::exists(RESOURCE_PATH_MATERIALW + name))
+		filesystem::create_directory(RESOURCE_PATH_MATERIALW + name);
+	if (filesystem::exists(RESOURCE_PATH_MATERIALW + name + L"\\" + material->GetName() + L".xml"))
 		return;
 
-	char* nameChar = UniversalUtils::ToChar(name);
+	char* nameChar = UniversalUtils::ToChar(material->GetName());
 	tinyxml2::XMLDocument doc;
 
 	XMLNode* node = doc.NewElement("Material");
@@ -60,6 +77,8 @@ void DataParseManager::XMLFromMaterial(shared_ptr<Material> material, const wstr
 	node->InsertEndChild(element);
 
 	char fullpath[100] = RESOURCE_PATH_MATERIAL;
+	strcat(fullpath, UniversalUtils::ToChar(name));
+	strcat(fullpath, "\\");
 	strcat(fullpath, nameChar);
 	strcat(fullpath, ".xml");
 	doc.SaveFile(fullpath);

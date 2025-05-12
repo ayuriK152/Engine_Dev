@@ -5,7 +5,7 @@ GameObject::GameObject()
 {
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	meshName = "";
+	name = "GameObject";
 	psoName = PSO_OPAQUE_SOLID;
 
 	objCBIndex = -1;

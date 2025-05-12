@@ -25,14 +25,12 @@ Material::Material(string name) : Material(name, L"Tex_Default")
 
 }
 
-Material::Material(string name, wstring textureName) : Super(ResourceType::Material),
-	name(name)
+Material::Material(string name, wstring textureName) : Super(ResourceType::Material)
 {
 	matCBIndex = _count++;
-
 	normalSrvHeapIndex = -1;
-
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_name = UniversalUtils::ToWString(name);
 
 	ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
 	diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };

@@ -1,8 +1,0 @@
-<Material>
-    <Name>Ground</Name>
-    <Ambient r="0" g="0" b="0" a="0"/>
-    <Diffuse r="0.38927203" g="0.38927203" b="0.38927203" a="0"/>
-    <Specular r="0.38927203" g="0.38927203" b="0.38927203" a="0"/>
-    <Emissive r="0" g="0" b="0" a="1"/>
-    <TextureName>white1x1.dds</TextureName>
-</Material>

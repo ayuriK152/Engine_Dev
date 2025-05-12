@@ -1,0 +1,8 @@
+<Material>
+    <Name>Alpha_Joints_MAT</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.12284123" g="0.1703151" b="0.17777371" a="1"/>
+    <Specular r="0.28204775" g="0.28204775" b="0.28204775" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName>white1x1.dds</TextureName>
+</Material>

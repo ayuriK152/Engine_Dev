@@ -111,11 +111,14 @@ void DataParseManager::LoadMaterials()
 {
 	tinyxml2::XMLDocument doc;
 	filesystem::path p = RESOURCE_PATH_MATERIAL;
-	filesystem::directory_iterator iter(p);
+	filesystem::recursive_directory_iterator iter(p);
 
 	for (auto& i = iter; i != filesystem::end(iter); i++)
 	{
-		doc.LoadFile(UniversalUtils::ToChar(i->path().c_str()));
+		XMLError e = doc.LoadFile(UniversalUtils::ToChar(i->path().c_str()));
+		if (e != XML_SUCCESS)
+			continue;
+
 		XMLNode* node = doc.FirstChild();
 
 		XMLElement* element = node->FirstChildElement("Name");

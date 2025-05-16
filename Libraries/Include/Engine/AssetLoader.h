@@ -18,17 +18,22 @@ public:
 	~AssetLoader();
 
 public:
+	void ReadAssetFile(wstring file);
+	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject; }
+
+private:
 	void InitializeFields();
 
-	void ReadAssetFile(wstring file);
 	void ProcessMaterials(const aiScene* scene);
 	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
+	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	void MapWeights();
 	void MapBones();
 	void BuildBones();
-	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	void ExportDataToXML();
 
-	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject; }
+	wstring GetAIMaterialName(const aiScene* scene, UINT index);
+	void ImportModelFormat(wstring fileName);
 
 	XMFLOAT4X4 ConvertToXMFLOAT4X4(aiMatrix4x4 mat) {
 		XMFLOAT4X4 ret(
@@ -39,10 +44,6 @@ public:
 		);
 		return ret;
 	}
-
-private:
-	wstring GetAIMaterialName(const aiScene* scene, UINT index);
-	void ImportModelFormat(wstring fileName);
 
 private:
 	shared_ptr<Assimp::Importer> _importer;

@@ -51,6 +51,7 @@ void AssetLoader::ReadAssetFile(wstring file)
 		BuildBones();
 	}
 
+	ExportDataToXML();
 	InitializeFields();
 }
 
@@ -58,12 +59,12 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 {
 	for (UINT i = 0; i < scene->mNumMaterials; i++)
 	{
-		aiMaterial* aiMat = scene->mMaterials[i];
-		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
 		wstring matName = GetAIMaterialName(scene, i);
-
 		if (RESOURCE->Get<Material>(matName) != nullptr)
 			continue;
+
+		aiMaterial* aiMat = scene->mMaterials[i];
+		string matNameStr(scene->mMaterials[i]->GetName().C_Str());
 
 		shared_ptr<Material> mat = make_shared<Material>(matNameStr);
 
@@ -119,8 +120,12 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	{
 		// 메시 기하정보 로드
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		shared_ptr<Mesh> m = ProcessMesh(mesh, scene);
-		RESOURCE->Add<Mesh>(UniversalUtils::ToWString(node->mName.C_Str()), m);
+		shared_ptr<Mesh> m = RESOURCE->Get<Mesh>(UniversalUtils::ToWString(mesh->mName.C_Str()));
+		if (m == nullptr)
+		{
+			m = ProcessMesh(mesh, scene);
+			RESOURCE->Add<Mesh>(UniversalUtils::ToWString(node->mName.C_Str()), m);
+		}
 		_meshes.push_back(m);
 
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
@@ -220,6 +225,17 @@ void AssetLoader::BuildBones()
 	assert(_boneObjs.size() != 0);
 }
 
+void AssetLoader::ExportDataToXML()
+{
+	// 데이터 작성 후 바로 저장이 가능한 Material을 제외한 나머지 데이터들의 저장
+
+	// Mesh
+	for (auto& m : _meshes)
+	{
+		DATA->XMLFromMesh(m, _assetName);
+	}
+}
+
 shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 {
 	shared_ptr<Geometry> geometry = make_shared<Geometry>();
@@ -293,8 +309,7 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 	geometry->SetIndices(indices);
 
 	shared_ptr<Mesh> mesh = make_shared<Mesh>(geometry);
-	mesh->name = aimesh->mName.C_Str();
-	mesh->id = _meshes.size();
+	mesh->SetName(UniversalUtils::ToWString(aimesh->mName.C_Str()));
 	auto mat = RESOURCE->Get<Material>(GetAIMaterialName(scene, aimesh->mMaterialIndex));
 	mesh->SetMaterial(mat);
 	return mesh;

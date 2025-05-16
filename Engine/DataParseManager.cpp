@@ -4,26 +4,12 @@
 void DataParseManager::Init()
 {
 	LoadTextures();
+	//LoadMeshes();
 	LoadMaterials();
 }
 
 void DataParseManager::XMLFromMesh(shared_ptr<Mesh> mesh, const wstring& name)
 {
-	if (!filesystem::exists(RESOURCE_PATH_MESHW + name))
-		filesystem::create_directory(RESOURCE_PATH_MESHW + name);
-	if (filesystem::exists(RESOURCE_PATH_MESHW + name + L"\\" + mesh->GetName() + L".xml"))
-		return;
-
-	tinyxml2::XMLDocument doc;
-
-	XMLNode* node = doc.NewElement("Mesh");
-	doc.InsertFirstChild(node);
-
-	XMLElement* element = doc.NewElement("Vertices");
-	for (auto& v : mesh->GetVertices())
-	{
-		XMLElement* vertex = element->InsertNewChildElement("Vertex");
-	}
 
 }
 
@@ -105,6 +91,11 @@ void DataParseManager::LoadTextures()
 		RESOURCE->Add<Texture>(UniversalUtils::ToWString(fileName.substr(0, fileName.length() - 4)), defaultTex);
 		auto asdf = RESOURCE->Get<Texture>(ssss);
 	}
+}
+
+void DataParseManager::LoadMeshes()
+{
+
 }
 
 void DataParseManager::LoadMaterials()

@@ -18,6 +18,7 @@ public:
 	void XMLFromMaterial(shared_ptr<Material> material, const wstring& name);
 
 	void LoadTextures();
+	void LoadMeshes();
 	void LoadMaterials();
 };
 

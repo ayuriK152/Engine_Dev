@@ -21,9 +21,6 @@ public:
 
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
 
-public:
-	string name;
-
 private:
 	vector<Vertex> _vertices;
 	vector<UINT16> _indices;

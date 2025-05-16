@@ -12,13 +12,14 @@ public:
 	Mesh(shared_ptr<Geometry> geometry);
 	virtual ~Mesh();
 
-// refactoring
 public:
 	UINT GetIndexCount() { return _geometry->GetIndexCount(); }
 
 	vector<Vertex>& GetVertices() { return _geometry->GetVertices(); }
 	void* GetVertexData() { return _geometry->GetVertices().data(); }
 	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
+
+	vector<UINT16>& GetIndices() { return _geometry->GetIndices(); }
 
 	void SetMaterial(shared_ptr<Material> mat) {
 		_material = mat;
@@ -27,15 +28,10 @@ public:
 
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
 
-// refactoring
 private:
 	void CreateBuffer();
 
-// refactoring
 public:
-	string name;
-	UINT id;
-
 	ComPtr<ID3D12Resource> vertexBufferGPU = nullptr;
 	ComPtr<ID3D12Resource> indexBufferGPU = nullptr;
 
@@ -46,10 +42,6 @@ public:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 private:
-	UINT _indexCount = 0;
-
-	//============================
-	// refactoring
 	shared_ptr<Geometry> _geometry;
 	shared_ptr<Material> _material;
 };

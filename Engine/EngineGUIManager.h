@@ -2,6 +2,9 @@
 
 #define TOGGLEVALUE_GUI_DEMOWINDOW		"GUI_DemoWindow"
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
+#define TOGGLEVALUE_GUI_HIERARCHY		"GUI_Hierarchy"
+
+class Transform;
 
 struct DescriptorHeapAllocator
 {
@@ -58,11 +61,13 @@ public:
 	void Update();
 	void Render();
 
-public:
-	void ShowEngineStatus();
-
 private:
 	void ToggleWindows();
+
+	void ShowEngineStatus();
+	void ShowHierarchyView();
+
+	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
 
 public:
 	bool isShowDemoWindow = true;

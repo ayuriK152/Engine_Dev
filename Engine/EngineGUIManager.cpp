@@ -50,6 +50,7 @@ void EngineGUIManager::Init()
 
 	_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW] = false;
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = true;
+	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 }
 
 void EngineGUIManager::FixedUpdate()
@@ -73,6 +74,8 @@ void EngineGUIManager::Render()
 			ImGui::ShowDemoWindow();
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS])
 			ShowEngineStatus();
+		if (_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY])
+			ShowHierarchyView();
 	}
 
 	ImGui::Render();
@@ -99,18 +102,62 @@ void EngineGUIManager::ShowEngineStatus()
 	if (ImGui::Begin("Engine Status", &_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS], windowFlags))
 	{
 		ImGui::Text("FPS: %s", ENGINESTAT->GetFrameCountString().c_str());
-		//ImGui::Text("FPS: %.1lf", ENGINESTAT->GetFrameCount());
-		//ImGui::SameLine();
-		//ImGui::Text("Max: %s", ENGINESTAT->GetMaxFrameCountString().c_str());
-		//ImGui::SameLine();
-		//ImGui::Text("Min: %s", ENGINESTAT->GetMinFrameCountString().c_str());
 	}
 	ImGui::End();
 }
 
+void EngineGUIManager::ShowHierarchyView()
+{
+	ImGuiWindowFlags windowFlags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoFocusOnAppearing;
+
+	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+	
+	const float padding = 10.0f;
+	ImVec2 windowPos = ImVec2(mainViewport->Size.x - padding, 0.0f + padding);
+	ImVec2 windowPivot = ImVec2(1.0f, 0.0f);
+	ImVec2 windowSize = ImVec2(400.0f, mainViewport->Size.y * 0.6f);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+	ImGui::SetNextWindowBgAlpha(0.35f);
+	ImGui::SetNextWindowSize(windowSize);
+
+	if (ImGui::Begin("Hierarchy View", nullptr, windowFlags))
+	{
+		for (auto& o : RENDER->GetObjects())
+		{
+			if (o->GetTransform()->GetParent() != nullptr)
+				continue;
+			HierarchyObjectRecursion(o->GetTransform());
+		}
+	}
+	ImGui::End();
+}
+
+void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
+{
+	//ImGui::Selectable(parent->GetGameObject()->name.c_str());
+	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+	if (parent->GetChilds().size() == 0)
+		tree_flags |= ImGuiTreeNodeFlags_Leaf;
+	if (ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags))
+	{
+		for (shared_ptr<Transform> child : parent->GetChilds())
+		{
+			HierarchyObjectRecursion(child);
+		}
+		ImGui::TreePop();
+	}
+}
+
 void EngineGUIManager::ToggleWindows()
 {
-	if (INPUTM->IsKeyDown(KeyValue::F3))
+	// FPS status view
+	if (INPUTM->IsKeyDown(KeyValue::F2))
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = !_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS];
 	}

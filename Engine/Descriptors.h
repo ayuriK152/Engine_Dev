@@ -6,8 +6,8 @@ struct AppDesc
 	wstring mainWndCaption = L"GameApplication";
 	bool _4xMsaaState = false;
 	int _4xMsaaQuality = 0;
-	int clientWidth = 800;
-	int clientHeight = 600;
+	int clientWidth = 1280;
+	int clientHeight = 720;
 };
 
 struct AppStatus

@@ -129,6 +129,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		_meshes.push_back(m);
 
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
+		meshObj->name = UniversalUtils::ToString(m->GetName());
 		meshObj->AddComponent(make_shared<MeshRenderer>());
 		meshObj->GetComponent<MeshRenderer>()->SetMesh(m);
 		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());

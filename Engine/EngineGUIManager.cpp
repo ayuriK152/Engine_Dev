@@ -51,6 +51,7 @@ void EngineGUIManager::Init()
 	_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW] = false;
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
+	_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
 }
 
 void EngineGUIManager::FixedUpdate()
@@ -74,8 +75,9 @@ void EngineGUIManager::Render()
 			ImGui::ShowDemoWindow();
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS])
 			ShowEngineStatus();
-		if (_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY])
-			ShowHierarchyView();
+
+		ShowHierarchyView();
+		ShowInspectorView();
 	}
 
 	ImGui::Render();
@@ -92,8 +94,8 @@ void EngineGUIManager::ShowEngineStatus()
 		ImGuiWindowFlags_NoDecoration | 
 		ImGuiWindowFlags_NoInputs;
 
-	const float padding = 10.0f;
-	ImVec2 windowPos = ImVec2(0.0f + padding, 0.0f + padding);
+	const int padding = 10;
+	ImVec2 windowPos = ImVec2(0 + padding, 0 + padding);
 	ImVec2 windowPivot = ImVec2(0.0f, 0.0f);
 
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
@@ -111,20 +113,20 @@ void EngineGUIManager::ShowHierarchyView()
 	ImGuiWindowFlags windowFlags =
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoFocusOnAppearing;
 
 	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
-	
-	const float padding = 10.0f;
-	ImVec2 windowPos = ImVec2(mainViewport->Size.x - padding, 0.0f + padding);
+
+	ImVec2 windowPos = ImVec2(mainViewport->Size.x - WIDTH_GUI_INSPECTOR, 0);
 	ImVec2 windowPivot = ImVec2(1.0f, 0.0f);
-	ImVec2 windowSize = ImVec2(400.0f, mainViewport->Size.y * 0.6f);
+	ImVec2 windowSize = ImVec2(WIDTH_GUI_HIERARCHY, mainViewport->Size.y * 0.6f);
 
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
 	ImGui::SetNextWindowBgAlpha(0.35f);
 	ImGui::SetNextWindowSize(windowSize);
+
+	ImGui::SetNextWindowCollapsed(!_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY]);
 
 	if (ImGui::Begin("Hierarchy View", nullptr, windowFlags))
 	{
@@ -138,13 +140,104 @@ void EngineGUIManager::ShowHierarchyView()
 	ImGui::End();
 }
 
+void EngineGUIManager::ShowInspectorView()
+{
+	ImGuiWindowFlags windowFlags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoFocusOnAppearing;
+
+	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+
+	ImVec2 windowPos = ImVec2(mainViewport->Size.x, 0);
+	ImVec2 windowPivot = ImVec2(1.0f, 0.0f);
+	ImVec2 windowSize = ImVec2(WIDTH_GUI_INSPECTOR, mainViewport->Size.y * 0.6f);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+	ImGui::SetNextWindowBgAlpha(0.35f);
+	ImGui::SetNextWindowSize(windowSize);
+
+	ImGui::SetNextWindowCollapsed(!_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR]);
+
+	if (ImGui::Begin("Inspector View", nullptr, windowFlags))
+	{
+		if (_selectedObj == nullptr)
+		{
+			ImGui::Text("No GameObject Selected");
+		}
+		else
+		{
+			ImGui::Text(_selectedObj->name.c_str());
+			ImGui::Separator();
+
+			// Transform
+			{
+				Vector3 pos = _selectedObj->GetTransform()->GetPosition();
+				Vector3 rot = _selectedObj->GetTransform()->GetRotation();
+				Vector3 scale = _selectedObj->GetTransform()->GetScale();
+				ImGui::SeparatorText("Transform");
+
+				ImGui::Text("Position");
+				ImGui::Text("X");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Position_X", &pos.x);
+				ImGui::Text("Y");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Position_Y", &pos.y);
+				ImGui::Text("Z");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Position_Z", &pos.z);
+
+				ImGui::Text("Rotation");
+				ImGui::Text("X");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Rotation_X", &rot.x);
+				ImGui::Text("Y");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Rotation_Y", &rot.y);
+				ImGui::Text("Z");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Rotation_Z", &rot.z);
+
+				ImGui::Text("Scale");
+				ImGui::Text("X");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Scale_X", &scale.x);
+				ImGui::Text("Y");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Scale_Y", &scale.y);
+				ImGui::Text("Z");
+				ImGui::SameLine();
+				ImGui::InputFloat("##Inspector_Scale_Z", &scale.z);
+			}
+		
+			// Other Components
+			for (auto& c : _selectedObj->GetComponents())
+			{
+				if (c.first == ComponentType::Transform)
+					continue;
+
+				auto componentType = magic_enum::enum_name(c.first);
+				ImGui::SeparatorText(string(componentType).c_str());
+			}
+		}
+	}
+	ImGui::End();
+}
+
 void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 {
-	//ImGui::Selectable(parent->GetGameObject()->name.c_str());
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
 	if (parent->GetChilds().size() == 0)
 		tree_flags |= ImGuiTreeNodeFlags_Leaf;
-	if (ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags))
+	if (_selectedObj == parent->GetGameObject())
+		tree_flags |= ImGuiTreeNodeFlags_Selected;
+
+	bool isNodeOpen = ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags);
+	if (ImGui::IsItemClicked())
+		_selectedObj = parent->GetGameObject();
+	if (isNodeOpen)
 	{
 		for (shared_ptr<Transform> child : parent->GetChilds())
 		{
@@ -160,6 +253,16 @@ void EngineGUIManager::ToggleWindows()
 	if (INPUTM->IsKeyDown(KeyValue::F2))
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = !_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS];
+	}
+
+	if (INPUTM->IsKeyDown(KeyValue::F3))
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = !_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY];
+	}
+	
+	if (INPUTM->IsKeyDown(KeyValue::F4))
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = !_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR];
 	}
 }
 

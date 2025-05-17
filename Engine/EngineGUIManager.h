@@ -3,6 +3,10 @@
 #define TOGGLEVALUE_GUI_DEMOWINDOW		"GUI_DemoWindow"
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
 #define TOGGLEVALUE_GUI_HIERARCHY		"GUI_Hierarchy"
+#define TOGGLEVALUE_GUI_INSPECTOR		"GUI_Inspector"
+
+#define WIDTH_GUI_HIERARCHY			250
+#define WIDTH_GUI_INSPECTOR			300
 
 class Transform;
 
@@ -66,6 +70,7 @@ private:
 
 	void ShowEngineStatus();
 	void ShowHierarchyView();
+	void ShowInspectorView();
 
 	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
 
@@ -76,5 +81,7 @@ private:
 	static DescriptorHeapAllocator _srvHeapDescAllocator;
 
 	map<string, bool> _guiToggleValues;
+
+	shared_ptr<GameObject> _selectedObj = nullptr;
 };
 

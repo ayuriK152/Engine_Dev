@@ -29,6 +29,8 @@ public:
 	template<typename T>
 	shared_ptr<T> GetComponent();
 
+	map<ComponentType, shared_ptr<Component>> GetComponents() { return components; }
+
 	template<typename T>
 	ComponentType GetComponentType();
 

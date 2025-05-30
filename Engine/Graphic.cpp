@@ -28,7 +28,7 @@ bool Graphic::Initialize()
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
 	RENDER->Init();
-	DATA->Init();
+	FILEIO->Init();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
 	ENGINEGUI->Init();

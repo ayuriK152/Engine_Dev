@@ -34,6 +34,8 @@ public:
 	template<typename T>
 	ComponentType GetComponentType();
 
+	void SetPSOName(const string& name);
+
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 

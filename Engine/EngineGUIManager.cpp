@@ -174,9 +174,9 @@ void EngineGUIManager::ShowInspectorView()
 			// Transform
 			{
 				bool isChanged = false;
-				Vector3 pos = _selectedObj->GetTransform()->GetPosition();
-				Vector3 rot = _selectedObj->GetTransform()->GetRotation();
-				Vector3 scale = _selectedObj->GetTransform()->GetScale();
+				Vector3 pos = _selectedObj->GetTransform()->GetLocalPosition();
+				Vector3 rot = _selectedObj->GetTransform()->GetLocalRotation();
+				Vector3 scale = _selectedObj->GetTransform()->GetLocalScale();
 				ImGui::SeparatorText("Transform");
 
 				ImGui::Text("Position");
@@ -194,7 +194,7 @@ void EngineGUIManager::ShowInspectorView()
 					isChanged = true;
 
 				if (isChanged)
-					_selectedObj->GetTransform()->SetPosition(pos);
+					_selectedObj->GetTransform()->SetLocalPosition(pos);
 
 				isChanged = false;
 				ImGui::Text("Rotation");
@@ -212,7 +212,7 @@ void EngineGUIManager::ShowInspectorView()
 					isChanged = true;
 
 				if (isChanged)
-					_selectedObj->GetTransform()->SetRotation(rot);
+					_selectedObj->GetTransform()->SetLocalRotation(rot);
 
 				isChanged = false;
 				ImGui::Text("Scale");
@@ -230,7 +230,7 @@ void EngineGUIManager::ShowInspectorView()
 					isChanged = true;
 
 				if (isChanged)
-					_selectedObj->GetTransform()->SetScale(scale);
+					_selectedObj->GetTransform()->SetLocalScale(scale);
 			}
 		
 			// Other Components

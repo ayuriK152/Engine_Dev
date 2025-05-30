@@ -71,3 +71,12 @@ shared_ptr<Transform> GameObject::GetTransform()
 	}
 	return transform;
 }
+
+void GameObject::SetPSOName(const string& name)
+{
+	psoName = name;
+	for (int i = 0; i < shared_from_this()->GetTransform()->GetChilds().size(); i++)
+	{
+		shared_from_this()->GetTransform()->GetChilds()[i]->GetGameObject()->SetPSOName(name);
+	}
+}

@@ -44,6 +44,7 @@ void AssetLoader::ReadAssetFile(wstring file)
 
 	ProcessMaterials(_scene);
 	ProcessNodes(_scene->mRootNode, _scene, nullptr);
+	ProcessAnimation(_scene);
 	if (_bones.size() > 0)
 	{
 		MapWeights();
@@ -51,7 +52,6 @@ void AssetLoader::ReadAssetFile(wstring file)
 		BuildBones();
 	}
 
-	ExportDataToXML();
 	InitializeFields();
 }
 
@@ -94,7 +94,7 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		}
 		RESOURCE->Add<Material>(matName, mat);
 
-		DATA->XMLFromMaterial(mat, _assetName);
+		FILEIO->XMLFromMaterial(mat, _assetName);
 	}
 }
 
@@ -210,9 +210,12 @@ void AssetLoader::BuildBones()
 		}
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
 		boneObj->name = b->name;
+		cout << boneObj->GetTransform()->GetPosition().y << endl;
 		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
+		cout << boneObj->GetTransform()->GetPosition().y << endl;
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
+		cout << boneObj->GetTransform()->GetPosition().y << endl << endl;
 		_boneObjs.push_back(boneObj);
 		b->instancedObj = boneObj;
 	}
@@ -224,17 +227,6 @@ void AssetLoader::BuildBones()
 
 	_boneObjs[0]->GetTransform()->SetParent(_loadedObject->GetTransform());
 	assert(_boneObjs.size() != 0);
-}
-
-void AssetLoader::ExportDataToXML()
-{
-	// 데이터 작성 후 바로 저장이 가능한 Material을 제외한 나머지 데이터들의 저장
-
-	// Mesh
-	for (auto& m : _meshes)
-	{
-		DATA->XMLFromMesh(m, _assetName);
-	}
 }
 
 shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
@@ -315,6 +307,71 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 	mesh->SetMaterial(mat);
 	return mesh;
 }
+
+
+// 애니메이션 데이터 추출
+void AssetLoader::ProcessAnimation(const aiScene* scene)
+{
+	if (!scene->HasAnimations())
+		return;
+
+	shared_ptr<Animator> bAnimator = make_shared<Animator>();
+
+	// 애니메이션 갯수만큼
+	for (int i = 0; i < scene->mNumAnimations; i++)
+	{
+		aiAnimation* anim = scene->mAnimations[i];
+		shared_ptr<Animation> bAnim = make_shared<Animation>(anim->mName.C_Str(), anim->mDuration, anim->mTicksPerSecond);
+
+		for (int j = 0; j < anim->mNumChannels; j++)
+		{
+			aiNodeAnim* channel = anim->mChannels[j];
+			string name = channel->mNodeName.data;
+
+			Animation::AnimationData animData;
+			animData.boneName = name;
+
+			UINT maxKeyCount = max({ channel->mNumPositionKeys, channel->mNumRotationKeys, channel->mNumScalingKeys });
+
+			// position, rotation, scale 키프레임 받아오기
+			map<float, Animation::KeyFrame> keyframeMap;
+			for (int k = 0; k < maxKeyCount; k++)
+			{
+				if (k < channel->mNumPositionKeys)
+				{
+					aiVectorKey pos = channel->mPositionKeys[k];
+					if (!keyframeMap.contains(pos.mTime))
+						keyframeMap[pos.mTime].time = pos.mTime;
+					keyframeMap[pos.mTime].position = { pos.mValue.x, pos.mValue.y, pos.mValue.z, 1.0f};
+				}
+				
+				if (k < channel->mNumRotationKeys)
+				{
+					aiQuatKey rot = channel->mRotationKeys[k];
+					if (!keyframeMap.contains(rot.mTime))
+						keyframeMap[rot.mTime].time = rot.mTime;
+					keyframeMap[rot.mTime].rotation = { rot.mValue.x, rot.mValue.y, rot.mValue.z, rot.mValue.w };
+				}
+
+				if (k < channel->mNumScalingKeys)
+				{
+					aiVectorKey scale = channel->mScalingKeys[k];
+					if (!keyframeMap.contains(scale.mTime))
+						keyframeMap[scale.mTime].time = scale.mTime;
+					keyframeMap[scale.mTime].scale = { scale.mValue.x, scale.mValue.y, scale.mValue.z, 1.0f };
+				}
+			}
+
+			for (auto& kf : keyframeMap)
+				animData.keyFrames.push_back(kf.second);
+
+			bAnim->AddAnimationData(animData);
+		}
+
+		bAnimator->AddAnimation(bAnim);
+	}
+}
+
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 {
 	string matNameStr(scene->mMaterials[index]->GetName().C_Str());

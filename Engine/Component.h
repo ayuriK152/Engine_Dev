@@ -14,7 +14,8 @@ enum class ComponentType
 	Camera,
 	Collider,
 	Rigidbody,
-	Light
+	Light,
+	Animator
 };
 
 class Component : public enable_shared_from_this<Component>

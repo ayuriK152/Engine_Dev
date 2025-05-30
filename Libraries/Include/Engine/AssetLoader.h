@@ -27,10 +27,11 @@ private:
 	void ProcessMaterials(const aiScene* scene);
 	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
 	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	void ProcessAnimation(const aiScene* scene);
+
 	void MapWeights();
 	void MapBones();
 	void BuildBones();
-	void ExportDataToXML();
 
 	wstring GetAIMaterialName(const aiScene* scene, UINT index);
 	void ImportModelFormat(wstring fileName);
@@ -52,13 +53,15 @@ private:
 	ModelFormat _modelType;
 	wstring _assetName;
 
+	// actual data
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, shared_ptr<Bone>> _bones;
+	vector<shared_ptr<Mesh>> _meshes;
+
+	// instances
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
 	vector<shared_ptr<MeshRenderer>> _meshRenderers;
-	vector<shared_ptr<Mesh>> _meshes;
-
 	shared_ptr<GameObject> _loadedObject;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;

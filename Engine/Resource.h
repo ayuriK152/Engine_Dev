@@ -7,7 +7,7 @@ enum class ResourceType
 	Texture,
 	Shader,
 	Material,
-	
+	Animation,
 
 	End
 };

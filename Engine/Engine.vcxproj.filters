@@ -101,7 +101,7 @@
     <ClInclude Include="Constants.h">
       <Filter>05. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="DataParseManager.h">
+    <ClInclude Include="FileIOManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="DirectionalLight.h">
@@ -113,7 +113,6 @@
     <ClInclude Include="EngineGUIManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
-    <ClInclude Include="EngineStatusManager.h" />
     <ClInclude Include="..\Libraries\Include\ImGUI\imconfig.h">
       <Filter>99. ExtLibraries\imgui</Filter>
     </ClInclude>
@@ -140,6 +139,13 @@
     </ClInclude>
     <ClInclude Include="..\Libraries\Include\tinyxml2\tinyxml2.h">
       <Filter>99. ExtLibraries\tinyxml2</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>03. Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h" />
+    <ClInclude Include="EngineStatusManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,7 +275,7 @@
     <ClCompile Include="AssetLoader.cpp">
       <Filter>98. Utils</Filter>
     </ClCompile>
-    <ClCompile Include="DataParseManager.cpp">
+    <ClCompile Include="FileIOManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
@@ -281,7 +287,6 @@
     <ClCompile Include="EngineGUIManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
-    <ClCompile Include="EngineStatusManager.cpp" />
     <ClCompile Include="..\Libraries\Include\ImGUI\imgui.cpp">
       <Filter>99. ExtLibraries\imgui</Filter>
     </ClCompile>
@@ -305,6 +310,13 @@
     </ClCompile>
     <ClCompile Include="..\Libraries\Include\tinyxml2\tinyxml2.cpp">
       <Filter>99. ExtLibraries\tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>03. Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="EngineStatusManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

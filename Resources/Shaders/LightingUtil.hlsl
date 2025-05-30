@@ -38,6 +38,7 @@ float4 ProcessDiffuse(float4 diffuse, float4 albedo, float3 lightDir, float3 nor
 
     float diffuseValue = dot(-lightDir, normal);
 
+/*
     // Toon Shading Part
     if (diffuseValue > 0.5f)
         diffuseValue = 1.0f;
@@ -45,7 +46,7 @@ float4 ProcessDiffuse(float4 diffuse, float4 albedo, float3 lightDir, float3 nor
         diffuseValue = 0.6f;
     else
         diffuseValue = 0.4f;
-
+*/
     totalDiffuse = diffuse * albedo * diffuseValue * diffuse.a;
 
     return totalDiffuse;
@@ -59,6 +60,7 @@ float4 ProcessSpecular(float4 specular, float shiness, float3 lightDir, float3 n
     float specularValue = saturate(dot(reflection, eyeDir));
     specularValue = pow(specularValue, 10);
     
+/*
     // Toon Shading Part
     if (specularValue > 0.8f)
         specularValue = 0.8f;
@@ -66,6 +68,7 @@ float4 ProcessSpecular(float4 specular, float shiness, float3 lightDir, float3 n
         specularValue = 0.5f;
     else
         specularValue = 0.0f;
+*/
 
     totalSpecular = specular * specularValue * shiness;
     //totalSpecular = specular * specularValue;
@@ -96,8 +99,8 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
         float4 specular = ProcessSpecular(GlobalLight.Specular * mat.Specular, mat.Shiness, lightDir, normal, eyeDir);
         float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
 
-        //totalColor = ambient + diffuse + specular;
-        totalColor = ambient + diffuse;
+        totalColor = ambient + diffuse + specular;
+        //totalColor = ambient + diffuse;
     }
 
     // General Light Process

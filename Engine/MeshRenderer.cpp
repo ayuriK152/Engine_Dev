@@ -16,7 +16,6 @@ void MeshRenderer::Init()
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
 	if (rootBone != nullptr)
 	{
-		UINT64 boneByteSize;
 		vector<XMFLOAT4X4> boneTransforms;
 
 		vector<shared_ptr<Transform>> boneQueue;
@@ -29,15 +28,35 @@ void MeshRenderer::Init()
 			boneQueue.erase(boneQueue.begin());
 		}
 
-		boneByteSize = sizeof(XMFLOAT4X4) * boneTransforms.size();
-		LoadBoneData(boneByteSize, boneTransforms);
+		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * boneTransforms.size();
+
+		_boneTransformTest = make_unique<UploadBuffer<XMFLOAT4X4>>(boneTransforms.size(), false);
+
 		CreateBoneSRV(boneTransforms);
 	}
 }
 
 void MeshRenderer::Update()
 {
+	if (rootBone != nullptr)
+	{
+		vector<XMFLOAT4X4> boneTransforms;
 
+		vector<shared_ptr<Transform>> boneQueue;
+		boneQueue.push_back(rootBone);
+		while (boneQueue.size() > 0)
+		{
+			boneTransforms.push_back(boneQueue[0]->GetWorldMatrix());
+			for (auto& t : boneQueue[0]->GetChilds())
+				boneQueue.push_back(t);
+			boneQueue.erase(boneQueue.begin());
+		}
+
+		for (UINT i = 0; i < boneTransforms.size(); ++i)
+		{
+			_boneTransformTest->CopyData(i, boneTransforms[i]);
+		}
+	}
 }
 
 void MeshRenderer::Render()
@@ -89,33 +108,6 @@ void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 	_material = _mesh->GetMaterial();
 }
 
-void MeshRenderer::LoadBoneData(UINT64 boneByteSize, vector<XMFLOAT4X4>& boneTransforms)
-{
-	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(boneByteSize),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		nullptr,
-		IID_PPV_ARGS(_boneTransformBuffer.GetAddressOf())));
-
-	D3D12_SUBRESOURCE_DATA initData = {};
-	initData.pData = boneTransforms.data();
-	initData.RowPitch = boneByteSize;
-	initData.SlicePitch = initData.RowPitch;
-
-	auto device = GRAPHIC->GetDevice().Get();
-	auto commandQueue = GRAPHIC->GetCommandQueue().Get();
-
-	ResourceUploadBatch upload(device);
-	upload.Begin();
-	upload.Upload(_boneTransformBuffer.Get(), 0, &initData, 1);
-	upload.Transition(_boneTransformBuffer.Get(),
-		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
-	auto finish = upload.End(commandQueue);
-	finish.wait();
-}
-
 void MeshRenderer::CreateBoneSRV(vector<XMFLOAT4X4>& boneTransforms)
 {
 	_boneSrvHeapIndex = RENDER->GetAndIncreaseSRVHeapIndex();
@@ -131,5 +123,5 @@ void MeshRenderer::CreateBoneSRV(vector<XMFLOAT4X4>& boneTransforms)
 	srvDesc.Buffer.StructureByteStride = sizeof(XMFLOAT4X4);
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
-	GRAPHIC->GetDevice()->CreateShaderResourceView(_boneTransformBuffer.Get(), &srvDesc, hDescriptor);
+	GRAPHIC->GetDevice()->CreateShaderResourceView(_boneTransformTest->GetResource(), &srvDesc, hDescriptor);
 }

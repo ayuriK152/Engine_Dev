@@ -31,7 +31,8 @@ void TestScript::Init()
 
 	model = assetLoader->GetLoadedObject();
 	model->name = "model";
-	model->psoName = PSO_OPAQUE_SKINNED;
+	model->SetPSOName(PSO_OPAQUE_SKINNED);
+	//model->psoName = PSO_OPAQUE_SKINNED;
 	gameObjects.push_back(model);
 
 	sphere = make_shared<GameObject>();
@@ -52,7 +53,7 @@ void TestScript::Init()
 	sphere->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 3.0f));
 	sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 	sphere2->GetTransform()->SetParent(sphere->GetTransform());
-	model->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
+	model->GetTransform()->SetScale(Vector3(0.1f, 0.1f, 0.1f));
 
 	
 	while (gameObjects.size() > 0)

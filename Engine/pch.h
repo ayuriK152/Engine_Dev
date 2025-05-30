@@ -4,6 +4,7 @@
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
 // STL
 #include <memory>
@@ -15,6 +16,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 using namespace std;
 
 // Win
@@ -85,6 +87,7 @@ using namespace tinyxml2;
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Animation.h"
 
 /**************/
 /* Components */
@@ -95,6 +98,7 @@ using namespace tinyxml2;
 #include "Collider.h"
 #include "BoxCollider.h"
 #include "Rigidbody.h"
+#include "Animator.h"
 #include "Light.h"
 #include "DirectionalLight.h"
 
@@ -107,7 +111,7 @@ using namespace tinyxml2;
 #include "ResourceManager.h"
 #include "RenderManager.h"
 #include "InputManager.h"
-#include "DataParseManager.h"
+#include "FileIOManager.h"
 #include "EngineGUIManager.h"
 #include "EngineStatusManager.h"
 

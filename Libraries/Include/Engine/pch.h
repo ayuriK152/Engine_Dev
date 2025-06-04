@@ -93,6 +93,7 @@ using namespace tinyxml2;
 /* Components */
 /**************/
 #include "MeshRenderer.h"
+#include "SkinnedMeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
 #include "Collider.h"

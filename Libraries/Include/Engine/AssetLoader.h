@@ -2,7 +2,7 @@
 class Geometry;
 class Mesh;
 class GameObject;
-class MeshRenderer;
+class SkinnedMeshRenderer;
 
 enum ModelFormat
 {
@@ -61,7 +61,7 @@ private:
 	// instances
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
-	vector<shared_ptr<MeshRenderer>> _meshRenderers;
+	vector<shared_ptr<SkinnedMeshRenderer>> _meshRenderers;
 	shared_ptr<GameObject> _loadedObject;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;

@@ -147,6 +147,9 @@
     <ClInclude Include="EngineStatusManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
+    <ClInclude Include="SkinnedMeshRenderer.h">
+      <Filter>02. GameObject\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -317,6 +320,9 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="EngineStatusManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedMeshRenderer.cpp">
+      <Filter>02. GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -63,6 +63,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UniversalUtils.cpp" />

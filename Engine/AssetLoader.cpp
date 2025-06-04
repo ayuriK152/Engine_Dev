@@ -130,10 +130,10 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
 		meshObj->name = UniversalUtils::ToString(m->GetName());
-		meshObj->AddComponent(make_shared<MeshRenderer>());
+		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<MeshRenderer>()->SetMesh(m);
 		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
-		_meshRenderers.push_back(meshObj->GetComponent<MeshRenderer>());
+		_meshRenderers.push_back(static_pointer_cast<SkinnedMeshRenderer>(meshObj->GetComponent<MeshRenderer>()));
 		_meshObjs.push_back(meshObj);
 
 		// 메시 본 로드 (있는 경우에만)

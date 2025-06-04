@@ -35,6 +35,7 @@ public:
 	ComponentType GetComponentType();
 
 	void SetPSOName(const string& name);
+	void SetFramesDirty();
 
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;

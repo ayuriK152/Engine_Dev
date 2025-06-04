@@ -32,7 +32,6 @@ void TestScript::Init()
 	model = assetLoader->GetLoadedObject();
 	model->name = "model";
 	model->SetPSOName(PSO_OPAQUE_SKINNED);
-	//model->psoName = PSO_OPAQUE_SKINNED;
 	gameObjects.push_back(model);
 
 	sphere = make_shared<GameObject>();
@@ -47,12 +46,24 @@ void TestScript::Init()
 	sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	gameObjects.push_back(sphere2);
 
+	sphere3 = make_shared<GameObject>();
+	sphere3->name = "sphere3";
+	sphere3->AddComponent(make_shared<MeshRenderer>());
+	sphere3->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+	gameObjects.push_back(sphere3);
+
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
-	sphere->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 3.0f));
+
+	sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, 0.0f));
+	sphere2->GetTransform()->SetPosition(Vector3(2.0f, 1.5f, 0.0f));
 	sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
 	sphere2->GetTransform()->SetParent(sphere->GetTransform());
+	sphere3->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 0.0f));
+	sphere3->GetTransform()->SetScale(Vector3(0.2f, 0.2f, 0.2f));
+	sphere3->GetTransform()->SetParent(sphere2->GetTransform());
+
 	model->GetTransform()->SetScale(Vector3(0.1f, 0.1f, 0.1f));
 
 	
@@ -73,6 +84,8 @@ void TestScript::Update()
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
 
 	sphere->GetTransform()->Rotate(Vector3(0.0f, 40.0f * TIME->DeltaTime(), 0.0f));
+	sphere2->GetTransform()->Rotate(Vector3(0.0f, 0.0f, 60.0f * TIME->DeltaTime()));
+	cout << model->numFramesDirty << endl;
 	//sphere2->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
 
 	if (INPUTM->IsKeyPress(KeyValue::W))

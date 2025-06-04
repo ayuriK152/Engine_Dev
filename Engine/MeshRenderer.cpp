@@ -16,16 +16,24 @@ void MeshRenderer::Init()
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
 	if (rootBone != nullptr)
 	{
-		vector<XMFLOAT4X4> boneTransforms;
+		vector<shared_ptr<Transform>> boneTransforms;
+		UpdateBoneTransforms(rootBone, boneTransforms);
 
-		vector<shared_ptr<Transform>> boneQueue;
-		boneQueue.push_back(rootBone);
-		while (boneQueue.size() > 0)
+		//vector<shared_ptr<Transform>> boneQueue;
+		//boneQueue.push_back(rootBone);
+		//while (boneQueue.size() > 0)
+		//{
+		//	boneTransforms.push_back(boneQueue[0]->GetWorldMatrix());
+		//	for (auto& t : boneQueue[0]->GetChilds())
+		//		boneQueue.push_back(t);
+		//	boneQueue.erase(boneQueue.begin());
+		//}
+
+		for (shared_ptr<Transform>& bt: boneTransforms)
 		{
-			boneTransforms.push_back(boneQueue[0]->GetWorldMatrix());
-			for (auto& t : boneQueue[0]->GetChilds())
-				boneQueue.push_back(t);
-			boneQueue.erase(boneQueue.begin());
+			XMFLOAT4X4 boneOffsetTransform;
+			XMStoreFloat4x4(&boneOffsetTransform, XMMatrixInverse(nullptr, XMLoadFloat4x4(&bt->GetWorldMatrix())));
+			_boneOffsetTransforms.push_back(boneOffsetTransform);
 		}
 
 		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * boneTransforms.size();
@@ -40,21 +48,16 @@ void MeshRenderer::Update()
 {
 	if (rootBone != nullptr)
 	{
-		vector<XMFLOAT4X4> boneTransforms;
+		vector<shared_ptr<Transform>> boneTransforms;
 
-		vector<shared_ptr<Transform>> boneQueue;
-		boneQueue.push_back(rootBone);
-		while (boneQueue.size() > 0)
-		{
-			boneTransforms.push_back(boneQueue[0]->GetWorldMatrix());
-			for (auto& t : boneQueue[0]->GetChilds())
-				boneQueue.push_back(t);
-			boneQueue.erase(boneQueue.begin());
-		}
+		UpdateBoneTransforms(rootBone, boneTransforms);
 
 		for (UINT i = 0; i < boneTransforms.size(); ++i)
 		{
-			_boneTransformTest->CopyData(i, boneTransforms[i]);
+			XMMATRIX finalMat = XMLoadFloat4x4(&boneTransforms[i]->GetWorldMatrix()) * XMLoadFloat4x4(&_bones[boneTransforms[i]->GetGameObject()->name]->offsetTransform);
+			XMFLOAT4X4 finalTransform;
+			XMStoreFloat4x4(&finalTransform, XMMatrixTranspose(finalMat));
+			_boneTransformTest->CopyData(i, finalTransform);
 		}
 	}
 }
@@ -108,7 +111,14 @@ void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 	_material = _mesh->GetMaterial();
 }
 
-void MeshRenderer::CreateBoneSRV(vector<XMFLOAT4X4>& boneTransforms)
+void MeshRenderer::UpdateBoneTransforms(const shared_ptr<Transform> root, vector<shared_ptr<Transform>>& boneTransforms)
+{
+	boneTransforms.push_back(root);
+	for (auto& t : root->GetChilds())
+		UpdateBoneTransforms(t, boneTransforms);
+}
+
+void MeshRenderer::CreateBoneSRV(vector<shared_ptr<Transform>>& boneTransforms)
 {
 	_boneSrvHeapIndex = RENDER->GetAndIncreaseSRVHeapIndex();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(RENDER->GetShaderResourceViewHeap()->GetCPUDescriptorHandleForHeapStart());

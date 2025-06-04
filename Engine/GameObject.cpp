@@ -80,3 +80,8 @@ void GameObject::SetPSOName(const string& name)
 		shared_from_this()->GetTransform()->GetChilds()[i]->GetGameObject()->SetPSOName(name);
 	}
 }
+
+void GameObject::SetFramesDirty()
+{
+	numFramesDirty = GRAPHIC->GetNumFrameResources();
+}

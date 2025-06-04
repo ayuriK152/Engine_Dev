@@ -195,6 +195,7 @@ void AssetLoader::BuildBones()
 
 	for (auto& b : sortedBones)
 	{
+		cout << b->name << " " << b->id << endl;
 		shared_ptr<GameObject> foundObj = nullptr;
 		shared_ptr<Node> currentParent = b->node->parent;
 		while (true)
@@ -210,12 +211,9 @@ void AssetLoader::BuildBones()
 		}
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
 		boneObj->name = b->name;
-		cout << boneObj->GetTransform()->GetPosition().y << endl;
 		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
-		cout << boneObj->GetTransform()->GetPosition().y << endl;
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
-		cout << boneObj->GetTransform()->GetPosition().y << endl << endl;
 		_boneObjs.push_back(boneObj);
 		b->instancedObj = boneObj;
 	}
@@ -223,6 +221,7 @@ void AssetLoader::BuildBones()
 	for (auto& renderer : _meshRenderers)
 	{
 		renderer->rootBone = _boneObjs[0]->GetTransform();
+		renderer->SetBoneData(_bones);
 	}
 
 	_boneObjs[0]->GetTransform()->SetParent(_loadedObject->GetTransform());

@@ -14,6 +14,7 @@ private:
 	shared_ptr<GameObject> globalLight;
 	shared_ptr<GameObject> sphere;
 	shared_ptr<GameObject> sphere2;
+	shared_ptr<GameObject> sphere3;
 	shared_ptr<GameObject> model;
 
 	vector<shared_ptr<GameObject>> gameObjects;

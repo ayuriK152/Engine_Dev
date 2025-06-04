@@ -16,7 +16,6 @@ SamplerState samAnisotropicClamp : register(s5);
 cbuffer cbPerObject : register(b1)
 {
     float4x4 World;
-	float4x4 TexTransform;
 };
 
 cbuffer cbMaterial : register(b2)

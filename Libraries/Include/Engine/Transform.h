@@ -15,7 +15,11 @@ public:
 	void UpdateTransform();
 
 	Vector3 GetLocalPosition() { return _localPosition; }
-	void SetLocalPosition(const Vector3& position) { _localPosition = position; UpdateTransform(); }
+	void SetLocalPosition(const Vector3& position) { 
+		_localPosition = position; 
+		UpdateTransform();
+		GetGameObject()->SetFramesDirty();
+	}
 	
 	// Get/Set Local Rotation With Degree
 	Vector3 GetLocalRotation() { return MathHelper::RadianToDegree(_localRotation); }
@@ -25,14 +29,17 @@ public:
 	// Get/Set Local Rotation With Radian
 	Vector3 GetLocalRotationRadian() { return _localRotation; }
 	void SetLocalRotationRadian(const Vector3& rotation) { 
-		_localRotation.x = rotation.x;
-		_localRotation.y = rotation.y;
-		_localRotation.z = rotation.z;
-		UpdateTransform(); 
+		_localRotation = rotation;
+		UpdateTransform();
+		GetGameObject()->SetFramesDirty();
 	}
 
 	Vector3 GetLocalScale() { return _localScale; }
-	void SetLocalScale(const Vector3& scale) { _localScale = scale; UpdateTransform(); }
+	void SetLocalScale(const Vector3& scale) { 
+		_localScale = scale; 
+		UpdateTransform();
+		GetGameObject()->SetFramesDirty();
+	}
 
 	Vector3 GetPosition() { return _position; }
 	void SetPosition(const Vector3& worldPosition);
@@ -64,9 +71,7 @@ public:
 	void SetObjectWorldMatrix(XMFLOAT4X4 mat);
 
 	XMFLOAT4X4 GetLocalMatrix() { return _matLocal; }
-	XMFLOAT4X4 GetObjectWorldMatrix() { return _matWorld; }
 	XMFLOAT4X4 GetWorldMatrix();
-	XMFLOAT4X4 GetTexTransform() { return _texTransform; }		// 반드시 수정
 
 	shared_ptr<Transform> GetParent() { return _parent; }
 	void SetParent(shared_ptr<Transform> parent);
@@ -88,7 +93,6 @@ private:
 
 	XMFLOAT4X4 _matLocal;
 	XMFLOAT4X4 _matWorld;
-	XMFLOAT4X4 _texTransform;
 
 	shared_ptr<Transform> _parent;
 	vector<shared_ptr<Transform>> _childs;

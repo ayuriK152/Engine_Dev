@@ -34,8 +34,8 @@ VertexOut VS(VertexIn vin)
 
     vout.position = mul(posW, ViewProj);
 	
-	float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), TexTransform);
-	vout.texUV = mul(texC, MatTransform).xy;
+	// float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), TexTransform);
+	vout.texUV = mul(float4(vin.TexC, 0.0f, 1.0f), MatTransform).xy;
 	
     return vout;
 }

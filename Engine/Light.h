@@ -13,7 +13,9 @@ public:
 	virtual void Update() = 0;
 
 public:
-	void IncreaseNumFramesDirty();
+	void SetFramesDirty();
+	int GetFramesDirty() { return _numFramesDirty; }
+	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
 	virtual LightConstants GetLightConstants() = 0;
 
@@ -22,6 +24,7 @@ public:
 	XMFLOAT4 diffuse;
 	XMFLOAT4 specular;
 
-	int numFramesDirty = 0;
+private:
+	int _numFramesDirty = 0;
 };
 

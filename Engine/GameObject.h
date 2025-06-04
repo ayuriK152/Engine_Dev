@@ -35,6 +35,9 @@ public:
 	ComponentType GetComponentType();
 
 	void SetPSOName(const string& name);
+	void SetFramesDirty();
+	int GetFramesDirty() { return _numFramesDirty; }
+	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
@@ -45,12 +48,12 @@ public:
 
 	UINT objCBIndex;
 
-	int numFramesDirty;
 
 	map<ComponentType, shared_ptr<Component>> components;
 
 private:
 	bool _isInitialized;
+	int _numFramesDirty;
 };
 
 template<typename T>

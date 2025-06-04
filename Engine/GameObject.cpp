@@ -10,7 +10,7 @@ GameObject::GameObject()
 
 	objCBIndex = -1;
 
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 	_isInitialized = false;
 }
 
@@ -79,4 +79,9 @@ void GameObject::SetPSOName(const string& name)
 	{
 		shared_from_this()->GetTransform()->GetChilds()[i]->GetGameObject()->SetPSOName(name);
 	}
+}
+
+void GameObject::SetFramesDirty()
+{
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 }

@@ -9,8 +9,6 @@ Transform::Transform() : Super(ComponentType::Transform)
 
 	_parent = nullptr;
 
-	_texTransform = MathHelper::Identity4x4();		// 반드시 수정
-
 	UpdateTransform();
 }
 
@@ -68,7 +66,7 @@ void Transform::UpdateTransform()
 	for (auto& child : _childs)
 	{
 		child->UpdateTransform();
-		child->GetGameObject()->numFramesDirty++;
+		child->GetGameObject()->SetFramesDirty();
 	}
 }
 
@@ -160,7 +158,7 @@ void Transform::Translate(const Vector3& moveVec)
 {
 	_localPosition = MathHelper::VectorAddition(_localPosition, moveVec);
 	UpdateTransform();
-	GetGameObject()->numFramesDirty++;
+	GetGameObject()->SetFramesDirty();
 }
 
 // 반드시 수정이 필요함
@@ -170,7 +168,7 @@ void Transform::Rotate(const Vector3& angle)
 	_localRotation.y += XMConvertToRadians(angle.y);
 	_localRotation.z += XMConvertToRadians(angle.z);
 	UpdateTransform();
-	GetGameObject()->numFramesDirty++;
+	GetGameObject()->SetFramesDirty();
 }
 
 void Transform::Rotate(const XMVECTOR& angle)
@@ -248,7 +246,13 @@ void Transform::SetObjectWorldMatrix(XMFLOAT4X4 mat)
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	if (HasParent())
-		return _parent->GetWorldMatrix();
+	{
+		XMMATRIX parent = XMLoadFloat4x4(&_parent->GetWorldMatrix());
+		XMMATRIX local = XMLoadFloat4x4(&_matLocal);
+		XMFLOAT4X4 result;
+		XMStoreFloat4x4(&result, local * parent);
+		return result;
+	}
 	else
 		return _matWorld;
 }
@@ -276,6 +280,8 @@ void Transform::SetParent(shared_ptr<Transform> parent)
 	XMStoreFloat3(&_localPosition, position);
 
 	_parent->AddChild(static_pointer_cast<Transform>(shared_from_this()));
+
+	UpdateTransform();
 }
 
 void Transform::AddChild(shared_ptr<Transform> child)

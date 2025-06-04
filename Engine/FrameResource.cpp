@@ -27,19 +27,16 @@ void FrameResource::UpdateObjectCB()
 {
 	for (auto& o : RENDER->GetObjects())
 	{
-		if (o->numFramesDirty > 0)
+		if (o->GetFramesDirty() > 0)
 		{
-			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetObjectWorldMatrix());
-			XMMATRIX texTransform = XMLoadFloat4x4(&o->GetTransform()->GetTexTransform());
-			texTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
 
 			ObjectConstants objConstants;
 			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
-			XMStoreFloat4x4(&objConstants.TexTransform, XMMatrixTranspose(texTransform));
 
 			objectCB->CopyData(o->objCBIndex, objConstants);
 
-			o->numFramesDirty--;
+			o->ReleaseFramesDirty();
 		}
 	}
 }
@@ -54,20 +51,20 @@ void FrameResource::UpdateLightCB()
 		return;
 
 	// Global Light
-	if (lights[0]->numFramesDirty > 0)
+	if (lights[0]->GetFramesDirty() > 0)
 	{
 		lightConstants.GlobalLight = lights[0]->GetLightConstants();
-		lights[0]->numFramesDirty--;
+		lights[0]->ReleaseFramesDirty();
 		flag = true;
 	}
 
 	// General Light
 	for (int i = 1; i < lights.size(); i++)
 	{
-		if (lights[i]->numFramesDirty > 0)
+		if (lights[i]->GetFramesDirty() > 0)
 		{
 			lightConstants.Lights[i - 1] = lights[i]->GetLightConstants();
-			lights[i]->numFramesDirty--;
+			lights[i]->ReleaseFramesDirty();
 			flag = true;
 		}
 	}

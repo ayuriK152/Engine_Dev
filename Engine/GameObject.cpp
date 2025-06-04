@@ -10,7 +10,7 @@ GameObject::GameObject()
 
 	objCBIndex = -1;
 
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 	_isInitialized = false;
 }
 
@@ -83,5 +83,5 @@ void GameObject::SetPSOName(const string& name)
 
 void GameObject::SetFramesDirty()
 {
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 }

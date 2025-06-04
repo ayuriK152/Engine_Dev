@@ -5,7 +5,7 @@ Light::Light() : Component(ComponentType::Light)
 {
 	ambient = {};
 
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 }
 
 Light::Light(
@@ -17,7 +17,7 @@ Light::Light(
 	diffuse(diffuse),
 	specular(specular)
 {
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 }
 
 Light::~Light()
@@ -25,10 +25,8 @@ Light::~Light()
 
 }
 
-// 불필요하게 데이터 값이 늘어나는 것 방지용
-void Light::IncreaseNumFramesDirty()
+void Light::SetFramesDirty()
 {
-	if (numFramesDirty < GRAPHIC->GetNumFrameResources())
-		numFramesDirty++;
+	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 }
 

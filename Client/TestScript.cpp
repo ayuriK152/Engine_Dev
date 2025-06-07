@@ -63,13 +63,17 @@ void TestScript::Init()
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
 
-	sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, 0.0f));
-	sphere2->GetTransform()->SetPosition(Vector3(2.5f, 1.5f, 0.0f));
-	sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
-	sphere2->GetTransform()->SetParent(sphere->GetTransform());
-	sphere3->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 0.0f));
-	sphere3->GetTransform()->SetScale(Vector3(0.2f, 0.2f, 0.2f));
-	sphere3->GetTransform()->SetParent(sphere2->GetTransform());
+	{
+		sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, 0.0f));
+		sphere2->GetTransform()->SetPosition(Vector3(2.5f, 1.5f, 0.0f));
+		sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+		sphere2->GetTransform()->SetParent(sphere->GetTransform());
+		sphere3->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 0.0f));
+		sphere3->GetTransform()->SetScale(Vector3(0.2f, 0.2f, 0.2f));
+		sphere3->GetTransform()->SetParent(sphere2->GetTransform());
+
+		sphere->GetTransform()->SetPosition(Vector3(5.0f, 1.0f, 0.0f));
+	}
 
 	model->GetTransform()->SetScale(Vector3(0.1f, 0.1f, 0.1f));
 

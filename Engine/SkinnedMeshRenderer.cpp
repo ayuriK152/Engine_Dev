@@ -44,7 +44,12 @@ void SkinnedMeshRenderer::Update()
 
 		for (UINT i = 0; i < boneTransforms.size(); ++i)
 		{
-			XMMATRIX finalMat = XMLoadFloat4x4(&boneTransforms[i]->GetWorldMatrix()) * XMLoadFloat4x4(&_bones[boneTransforms[i]->GetGameObject()->name]->offsetTransform);
+			XMMATRIX finalMat = XMLoadFloat4x4(&_bones[boneTransforms[i]->GetGameObject()->name]->offsetTransform);
+			//if (GetGameObject()->GetComponent<Animator>() != nullptr)
+			//{
+			//	finalMat = finalMat * GetGameObject()->GetComponent<Animator>()->GetCurrentAnimation()->GetAnimationMatTest(boneTransforms[i]->GetGameObject()->name);
+			//}
+			finalMat = finalMat * XMLoadFloat4x4(&boneTransforms[i]->GetWorldMatrix());
 			XMFLOAT4X4 finalTransform;
 			XMStoreFloat4x4(&finalTransform, XMMatrixTranspose(finalMat));
 			_boneTransformTest->CopyData(i, finalTransform);

@@ -17,6 +17,7 @@ VertexOut VS(VertexIn vin)
                 posL = vin.Pos;
             break;
         }
+
         posL += vin.BoneWeights[i] * mul(float4(vin.Pos, 1.0f), BoneTransforms[vin.BoneIndices[i]]).xyz;
         normalL += vin.BoneWeights[i] * mul(float4(vin.Normal, 1.0f), (float3x3)BoneTransforms[vin.BoneIndices[i]]);
         tangentL +=  vin.BoneWeights[i] * mul(float4(vin.Tangent, 1.0f), (float3x3)BoneTransforms[vin.BoneIndices[i]]);
@@ -26,7 +27,7 @@ VertexOut VS(VertexIn vin)
     vin.Normal = normalL;
     vin.Tangent = tangentL;
 #endif
-	
+
     float4 posW = mul(float4(vin.Pos, 1.0f), World);
     vout.positionWorld = posW.xyz;
 

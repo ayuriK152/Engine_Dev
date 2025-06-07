@@ -33,6 +33,8 @@ public:
 
 	void AddAnimationData(const AnimationData animation);
 
+	XMMATRIX GetAnimationMatTest(string boneName);
+
 private:
 	string _name;
 	float _duration;

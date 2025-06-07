@@ -2,7 +2,9 @@
 class Geometry;
 class Mesh;
 class GameObject;
-class MeshRenderer;
+class SkinnedMeshRenderer;
+class Animator;
+class Animation;
 
 enum ModelFormat
 {
@@ -43,6 +45,7 @@ private:
 			mat.c1, mat.c2, mat.c3, mat.c4,
 			mat.d1, mat.d2, mat.d3, mat.d4
 		);
+		XMStoreFloat4x4(&ret, XMMatrixTranspose(XMLoadFloat4x4(&ret)));
 		return ret;
 	}
 
@@ -61,8 +64,10 @@ private:
 	// instances
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
-	vector<shared_ptr<MeshRenderer>> _meshRenderers;
+	vector<shared_ptr<SkinnedMeshRenderer>> _meshRenderers;
 	shared_ptr<GameObject> _loadedObject;
+	shared_ptr<Animator> _bAnimator;
+	vector<shared_ptr<Animation>> _bAnimations;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 

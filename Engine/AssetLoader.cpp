@@ -4,6 +4,7 @@
 AssetLoader::AssetLoader()
 {
 	_importer = make_shared<Assimp::Importer>();
+	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 }
 
 AssetLoader::~AssetLoader()
@@ -31,10 +32,10 @@ void AssetLoader::ReadAssetFile(wstring file)
 	_scene = _importer->ReadFile(
 		UniversalUtils::ToString(fileStr),
 		aiProcess_ConvertToLeftHanded |
-		aiProcess_Triangulate |
+		aiProcess_Triangulate/* |
 		aiProcess_GenUVCoords |
 		aiProcess_GenNormals |
-		aiProcess_CalcTangentSpace
+		aiProcess_CalcTangentSpace*/
 	);
 
 	assert(_scene != nullptr);
@@ -43,8 +44,8 @@ void AssetLoader::ReadAssetFile(wstring file)
 	_loadedObject = make_shared<GameObject>();
 
 	ProcessMaterials(_scene);
-	ProcessNodes(_scene->mRootNode, _scene, nullptr);
 	ProcessAnimation(_scene);
+	ProcessNodes(_scene->mRootNode, _scene, nullptr);
 	if (_bones.size() > 0)
 	{
 		MapWeights();
@@ -107,13 +108,31 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	currNode->parent = parentNode;
 	currNode->transform = ConvertToXMFLOAT4X4(node->mTransformation);
 
+
 	// 부모 노드 존재시 행렬 계산
 	if (currNode->parent != nullptr)
 	{
-		XMMATRIX multipliedMat = XMLoadFloat4x4(&parentNode->transform) * XMLoadFloat4x4(&currNode->transform);
+		XMMATRIX multipliedMat = XMLoadFloat4x4(&currNode->transform) * XMLoadFloat4x4(&parentNode->transform);
 		XMStoreFloat4x4(&currNode->transform, multipliedMat);
+		//cout << node->mParent->mName.C_Str() << endl << currNode->parent->name << endl << endl;
 	}
-	
+
+
+	// for debug
+	{
+		XMVECTOR xscale, xquaternion, xposition;
+		XMMatrixDecompose(
+			&xscale,
+			&xquaternion,
+			&xposition,
+			XMLoadFloat4x4(&currNode->transform));
+		cout << "Decomposed Node: " << currNode->name << endl
+			<< " Scale: " << XMVectorGetX(xscale) << ", " << XMVectorGetY(xscale) << ", " << XMVectorGetZ(xscale)
+			<< endl << " Position: " << XMVectorGetX(xposition) << ", " << XMVectorGetY(xposition) << ", " << XMVectorGetZ(xposition)
+			<< endl << " Rotation: " << XMVectorGetX(xquaternion) << ", " << XMVectorGetY(xquaternion) << ", "
+			<< XMVectorGetZ(xquaternion) << ", " << XMVectorGetW(xquaternion) << endl << endl;
+	}
+
 	_nodes.insert({ currNode->name, currNode });
 
 	for (UINT i = 0; i < node->mNumMeshes; i++)
@@ -128,12 +147,14 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		}
 		_meshes.push_back(m);
 
+		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
 		meshObj->name = UniversalUtils::ToString(m->GetName());
-		meshObj->AddComponent(make_shared<MeshRenderer>());
+		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<MeshRenderer>()->SetMesh(m);
+		meshObj->AddComponent(_bAnimator);
 		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
-		_meshRenderers.push_back(meshObj->GetComponent<MeshRenderer>());
+		_meshRenderers.push_back(static_pointer_cast<SkinnedMeshRenderer>(meshObj->GetComponent<MeshRenderer>()));
 		_meshObjs.push_back(meshObj);
 
 		// 메시 본 로드 (있는 경우에만)
@@ -149,6 +170,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 					bone->name = mesh->mBones[i]->mName.C_Str();
 					bone->id = _bones.size();
 					bone->offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
+
 					_bones.insert({ bone->name, bone });
 				}
 			}
@@ -195,7 +217,6 @@ void AssetLoader::BuildBones()
 
 	for (auto& b : sortedBones)
 	{
-		cout << b->name << " " << b->id << endl;
 		shared_ptr<GameObject> foundObj = nullptr;
 		shared_ptr<Node> currentParent = b->node->parent;
 		while (true)
@@ -211,11 +232,15 @@ void AssetLoader::BuildBones()
 		}
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
 		boneObj->name = b->name;
-		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
+		XMFLOAT4X4 finalTransform;
+		XMStoreFloat4x4(&finalTransform, XMMatrixMultiply(XMLoadFloat4x4(&b->offsetTransform), XMLoadFloat4x4(&b->node->transform)));
+
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
+		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
 		_boneObjs.push_back(boneObj);
 		b->instancedObj = boneObj;
+
 	}
 
 	for (auto& renderer : _meshRenderers)
@@ -314,7 +339,8 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	if (!scene->HasAnimations())
 		return;
 
-	shared_ptr<Animator> bAnimator = make_shared<Animator>();
+	//shared_ptr<Animator> bAnimator = make_shared<Animator>();
+	_bAnimator = make_shared<Animator>();
 
 	// 애니메이션 갯수만큼
 	for (int i = 0; i < scene->mNumAnimations; i++)
@@ -366,9 +392,10 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 
 			bAnim->AddAnimationData(animData);
 		}
-
-		bAnimator->AddAnimation(bAnim);
+		_bAnimations.push_back(bAnim);
+		_bAnimator->AddAnimation(bAnim);
 	}
+
 }
 
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)

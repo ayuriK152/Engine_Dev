@@ -10,7 +10,12 @@ public:
 
 public:
 	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation; }
-	void AddAnimation(shared_ptr<Animation> animation) { _animations[animation->GetName()] = animation; }
+	void AddAnimation(shared_ptr<Animation> animation) { 
+		_animations[animation->GetName()] = animation;
+		if (!_currentAnimation) {
+			_currentAnimation = animation;
+		}
+	}
 
 private:
 	shared_ptr<Animation> _currentAnimation;

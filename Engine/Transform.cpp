@@ -42,7 +42,8 @@ void Transform::UpdateTransform()
 
 	if (HasParent())
 	{
-		XMMATRIX matWorld = XMLoadFloat4x4(&_matLocal) * XMLoadFloat4x4(&_parent->GetWorldMatrix());
+		//XMMATRIX matWorld = XMLoadFloat4x4(&_matLocal) * XMLoadFloat4x4(&_parent->GetWorldMatrix());
+		XMMATRIX matWorld = XMLoadFloat4x4(&GetWorldMatrix());
 		XMStoreFloat4x4(&_matWorld, matWorld);
 	}
 	else
@@ -77,6 +78,8 @@ void Transform::SetPosition(const Vector3& worldPosition)
 		XMMATRIX inverseWorldMat = XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix()));
 		Vector3 position;
 		XMStoreFloat3(&position, XMVector3Transform(XMLoadFloat3(&worldPosition), inverseWorldMat));
+
+		SetLocalPosition(position);
 	}
 	else
 	{
@@ -223,24 +226,11 @@ void Transform::SetObjectWorldMatrix(XMFLOAT4X4 mat)
 	_matWorld = mat;
 
 	if (HasParent())
-		XMStoreFloat4x4(&_matLocal, XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())) * XMLoadFloat4x4(&_matWorld));
+		XMStoreFloat4x4(&_matLocal, XMLoadFloat4x4(&_matWorld) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())));
 	else
 		_matLocal = _matWorld;
 
-	XMVECTOR scale;
-	XMVECTOR quaternion;
-	XMVECTOR position;
-	XMMatrixDecompose(
-		&scale,
-		&quaternion,
-		&position,
-		XMLoadFloat4x4(&_matLocal));
-
-	XMStoreFloat3(&_localScale, scale);
-	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
-	XMStoreFloat3(&_localPosition, position);
-
-	UpdateTransform();
+	SetLocalMatrix(_matLocal);
 }
 
 XMFLOAT4X4 Transform::GetWorldMatrix()
@@ -262,26 +252,13 @@ void Transform::SetParent(shared_ptr<Transform> parent)
 	_parent = parent;
 
 	if (HasParent())
-		XMStoreFloat4x4(&_matLocal, XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())) * XMLoadFloat4x4(&_matWorld));
+		XMStoreFloat4x4(&_matLocal, XMLoadFloat4x4(&_matWorld) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())));
 	else
 		_matLocal = _matWorld;
 
-	XMVECTOR scale;
-	XMVECTOR quaternion;
-	XMVECTOR position;
-	XMMatrixDecompose(
-		&scale,
-		&quaternion,
-		&position,
-		XMLoadFloat4x4(&_matLocal));
-
-	XMStoreFloat3(&_localScale, scale);
-	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
-	XMStoreFloat3(&_localPosition, position);
-
 	_parent->AddChild(static_pointer_cast<Transform>(shared_from_this()));
 
-	UpdateTransform();
+	SetLocalMatrix(_matLocal);
 }
 
 void Transform::AddChild(shared_ptr<Transform> child)

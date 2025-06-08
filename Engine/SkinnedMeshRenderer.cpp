@@ -39,17 +39,14 @@ void SkinnedMeshRenderer::Update()
 	if (rootBone != nullptr)
 	{
 		vector<shared_ptr<Transform>> boneTransforms;
+		vector<XMFLOAT4X4> boneMatrices;
 
 		UpdateBoneTransforms(rootBone, boneTransforms);
 
 		for (UINT i = 0; i < boneTransforms.size(); ++i)
 		{
-			XMMATRIX finalMat = XMLoadFloat4x4(&_bones[boneTransforms[i]->GetGameObject()->name]->offsetTransform);
-			//if (GetGameObject()->GetComponent<Animator>() != nullptr)
-			//{
-			//	finalMat = finalMat * GetGameObject()->GetComponent<Animator>()->GetCurrentAnimation()->GetAnimationMatTest(boneTransforms[i]->GetGameObject()->name);
-			//}
-			finalMat = finalMat * XMLoadFloat4x4(&boneTransforms[i]->GetWorldMatrix());
+			XMMATRIX finalMat = XMLoadFloat4x4(&boneTransforms[i]->GetWorldMatrix());
+			finalMat = XMLoadFloat4x4(&_bones[boneTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
 			XMFLOAT4X4 finalTransform;
 			XMStoreFloat4x4(&finalTransform, XMMatrixTranspose(finalMat));
 			_boneTransformTest->CopyData(i, finalTransform);
@@ -74,6 +71,15 @@ void SkinnedMeshRenderer::Render()
 
 void SkinnedMeshRenderer::UpdateBoneTransforms(const shared_ptr<Transform> root, vector<shared_ptr<Transform>>& boneTransforms)
 {
+	shared_ptr<Animator> animator = GetGameObject()->GetComponent<Animator>();
+	//cout << root->GetGameObject()->name << endl;
+	//cout << "before " << root->GetLocalPosition().x << ", " << root->GetLocalPosition().y << ", " << root->GetLocalPosition().z << endl;
+	if (animator != nullptr)
+	{
+		// 여기에 애니메이션 적용
+		animator->GetCurrentAnimation()->AnimationTest(root);
+	}
+	//cout << "after  " << root->GetLocalPosition().x << ", " << root->GetLocalPosition().y << ", " << root->GetLocalPosition().z << endl << endl;
 	boneTransforms.push_back(root);
 	for (auto& t : root->GetChilds())
 		UpdateBoneTransforms(t, boneTransforms);

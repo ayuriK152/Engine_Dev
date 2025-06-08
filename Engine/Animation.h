@@ -7,9 +7,9 @@ public:
 	struct KeyFrame
 	{
 		double time;
-		Vector4 position;
+		Vector3 position;
 		Vector4 rotation;
-		Vector4 scale;
+		Vector3 scale;
 	};
 
 	struct AnimationData
@@ -33,7 +33,9 @@ public:
 
 	void AddAnimationData(const AnimationData animation);
 
-	XMMATRIX GetAnimationMatTest(string boneName);
+	KeyFrame* Interpolate(const string& boneName, float time);
+
+	void AnimationTest(shared_ptr<Transform> transform);
 
 private:
 	string _name;

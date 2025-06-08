@@ -42,7 +42,6 @@ void Transform::UpdateTransform()
 
 	if (HasParent())
 	{
-		//XMMATRIX matWorld = XMLoadFloat4x4(&_matLocal) * XMLoadFloat4x4(&_parent->GetWorldMatrix());
 		XMMATRIX matWorld = XMLoadFloat4x4(&GetWorldMatrix());
 		XMStoreFloat4x4(&_matWorld, matWorld);
 	}

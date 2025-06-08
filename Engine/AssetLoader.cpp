@@ -114,23 +114,6 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	{
 		XMMATRIX multipliedMat = XMLoadFloat4x4(&currNode->transform) * XMLoadFloat4x4(&parentNode->transform);
 		XMStoreFloat4x4(&currNode->transform, multipliedMat);
-		//cout << node->mParent->mName.C_Str() << endl << currNode->parent->name << endl << endl;
-	}
-
-
-	// for debug
-	{
-		XMVECTOR xscale, xquaternion, xposition;
-		XMMatrixDecompose(
-			&xscale,
-			&xquaternion,
-			&xposition,
-			XMLoadFloat4x4(&currNode->transform));
-		cout << "Decomposed Node: " << currNode->name << endl
-			<< " Scale: " << XMVectorGetX(xscale) << ", " << XMVectorGetY(xscale) << ", " << XMVectorGetZ(xscale)
-			<< endl << " Position: " << XMVectorGetX(xposition) << ", " << XMVectorGetY(xposition) << ", " << XMVectorGetZ(xposition)
-			<< endl << " Rotation: " << XMVectorGetX(xquaternion) << ", " << XMVectorGetY(xquaternion) << ", "
-			<< XMVectorGetZ(xquaternion) << ", " << XMVectorGetW(xquaternion) << endl << endl;
 	}
 
 	_nodes.insert({ currNode->name, currNode });
@@ -339,7 +322,6 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	if (!scene->HasAnimations())
 		return;
 
-	//shared_ptr<Animator> bAnimator = make_shared<Animator>();
 	_bAnimator = make_shared<Animator>();
 
 	// 애니메이션 갯수만큼
@@ -367,7 +349,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 					aiVectorKey pos = channel->mPositionKeys[k];
 					if (!keyframeMap.contains(pos.mTime))
 						keyframeMap[pos.mTime].time = pos.mTime;
-					keyframeMap[pos.mTime].position = { pos.mValue.x, pos.mValue.y, pos.mValue.z, 1.0f};
+					keyframeMap[pos.mTime].position = { pos.mValue.x, pos.mValue.y, pos.mValue.z };
 				}
 				
 				if (k < channel->mNumRotationKeys)
@@ -383,7 +365,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 					aiVectorKey scale = channel->mScalingKeys[k];
 					if (!keyframeMap.contains(scale.mTime))
 						keyframeMap[scale.mTime].time = scale.mTime;
-					keyframeMap[scale.mTime].scale = { scale.mValue.x, scale.mValue.y, scale.mValue.z, 1.0f };
+					keyframeMap[scale.mTime].scale = { scale.mValue.x, scale.mValue.y, scale.mValue.z };
 				}
 			}
 

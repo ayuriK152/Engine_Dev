@@ -9,6 +9,7 @@ class Transform;
 class Camera;
 class Rigidbody;
 class Collider;
+class Animator;
 #pragma endregion
 
 
@@ -78,6 +79,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Rigidbody;
 	if (is_same_v<T, Collider>)
 		return ComponentType::Collider;
+	if (is_same_v<T, Animator>)
+		return ComponentType::Animator;
 
 	return ComponentType::Undefined;
 }

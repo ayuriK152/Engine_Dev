@@ -104,6 +104,7 @@ void EngineGUIManager::ShowEngineStatus()
 	if (ImGui::Begin("Engine Status", &_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS], windowFlags))
 	{
 		ImGui::Text("FPS: %s", ENGINESTAT->GetFrameCountString().c_str());
+		ImGui::Text("AVG: %s", ENGINESTAT->GetAverageFrameCountString().c_str());
 	}
 	ImGui::End();
 }

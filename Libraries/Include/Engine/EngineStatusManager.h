@@ -14,6 +14,7 @@ public:
 		_maxFrameCount = 0.0f;
 		_minFrameCount = -1.0f;
 		_timeElapsed = 0.0f;
+		_averageFrameCount = 0.0f;
 	}
 
 	float GetFrameCount() { return _frameCount; }
@@ -25,10 +26,14 @@ public:
 	float GetMinFrameCount() { return _minFrameCount; }
 	string GetMinFrameCountString();
 
+	float GetAverageFrameCount() { return _averageFrameCount; }
+	string GetAverageFrameCountString();
+
 private:
 	float _frameCount = 0.0f;
 	float _maxFrameCount = 0.0f;
 	float _minFrameCount = -1.0f;
+	float _averageFrameCount = 0.0f;
 	float _timeElapsed = 0.0f;
 };
 

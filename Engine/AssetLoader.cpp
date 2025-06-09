@@ -228,8 +228,8 @@ void AssetLoader::BuildBones()
 
 	for (auto& renderer : _meshRenderers)
 	{
-		renderer->rootBone = _boneObjs[0]->GetTransform();
 		renderer->SetBoneData(_bones);
+		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}
 
 	_boneObjs[0]->GetTransform()->SetParent(_loadedObject->GetTransform());

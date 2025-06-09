@@ -13,20 +13,22 @@ public:
 	void Render() override;
 
 public:
-	void UpdateBoneTransforms(const shared_ptr<Transform> root, vector<shared_ptr<Transform>>& boneTransforms);
+	void UpdateBoneTransforms(const shared_ptr<Transform> root);
 	void SetBoneData(const map<string, shared_ptr<Bone>>& bones) { _bones = bones; }
+	void SetRootBone(const shared_ptr<Transform> rootBone);
 
 private:
 	void CreateBoneSRV(vector<shared_ptr<Transform>>& boneTransforms);
 
 public:
-	shared_ptr<Transform> rootBone;
 
 private:
 	UINT _boneSrvHeapIndex = 0;
 
+	shared_ptr<Transform> _rootBone;
 	vector<XMFLOAT4X4> _boneOffsetTransforms;
+	vector<shared_ptr<Transform>> _boneInstanceTransforms;
 	map<string, shared_ptr<Bone>> _bones;
-	unique_ptr<UploadBuffer<XMFLOAT4X4>> _boneTransformTest = nullptr;
+	unique_ptr<UploadBuffer<XMFLOAT4X4>> _boneTransformUploadBuffer = nullptr;
 };
 

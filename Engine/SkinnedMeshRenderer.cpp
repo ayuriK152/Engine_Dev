@@ -14,42 +14,31 @@ SkinnedMeshRenderer::~SkinnedMeshRenderer()
 void SkinnedMeshRenderer::Init()
 {
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
-	if (rootBone != nullptr)
+	if (_rootBone != nullptr)
 	{
-		vector<shared_ptr<Transform>> boneTransforms;
-		UpdateBoneTransforms(rootBone, boneTransforms);
+		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * _boneInstanceTransforms.size();
 
-		for (shared_ptr<Transform>& bt : boneTransforms)
-		{
-			XMFLOAT4X4 boneOffsetTransform;
-			XMStoreFloat4x4(&boneOffsetTransform, XMMatrixInverse(nullptr, XMLoadFloat4x4(&bt->GetWorldMatrix())));
-			_boneOffsetTransforms.push_back(boneOffsetTransform);
-		}
+		_boneTransformUploadBuffer = make_unique<UploadBuffer<XMFLOAT4X4>>(_boneInstanceTransforms.size(), false);
 
-		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * boneTransforms.size();
-
-		_boneTransformTest = make_unique<UploadBuffer<XMFLOAT4X4>>(boneTransforms.size(), false);
-
-		CreateBoneSRV(boneTransforms);
+		CreateBoneSRV(_boneInstanceTransforms);
 	}
 }
 
 void SkinnedMeshRenderer::Update()
 {
-	if (rootBone != nullptr)
+	if (_rootBone != nullptr)
 	{
-		vector<shared_ptr<Transform>> boneTransforms;
-		vector<XMFLOAT4X4> boneMatrices;
-
-		UpdateBoneTransforms(rootBone, boneTransforms);
-
-		for (UINT i = 0; i < boneTransforms.size(); ++i)
+		for (UINT i = 0; i < _boneInstanceTransforms.size(); ++i)
 		{
-			XMMATRIX finalMat = XMLoadFloat4x4(&boneTransforms[i]->GetWorldMatrix());
-			finalMat = XMLoadFloat4x4(&_bones[boneTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
+			if (_boneInstanceTransforms[i]->GetGameObject()->GetFramesDirty() == 0)
+				continue;
+
+			XMMATRIX finalMat = XMLoadFloat4x4(&_boneInstanceTransforms[i]->GetWorldMatrix());
+			finalMat = XMLoadFloat4x4(&_bones[_boneInstanceTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
+			finalMat = XMMatrixTranspose(finalMat);
 			XMFLOAT4X4 finalTransform;
-			XMStoreFloat4x4(&finalTransform, XMMatrixTranspose(finalMat));
-			_boneTransformTest->CopyData(i, finalTransform);
+			XMStoreFloat4x4(&finalTransform, finalMat);
+			_boneTransformUploadBuffer->CopyData(i, finalTransform);
 		}
 	}
 }
@@ -58,7 +47,7 @@ void SkinnedMeshRenderer::Render()
 {
 	auto cmdList = GRAPHIC->GetCommandList().Get();
 
-	if (rootBone != nullptr)
+	if (_rootBone != nullptr)
 	{
 		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 		bone.Offset(_boneSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
@@ -69,20 +58,18 @@ void SkinnedMeshRenderer::Render()
 	Super::Render();
 }
 
-void SkinnedMeshRenderer::UpdateBoneTransforms(const shared_ptr<Transform> root, vector<shared_ptr<Transform>>& boneTransforms)
+void SkinnedMeshRenderer::UpdateBoneTransforms(const shared_ptr<Transform> root)
 {
-	shared_ptr<Animator> animator = GetGameObject()->GetComponent<Animator>();
-	//cout << root->GetGameObject()->name << endl;
-	//cout << "before " << root->GetLocalPosition().x << ", " << root->GetLocalPosition().y << ", " << root->GetLocalPosition().z << endl;
-	if (animator != nullptr)
-	{
-		// 여기에 애니메이션 적용
-		animator->GetCurrentAnimation()->AnimationTest(root);
-	}
-	//cout << "after  " << root->GetLocalPosition().x << ", " << root->GetLocalPosition().y << ", " << root->GetLocalPosition().z << endl << endl;
-	boneTransforms.push_back(root);
+	_boneInstanceTransforms.push_back(root);
 	for (auto& t : root->GetChilds())
-		UpdateBoneTransforms(t, boneTransforms);
+		UpdateBoneTransforms(t);
+}
+
+void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
+{
+	_rootBone = rootBone;
+
+	UpdateBoneTransforms(_rootBone);
 }
 
 void SkinnedMeshRenderer::CreateBoneSRV(vector<shared_ptr<Transform>>& boneTransforms)
@@ -100,5 +87,5 @@ void SkinnedMeshRenderer::CreateBoneSRV(vector<shared_ptr<Transform>>& boneTrans
 	srvDesc.Buffer.StructureByteStride = sizeof(XMFLOAT4X4);
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
-	GRAPHIC->GetDevice()->CreateShaderResourceView(_boneTransformTest->GetResource(), &srvDesc, hDescriptor);
+	GRAPHIC->GetDevice()->CreateShaderResourceView(_boneTransformUploadBuffer->GetResource(), &srvDesc, hDescriptor);
 }

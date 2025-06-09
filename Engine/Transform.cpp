@@ -19,10 +19,7 @@ Transform::~Transform()
 
 void Transform::Update()
 {
-	for (auto& c : _childs)
-	{
-		c->GetGameObject()->Update();
-	}
+
 }
 
 void Transform::Render()
@@ -198,6 +195,7 @@ void Transform::LookAt(const Vector3& targetPos)
 	Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
 	SetRotationRadian(euler);
 	UpdateTransform();
+	GetGameObject()->SetFramesDirty();
 }
 
 void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
@@ -218,6 +216,7 @@ void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 	XMStoreFloat3(&_localPosition, position);
 
 	UpdateTransform();
+	GetGameObject()->SetFramesDirty();
 }
 
 void Transform::SetObjectWorldMatrix(XMFLOAT4X4 mat)

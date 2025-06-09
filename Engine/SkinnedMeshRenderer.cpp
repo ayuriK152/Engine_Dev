@@ -16,11 +16,11 @@ void SkinnedMeshRenderer::Init()
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
 	if (_rootBone != nullptr)
 	{
-		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * _boneInstanceTransforms.size();
+		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * _boneTransforms.size();
 
-		_boneTransformUploadBuffer = make_unique<UploadBuffer<XMFLOAT4X4>>(_boneInstanceTransforms.size(), false);
+		_boneTransformUploadBuffer = make_unique<UploadBuffer<XMFLOAT4X4>>(_boneTransforms.size(), false);
 
-		CreateBoneSRV(_boneInstanceTransforms);
+		CreateBoneSRV(_boneTransforms);
 	}
 }
 
@@ -28,13 +28,13 @@ void SkinnedMeshRenderer::Update()
 {
 	if (_rootBone != nullptr)
 	{
-		for (UINT i = 0; i < _boneInstanceTransforms.size(); ++i)
+		for (UINT i = 0; i < _boneTransforms.size(); ++i)
 		{
-			if (_boneInstanceTransforms[i]->GetGameObject()->GetFramesDirty() == 0)
+			if (_boneTransforms[i]->GetGameObject()->GetFramesDirty() == 0)
 				continue;
 
-			XMMATRIX finalMat = XMLoadFloat4x4(&_boneInstanceTransforms[i]->GetWorldMatrix());
-			finalMat = XMLoadFloat4x4(&_bones[_boneInstanceTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
+			XMMATRIX finalMat = XMLoadFloat4x4(&_boneTransforms[i]->GetWorldMatrix());
+			finalMat = XMLoadFloat4x4(&_bones[_boneTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
 			finalMat = XMMatrixTranspose(finalMat);
 			XMFLOAT4X4 finalTransform;
 			XMStoreFloat4x4(&finalTransform, finalMat);
@@ -60,7 +60,7 @@ void SkinnedMeshRenderer::Render()
 
 void SkinnedMeshRenderer::UpdateBoneTransforms(const shared_ptr<Transform> root)
 {
-	_boneInstanceTransforms.push_back(root);
+	_boneTransforms.push_back(root);
 	for (auto& t : root->GetChilds())
 		UpdateBoneTransforms(t);
 }

@@ -36,6 +36,7 @@ void SkinnedMeshRenderer::Update()
 			XMMATRIX finalMat = XMLoadFloat4x4(&_boneTransforms[i]->GetWorldMatrix());
 			finalMat = XMLoadFloat4x4(&_bones[_boneTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
 			finalMat = XMMatrixTranspose(finalMat);
+
 			XMFLOAT4X4 finalTransform;
 			XMStoreFloat4x4(&finalTransform, finalMat);
 			_boneTransformUploadBuffer->CopyData(i, finalTransform);

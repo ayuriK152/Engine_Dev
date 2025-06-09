@@ -64,7 +64,6 @@ private:
 	// instances
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
-	vector<shared_ptr<SkinnedMeshRenderer>> _meshRenderers;
 	shared_ptr<GameObject> _loadedObject;
 	vector<shared_ptr<Animation>> _bAnimations;
 

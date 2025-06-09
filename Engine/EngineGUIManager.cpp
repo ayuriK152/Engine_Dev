@@ -131,12 +131,17 @@ void EngineGUIManager::ShowHierarchyView()
 
 	if (ImGui::Begin("Hierarchy View", nullptr, windowFlags))
 	{
+		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 		for (auto& o : RENDER->GetObjects())
 		{
 			if (o->GetTransform()->GetParent() != nullptr)
 				continue;
 			HierarchyObjectRecursion(o->GetTransform());
 		}
+	}
+	else if (_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY])
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = false;
 	}
 	ImGui::End();
 }
@@ -160,9 +165,9 @@ void EngineGUIManager::ShowInspectorView()
 	ImGui::SetNextWindowSize(windowSize);
 
 	ImGui::SetNextWindowCollapsed(!_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR]);
-
 	if (ImGui::Begin("Inspector View", nullptr, windowFlags))
 	{
+		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
 		if (_selectedObj == nullptr)
 		{
 			ImGui::Text("No GameObject Selected");
@@ -173,66 +178,7 @@ void EngineGUIManager::ShowInspectorView()
 			ImGui::Separator();
 
 			// Transform
-			{
-				bool isChanged = false;
-				Vector3 pos = _selectedObj->GetTransform()->GetLocalPosition();
-				Vector3 rot = _selectedObj->GetTransform()->GetLocalRotation();
-				Vector3 scale = _selectedObj->GetTransform()->GetLocalScale();
-				ImGui::SeparatorText("Transform");
-
-				ImGui::Text("Position");
-				ImGui::Text("X");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Position_X", &pos.x))
-					isChanged = true;
-				ImGui::Text("Y");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Position_Y", &pos.y))
-					isChanged = true;
-				ImGui::Text("Z");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Position_Z", &pos.z))
-					isChanged = true;
-
-				if (isChanged)
-					_selectedObj->GetTransform()->SetLocalPosition(pos);
-
-				isChanged = false;
-				ImGui::Text("Rotation");
-				ImGui::Text("X");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Rotation_X", &rot.x))
-					isChanged = true;
-				ImGui::Text("Y");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Rotation_Y", &rot.y))
-					isChanged = true;
-				ImGui::Text("Z");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Rotation_Z", &rot.z))
-					isChanged = true;
-
-				if (isChanged)
-					_selectedObj->GetTransform()->SetLocalRotation(rot);
-
-				isChanged = false;
-				ImGui::Text("Scale");
-				ImGui::Text("X");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Scale_X", &scale.x))
-					isChanged = true;
-				ImGui::Text("Y");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Scale_Y", &scale.y))
-					isChanged = true;
-				ImGui::Text("Z");
-				ImGui::SameLine();
-				if (ImGui::InputFloat("##Inspector_Scale_Z", &scale.z))
-					isChanged = true;
-
-				if (isChanged)
-					_selectedObj->GetTransform()->SetLocalScale(scale);
-			}
+			ShowTransform();
 		
 			// Other Components
 			for (auto& c : _selectedObj->GetComponents())
@@ -245,7 +191,73 @@ void EngineGUIManager::ShowInspectorView()
 			}
 		}
 	}
+	else if (_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR])
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = false;
+	}
 	ImGui::End();
+}
+
+void EngineGUIManager::ShowTransform()
+{
+	bool isChanged = false;
+	Vector3 pos = _selectedObj->GetTransform()->GetLocalPosition();
+	Vector3 rot = _selectedObj->GetTransform()->GetLocalRotation();
+	Vector3 scale = _selectedObj->GetTransform()->GetLocalScale();
+	ImGui::SeparatorText("Transform");
+
+	ImGui::Text("Position");
+	ImGui::Text("X");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Position_X", &pos.x))
+		isChanged = true;
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Position_Y", &pos.y))
+		isChanged = true;
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Position_Z", &pos.z))
+		isChanged = true;
+
+	if (isChanged)
+		_selectedObj->GetTransform()->SetLocalPosition(pos);
+
+	isChanged = false;
+	ImGui::Text("Rotation");
+	ImGui::Text("X");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Rotation_X", &rot.x))
+		isChanged = true;
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Rotation_Y", &rot.y))
+		isChanged = true;
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Rotation_Z", &rot.z))
+		isChanged = true;
+
+	if (isChanged)
+		_selectedObj->GetTransform()->SetLocalRotation(rot);
+
+	isChanged = false;
+	ImGui::Text("Scale");
+	ImGui::Text("X");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Scale_X", &scale.x))
+		isChanged = true;
+	ImGui::Text("Y");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Scale_Y", &scale.y))
+		isChanged = true;
+	ImGui::Text("Z");
+	ImGui::SameLine();
+	if (ImGui::InputFloat("##Inspector_Scale_Z", &scale.z))
+		isChanged = true;
+
+	if (isChanged)
+		_selectedObj->GetTransform()->SetLocalScale(scale);
 }
 
 void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)

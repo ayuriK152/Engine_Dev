@@ -69,8 +69,11 @@ private:
 	void ToggleWindows();
 
 	void ShowEngineStatus();
+
 	void ShowHierarchyView();
+
 	void ShowInspectorView();
+	void ShowTransform();
 
 	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
 

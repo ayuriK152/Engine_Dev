@@ -55,6 +55,7 @@ void Animator::PauseAnimation()
 void Animator::UpdateBoneTransform()
 {
 	shared_ptr<SkinnedMeshRenderer> renderer = static_pointer_cast<SkinnedMeshRenderer>(GetGameObject()->GetComponent<MeshRenderer>());
+	GetGameObject()->GetComponent<SkinnedMeshRenderer>();
 	if (renderer == nullptr)
 	{
 		cout << "No Available Renderer!" << endl;

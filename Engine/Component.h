@@ -11,6 +11,7 @@ enum class ComponentType
 	Undefined,
 	Transform,
 	MeshRenderer,
+	SkinnedMeshRenderer,
 	Camera,
 	Collider,
 	Rigidbody,

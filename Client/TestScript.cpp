@@ -96,7 +96,6 @@ void TestScript::Update()
 
 	sphere->GetTransform()->Rotate(Vector3(0.0f, 30.0f * TIME->DeltaTime(), 0.0f));
 	sphere2->GetTransform()->Rotate(Vector3(0.0f, 0.0f, 70.0f * TIME->DeltaTime()));
-	//sphere2->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
 
 	if (INPUTM->IsKeyPress(KeyValue::W))
 		camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));

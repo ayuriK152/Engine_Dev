@@ -16,9 +16,6 @@ void AssetLoader::InitializeFields()
 {
 	_nodes.clear();
 	_bones.clear();
-	//_meshObjs.clear();
-	//_boneObjs.clear();
-	_meshRenderers.clear();
 
 	_tempBoneWeights.clear();
 }
@@ -32,10 +29,10 @@ void AssetLoader::ReadAssetFile(wstring file)
 	_scene = _importer->ReadFile(
 		UniversalUtils::ToString(fileStr),
 		aiProcess_ConvertToLeftHanded |
-		aiProcess_Triangulate/* |
+		aiProcess_Triangulate |
 		aiProcess_GenUVCoords |
 		aiProcess_GenNormals |
-		aiProcess_CalcTangentSpace*/
+		aiProcess_CalcTangentSpace
 	);
 
 	assert(_scene != nullptr);
@@ -134,7 +131,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
 		meshObj->name = UniversalUtils::ToString(m->GetName());
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
-		meshObj->GetComponent<MeshRenderer>()->SetMesh(m);
+		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
 		shared_ptr<Animator> bAnimator = make_shared<Animator>();
 		for (auto& anim : _bAnimations)
 		{
@@ -142,7 +139,6 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		}
 		meshObj->AddComponent(bAnimator);
 		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
-		_meshRenderers.push_back(static_pointer_cast<SkinnedMeshRenderer>(meshObj->GetComponent<MeshRenderer>()));
 		_meshObjs.push_back(meshObj);
 
 		// 메시 본 로드 (있는 경우에만)
@@ -231,8 +227,9 @@ void AssetLoader::BuildBones()
 
 	}
 
-	for (auto& renderer : _meshRenderers)
+	for (auto& meshObj : _meshObjs)
 	{
+		auto renderer = meshObj->GetComponent<SkinnedMeshRenderer>();
 		renderer->SetBoneData(_bones);
 		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}

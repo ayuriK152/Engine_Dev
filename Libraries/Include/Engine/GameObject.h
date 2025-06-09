@@ -5,6 +5,7 @@ class Geometry;
 class Material;
 class Component;
 class MeshRenderer;
+class SkinnedMeshRenderer;
 class Transform;
 class Camera;
 class Rigidbody;
@@ -60,8 +61,11 @@ private:
 template<typename T>
 shared_ptr<T> GameObject::GetComponent()
 {
-	if (components.contains(GetComponentType<T>()))
-		return static_pointer_cast<T>(components[GetComponentType<T>()]);
+	ComponentType componentType = GetComponentType<T>();
+	if (components.contains(componentType))
+		return static_pointer_cast<T>(components[componentType]);
+	else if (componentType == ComponentType::SkinnedMeshRenderer)
+		return static_pointer_cast<T>(components[ComponentType::MeshRenderer]);
 	else
 		return nullptr;
 }
@@ -71,6 +75,8 @@ ComponentType GameObject::GetComponentType()
 {
 	if (is_same_v<T, MeshRenderer>)
 		return ComponentType::MeshRenderer;
+	if (is_same_v<T, SkinnedMeshRenderer>)
+		return ComponentType::SkinnedMeshRenderer;
 	if (is_same_v<T, Transform>)
 		return ComponentType::Transform;
 	if (is_same_v<T, Camera>)

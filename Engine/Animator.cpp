@@ -54,19 +54,13 @@ void Animator::PauseAnimation()
 
 void Animator::UpdateBoneTransform()
 {
-	shared_ptr<SkinnedMeshRenderer> renderer = static_pointer_cast<SkinnedMeshRenderer>(GetGameObject()->GetComponent<MeshRenderer>());
-	GetGameObject()->GetComponent<SkinnedMeshRenderer>();
-	if (renderer == nullptr)
+	vector<shared_ptr<Transform>> childs = GetTransform()->GetChilds();
+	for (int i = 0; i < childs.size(); i++)
 	{
-		cout << "No Available Renderer!" << endl;
-		return;
-	}
-
-	vector<shared_ptr<Transform>> boneTransforms = renderer->GetBoneTransforms();
-	for (const auto& boneTransform : boneTransforms)
-	{
-		string boneName = boneTransform->GetGameObject()->name;
-		Animation::KeyFrame* keyFrame = _currentAnimation->Interpolate(boneName, _currentTick);
+		shared_ptr<Transform> child = childs[i];
+		childs.insert(childs.end(), child->GetChilds().begin(), child->GetChilds().end());
+		string objName = child->GetGameObject()->name;
+		Animation::KeyFrame* keyFrame = _currentAnimation->Interpolate(objName, _currentTick);
 
 		if (keyFrame == nullptr)
 			continue;
@@ -77,6 +71,6 @@ void Animator::UpdateBoneTransform()
 
 		XMFLOAT4X4 finalMat;
 		XMStoreFloat4x4(&finalMat, matScale * matRotation * matTranslate);
-		boneTransform->SetLocalMatrix(finalMat);
+		child->SetLocalMatrix(finalMat);
 	}
 }

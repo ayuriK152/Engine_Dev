@@ -65,7 +65,6 @@ private:
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
 	shared_ptr<GameObject> _loadedObject;
-	vector<shared_ptr<Animation>> _bAnimations;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 

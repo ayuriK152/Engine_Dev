@@ -132,12 +132,6 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		meshObj->name = UniversalUtils::ToString(m->GetName());
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
-		shared_ptr<Animator> bAnimator = make_shared<Animator>();
-		for (auto& anim : _bAnimations)
-		{
-			bAnimator->AddAnimation(anim);
-		}
-		meshObj->AddComponent(bAnimator);
 		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
 		_meshObjs.push_back(meshObj);
 
@@ -324,6 +318,8 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	if (!scene->HasAnimations())
 		return;
 
+	_loadedObject->AddComponent(make_shared<Animator>());
+
 	// 애니메이션 갯수만큼
 	for (int i = 0; i < scene->mNumAnimations; i++)
 	{
@@ -374,9 +370,8 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 
 			bAnim->AddAnimationData(animData);
 		}
-		_bAnimations.push_back(bAnim);
+		_loadedObject->GetComponent<Animator>()->AddAnimation(bAnim);
 	}
-
 }
 
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)

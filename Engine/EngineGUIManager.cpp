@@ -183,11 +183,39 @@ void EngineGUIManager::ShowInspectorView()
 			// Other Components
 			for (auto& c : _selectedObj->GetComponents())
 			{
-				if (c.first == ComponentType::Transform)
+				ComponentType componentType = c.first;
+				if (componentType == ComponentType::Transform)
 					continue;
+				if (componentType == ComponentType::MeshRenderer)
+				{
+					if (dynamic_pointer_cast<SkinnedMeshRenderer>(c.second) == nullptr)
+						componentType = ComponentType::MeshRenderer;
+					else
+						componentType = ComponentType::SkinnedMeshRenderer;
+				}
 
-				auto componentType = magic_enum::enum_name(c.first);
-				ImGui::SeparatorText(string(componentType).c_str());
+				switch (componentType)
+				{
+					case ComponentType::MeshRenderer:
+						ShowMeshRenderer(static_pointer_cast<MeshRenderer>(c.second));
+						break;
+
+					case ComponentType::SkinnedMeshRenderer:
+						ShowSkinnedMeshRenderer(static_pointer_cast<SkinnedMeshRenderer>(c.second));
+						break;
+
+					case ComponentType::Camera:
+						ShowCamera(static_pointer_cast<Camera>(c.second));
+						break;
+
+					case ComponentType::Light:
+						ShowLight(static_pointer_cast<Light>(c.second));
+						break;
+
+					case ComponentType::Animator:
+						ShowAnimator(static_pointer_cast<Animator>(c.second));
+						break;
+				}
 			}
 		}
 	}
@@ -200,64 +228,121 @@ void EngineGUIManager::ShowInspectorView()
 
 void EngineGUIManager::ShowTransform()
 {
-	bool isChanged = false;
-	Vector3 pos = _selectedObj->GetTransform()->GetLocalPosition();
-	Vector3 rot = _selectedObj->GetTransform()->GetLocalRotation();
-	Vector3 scale = _selectedObj->GetTransform()->GetLocalScale();
-	ImGui::SeparatorText("Transform");
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		bool isChanged = false;
+		Vector3 pos = _selectedObj->GetTransform()->GetLocalPosition();
+		Vector3 rot = _selectedObj->GetTransform()->GetLocalRotation();
+		Vector3 scale = _selectedObj->GetTransform()->GetLocalScale();
 
-	ImGui::Text("Position");
-	ImGui::Text("X");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Position_X", &pos.x))
-		isChanged = true;
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Position_Y", &pos.y))
-		isChanged = true;
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Position_Z", &pos.z))
-		isChanged = true;
+		ImGui::SeparatorText("Position");
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Position_X", &pos.x))
+			isChanged = true;
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Position_Y", &pos.y))
+			isChanged = true;
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Position_Z", &pos.z))
+			isChanged = true;
 
-	if (isChanged)
-		_selectedObj->GetTransform()->SetLocalPosition(pos);
+		if (isChanged)
+			_selectedObj->GetTransform()->SetLocalPosition(pos);
 
-	isChanged = false;
-	ImGui::Text("Rotation");
-	ImGui::Text("X");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Rotation_X", &rot.x))
-		isChanged = true;
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Rotation_Y", &rot.y))
-		isChanged = true;
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Rotation_Z", &rot.z))
-		isChanged = true;
+		isChanged = false;
+		ImGui::SeparatorText("Rotation");
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Rotation_X", &rot.x))
+			isChanged = true;
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Rotation_Y", &rot.y))
+			isChanged = true;
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Rotation_Z", &rot.z))
+			isChanged = true;
 
-	if (isChanged)
-		_selectedObj->GetTransform()->SetLocalRotation(rot);
+		if (isChanged)
+			_selectedObj->GetTransform()->SetLocalRotation(rot);
 
-	isChanged = false;
-	ImGui::Text("Scale");
-	ImGui::Text("X");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Scale_X", &scale.x))
-		isChanged = true;
-	ImGui::Text("Y");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Scale_Y", &scale.y))
-		isChanged = true;
-	ImGui::Text("Z");
-	ImGui::SameLine();
-	if (ImGui::InputFloat("##Inspector_Scale_Z", &scale.z))
-		isChanged = true;
+		isChanged = false;
+		ImGui::SeparatorText("Scale");
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Scale_X", &scale.x))
+			isChanged = true;
+		ImGui::Text("Y");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Scale_Y", &scale.y))
+			isChanged = true;
+		ImGui::Text("Z");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##Inspector_Scale_Z", &scale.z))
+			isChanged = true;
 
-	if (isChanged)
-		_selectedObj->GetTransform()->SetLocalScale(scale);
+		if (isChanged)
+			_selectedObj->GetTransform()->SetLocalScale(scale);
+	}
+}
+
+void EngineGUIManager::ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer)
+{
+	if (ImGui::CollapsingHeader("MeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SeparatorText("Mesh");
+		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMesh()->GetName()));
+
+		ImGui::SeparatorText("Material");
+		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMaterial()->GetName()));
+	}
+}
+
+void EngineGUIManager::ShowSkinnedMeshRenderer(shared_ptr<SkinnedMeshRenderer> meshRenderer)
+{
+	if (ImGui::CollapsingHeader("SkinnedMeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SeparatorText("Mesh");
+		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMesh()->GetName()));
+
+		ImGui::SeparatorText("Material");
+		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMaterial()->GetName()));
+
+		ImGui::SeparatorText("RootBone");
+		ImGui::Text(meshRenderer->GetRootBone()->GetGameObject()->name.c_str());
+	}
+}
+
+void EngineGUIManager::ShowCamera(shared_ptr<Camera> camera)
+{
+	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SeparatorText("Mesh");
+		ImGui::Text(camera->IsMainCamera() ? "True" : "False");
+	}
+}
+
+void EngineGUIManager::ShowLight(shared_ptr<Light> light)
+{
+	if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SeparatorText("Light Type");
+		if (dynamic_pointer_cast<DirectionalLight>(light) != nullptr)
+			ImGui::Text("Directional Light");
+	}
+}
+
+void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
+{
+	if (ImGui::CollapsingHeader("Animator", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SeparatorText("Animation Tick");
+		ImGui::Text("%.1f / %.1f", animator->GetCurrentTick(), animator->GetCurrentAnimation()->GetDuration());
+	}
 }
 
 void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)

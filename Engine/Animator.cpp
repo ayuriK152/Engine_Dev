@@ -20,13 +20,13 @@ void Animator::Update()
 	UpdateBoneTransform();
 
 	float ticksPerSecond = (_currentAnimation->GetTicksPerSecond() != 0.0f) ? _currentAnimation->GetTicksPerSecond() : 25.0f;
-	_currentTime += TIME->DeltaTime() * ticksPerSecond;
+	_currentTick += TIME->DeltaTime() * ticksPerSecond;
 
-	if (_currentTime > _currentAnimation->GetDuration()) {
+	if (_currentTick > _currentAnimation->GetDuration()) {
 		if (_isLoop)
-			_currentTime = 0.0f;
+			_currentTick = 0.0f;
 		else
-			_currentTime = _currentAnimation->GetDuration();
+			_currentTick = _currentAnimation->GetDuration();
 	}
 }
 
@@ -66,7 +66,7 @@ void Animator::UpdateBoneTransform()
 	for (const auto& boneTransform : boneTransforms)
 	{
 		string boneName = boneTransform->GetGameObject()->name;
-		Animation::KeyFrame* keyFrame = _currentAnimation->Interpolate(boneName, _currentTime);
+		Animation::KeyFrame* keyFrame = _currentAnimation->Interpolate(boneName, _currentTick);
 
 		if (keyFrame == nullptr)
 			continue;

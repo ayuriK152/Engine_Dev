@@ -348,7 +348,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 				{
 					aiVectorKey pos = channel->mPositionKeys[k];
 					if (!keyframeMap.contains(pos.mTime))
-						keyframeMap[pos.mTime].time = pos.mTime;
+						keyframeMap[pos.mTime].tick = pos.mTime;
 					keyframeMap[pos.mTime].position = { pos.mValue.x, pos.mValue.y, pos.mValue.z };
 				}
 				
@@ -356,7 +356,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 				{
 					aiQuatKey rot = channel->mRotationKeys[k];
 					if (!keyframeMap.contains(rot.mTime))
-						keyframeMap[rot.mTime].time = rot.mTime;
+						keyframeMap[rot.mTime].tick = rot.mTime;
 					keyframeMap[rot.mTime].rotation = { rot.mValue.x, rot.mValue.y, rot.mValue.z, rot.mValue.w };
 				}
 
@@ -364,7 +364,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 				{
 					aiVectorKey scale = channel->mScalingKeys[k];
 					if (!keyframeMap.contains(scale.mTime))
-						keyframeMap[scale.mTime].time = scale.mTime;
+						keyframeMap[scale.mTime].tick = scale.mTime;
 					keyframeMap[scale.mTime].scale = { scale.mValue.x, scale.mValue.y, scale.mValue.z };
 				}
 			}

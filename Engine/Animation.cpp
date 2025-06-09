@@ -18,7 +18,7 @@ void Animation::AddAnimationData(const AnimationData animation)
 	_boneAnimations[animation.boneName] = animation;
 }
 
-Animation::KeyFrame* Animation::Interpolate(const string& boneName, float time)
+Animation::KeyFrame* Animation::Interpolate(const string& boneName, float tick)
 {
 	if (!_boneAnimations.contains(boneName))
 		return nullptr;
@@ -27,7 +27,7 @@ Animation::KeyFrame* Animation::Interpolate(const string& boneName, float time)
 	if (_boneAnimations[boneName].keyFrames.size() == 1)
 	{
 		KeyFrame* resultFrame = new KeyFrame();
-		resultFrame->time = _boneAnimations[boneName].keyFrames[0].time;
+		resultFrame->tick = _boneAnimations[boneName].keyFrames[0].tick;
 		resultFrame->position = _boneAnimations[boneName].keyFrames[0].position;
 		resultFrame->rotation = _boneAnimations[boneName].keyFrames[0].rotation;
 		resultFrame->scale = _boneAnimations[boneName].keyFrames[0].scale;
@@ -40,7 +40,7 @@ Animation::KeyFrame* Animation::Interpolate(const string& boneName, float time)
 	KeyFrame* resultFrame = new KeyFrame();
 	for (int i = 0; i < animationData.keyFrames.size() - 1; i++)
 	{
-		if (time >= animationData.keyFrames[i].time && time <= animationData.keyFrames[i + 1].time)
+		if (tick >= animationData.keyFrames[i].tick && tick <= animationData.keyFrames[i + 1].tick)
 		{
 			prevFrame = animationData.keyFrames[i];
 			nextFrame = animationData.keyFrames[i + 1];
@@ -48,8 +48,8 @@ Animation::KeyFrame* Animation::Interpolate(const string& boneName, float time)
 		}
 	}
 
-	float blendValue = (time - prevFrame.time) / (nextFrame.time - prevFrame.time);
-	resultFrame->time = time;
+	float blendValue = (tick - prevFrame.tick) / (nextFrame.tick - prevFrame.tick);
+	resultFrame->tick = tick;
 
 	resultFrame->position = Vector3(
 		prevFrame.position.x + blendValue * (nextFrame.position.x - prevFrame.position.x),

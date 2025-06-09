@@ -6,7 +6,7 @@ class Animation : public Resource
 public:
 	struct KeyFrame
 	{
-		double time;
+		double tick;
 		Vector3 position;
 		Vector4 rotation;
 		Vector3 scale;
@@ -33,7 +33,7 @@ public:
 
 	void AddAnimationData(const AnimationData animation);
 
-	KeyFrame* Interpolate(const string& boneName, float time);
+	KeyFrame* Interpolate(const string& boneName, float tick);
 
 	void AnimationTest(shared_ptr<Transform> transform);
 

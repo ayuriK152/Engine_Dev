@@ -11,6 +11,8 @@ public:
 	void Update() override;
 
 public:
+	float GetCurrentTick() { return _currentTick; }
+
 	void PlayAnimation();
 	void PauseAnimation();
 
@@ -31,7 +33,7 @@ private:
 	shared_ptr<Animation> _currentAnimation;
 
 	map<string, shared_ptr<Animation>> _animations;
-	float _currentTime = 0.0f;
+	float _currentTick = 0.0f;
 	bool _isPlaying = true;
 	bool _isLoop = true;
 };

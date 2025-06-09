@@ -9,6 +9,11 @@
 #define WIDTH_GUI_INSPECTOR			300
 
 class Transform;
+class MeshRenderer;
+class SkinnedMeshRenderer;
+class Camera;
+class Light;
+class Animator;
 
 struct DescriptorHeapAllocator
 {
@@ -74,6 +79,12 @@ private:
 
 	void ShowInspectorView();
 	void ShowTransform();
+	void ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer);
+	void ShowSkinnedMeshRenderer(shared_ptr<SkinnedMeshRenderer> meshRenderer);
+	void ShowCamera(shared_ptr<Camera> camera);
+	void ShowLight(shared_ptr<Light> light);
+	void ShowAnimator(shared_ptr<Animator> animator);
+
 
 	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
 

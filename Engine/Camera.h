@@ -17,6 +17,7 @@ public:
 	static XMFLOAT4X4& GetProjMatrix() { return _currentCamera->_matProj; }
 	
 	void SetAsMainCamera() { _currentCamera = this; }
+	bool IsMainCamera() { return _currentCamera == this; }
 
 private:
 	XMFLOAT3 _eyePos;

@@ -16,6 +16,7 @@ public:
 	void UpdateBoneTransforms(const shared_ptr<Transform> root);
 	void SetBoneData(const map<string, shared_ptr<Bone>>& bones) { _bones = bones; }
 	void SetRootBone(const shared_ptr<Transform> rootBone);
+	shared_ptr<Transform> GetRootBone() const { return _rootBone; }
 
 	vector<shared_ptr<Transform>> GetBoneTransforms() const { return _boneTransforms; }
 

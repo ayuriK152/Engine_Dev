@@ -5,13 +5,35 @@ void TestScript::Init()
 {
 	assetLoader = make_shared<AssetLoader>();
 	{
-		assetLoader->ReadAssetFile(L"Y Bot\\Y Bot.fbx");
+		assetLoader->ImportAssetFile(L"Y Bot\\Y Bot.fbx");
 	}
 
 	// 텍스쳐 테스트용 나중에 삭제
 	{
 		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");
 		RESOURCE->Add<Texture>(L"0dot001mm_1", koyuki);
+	}
+
+	//file io test
+	{
+		HANDLE testHandle = FILEIO->CreateFileHandle<Mesh>("test");
+		int test = 1;
+		int test2 = 15;
+		string test3 = "abcd";
+		FILEIO->WriteToFile(testHandle, test);
+		FILEIO->WriteToFile(testHandle, test2);
+		FILEIO->WriteToFile(testHandle, test3);
+		CloseHandle(testHandle);
+
+		testHandle = FILEIO->CreateFileHandle<Mesh>("test");
+		int a;
+		FILEIO->ReadFileData(testHandle, a);
+		int b;
+		FILEIO->ReadFileData(testHandle, b);
+		string c;
+		FILEIO->ReadFileData(testHandle, c);
+
+		CloseHandle(testHandle);
 	}
 
 	skybox = make_shared<GameObject>();

@@ -20,7 +20,7 @@ public:
 	~AssetLoader();
 
 public:
-	void ReadAssetFile(wstring file);
+	void ImportAssetFile(wstring file);
 	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject; }
 
 private:
@@ -69,6 +69,6 @@ private:
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 
 private:
-	wstring _assetPath = L"../Resources/Assets/";
+	wstring _assetPath = L"..\\Resources\\Assets\\";
 };
 

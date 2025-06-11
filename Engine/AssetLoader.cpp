@@ -4,7 +4,7 @@
 AssetLoader::AssetLoader()
 {
 	_importer = make_shared<Assimp::Importer>();
-	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
 }
 
 AssetLoader::~AssetLoader()
@@ -20,7 +20,8 @@ void AssetLoader::InitializeFields()
 	_tempBoneWeights.clear();
 }
 
-void AssetLoader::ReadAssetFile(wstring file)
+// 바이너리 파일로 저장 안된경우 최초 임포트 메소드
+void AssetLoader::ImportAssetFile(wstring file)
 {
 	wstring fileStr = _assetPath + file;
 

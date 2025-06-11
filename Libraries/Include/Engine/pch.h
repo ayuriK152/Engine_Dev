@@ -24,6 +24,9 @@ using namespace std;
 #include <windowsx.h>
 #include <assert.h>
 #include <comdef.h>
+#include <Shlwapi.h>
+
+#pragma comment(lib, "Shlwapi.lib")
 
 // DX
 #include "d3dx12/d3dx12.h"

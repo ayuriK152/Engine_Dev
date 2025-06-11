@@ -27,6 +27,12 @@ public:									\
 #define FILEIO		GET_SINGLE(FileIOManager)
 
 
+#define BULB_EXT_UNKNOWN		".brsc"
+#define BULB_EXT_UNKNOWNW		L".brsc"
+#define BULB_EXT_MESH			".bmesh"
+#define BULB_EXT_MESHW			L".bmesh"
+
+
 /* 
 * 경로 define 명명 규칙
 * 

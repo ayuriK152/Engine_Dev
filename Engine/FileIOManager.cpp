@@ -150,3 +150,55 @@ void FileIOManager::LoadMaterials()
 		RESOURCE->Add<Material>(UniversalUtils::ToWString(name), mat);
 	}
 }
+
+void FileIOManager::WriteToFile(HANDLE fileHandle, void* data, UINT32 size)
+{
+	WriteFile(
+		fileHandle,
+		&data,
+		size,
+		NULL,
+		NULL
+	);
+}
+
+void FileIOManager::WriteToFile(HANDLE fileHandle, const string& data)
+{
+	UINT32 size = (UINT32)data.size();
+	WriteToFile(fileHandle, size);
+
+	if (size == 0)
+		return;
+
+	WriteFile(
+		fileHandle,
+		(data.data()),
+		size,
+		NULL,
+		NULL
+	);
+}
+
+void FileIOManager::ReadFileData(HANDLE fileHandle, string& out)
+{
+	UINT32 size;
+	ReadFile(
+		fileHandle,
+		&size,
+		sizeof(UINT32),
+		NULL,
+		NULL
+	);
+	char* data = new char[size + 1];
+	data[size] = 0;
+	ReadFile(
+		fileHandle,
+		data,
+		size,
+		NULL,
+		NULL
+	);
+
+	out = data;
+	delete[] data;
+}

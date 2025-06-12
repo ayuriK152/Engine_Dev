@@ -72,5 +72,7 @@ void Animator::UpdateBoneTransform()
 		XMFLOAT4X4 finalMat;
 		XMStoreFloat4x4(&finalMat, matScale * matRotation * matTranslate);
 		child->SetLocalMatrix(finalMat);
+
+		delete keyFrame;
 	}
 }

@@ -57,6 +57,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 	//ReadMeshData("Alpha_Joints");
 
 	InitializeFields();
+	delete _scene;
 }
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
@@ -99,6 +100,8 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		RESOURCE->Add<Material>(matName, mat);
 
 		FILEIO->XMLFromMaterial(mat, _assetName);
+
+		delete aiMat;
 	}
 }
 

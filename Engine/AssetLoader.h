@@ -49,6 +49,10 @@ private:
 		return ret;
 	}
 
+	void SaveMeshData();
+
+	shared_ptr<Mesh> ReadMeshData(string fileName);
+
 private:
 	shared_ptr<Assimp::Importer> _importer;
 

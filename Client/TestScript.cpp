@@ -14,28 +14,6 @@ void TestScript::Init()
 		RESOURCE->Add<Texture>(L"0dot001mm_1", koyuki);
 	}
 
-	//file io test
-	{
-		HANDLE testHandle = FILEIO->CreateFileHandle<Mesh>("test");
-		int test = 1;
-		int test2 = 15;
-		string test3 = "abcd";
-		FILEIO->WriteToFile(testHandle, test);
-		FILEIO->WriteToFile(testHandle, test2);
-		FILEIO->WriteToFile(testHandle, test3);
-		CloseHandle(testHandle);
-
-		testHandle = FILEIO->CreateFileHandle<Mesh>("test");
-		int a;
-		FILEIO->ReadFileData(testHandle, a);
-		int b;
-		FILEIO->ReadFileData(testHandle, b);
-		string c;
-		FILEIO->ReadFileData(testHandle, c);
-
-		CloseHandle(testHandle);
-	}
-
 	skybox = make_shared<GameObject>();
 	skybox->name = "skybox";
 	skybox->AddComponent(make_shared<MeshRenderer>());

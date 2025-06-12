@@ -23,9 +23,7 @@ public:
 	void WriteToFile(HANDLE fileHandle, void* data, UINT32 size);
 	void WriteToFile(HANDLE fileHandle, const string& data);
 
-	template<typename T>
-	void ReadFileData(HANDLE fileHandle, T& out);
-
+	void ReadFileData(HANDLE fileHandle, void* out, UINT32 dataSize);
 	void ReadFileData(HANDLE fileHandle, string& out);
 };
 
@@ -65,9 +63,6 @@ HANDLE FileIOManager::CreateFileHandle(string fileName) {
 template<typename T>
 void FileIOManager::WriteToFile(HANDLE fileHandle, const T& data)
 {
-	if (is_same_v<T, string>)
-	{
-	}
 	WriteFile(
 		fileHandle,
 		&data,
@@ -76,19 +71,3 @@ void FileIOManager::WriteToFile(HANDLE fileHandle, const T& data)
 		NULL
 	);
 }
-
-template<typename T>
-void FileIOManager::ReadFileData(HANDLE fileHandle, T& out)
-{
-	void* data;
-	ReadFile(
-		fileHandle,
-		&data,
-		sizeof(T),
-		NULL,
-		NULL
-	);
-
-	out = (T)data;
-}
-

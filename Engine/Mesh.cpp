@@ -9,7 +9,10 @@ Mesh::Mesh(shared_ptr<Geometry> geometry) : Super(ResourceType::Mesh), _geometry
 
 Mesh::~Mesh()
 {
-
+	vertexBufferGPU.Reset();
+	indexBufferGPU.Reset();
+	vertexBufferUploader.Reset();
+	indexBufferUploader.Reset();
 }
 
 void Mesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)

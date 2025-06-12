@@ -202,3 +202,14 @@ void FileIOManager::ReadFileData(HANDLE fileHandle, string& out)
 	out = data;
 	delete[] data;
 }
+
+void FileIOManager::ReadFileData(HANDLE fileHandle, void* out, UINT32 dataSize)
+{
+	ReadFile(
+		fileHandle,
+		out,
+		dataSize,
+		NULL,
+		NULL
+	);
+}

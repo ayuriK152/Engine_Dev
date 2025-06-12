@@ -51,6 +51,11 @@ void AssetLoader::ImportAssetFile(wstring file)
 		BuildBones();
 	}
 
+	// 바이너리 파일 저장
+	SaveMeshData();
+
+	//ReadMeshData("Alpha_Joints");
+
 	InitializeFields();
 }
 
@@ -396,4 +401,61 @@ void AssetLoader::ImportModelFormat(wstring fileName)
 		_modelType = ModelFormat::GLTF;
 	else
 		_modelType = ModelFormat::UNKOWN;
+}
+
+void AssetLoader::SaveMeshData()
+{
+	for (shared_ptr<Mesh> mesh : _meshes)
+	{
+		HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(UniversalUtils::ToString(mesh->GetName()));
+
+		UINT32 vertexCount = mesh->GetVertexCount();
+		FILEIO->WriteToFile(fileHandle, vertexCount);
+		for (const Vertex& v : mesh->GetVertices())
+		{
+			FILEIO->WriteToFile(fileHandle, v);
+		}
+
+		UINT32 indexCount = mesh->GetIndexCount();
+		FILEIO->WriteToFile(fileHandle, indexCount);
+		for (UINT16 i : mesh->GetIndices())
+		{
+			FILEIO->WriteToFile(fileHandle, i);
+		}
+
+		CloseHandle(fileHandle);
+	}
+}
+
+shared_ptr<Mesh> AssetLoader::ReadMeshData(string fileName)
+{
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(fileName);
+
+	UINT32 vertexCount;
+	FILEIO->ReadFileData(fileHandle, &vertexCount, sizeof(UINT32));
+	vector<Vertex> vertices;
+	for (int i = 0; i < vertexCount; i++)
+	{
+		Vertex v;
+		FILEIO->ReadFileData(fileHandle, &v, sizeof(Vertex));
+
+		vertices.push_back(v);
+	}
+
+	UINT32 indexCount;
+	FILEIO->ReadFileData(fileHandle, &indexCount, sizeof(UINT32));
+	vector<UINT16> indices;
+	for (int i = 0; i < indexCount; i++)
+	{
+		UINT16 index;
+		FILEIO->ReadFileData(fileHandle, &index, sizeof(UINT16));
+		indices.push_back(index);
+	}
+
+	CloseHandle(fileHandle);
+
+	shared_ptr<Geometry> geometry = make_shared<Geometry>(vertices, indices);
+	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);	// 객체 생성 후 바로 포인터 해제되면 gpu 버퍼 때문에 터짐. 수정해야함.
+
+	return loadedMesh;
 }

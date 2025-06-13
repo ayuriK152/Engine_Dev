@@ -3,8 +3,7 @@
 
 AssetLoader::AssetLoader()
 {
-	_importer = make_shared<Assimp::Importer>();
-	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
+
 }
 
 AssetLoader::~AssetLoader()
@@ -16,13 +15,16 @@ void AssetLoader::InitializeFields()
 {
 	_nodes.clear();
 	_bones.clear();
-
 	_tempBoneWeights.clear();
+	_animations.clear();
 }
 
 // 바이너리 파일로 저장 안된경우 최초 임포트 메소드
 void AssetLoader::ImportAssetFile(wstring file)
 {
+	_importer = make_shared<Assimp::Importer>();
+	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
+
 	wstring fileStr = _assetPath + file;
 
 	auto p = filesystem::path(fileStr);
@@ -40,6 +42,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
 	_loadedObject = make_shared<GameObject>();
+	_loadedObject->name = UniversalUtils::ToString(_assetName);
 
 	ProcessMaterials(_scene);
 	ProcessAnimation(_scene);
@@ -53,11 +56,15 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	// 바이너리 파일 저장
 	SaveMeshData();
+	SaveAnimationData();
+	SaveBoneData();
+	SavePrefabData();
 
 	//ReadMeshData("Alpha_Joints");
 
 	InitializeFields();
-	delete _scene;
+
+	_importer = nullptr;
 }
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
@@ -100,8 +107,6 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		RESOURCE->Add<Material>(matName, mat);
 
 		FILEIO->XMLFromMaterial(mat, _assetName);
-
-		delete aiMat;
 	}
 }
 
@@ -379,6 +384,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 
 			bAnim->AddAnimationData(animData);
 		}
+		_animations.push_back(bAnim);
 		_loadedObject->GetComponent<Animator>()->AddAnimation(bAnim);
 	}
 }
@@ -427,6 +433,82 @@ void AssetLoader::SaveMeshData()
 		}
 
 		CloseHandle(fileHandle);
+	}
+}
+
+void AssetLoader::SaveAnimationData()
+{
+	UINT32 animCount = _animations.size();
+	for (int i = 0; i < animCount; i++)
+	{
+		HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(_animations[i]->GetName());
+		FILEIO->WriteToFile(fileHandle, animCount);
+		
+		unordered_map<string, Animation::AnimationData> animationDatas = _animations[i]->GetAnimationDatas();
+		for (auto& animData : animationDatas)
+		{
+			FILEIO->WriteToFile(fileHandle, animData.first);
+			UINT32 keyFrameCount = animData.second.keyFrames.size();
+			FILEIO->WriteToFile(fileHandle, keyFrameCount);
+			for (auto& keyFrame : animData.second.keyFrames)
+			{
+				FILEIO->WriteToFile(fileHandle, keyFrame);
+			}
+		}
+
+		CloseHandle(fileHandle);
+	}
+}
+
+void AssetLoader::SaveBoneData()
+{
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(UniversalUtils::ToString(_assetName));
+	UINT32 boneCount = _bones.size();
+	for (auto& bone : _bones)
+	{
+		FILEIO->WriteToFile(fileHandle, bone.second->name);
+		FILEIO->WriteToFile(fileHandle, bone.second->id);
+		FILEIO->WriteToFile(fileHandle, bone.second->offsetTransform);
+	}
+	CloseHandle(fileHandle);
+}
+
+void AssetLoader::SavePrefabData()
+{
+	vector<shared_ptr<Transform>> allObjects;
+	allObjects.push_back(_loadedObject->GetTransform());
+	for (int i = 0; i < allObjects.size(); i++)
+	{
+		allObjects.insert(allObjects.end(), allObjects[i]->GetChilds().begin(), allObjects[i]->GetChilds().end());
+	}
+
+	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(UniversalUtils::ToString(_assetName));
+	FILEIO->WriteToFile(fileHandle, allObjects.size());
+	WritePrefabRecursive(fileHandle, _loadedObject, -1);
+	CloseHandle(fileHandle);
+}
+
+void AssetLoader::WritePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> obj, int parentIdx)
+{
+	static int objectIdx = 0;
+	int currentIdx = objectIdx++;
+
+	FILEIO->WriteToFile(fileHandle, obj->name);
+	FILEIO->WriteToFile(fileHandle, obj->psoName);
+	FILEIO->WriteToFile(fileHandle, obj->GetTransform()->GetWorldMatrix());
+	FILEIO->WriteToFile(fileHandle, parentIdx);		// 부모 인덱스
+	FILEIO->WriteToFile(fileHandle, obj->GetComponents().size() - 1);
+	for (auto& c : obj->GetComponents())
+	{
+		if (c.first == ComponentType::Transform)
+			continue;
+
+		FILEIO->WriteToFile(fileHandle, c.first);	// 컴포넌트 타입
+	}
+
+	for (auto& c : obj->GetTransform()->GetChilds())
+	{
+		WritePrefabRecursive(fileHandle, c->GetGameObject(), currentIdx);
 	}
 }
 

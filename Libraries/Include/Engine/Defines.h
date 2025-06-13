@@ -27,26 +27,37 @@ public:									\
 #define FILEIO		GET_SINGLE(FileIOManager)
 
 
-#define BULB_EXT_UNKNOWN		".brsc"
-#define BULB_EXT_UNKNOWNW		L".brsc"
-#define BULB_EXT_MESH			".bmesh"
-#define BULB_EXT_MESHW			L".bmesh"
+/**************/
+/* Extentions */
+/**************/
+#define BULB_EXT_UNKNOWN			".brsc"
+#define BULB_EXT_UNKNOWNW			L".brsc"
+#define BULB_EXT_MESH				".bmesh"
+#define BULB_EXT_MESHW				L".bmesh"
+#define BULB_EXT_ANIMATION			".banim"
+#define BULB_EXT_ANIMATIONW			L".banim"
+#define BULB_EXT_BONE				".bbone"
+#define BULB_EXT_BONEW				L".bbone"
+#define BULB_EXT_PREFAB				".bprefab"
+#define BULB_EXT_PREFABW			L".bprefab"
 
 
-/* 
-* 경로 define 명명 규칙
-* 
-* 1. 무엇에 대한 경로인지 + PATH
-* 2. 하위 분류 이름
-* 3. wstring인 경우 + W
-*/
-#define RESOURCE_PATH				"..\\Resources\\"
-#define RESOURCE_PATHW				L"..\\Resources\\"
-#define RESOURCE_PATH_MATERIAL		"..\\Resources\\Materials\\"
-#define RESOURCE_PATH_MATERIALW		L"..\\Resources\\Materials\\"
-#define RESOURCE_PATH_SHADER		"..\\Resources\\Shaders\\"
-#define RESOURCE_PATH_SHADERW		L"..\\Resources\\Shaders\\"
-#define RESOURCE_PATH_TEXTURE		"..\\Resources\\Textures\\"
-#define RESOURCE_PATH_TEXTUREW		L"..\\Resources\\Textures\\"
-#define RESOURCE_PATH_MESH			"..\\Resources\\Meshes\\"
-#define RESOURCE_PATH_MESHW			L"..\\Resources\\Meshes\\"
+/*********/
+/* Paths */
+/*********/
+#define RESOURCE_PATH					"..\\Resources\\"
+#define RESOURCE_PATHW					L"..\\Resources\\"
+#define RESOURCE_PATH_MATERIAL			"..\\Resources\\Materials\\"
+#define RESOURCE_PATH_MATERIALW			L"..\\Resources\\Materials\\"
+#define RESOURCE_PATH_SHADER			"..\\Resources\\Shaders\\"
+#define RESOURCE_PATH_SHADERW			L"..\\Resources\\Shaders\\"
+#define RESOURCE_PATH_TEXTURE			"..\\Resources\\Textures\\"
+#define RESOURCE_PATH_TEXTUREW			L"..\\Resources\\Textures\\"
+#define RESOURCE_PATH_MESH				"..\\Resources\\Meshes\\"
+#define RESOURCE_PATH_MESHW				L"..\\Resources\\Meshes\\"
+#define RESOURCE_PATH_ANIMATION			"..\\Resources\\Animations\\"
+#define RESOURCE_PATH_ANIMATIONW		L"..\\Resources\\Animations\\"
+#define RESOURCE_PATH_BONE				"..\\Resources\\Bones\\"
+#define RESOURCE_PATH_BONEW				L"..\\Resources\\Bones\\"
+#define RESOURCE_PATH_PREFAB			"..\\Resources\\Prefabs\\"
+#define RESOURCE_PATH_PREFABW			L"..\\Resources\\Prefabs\\"

@@ -36,7 +36,6 @@ void TestScript::Init()
 	gameObjects.push_back(globalLight);
 
 	model = assetLoader->GetLoadedObject();
-	model->name = "model";
 	model->SetPSOName(PSO_OPAQUE_SKINNED);
 	gameObjects.push_back(model);
 

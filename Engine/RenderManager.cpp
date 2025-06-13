@@ -57,20 +57,13 @@ void RenderManager::Render()
 	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// 이거 최적화할 필요 있을듯
-	map<string, vector<shared_ptr<GameObject>>> sortedObjects;
-	for (int i = 0; i < _objects.size(); i++)
-	{
-		if (!sortedObjects.contains(_objects[i]->psoName))
-			sortedObjects.insert({ _objects[i]->psoName, { } });
-		sortedObjects[_objects[i]->psoName].push_back(_objects[i]);
-	}
-
-	for (auto& p : sortedObjects)
+	for (auto& p : _sortedObjects)
 	{
 		if (_isPSOFixed && p.first != PSO_SKYBOX)
 			GRAPHIC->GetCommandList()->SetPipelineState(_currPSO.Get());
 		else
 			GRAPHIC->GetCommandList()->SetPipelineState(_PSOs[p.first].Get());
+
 		for (int i = 0; i < p.second.size(); i++)
 			p.second[i]->Render();
 	}
@@ -170,6 +163,7 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	obj->objCBIndex = _objects.size();
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	_sortedObjects[obj->psoName].push_back(obj);
 	_objects.push_back(move(obj));
 	return _objects[_objects.size() - 1];
 }

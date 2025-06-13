@@ -50,6 +50,10 @@ private:
 	}
 
 	void SaveMeshData();
+	void SaveAnimationData();
+	void SaveBoneData();
+	void SavePrefabData();
+	void WritePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> obj, int parentIdx);
 
 	shared_ptr<Mesh> ReadMeshData(string fileName);
 
@@ -69,6 +73,7 @@ private:
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
 	shared_ptr<GameObject> _loadedObject;
+	vector<shared_ptr<Animation>> _animations;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 

@@ -74,6 +74,7 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	vector<shared_ptr<GameObject>> _objects;
+	unordered_map<string, vector<shared_ptr<GameObject>>> _sortedObjects;
 	vector<Light*> _lights;
 
 	int _skyboxTexSrvHeapIndex = -1;

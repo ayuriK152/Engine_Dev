@@ -61,6 +61,8 @@ void AssetLoader::ImportAssetFile(wstring file)
 	SavePrefabData();
 
 	ReadMeshData("Alpha_Joints");
+	ReadAnimationData("mixamo.com");
+	ReadBoneData("Y Bot");
 
 	InitializeFields();
 
@@ -442,9 +444,13 @@ void AssetLoader::SaveAnimationData()
 	for (int i = 0; i < animCount; i++)
 	{
 		HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(_animations[i]->GetName());
-		FILEIO->WriteToFile(fileHandle, animCount);
-		
+
+		FILEIO->WriteToFile(fileHandle, _animations[i]->GetDuration());
+		FILEIO->WriteToFile(fileHandle, _animations[i]->GetTicksPerSecond());
+
 		unordered_map<string, Animation::AnimationData> animationDatas = _animations[i]->GetAnimationDatas();
+		FILEIO->WriteToFile(fileHandle, (UINT32)animationDatas.size());
+
 		for (auto& animData : animationDatas)
 		{
 			FILEIO->WriteToFile(fileHandle, animData.first);
@@ -464,6 +470,8 @@ void AssetLoader::SaveBoneData()
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(UniversalUtils::ToString(_assetName));
 	UINT32 boneCount = _bones.size();
+
+	FILEIO->WriteToFile(fileHandle, boneCount);
 	for (auto& bone : _bones)
 	{
 		FILEIO->WriteToFile(fileHandle, bone.second->name);
@@ -547,12 +555,56 @@ shared_ptr<Mesh> AssetLoader::ReadMeshData(string fileName)
 
 shared_ptr<Animation> AssetLoader::ReadAnimationData(string fileName)
 {
-	return nullptr;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(fileName);
+	float duration, ticks;
+	FILEIO->ReadFileData(fileHandle, &duration, sizeof(float));
+	FILEIO->ReadFileData(fileHandle, &ticks, sizeof(float));
+
+	UINT32 animationDataCount;
+	FILEIO->ReadFileData(fileHandle, &animationDataCount, sizeof(UINT32));
+	unordered_map<string, Animation::AnimationData> animationDatas;
+	for (int i = 0; i < animationDataCount; i++)
+	{
+		string objName;
+		FILEIO->ReadFileData(fileHandle, objName);
+		animationDatas[objName].boneName = objName;
+
+		UINT32 keyFrameCount;
+		FILEIO->ReadFileData(fileHandle, &keyFrameCount, sizeof(UINT32));
+
+		for (int j = 0; j < keyFrameCount; j++)
+		{
+			Animation::KeyFrame keyFrame;
+			FILEIO->ReadFileData(fileHandle, &keyFrame, sizeof(Animation::KeyFrame));
+			animationDatas[objName].keyFrames.push_back(keyFrame);
+		}
+	}
+
+	CloseHandle(fileHandle);
+
+	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(fileName, duration, ticks);
+
+	return loadedAnimation;
 }
 
-map<string, shared_ptr<Bone>> AssetLoader::ReadBoneData(string fileName)
+map<string, Bone> AssetLoader::ReadBoneData(string fileName)
 {
-	map<string, shared_ptr<Bone>> boneData;
+	map<string, Bone> boneData;
+
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(fileName);
+	UINT32 boneCount;
+
+	FILEIO->ReadFileData(fileHandle, &boneCount, sizeof(UINT32));
+	for (int i = 0; i < boneCount; i++)
+	{
+		Bone bone;
+		FILEIO->ReadFileData(fileHandle, bone.name);
+		FILEIO->ReadFileData(fileHandle, &bone.id, sizeof(UINT));
+		FILEIO->ReadFileData(fileHandle, &bone.offsetTransform, sizeof(XMFLOAT4X4));
+		boneData[bone.name] = bone;
+	}
+	CloseHandle(fileHandle);
+
 	return boneData;
 }
 

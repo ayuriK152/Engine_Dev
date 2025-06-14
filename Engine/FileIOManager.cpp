@@ -189,6 +189,7 @@ void FileIOManager::ReadFileData(HANDLE fileHandle, string& out)
 		NULL,
 		NULL
 	);
+
 	char* data = new char[size + 1];
 	data[size] = 0;
 	ReadFile(

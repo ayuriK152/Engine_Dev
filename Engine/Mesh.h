@@ -28,7 +28,6 @@ public:
 
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
 
-private:
 	void CreateBuffer();
 
 public:

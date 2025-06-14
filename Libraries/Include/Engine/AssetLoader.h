@@ -56,6 +56,9 @@ private:
 	void WritePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> obj, int parentIdx);
 
 	shared_ptr<Mesh> ReadMeshData(string fileName);
+	shared_ptr<Animation> ReadAnimationData(string fileName);
+	map<string, shared_ptr<Bone>> ReadBoneData(string fileName);
+	shared_ptr<GameObject> ReadPrefabObject(string fileName);
 
 private:
 	shared_ptr<Assimp::Importer> _importer;

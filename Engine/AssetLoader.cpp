@@ -60,7 +60,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 	SaveBoneData();
 	SavePrefabData();
 
-	//ReadMeshData("Alpha_Joints");
+	ReadMeshData("Alpha_Joints");
 
 	InitializeFields();
 
@@ -543,4 +543,20 @@ shared_ptr<Mesh> AssetLoader::ReadMeshData(string fileName)
 	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);	// 객체 생성 후 바로 포인터 해제되면 gpu 버퍼 때문에 터짐. 수정해야함.
 
 	return loadedMesh;
+}
+
+shared_ptr<Animation> AssetLoader::ReadAnimationData(string fileName)
+{
+	return nullptr;
+}
+
+map<string, shared_ptr<Bone>> AssetLoader::ReadBoneData(string fileName)
+{
+	map<string, shared_ptr<Bone>> boneData;
+	return boneData;
+}
+
+shared_ptr<GameObject> AssetLoader::ReadPrefabObject(string fileName)
+{
+	return nullptr;
 }

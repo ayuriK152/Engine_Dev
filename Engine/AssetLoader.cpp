@@ -63,6 +63,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 	ReadMeshData("Alpha_Joints");
 	ReadAnimationData("mixamo.com");
 	ReadBoneData("Y Bot");
+	ReadPrefabObject("Y Bot");
 
 	InitializeFields();
 
@@ -491,7 +492,7 @@ void AssetLoader::SavePrefabData()
 	}
 
 	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(UniversalUtils::ToString(_assetName));
-	FILEIO->WriteToFile(fileHandle, allObjects.size());
+	FILEIO->WriteToFile(fileHandle, (UINT32)allObjects.size());
 	WritePrefabRecursive(fileHandle, _loadedObject, -1);
 	CloseHandle(fileHandle);
 }
@@ -505,7 +506,7 @@ void AssetLoader::WritePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject>
 	FILEIO->WriteToFile(fileHandle, obj->psoName);
 	FILEIO->WriteToFile(fileHandle, obj->GetTransform()->GetWorldMatrix());
 	FILEIO->WriteToFile(fileHandle, parentIdx);		// 부모 인덱스
-	FILEIO->WriteToFile(fileHandle, obj->GetComponents().size() - 1);
+	FILEIO->WriteToFile(fileHandle, (UINT32)obj->GetComponents().size() - 1);
 	for (auto& c : obj->GetComponents())
 	{
 		if (c.first == ComponentType::Transform)
@@ -608,7 +609,37 @@ map<string, Bone> AssetLoader::ReadBoneData(string fileName)
 	return boneData;
 }
 
-shared_ptr<GameObject> AssetLoader::ReadPrefabObject(string fileName)
+vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 {
-	return nullptr;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(fileName);
+
+	vector<shared_ptr<GameObject>> loadedObjects;
+
+	UINT32 objectCount;
+	FILEIO->ReadFileData(fileHandle, &objectCount, sizeof(UINT32));
+	for (int i = 0; i < objectCount; i++)
+	{
+		shared_ptr<GameObject> go = make_shared<GameObject>();
+		FILEIO->ReadFileData(fileHandle, go->name);
+		FILEIO->ReadFileData(fileHandle, go->psoName);
+
+		XMFLOAT4X4 worldMat;
+		FILEIO->ReadFileData(fileHandle, &worldMat, sizeof(XMFLOAT4X4));
+		go->GetTransform()->SetObjectWorldMatrix(worldMat);
+
+		int parentIdx;
+		FILEIO->ReadFileData(fileHandle, &parentIdx, sizeof(int));
+
+		UINT32 componentCount;
+		FILEIO->ReadFileData(fileHandle, &componentCount, sizeof(UINT32));
+
+		for (int j = 0; j < componentCount; j++)
+		{
+			ComponentType componentType;
+			FILEIO->ReadFileData(fileHandle, &componentType, sizeof(ComponentType));
+			assert(componentType != ComponentType::Undefined);
+		}
+	}
+
+	return loadedObjects;
 }

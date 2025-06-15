@@ -58,7 +58,7 @@ private:
 	shared_ptr<Mesh> ReadMeshData(string fileName);
 	shared_ptr<Animation> ReadAnimationData(string fileName);
 	map<string, Bone> ReadBoneData(string fileName);
-	shared_ptr<GameObject> ReadPrefabObject(string fileName);
+	vector<shared_ptr<GameObject>> ReadPrefabObject(string fileName);
 
 private:
 	shared_ptr<Assimp::Importer> _importer;

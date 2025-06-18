@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SkinnedMeshRenderer.h"
 
-SkinnedMeshRenderer::SkinnedMeshRenderer() : Super()
+SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRenderer)
 {
 
 }
@@ -71,6 +71,7 @@ void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
 {
 	_rootBone = rootBone;
 
+	_boneTransforms.clear();
 	UpdateBoneTransforms(_rootBone);
 }
 

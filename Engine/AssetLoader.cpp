@@ -146,7 +146,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
-		meshObj->name = UniversalUtils::ToString(m->GetName());
+		meshObj->name = UniversalUtils::ToString(m->GetNameW());
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
 		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
@@ -419,7 +419,7 @@ void AssetLoader::SaveMeshData()
 {
 	for (shared_ptr<Mesh> mesh : _meshes)
 	{
-		HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(UniversalUtils::ToString(mesh->GetName()));
+		HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(UniversalUtils::ToString(mesh->GetNameW()));
 
 		UINT32 vertexCount = mesh->GetVertexCount();
 		FILEIO->WriteToFile(fileHandle, vertexCount);
@@ -513,6 +513,64 @@ void AssetLoader::WritePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject>
 			continue;
 
 		FILEIO->WriteToFile(fileHandle, c.first);	// 컴포넌트 타입
+
+		switch (c.first)
+		{
+			case ComponentType::MeshRenderer:
+			{
+				auto meshRenderer = static_pointer_cast<MeshRenderer>(c.second);
+
+				string meshName = UniversalUtils::ToString(meshRenderer->GetMesh()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, meshName);
+
+				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, matName);
+
+				break;
+			}
+
+			case ComponentType::SkinnedMeshRenderer:
+			{
+				auto meshRenderer = static_pointer_cast<SkinnedMeshRenderer>(c.second);
+
+				string meshName = UniversalUtils::ToString(meshRenderer->GetMesh()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, meshName);
+
+				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, matName);
+
+				string rootBoneName = meshRenderer->GetRootBone()->GetGameObject()->name;
+				FILEIO->WriteToFile(fileHandle, rootBoneName);
+
+				string boneDataName = UniversalUtils::ToString(_assetName);
+				FILEIO->WriteToFile(fileHandle, boneDataName);
+
+				break;
+			}
+
+			case ComponentType::Animator:
+			{
+				auto animator = static_pointer_cast<Animator>(c.second);
+
+				FILEIO->WriteToFile(fileHandle, animator->IsPlayOnInit());
+				FILEIO->WriteToFile(fileHandle, animator->IsLoop());
+
+				string currentAnimName = animator->GetCurrentAnimation()->GetName();
+				FILEIO->WriteToFile(fileHandle, currentAnimName);
+
+				auto animations = animator->GetAnimations();
+				FILEIO->WriteToFile(fileHandle, (UINT32)animations.size());
+				for (auto& anim : animations)
+				{
+					/* 현재는 애니메이션의 이름만 저장함. 
+					*  나중에 Resource 전체 리팩토링을 진행하면서 전체 경로를 저장하는 방식을 고려할 수 있도록
+					*/
+					FILEIO->WriteToFile(fileHandle, anim.first);
+				}
+
+				break;
+			}
+		}
 	}
 
 	for (auto& c : obj->GetTransform()->GetChilds())
@@ -549,7 +607,7 @@ shared_ptr<Mesh> AssetLoader::ReadMeshData(string fileName)
 	CloseHandle(fileHandle);
 
 	shared_ptr<Geometry> geometry = make_shared<Geometry>(vertices, indices);
-	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);	// 객체 생성 후 바로 포인터 해제되면 gpu 버퍼 때문에 터짐. 수정해야함.
+	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);
 
 	return loadedMesh;
 }
@@ -637,7 +695,77 @@ vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 		{
 			ComponentType componentType;
 			FILEIO->ReadFileData(fileHandle, &componentType, sizeof(ComponentType));
-			assert(componentType != ComponentType::Undefined);
+
+			switch (componentType)
+			{
+				case ComponentType::MeshRenderer:
+				{
+					shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+
+					string meshName;
+					FILEIO->ReadFileData(fileHandle, meshName);
+
+					string matName;
+					FILEIO->ReadFileData(fileHandle, matName);
+
+					go->AddComponent(meshRenderer);
+
+					break;
+				}
+
+				case ComponentType::SkinnedMeshRenderer:
+				{
+					shared_ptr<MeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
+
+					string meshName;
+					FILEIO->ReadFileData(fileHandle, meshName);
+
+					string matName;
+					FILEIO->ReadFileData(fileHandle, matName);
+
+					string rootBoneName;
+					FILEIO->ReadFileData(fileHandle, rootBoneName);
+
+					string boneDataName;
+					FILEIO->ReadFileData(fileHandle, boneDataName);
+
+					go->AddComponent(meshRenderer);
+
+					break;
+				}
+
+				case ComponentType::Animator:
+				{
+					shared_ptr<Animator> animator = make_shared<Animator>();
+
+					bool isPlayOnInit, isLoop;
+					FILEIO->ReadFileData(fileHandle, &isPlayOnInit, sizeof(bool));
+					FILEIO->ReadFileData(fileHandle, &isLoop, sizeof(bool));
+
+					string currentAnimName;
+					FILEIO->ReadFileData(fileHandle, currentAnimName);
+
+					UINT32 animationCount;
+					FILEIO->ReadFileData(fileHandle, &animationCount, sizeof(UINT32));
+
+					vector<string> animationNames;
+					for (int k = 0; k < animationCount; k++)
+					{
+						string animationName;
+						FILEIO->ReadFileData(fileHandle, animationName);
+						animationNames.push_back(animationName);
+					}
+
+					animator->SetPlayOnInit(isPlayOnInit);
+					animator->SetLoop(isLoop);
+					// animationNames로부터 애니메이션 맵 먼저 로드 해야지 안터짐. 구현 필요.
+					animator->SetCurrentAnimation(currentAnimName);
+
+					go->AddComponent(animator);
+
+					break;
+				}
+			}
 		}
 	}
 

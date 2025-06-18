@@ -6,6 +6,11 @@ MeshRenderer::MeshRenderer() : Super(ComponentType::MeshRenderer)
 
 }
 
+MeshRenderer::MeshRenderer(ComponentType type) : Super(type)
+{
+
+}
+
 MeshRenderer::~MeshRenderer()
 {
 

@@ -29,7 +29,6 @@ private:
 	UINT _boneSrvHeapIndex = 0;
 
 	shared_ptr<Transform> _rootBone;
-	vector<XMFLOAT4X4> _boneOffsetTransforms;
 	vector<shared_ptr<Transform>> _boneTransforms;
 	map<string, shared_ptr<Bone>> _bones;
 	unique_ptr<UploadBuffer<XMFLOAT4X4>> _boneTransformUploadBuffer = nullptr;

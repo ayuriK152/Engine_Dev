@@ -11,10 +11,10 @@ void FileIOManager::XMLFromMaterial(shared_ptr<Material> material, const wstring
 {
 	if (!filesystem::exists(RESOURCE_PATH_MATERIALW + name))
 		filesystem::create_directory(RESOURCE_PATH_MATERIALW + name);
-	if (filesystem::exists(RESOURCE_PATH_MATERIALW + name + L"\\" + material->GetName() + L".xml"))
+	if (filesystem::exists(RESOURCE_PATH_MATERIALW + name + L"\\" + material->GetNameW() + L".xml"))
 		return;
 
-	char* nameChar = UniversalUtils::ToChar(material->GetName());
+	char* nameChar = UniversalUtils::ToChar(material->GetNameW());
 	tinyxml2::XMLDocument doc;
 
 	XMLNode* node = doc.NewElement("Material");

@@ -8,7 +8,7 @@ Animation::Animation() : Resource(ResourceType::Animation)
 
 Animation::Animation(string name, float duration, float ticksPerSecond) : Resource(ResourceType::Animation)
 {
-	_name = name;
+	SetName(name);
 	_duration = duration;
 	_ticksPerSecond = ticksPerSecond;
 }

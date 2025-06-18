@@ -5,6 +5,8 @@ Animator::Animator() : Component(ComponentType::Animator)
 {
 	_isPlaying = true;
 	_isLoop = true;
+
+	_currentAnimation = EMPTY_CURRENT_ANIMATION;
 }
 
 Animator::~Animator()
@@ -12,27 +14,32 @@ Animator::~Animator()
 
 }
 
+void Animator::Init()
+{
+	_isPlaying = _isPlayOnInit;
+}
+
 void Animator::Update()
 {
-	if (_currentAnimation == nullptr || !_isPlaying)
+	if (_currentAnimation == EMPTY_CURRENT_ANIMATION || !_isPlaying)
 		return;
 
 	UpdateBoneTransform();
 
-	float ticksPerSecond = (_currentAnimation->GetTicksPerSecond() != 0.0f) ? _currentAnimation->GetTicksPerSecond() : 25.0f;
+	float ticksPerSecond = (GetCurrentAnimation()->GetTicksPerSecond() != 0.0f) ? GetCurrentAnimation()->GetTicksPerSecond() : 25.0f;
 	_currentTick += TIME->DeltaTime() * ticksPerSecond;
 
-	if (_currentTick > _currentAnimation->GetDuration()) {
+	if (_currentTick > GetCurrentAnimation()->GetDuration()) {
 		if (_isLoop)
 			_currentTick = 0.0f;
 		else
-			_currentTick = _currentAnimation->GetDuration();
+			_currentTick = GetCurrentAnimation()->GetDuration();
 	}
 }
 
 void Animator::PlayAnimation()
 {
-	if (_currentAnimation == nullptr)
+	if (_currentAnimation == EMPTY_CURRENT_ANIMATION)
 	{
 		cout << "Current Animation is null!" << endl;
 		return;
@@ -43,7 +50,7 @@ void Animator::PlayAnimation()
 
 void Animator::PauseAnimation()
 {
-	if (_currentAnimation == nullptr)
+	if (_currentAnimation == EMPTY_CURRENT_ANIMATION)
 	{
 		cout << "Current Animation is null!" << endl;
 		return;
@@ -60,7 +67,7 @@ void Animator::UpdateBoneTransform()
 		shared_ptr<Transform> child = childs[i];
 		childs.insert(childs.end(), child->GetChilds().begin(), child->GetChilds().end());
 		string objName = child->GetGameObject()->name;
-		Animation::KeyFrame* keyFrame = _currentAnimation->Interpolate(objName, _currentTick);
+		Animation::KeyFrame* keyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick);
 
 		if (keyFrame == nullptr)
 			continue;

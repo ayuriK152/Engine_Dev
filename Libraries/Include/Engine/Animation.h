@@ -24,9 +24,6 @@ public:
 	~Animation() = default;
 
 public:
-	void SetName(const string& name) { _name = name; }
-	string GetName() const { return _name; }
-
 	float GetDuration() const { return _duration; }
 
 	float GetTicksPerSecond() const { return _ticksPerSecond; }
@@ -37,7 +34,6 @@ public:
 	KeyFrame* Interpolate(const string& boneName, float tick);
 
 private:
-	string _name;
 	float _duration;
 	float _ticksPerSecond;
 	unordered_map<string, AnimationData> _animationDatas;

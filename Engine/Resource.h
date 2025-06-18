@@ -25,8 +25,17 @@ public:
 
 	ResourceType GetType() { return _type; }
 
-	void SetName(wstring name) { _name = name; }
-	wstring GetName() { return _name; }
+	void SetName(const string& name) { 
+		_name = name;
+		_namew = UniversalUtils::ToWString(name);
+	}
+	string GetName() { return _name; }
+
+	void SetName(wstring name) { 
+		_namew = name;
+		_name = UniversalUtils::ToString(name);
+	}
+	wstring GetNameW() { return _namew; }
 
 	void SetPath(wstring path) { _path = path; }
 	wstring GetPath() { return _path; }
@@ -36,7 +45,11 @@ protected:
 
 protected:
 	ResourceType _type;
-	wstring _name;
+
+	string _name;
+	wstring _namew;
+
 	wstring _path;
+
 	UINT32 _id = 0;
 };

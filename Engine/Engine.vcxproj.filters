@@ -98,9 +98,6 @@
     <ClInclude Include="Constants.h">
       <Filter>05. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="FileIOManager.h">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
@@ -147,10 +144,13 @@
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
-      <Filter>02. GameObject\Components\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedMeshRenderer.h">
-      <Filter>02. GameObject\Components\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIOUtil.h">
+      <Filter>01. EngineComponents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,7 +196,7 @@
     <Filter Include="99. ExtLibraries\tinyxml2">
       <UniqueIdentifier>{91de3027-70a4-498d-a84a-0c72b4580e38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Components\MeshRenderer">
+    <Filter Include="02. GameObject\Components\Lights\MeshRenderer">
       <UniqueIdentifier>{a16cbda6-39ad-49f4-891c-365318c88ded}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -280,9 +280,6 @@
     <ClCompile Include="AssetLoader.cpp">
       <Filter>98. Utils</Filter>
     </ClCompile>
-    <ClCompile Include="FileIOManager.cpp">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
@@ -326,10 +323,13 @@
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="SkinnedMeshRenderer.cpp">
-      <Filter>02. GameObject\Components\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
-      <Filter>02. GameObject\Components\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="FileIOUtil.cpp">
+      <Filter>01. EngineComponents</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -15,6 +15,8 @@ void AssetLoader::InitializeFields()
 {
 	_nodes.clear();
 	_bones.clear();
+	_meshObjs.clear();
+	_boneObjs.clear();
 	_tempBoneWeights.clear();
 	_animations.clear();
 }
@@ -41,8 +43,9 @@ void AssetLoader::ImportAssetFile(wstring file)
 	assert(_scene != nullptr);
 
 	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
-	_loadedObject = make_shared<GameObject>();
-	_loadedObject->name = UniversalUtils::ToString(_assetName);
+	shared_ptr<GameObject> rootObj = make_shared<GameObject>();
+	rootObj->name = UniversalUtils::ToString(_assetName);
+	_loadedObject.push_back(rootObj);
 
 	ProcessMaterials(_scene);
 	ProcessAnimation(_scene);
@@ -63,7 +66,9 @@ void AssetLoader::ImportAssetFile(wstring file)
 	ReadMeshData("Alpha_Joints");
 	ReadAnimationData("mixamo.com");
 	ReadBoneData("Y Bot");
-	ReadPrefabObject("Y Bot");
+
+	_loadedObject.clear();
+	_loadedObject = ReadPrefabObject("Y Bot");
 
 	InitializeFields();
 
@@ -149,8 +154,9 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		meshObj->name = UniversalUtils::ToString(m->GetNameW());
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
-		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
+		meshObj->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
 		_meshObjs.push_back(meshObj);
+		_loadedObject.push_back(meshObj);
 
 		// 메시 본 로드 (있는 경우에만)
 		if (mesh->HasBones())
@@ -161,12 +167,12 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 				// 본 중복 확인, 본 이름과 노드 검증
 				if (!_bones.contains(currentBone->mName.C_Str()))
 				{
-					shared_ptr<Bone> bone = make_shared<Bone>();
-					bone->name = mesh->mBones[i]->mName.C_Str();
-					bone->id = _bones.size();
-					bone->offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
+					Bone bone;
+					bone.name = mesh->mBones[i]->mName.C_Str();
+					bone.id = _bones.size();
+					bone.offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
 
-					_bones.insert({ bone->name, bone });
+					_bones.insert({ bone.name, bone });
 				}
 			}
 		}
@@ -184,7 +190,7 @@ void AssetLoader::MapWeights()
 	{
 		int subMeshIndex = weight.first.first;
 		string boneName = weight.first.second;
-		UINT boneId = _bones[boneName]->id;
+		UINT boneId = _bones[boneName].id;
 		shared_ptr<Mesh> mesh = _meshes[subMeshIndex];
 		mesh->SetWeights(boneId, weight.second);
 	}
@@ -197,45 +203,46 @@ void AssetLoader::MapBones()
 		shared_ptr<Node> node = _nodes[bone->first];
 		if (node == nullptr)
 			continue;
-		bone->second->node = node;
+		bone->second.node = node;
 	}
 }
 
 void AssetLoader::BuildBones()
 {
-	vector<shared_ptr<Bone>> sortedBones;
+	vector<Bone> sortedBones;
 	sortedBones.reserve(_bones.size());
 	for (auto& b : _bones)
 		sortedBones.push_back(b.second);
 
-	sort(sortedBones.begin(), sortedBones.end(), [](shared_ptr<Bone> a, shared_ptr<Bone> b) { return a->id < b->id; });
+	sort(sortedBones.begin(), sortedBones.end(), [](Bone a, Bone b) { return a.id < b.id; });
 
 	for (auto& b : sortedBones)
 	{
 		shared_ptr<GameObject> foundObj = nullptr;
-		shared_ptr<Node> currentParent = b->node->parent;
+		shared_ptr<Node> currentParent = b.node->parent;
+
 		while (true)
 		{
 			if (currentParent == nullptr)
 				break;
 			if (_bones.contains(currentParent->name))
 			{
-				foundObj = _bones[currentParent->name]->instancedObj;
+				foundObj = _bones[currentParent->name].instancedObj;
 				break;
 			}
 			currentParent = currentParent->parent;
 		}
+
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
-		boneObj->name = b->name;
-		XMFLOAT4X4 finalTransform;
-		XMStoreFloat4x4(&finalTransform, XMMatrixMultiply(XMLoadFloat4x4(&b->offsetTransform), XMLoadFloat4x4(&b->node->transform)));
+		boneObj->name = b.name;
 
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
-		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
-		_boneObjs.push_back(boneObj);
-		b->instancedObj = boneObj;
+		boneObj->GetTransform()->SetObjectWorldMatrix(b.node->transform);
 
+		_boneObjs.push_back(boneObj);
+		_loadedObject.push_back(boneObj);
+		_bones[b.name].instancedObj = boneObj;
 	}
 
 	for (auto& meshObj : _meshObjs)
@@ -245,7 +252,7 @@ void AssetLoader::BuildBones()
 		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}
 
-	_boneObjs[0]->GetTransform()->SetParent(_loadedObject->GetTransform());
+	_boneObjs[0]->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
 	assert(_boneObjs.size() != 0);
 }
 
@@ -335,7 +342,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	if (!scene->HasAnimations())
 		return;
 
-	_loadedObject->AddComponent(make_shared<Animator>());
+	_loadedObject[0]->AddComponent(make_shared<Animator>());
 
 	// 애니메이션 갯수만큼
 	for (int i = 0; i < scene->mNumAnimations; i++)
@@ -388,7 +395,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 			bAnim->AddAnimationData(animData);
 		}
 		_animations.push_back(bAnim);
-		_loadedObject->GetComponent<Animator>()->AddAnimation(bAnim);
+		_loadedObject[0]->GetComponent<Animator>()->AddAnimation(bAnim);
 	}
 }
 
@@ -435,6 +442,9 @@ void AssetLoader::SaveMeshData()
 			FILEIO->WriteToFile(fileHandle, i);
 		}
 
+		string matName = mesh->GetMaterial()->GetName();
+		FILEIO->WriteToFile(fileHandle, matName);
+
 		CloseHandle(fileHandle);
 	}
 }
@@ -475,9 +485,9 @@ void AssetLoader::SaveBoneData()
 	FILEIO->WriteToFile(fileHandle, boneCount);
 	for (auto& bone : _bones)
 	{
-		FILEIO->WriteToFile(fileHandle, bone.second->name);
-		FILEIO->WriteToFile(fileHandle, bone.second->id);
-		FILEIO->WriteToFile(fileHandle, bone.second->offsetTransform);
+		FILEIO->WriteToFile(fileHandle, bone.second.name);
+		FILEIO->WriteToFile(fileHandle, bone.second.id);
+		FILEIO->WriteToFile(fileHandle, bone.second.offsetTransform);
 	}
 	CloseHandle(fileHandle);
 }
@@ -485,7 +495,7 @@ void AssetLoader::SaveBoneData()
 void AssetLoader::SavePrefabData()
 {
 	vector<shared_ptr<Transform>> allObjects;
-	allObjects.push_back(_loadedObject->GetTransform());
+	allObjects.push_back(_loadedObject[0]->GetTransform());
 	for (int i = 0; i < allObjects.size(); i++)
 	{
 		allObjects.insert(allObjects.end(), allObjects[i]->GetChilds().begin(), allObjects[i]->GetChilds().end());
@@ -493,7 +503,7 @@ void AssetLoader::SavePrefabData()
 
 	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(UniversalUtils::ToString(_assetName));
 	FILEIO->WriteToFile(fileHandle, (UINT32)allObjects.size());
-	WritePrefabRecursive(fileHandle, _loadedObject, -1);
+	WritePrefabRecursive(fileHandle, _loadedObject[0], -1);
 	CloseHandle(fileHandle);
 }
 
@@ -604,10 +614,14 @@ shared_ptr<Mesh> AssetLoader::ReadMeshData(string fileName)
 		indices.push_back(index);
 	}
 
+	string matName;
+	FILEIO->ReadFileData(fileHandle, matName);
+
 	CloseHandle(fileHandle);
 
 	shared_ptr<Geometry> geometry = make_shared<Geometry>(vertices, indices);
 	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);
+	loadedMesh->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
 
 	return loadedMesh;
 }
@@ -619,14 +633,17 @@ shared_ptr<Animation> AssetLoader::ReadAnimationData(string fileName)
 	FILEIO->ReadFileData(fileHandle, &duration, sizeof(float));
 	FILEIO->ReadFileData(fileHandle, &ticks, sizeof(float));
 
+	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(fileName, duration, ticks);
+
 	UINT32 animationDataCount;
 	FILEIO->ReadFileData(fileHandle, &animationDataCount, sizeof(UINT32));
-	unordered_map<string, Animation::AnimationData> animationDatas;
 	for (int i = 0; i < animationDataCount; i++)
 	{
+		Animation::AnimationData animationData;
+
 		string objName;
 		FILEIO->ReadFileData(fileHandle, objName);
-		animationDatas[objName].boneName = objName;
+		animationData.boneName = objName;
 
 		UINT32 keyFrameCount;
 		FILEIO->ReadFileData(fileHandle, &keyFrameCount, sizeof(UINT32));
@@ -635,13 +652,14 @@ shared_ptr<Animation> AssetLoader::ReadAnimationData(string fileName)
 		{
 			Animation::KeyFrame keyFrame;
 			FILEIO->ReadFileData(fileHandle, &keyFrame, sizeof(Animation::KeyFrame));
-			animationDatas[objName].keyFrames.push_back(keyFrame);
+			animationData.keyFrames.push_back(keyFrame);
 		}
+
+		loadedAnimation->AddAnimationData(animationData);
 	}
 
 	CloseHandle(fileHandle);
 
-	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(fileName, duration, ticks);
 
 	return loadedAnimation;
 }
@@ -672,6 +690,8 @@ vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(fileName);
 
 	vector<shared_ptr<GameObject>> loadedObjects;
+	vector<pair<int, int>> objHierarchyIdxPair;
+	vector<pair<shared_ptr<SkinnedMeshRenderer>, string>> boneSettingQueue;
 
 	UINT32 objectCount;
 	FILEIO->ReadFileData(fileHandle, &objectCount, sizeof(UINT32));
@@ -687,6 +707,7 @@ vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 
 		int parentIdx;
 		FILEIO->ReadFileData(fileHandle, &parentIdx, sizeof(int));
+		objHierarchyIdxPair.push_back({ i, parentIdx });
 
 		UINT32 componentCount;
 		FILEIO->ReadFileData(fileHandle, &componentCount, sizeof(UINT32));
@@ -704,9 +725,12 @@ vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 
 					string meshName;
 					FILEIO->ReadFileData(fileHandle, meshName);
+					shared_ptr<Mesh> loadedMesh = ReadMeshData(meshName);
+					meshRenderer->SetMesh(loadedMesh);
 
 					string matName;
 					FILEIO->ReadFileData(fileHandle, matName);
+					meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
 
 					go->AddComponent(meshRenderer);
 
@@ -715,20 +739,25 @@ vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 
 				case ComponentType::SkinnedMeshRenderer:
 				{
-					shared_ptr<MeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
+					shared_ptr<SkinnedMeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
 
 					string meshName;
 					FILEIO->ReadFileData(fileHandle, meshName);
+					shared_ptr<Mesh> loadedMesh = ReadMeshData(meshName);
+					meshRenderer->SetMesh(loadedMesh);
 
 					string matName;
 					FILEIO->ReadFileData(fileHandle, matName);
+					meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
 
 					string rootBoneName;
 					FILEIO->ReadFileData(fileHandle, rootBoneName);
 
 					string boneDataName;
 					FILEIO->ReadFileData(fileHandle, boneDataName);
+					meshRenderer->SetBoneData(ReadBoneData(boneDataName));
 
+					boneSettingQueue.push_back({ meshRenderer, rootBoneName });
 					go->AddComponent(meshRenderer);
 
 					break;
@@ -748,23 +777,43 @@ vector<shared_ptr<GameObject>> AssetLoader::ReadPrefabObject(string fileName)
 					UINT32 animationCount;
 					FILEIO->ReadFileData(fileHandle, &animationCount, sizeof(UINT32));
 
-					vector<string> animationNames;
 					for (int k = 0; k < animationCount; k++)
 					{
 						string animationName;
 						FILEIO->ReadFileData(fileHandle, animationName);
-						animationNames.push_back(animationName);
+						animator->AddAnimation(ReadAnimationData(animationName));
 					}
 
 					animator->SetPlayOnInit(isPlayOnInit);
 					animator->SetLoop(isLoop);
-					// animationNames로부터 애니메이션 맵 먼저 로드 해야지 안터짐. 구현 필요.
 					animator->SetCurrentAnimation(currentAnimName);
 
 					go->AddComponent(animator);
 
 					break;
 				}
+			}
+		}
+
+		loadedObjects.push_back(go);
+	}
+
+	for (auto& idxPair : objHierarchyIdxPair)
+	{
+		if (idxPair.second == -1)
+			continue;
+
+		loadedObjects[idxPair.first]->GetTransform()->SetParent(loadedObjects[idxPair.second]->GetTransform());
+	}
+
+	for (auto& renderer : boneSettingQueue)
+	{
+		for (auto& go : loadedObjects)
+		{
+			if (go->name == renderer.second)
+			{
+				renderer.first->SetRootBone(go->GetTransform());
+				break;
 			}
 		}
 	}

@@ -24,23 +24,18 @@ public:
 	~Animation() = default;
 
 public:
-	void SetName(const string& name) { _name = name; }
-	string GetName() const { return _name; }
-
 	float GetDuration() const { return _duration; }
 
 	float GetTicksPerSecond() const { return _ticksPerSecond; }
 
 	void AddAnimationData(const AnimationData animation);
+	unordered_map<string, AnimationData>& GetAnimationDatas() { return _animationDatas; }
 
 	KeyFrame* Interpolate(const string& boneName, float tick);
 
-	void AnimationTest(shared_ptr<Transform> transform);
-
 private:
-	string _name;
 	float _duration;
 	float _ticksPerSecond;
-	unordered_map<string, AnimationData> _boneAnimations;
+	unordered_map<string, AnimationData> _animationDatas;
 };
 

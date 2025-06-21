@@ -33,6 +33,12 @@ HANDLE FileIOManager::CreateFileHandle(string fileName) {
 
 	if (is_same_v<T, Mesh>)
 		fullPath = RESOURCE_PATH_MESH + fileName + BULB_EXT_MESH;
+	else if (is_same_v<T, Animation>)
+		fullPath = RESOURCE_PATH_ANIMATION + fileName + BULB_EXT_ANIMATION;
+	else if (is_same_v<T, Bone>)
+		fullPath = RESOURCE_PATH_BONE + fileName + BULB_EXT_BONE;
+	else if (is_same_v<T, GameObject>)
+		fullPath = RESOURCE_PATH_PREFAB + fileName + BULB_EXT_PREFAB;
 	else
 		fullPath = RESOURCE_PATH + fileName + BULB_EXT_UNKNOWN;
 

@@ -13,7 +13,7 @@ bool Texture::IsTextureExists(wstring& fileName)
 
 Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 {
-	_name = fileName;
+	SetName(fileName);
 	_path = L"..\\Resources\\Textures\\" + fileName;
 	Load(_path);
 	textureType = TextureType::General;
@@ -22,7 +22,7 @@ Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 
 Texture::Texture(wstring fileName, TextureType type) : Super(ResourceType::Texture)
 {
-	_name = fileName;
+	SetName(fileName);
 	_path = L"..\\Resources\\Textures\\" + fileName;
 	Load(_path);
 	textureType = type;

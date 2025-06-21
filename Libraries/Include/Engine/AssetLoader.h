@@ -21,7 +21,7 @@ public:
 
 public:
 	void ImportAssetFile(wstring file);
-	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject; }
+	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject[0]; }
 
 private:
 	void InitializeFields();
@@ -49,10 +49,6 @@ private:
 		return ret;
 	}
 
-	void SaveMeshData();
-
-	shared_ptr<Mesh> ReadMeshData(string fileName);
-
 private:
 	shared_ptr<Assimp::Importer> _importer;
 
@@ -60,15 +56,17 @@ private:
 	ModelFormat _modelType;
 	wstring _assetName;
 
-	// actual data
+	// temp data
 	map<string, shared_ptr<Node>> _nodes;
-	map<string, shared_ptr<Bone>> _bones;
+	map<string, Bone> _bones;
 	vector<shared_ptr<Mesh>> _meshes;
 
-	// instances
+	// temp instances
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
-	shared_ptr<GameObject> _loadedObject;
+	vector<shared_ptr<Animation>> _animations;
+
+	vector<shared_ptr<GameObject>> _loadedObject;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 

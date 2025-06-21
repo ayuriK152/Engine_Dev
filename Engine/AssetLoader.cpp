@@ -3,8 +3,7 @@
 
 AssetLoader::AssetLoader()
 {
-	_importer = make_shared<Assimp::Importer>();
-	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
+
 }
 
 AssetLoader::~AssetLoader()
@@ -16,13 +15,18 @@ void AssetLoader::InitializeFields()
 {
 	_nodes.clear();
 	_bones.clear();
-
+	_meshObjs.clear();
+	_boneObjs.clear();
 	_tempBoneWeights.clear();
+	_animations.clear();
 }
 
 // 바이너리 파일로 저장 안된경우 최초 임포트 메소드
 void AssetLoader::ImportAssetFile(wstring file)
 {
+	_importer = make_shared<Assimp::Importer>();
+	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
+
 	wstring fileStr = _assetPath + file;
 
 	auto p = filesystem::path(fileStr);
@@ -39,7 +43,9 @@ void AssetLoader::ImportAssetFile(wstring file)
 	assert(_scene != nullptr);
 
 	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
-	_loadedObject = make_shared<GameObject>();
+	shared_ptr<GameObject> rootObj = make_shared<GameObject>();
+	rootObj->name = UniversalUtils::ToString(_assetName);
+	_loadedObject.push_back(rootObj);
 
 	ProcessMaterials(_scene);
 	ProcessAnimation(_scene);
@@ -52,12 +58,20 @@ void AssetLoader::ImportAssetFile(wstring file)
 	}
 
 	// 바이너리 파일 저장
-	SaveMeshData();
+	{
+		for (auto& mesh : _meshes)
+			RESOURCE->SaveMesh(mesh);
 
-	//ReadMeshData("Alpha_Joints");
+		for (auto& animation : _animations)
+			RESOURCE->SaveAnimation(animation);
+
+		RESOURCE->SaveBone(_bones, UniversalUtils::ToString(_assetName));
+		RESOURCE->SavePrefab(_loadedObject[0]);
+	}
 
 	InitializeFields();
-	delete _scene;
+
+	_importer = nullptr;
 }
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
@@ -100,8 +114,6 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		RESOURCE->Add<Material>(matName, mat);
 
 		FILEIO->XMLFromMaterial(mat, _assetName);
-
-		delete aiMat;
 	}
 }
 
@@ -138,11 +150,12 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
-		meshObj->name = UniversalUtils::ToString(m->GetName());
+		meshObj->name = UniversalUtils::ToString(m->GetNameW());
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
-		meshObj->GetTransform()->SetParent(_loadedObject->GetTransform());
+		meshObj->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
 		_meshObjs.push_back(meshObj);
+		_loadedObject.push_back(meshObj);
 
 		// 메시 본 로드 (있는 경우에만)
 		if (mesh->HasBones())
@@ -153,12 +166,12 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 				// 본 중복 확인, 본 이름과 노드 검증
 				if (!_bones.contains(currentBone->mName.C_Str()))
 				{
-					shared_ptr<Bone> bone = make_shared<Bone>();
-					bone->name = mesh->mBones[i]->mName.C_Str();
-					bone->id = _bones.size();
-					bone->offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
+					Bone bone;
+					bone.name = mesh->mBones[i]->mName.C_Str();
+					bone.id = _bones.size();
+					bone.offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
 
-					_bones.insert({ bone->name, bone });
+					_bones.insert({ bone.name, bone });
 				}
 			}
 		}
@@ -176,7 +189,7 @@ void AssetLoader::MapWeights()
 	{
 		int subMeshIndex = weight.first.first;
 		string boneName = weight.first.second;
-		UINT boneId = _bones[boneName]->id;
+		UINT boneId = _bones[boneName].id;
 		shared_ptr<Mesh> mesh = _meshes[subMeshIndex];
 		mesh->SetWeights(boneId, weight.second);
 	}
@@ -189,45 +202,46 @@ void AssetLoader::MapBones()
 		shared_ptr<Node> node = _nodes[bone->first];
 		if (node == nullptr)
 			continue;
-		bone->second->node = node;
+		bone->second.node = node;
 	}
 }
 
 void AssetLoader::BuildBones()
 {
-	vector<shared_ptr<Bone>> sortedBones;
+	vector<Bone> sortedBones;
 	sortedBones.reserve(_bones.size());
 	for (auto& b : _bones)
 		sortedBones.push_back(b.second);
 
-	sort(sortedBones.begin(), sortedBones.end(), [](shared_ptr<Bone> a, shared_ptr<Bone> b) { return a->id < b->id; });
+	sort(sortedBones.begin(), sortedBones.end(), [](Bone a, Bone b) { return a.id < b.id; });
 
 	for (auto& b : sortedBones)
 	{
 		shared_ptr<GameObject> foundObj = nullptr;
-		shared_ptr<Node> currentParent = b->node->parent;
+		shared_ptr<Node> currentParent = b.node->parent;
+
 		while (true)
 		{
 			if (currentParent == nullptr)
 				break;
 			if (_bones.contains(currentParent->name))
 			{
-				foundObj = _bones[currentParent->name]->instancedObj;
+				foundObj = _bones[currentParent->name].instancedObj;
 				break;
 			}
 			currentParent = currentParent->parent;
 		}
+
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
-		boneObj->name = b->name;
-		XMFLOAT4X4 finalTransform;
-		XMStoreFloat4x4(&finalTransform, XMMatrixMultiply(XMLoadFloat4x4(&b->offsetTransform), XMLoadFloat4x4(&b->node->transform)));
+		boneObj->name = b.name;
 
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
-		boneObj->GetTransform()->SetObjectWorldMatrix(b->node->transform);
-		_boneObjs.push_back(boneObj);
-		b->instancedObj = boneObj;
+		boneObj->GetTransform()->SetObjectWorldMatrix(b.node->transform);
 
+		_boneObjs.push_back(boneObj);
+		_loadedObject.push_back(boneObj);
+		_bones[b.name].instancedObj = boneObj;
 	}
 
 	for (auto& meshObj : _meshObjs)
@@ -237,7 +251,7 @@ void AssetLoader::BuildBones()
 		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}
 
-	_boneObjs[0]->GetTransform()->SetParent(_loadedObject->GetTransform());
+	_boneObjs[0]->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
 	assert(_boneObjs.size() != 0);
 }
 
@@ -327,7 +341,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	if (!scene->HasAnimations())
 		return;
 
-	_loadedObject->AddComponent(make_shared<Animator>());
+	_loadedObject[0]->AddComponent(make_shared<Animator>());
 
 	// 애니메이션 갯수만큼
 	for (int i = 0; i < scene->mNumAnimations; i++)
@@ -379,7 +393,8 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 
 			bAnim->AddAnimationData(animData);
 		}
-		_loadedObject->GetComponent<Animator>()->AddAnimation(bAnim);
+		_animations.push_back(bAnim);
+		_loadedObject[0]->GetComponent<Animator>()->AddAnimation(bAnim);
 	}
 }
 
@@ -404,61 +419,4 @@ void AssetLoader::ImportModelFormat(wstring fileName)
 		_modelType = ModelFormat::GLTF;
 	else
 		_modelType = ModelFormat::UNKOWN;
-}
-
-void AssetLoader::SaveMeshData()
-{
-	for (shared_ptr<Mesh> mesh : _meshes)
-	{
-		HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(UniversalUtils::ToString(mesh->GetName()));
-
-		UINT32 vertexCount = mesh->GetVertexCount();
-		FILEIO->WriteToFile(fileHandle, vertexCount);
-		for (const Vertex& v : mesh->GetVertices())
-		{
-			FILEIO->WriteToFile(fileHandle, v);
-		}
-
-		UINT32 indexCount = mesh->GetIndexCount();
-		FILEIO->WriteToFile(fileHandle, indexCount);
-		for (UINT16 i : mesh->GetIndices())
-		{
-			FILEIO->WriteToFile(fileHandle, i);
-		}
-
-		CloseHandle(fileHandle);
-	}
-}
-
-shared_ptr<Mesh> AssetLoader::ReadMeshData(string fileName)
-{
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(fileName);
-
-	UINT32 vertexCount;
-	FILEIO->ReadFileData(fileHandle, &vertexCount, sizeof(UINT32));
-	vector<Vertex> vertices;
-	for (int i = 0; i < vertexCount; i++)
-	{
-		Vertex v;
-		FILEIO->ReadFileData(fileHandle, &v, sizeof(Vertex));
-
-		vertices.push_back(v);
-	}
-
-	UINT32 indexCount;
-	FILEIO->ReadFileData(fileHandle, &indexCount, sizeof(UINT32));
-	vector<UINT16> indices;
-	for (int i = 0; i < indexCount; i++)
-	{
-		UINT16 index;
-		FILEIO->ReadFileData(fileHandle, &index, sizeof(UINT16));
-		indices.push_back(index);
-	}
-
-	CloseHandle(fileHandle);
-
-	shared_ptr<Geometry> geometry = make_shared<Geometry>(vertices, indices);
-	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);	// 객체 생성 후 바로 포인터 해제되면 gpu 버퍼 때문에 터짐. 수정해야함.
-
-	return loadedMesh;
 }

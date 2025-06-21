@@ -5,7 +5,6 @@ int Material::_count = 0;
 
 Material::Material() : Super(ResourceType::Material)
 {
-	//_count++;
 	matCBIndex = _count++;
 
 	diffuseSrvHeapIndex = -1;
@@ -30,7 +29,7 @@ Material::Material(string name, wstring textureName) : Super(ResourceType::Mater
 	matCBIndex = _count++;
 	normalSrvHeapIndex = -1;
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
-	_name = UniversalUtils::ToWString(name);
+	SetName(name);
 
 	ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
 	diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -50,5 +49,5 @@ Material::~Material()
 void Material::SetTexture(shared_ptr<Texture> texture)
 {
 	diffuseSrvHeapIndex = texture->GetSRVHeapIndex();
-	textureName = UniversalUtils::ToString(texture->GetName());
+	textureName = UniversalUtils::ToString(texture->GetNameW());
 }

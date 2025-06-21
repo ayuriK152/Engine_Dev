@@ -35,6 +35,7 @@ public:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
+	void UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO);
 
 	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
 
@@ -74,6 +75,7 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	vector<shared_ptr<GameObject>> _objects;
+	unordered_map<string, vector<shared_ptr<GameObject>>> _sortedObjects;
 	vector<Light*> _lights;
 
 	int _skyboxTexSrvHeapIndex = -1;

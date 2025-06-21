@@ -6,6 +6,11 @@ MeshRenderer::MeshRenderer() : Super(ComponentType::MeshRenderer)
 
 }
 
+MeshRenderer::MeshRenderer(ComponentType type) : Super(type)
+{
+
+}
+
 MeshRenderer::~MeshRenderer()
 {
 
@@ -60,4 +65,5 @@ void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 {
 	_mesh = mesh;
 	_material = _mesh->GetMaterial();
+	_mesh->CreateBuffer();
 }

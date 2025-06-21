@@ -45,11 +45,9 @@ public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
 	string name;
-	string meshName;
 	string psoName;
 
 	UINT objCBIndex;
-
 
 	map<ComponentType, shared_ptr<Component>> components;
 

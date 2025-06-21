@@ -3,10 +3,10 @@
 
 void TestScript::Init()
 {
-	assetLoader = make_shared<AssetLoader>();
-	{
-		assetLoader->ImportAssetFile(L"Y Bot\\Y Bot.fbx");
-	}
+	//assetLoader = make_shared<AssetLoader>();
+	//{
+	//	assetLoader->ImportAssetFile(L"Y Bot\\Y Bot.fbx");
+	//}
 
 	// 텍스쳐 테스트용 나중에 삭제
 	{
@@ -35,10 +35,11 @@ void TestScript::Init()
 	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
 	gameObjects.push_back(globalLight);
 
-	model = assetLoader->GetLoadedObject();
-	model->name = "model";
-	model->SetPSOName(PSO_OPAQUE_SKINNED);
-	gameObjects.push_back(model);
+	{
+		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
+		model = loadedObjects[0];	
+		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+	}
 
 	sphere = make_shared<GameObject>();
 	sphere->name = "sphere";

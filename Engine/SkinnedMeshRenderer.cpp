@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SkinnedMeshRenderer.h"
 
-SkinnedMeshRenderer::SkinnedMeshRenderer() : Super()
+SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRenderer)
 {
 
 }
@@ -22,6 +22,8 @@ void SkinnedMeshRenderer::Init()
 
 		CreateBoneSRV(_boneTransforms);
 	}
+
+	GetGameObject()->SetPSOName(PSO_OPAQUE_SKINNED);
 }
 
 void SkinnedMeshRenderer::Update()
@@ -35,7 +37,7 @@ void SkinnedMeshRenderer::Update()
 
 			// 얘 왜 곱셈 순서 반대로 해야되고 전치행렬 해줘야 작동하는지 이유를 모르겠음
 			XMMATRIX finalMat = XMLoadFloat4x4(&_boneTransforms[i]->GetWorldMatrix());
-			finalMat = XMLoadFloat4x4(&_bones[_boneTransforms[i]->GetGameObject()->name]->offsetTransform) * finalMat;
+			finalMat = XMLoadFloat4x4(&_bones[_boneTransforms[i]->GetGameObject()->name].offsetTransform) * finalMat;
 			finalMat = XMMatrixTranspose(finalMat);
 
 			XMFLOAT4X4 finalTransform;
@@ -71,6 +73,7 @@ void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
 {
 	_rootBone = rootBone;
 
+	_boneTransforms.clear();
 	UpdateBoneTransforms(_rootBone);
 }
 

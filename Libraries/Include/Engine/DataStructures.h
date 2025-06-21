@@ -11,18 +11,15 @@ struct Node
 	shared_ptr<Node> parent;
 	XMFLOAT4X4 transform;
 	XMFLOAT4X4 parentTransform;
-
-	//vector<UINT> submeshIndices;
 };
 
 struct Bone
 {
 	string name;
 	UINT id;
+	XMFLOAT4X4 offsetTransform;
 	shared_ptr<Node> node;
 	shared_ptr<GameObject> instancedObj;
-	XMFLOAT4X4 offsetTransform;
-	vector<UINT> vertexIndices;
 };
 
 struct BoneWeight

@@ -74,11 +74,8 @@ shared_ptr<Transform> GameObject::GetTransform()
 
 void GameObject::SetPSOName(const string& name)
 {
+	RENDER->UpdateObjectPSO(shared_from_this(), name);
 	psoName = name;
-	for (int i = 0; i < shared_from_this()->GetTransform()->GetChilds().size(); i++)
-	{
-		shared_from_this()->GetTransform()->GetChilds()[i]->GetGameObject()->SetPSOName(name);
-	}
 }
 
 void GameObject::SetFramesDirty()

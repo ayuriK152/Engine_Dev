@@ -98,9 +98,6 @@
     <ClInclude Include="Constants.h">
       <Filter>05. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="FileIOManager.h">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
@@ -151,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="SkinnedMeshRenderer.h">
       <Filter>02. GameObject\Components\MeshRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIOUtil.h">
+      <Filter>01. EngineComponents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -280,9 +280,6 @@
     <ClCompile Include="AssetLoader.cpp">
       <Filter>98. Utils</Filter>
     </ClCompile>
-    <ClCompile Include="FileIOManager.cpp">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
@@ -330,6 +327,9 @@
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>02. GameObject\Components\MeshRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="FileIOUtil.cpp">
+      <Filter>01. EngineComponents</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

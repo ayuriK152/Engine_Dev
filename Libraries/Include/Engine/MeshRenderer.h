@@ -13,6 +13,9 @@ public:
 	void Update() override;
 	void Render() override;
 
+protected:
+	MeshRenderer(ComponentType type);
+
 public:
 	shared_ptr<Mesh> GetMesh() { return _mesh; }
 	void SetMesh(shared_ptr<Mesh> mesh);

@@ -4,7 +4,7 @@
 Mesh::Mesh(shared_ptr<Geometry> geometry) : Super(ResourceType::Mesh), _geometry(geometry)
 {
 	_material = RESOURCE->Get<Material>(L"Mat_Default");
-	CreateBuffer();
+	//CreateBuffer();
 }
 
 Mesh::~Mesh()
@@ -26,6 +26,9 @@ void Mesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
 
 void Mesh::CreateBuffer()
 {
+	if (vertexBufferGPU != nullptr || indexBufferGPU != nullptr)
+		return;
+
 	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)_geometry->GetIndexCount() * sizeof(UINT16);
 

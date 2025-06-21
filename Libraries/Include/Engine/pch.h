@@ -115,7 +115,7 @@ using namespace tinyxml2;
 #include "ResourceManager.h"
 #include "RenderManager.h"
 #include "InputManager.h"
-#include "FileIOManager.h"
+#include "FileIOUtil.h"
 #include "EngineGUIManager.h"
 #include "EngineStatusManager.h"
 

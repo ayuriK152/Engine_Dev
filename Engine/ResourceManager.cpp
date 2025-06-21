@@ -51,3 +51,403 @@ void ResourceManager::CreateDefaultResources()
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
 	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
 }
+
+void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
+{
+	string finalPath = filePath == "" ? mesh->GetName() : filePath;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(finalPath);
+
+	UINT32 vertexCount = mesh->GetVertexCount();
+	FILEIO->WriteToFile(fileHandle, vertexCount);
+	for (const Vertex& v : mesh->GetVertices())
+	{
+		FILEIO->WriteToFile(fileHandle, v);
+	}
+
+	UINT32 indexCount = mesh->GetIndexCount();
+	FILEIO->WriteToFile(fileHandle, indexCount);
+	for (UINT16 i : mesh->GetIndices())
+	{
+		FILEIO->WriteToFile(fileHandle, i);
+	}
+
+	string matName = mesh->GetMaterial()->GetName();
+	FILEIO->WriteToFile(fileHandle, matName);
+
+	CloseHandle(fileHandle);
+}
+
+void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const string& filePath)
+{
+	string finalPath = filePath == "" ? animation->GetName() : filePath;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(finalPath);
+
+	FILEIO->WriteToFile(fileHandle, animation->GetDuration());
+	FILEIO->WriteToFile(fileHandle, animation->GetTicksPerSecond());
+
+	unordered_map<string, Animation::AnimationData> animationDatas = animation->GetAnimationDatas();
+	FILEIO->WriteToFile(fileHandle, (UINT32)animationDatas.size());
+
+	for (auto& animData : animationDatas)
+	{
+		FILEIO->WriteToFile(fileHandle, animData.first);
+		UINT32 keyFrameCount = animData.second.keyFrames.size();
+		FILEIO->WriteToFile(fileHandle, keyFrameCount);
+		for (auto& keyFrame : animData.second.keyFrames)
+		{
+			FILEIO->WriteToFile(fileHandle, keyFrame);
+		}
+	}
+
+	CloseHandle(fileHandle);
+}
+
+void ResourceManager::SaveBone(map<string, Bone> bones, const string& boneName, const string& filePath)
+{
+	string finalPath = filePath == "" ? boneName : filePath;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(filePath);
+
+	UINT32 boneCount = bones.size();
+	FILEIO->WriteToFile(fileHandle, boneCount);
+
+	for (auto& bone : bones)
+	{
+		FILEIO->WriteToFile(fileHandle, bone.second.name);
+		FILEIO->WriteToFile(fileHandle, bone.second.id);
+		FILEIO->WriteToFile(fileHandle, bone.second.offsetTransform);
+	}
+	CloseHandle(fileHandle);
+}
+
+void ResourceManager::SavePrefab(shared_ptr<GameObject> prefabObject, const string& filePath)
+{
+	vector<shared_ptr<Transform>> allObjects;
+	allObjects.push_back(prefabObject->GetTransform());
+	for (int i = 0; i < allObjects.size(); i++)
+	{
+		allObjects.insert(allObjects.end(), allObjects[i]->GetChilds().begin(), allObjects[i]->GetChilds().end());
+	}
+
+	string finalPath = filePath == "" ? prefabObject->name : filePath;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(prefabObject->name);
+	
+	FILEIO->WriteToFile(fileHandle, (UINT32)allObjects.size());
+	SavePrefabRecursive(fileHandle, prefabObject, -1, prefabObject->name);
+	CloseHandle(fileHandle);
+}
+
+void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> object, int parentIdx, const string& prefabName)
+{
+	static int objectIdx = 0;
+	int currentIdx = objectIdx++;
+
+	FILEIO->WriteToFile(fileHandle, object->name);
+	FILEIO->WriteToFile(fileHandle, object->psoName);
+	FILEIO->WriteToFile(fileHandle, object->GetTransform()->GetWorldMatrix());
+	FILEIO->WriteToFile(fileHandle, parentIdx);		// 부모 인덱스
+	FILEIO->WriteToFile(fileHandle, (UINT32)object->GetComponents().size() - 1);
+	for (auto& c : object->GetComponents())
+	{
+		if (c.first == ComponentType::Transform)
+			continue;
+
+		FILEIO->WriteToFile(fileHandle, c.first);	// 컴포넌트 타입
+
+		switch (c.first)
+		{
+			case ComponentType::MeshRenderer:
+			{
+				auto meshRenderer = static_pointer_cast<MeshRenderer>(c.second);
+
+				string meshName = UniversalUtils::ToString(meshRenderer->GetMesh()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, meshName);
+
+				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, matName);
+
+				break;
+			}
+
+			case ComponentType::SkinnedMeshRenderer:
+			{
+				auto meshRenderer = static_pointer_cast<SkinnedMeshRenderer>(c.second);
+
+				string meshName = UniversalUtils::ToString(meshRenderer->GetMesh()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, meshName);
+
+				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
+				FILEIO->WriteToFile(fileHandle, matName);
+
+				string rootBoneName = meshRenderer->GetRootBone()->GetGameObject()->name;
+				FILEIO->WriteToFile(fileHandle, rootBoneName);
+
+				string boneDataName = prefabName;
+				FILEIO->WriteToFile(fileHandle, boneDataName);
+
+				break;
+			}
+
+			case ComponentType::Animator:
+			{
+				auto animator = static_pointer_cast<Animator>(c.second);
+
+				FILEIO->WriteToFile(fileHandle, animator->IsPlayOnInit());
+				FILEIO->WriteToFile(fileHandle, animator->IsLoop());
+
+				string currentAnimName = animator->GetCurrentAnimation()->GetName();
+				FILEIO->WriteToFile(fileHandle, currentAnimName);
+
+				auto animations = animator->GetAnimations();
+				FILEIO->WriteToFile(fileHandle, (UINT32)animations.size());
+				for (auto& anim : animations)
+				{
+					/* 현재는 애니메이션의 이름만 저장함.
+					*  나중에 Resource 전체 리팩토링을 진행하면서 전체 경로를 저장하는 방식을 고려할 수 있도록
+					*/
+					FILEIO->WriteToFile(fileHandle, anim.first);
+				}
+
+				break;
+			}
+		}
+	}
+
+	for (auto& c : object->GetTransform()->GetChilds())
+	{
+		SavePrefabRecursive(fileHandle, c->GetGameObject(), currentIdx, prefabName);
+	}
+}
+
+shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
+{
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath);
+
+	UINT32 vertexCount;
+	FILEIO->ReadFileData(fileHandle, &vertexCount, sizeof(UINT32));
+	vector<Vertex> vertices;
+	for (int i = 0; i < vertexCount; i++)
+	{
+		Vertex v;
+		FILEIO->ReadFileData(fileHandle, &v, sizeof(Vertex));
+
+		vertices.push_back(v);
+	}
+
+	UINT32 indexCount;
+	FILEIO->ReadFileData(fileHandle, &indexCount, sizeof(UINT32));
+	vector<UINT16> indices;
+	for (int i = 0; i < indexCount; i++)
+	{
+		UINT16 index;
+		FILEIO->ReadFileData(fileHandle, &index, sizeof(UINT16));
+		indices.push_back(index);
+	}
+
+	string matName;
+	FILEIO->ReadFileData(fileHandle, matName);
+
+	CloseHandle(fileHandle);
+
+	shared_ptr<Geometry> geometry = make_shared<Geometry>(vertices, indices);
+	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);
+	loadedMesh->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+
+	return loadedMesh;
+}
+
+shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
+{
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath);
+	float duration, ticks;
+	FILEIO->ReadFileData(fileHandle, &duration, sizeof(float));
+	FILEIO->ReadFileData(fileHandle, &ticks, sizeof(float));
+
+	// filePath는 Resources/리소스타입/ 이후의 디렉토리 경로 데이터로 생각중.
+	// 따라서 filePath에서 파일 이름만 추출해서 사용하도록 변경해야함.
+	// 애니메이션 뿐만 아니라 모든 리소스에대해 작업 필요.
+	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(filePath, duration, ticks);
+
+	UINT32 animationDataCount;
+	FILEIO->ReadFileData(fileHandle, &animationDataCount, sizeof(UINT32));
+	for (int i = 0; i < animationDataCount; i++)
+	{
+		Animation::AnimationData animationData;
+
+		string objName;
+		FILEIO->ReadFileData(fileHandle, objName);
+		animationData.boneName = objName;
+
+		UINT32 keyFrameCount;
+		FILEIO->ReadFileData(fileHandle, &keyFrameCount, sizeof(UINT32));
+
+		for (int j = 0; j < keyFrameCount; j++)
+		{
+			Animation::KeyFrame keyFrame;
+			FILEIO->ReadFileData(fileHandle, &keyFrame, sizeof(Animation::KeyFrame));
+			animationData.keyFrames.push_back(keyFrame);
+		}
+
+		loadedAnimation->AddAnimationData(animationData);
+	}
+
+	CloseHandle(fileHandle);
+
+	return loadedAnimation;
+}
+
+map<string, Bone> ResourceManager::LoadBone(const string& filePath)
+{
+	map<string, Bone> boneData;
+
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(filePath);
+	UINT32 boneCount;
+
+	FILEIO->ReadFileData(fileHandle, &boneCount, sizeof(UINT32));
+	for (int i = 0; i < boneCount; i++)
+	{
+		Bone bone;
+		FILEIO->ReadFileData(fileHandle, bone.name);
+		FILEIO->ReadFileData(fileHandle, &bone.id, sizeof(UINT));
+		FILEIO->ReadFileData(fileHandle, &bone.offsetTransform, sizeof(XMFLOAT4X4));
+		boneData[bone.name] = bone;
+	}
+	CloseHandle(fileHandle);
+
+	return boneData;
+}
+
+vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& filePath)
+{
+	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(filePath);
+
+	vector<shared_ptr<GameObject>> loadedObjects;
+	vector<pair<int, int>> objHierarchyIdxPair;
+	vector<pair<shared_ptr<SkinnedMeshRenderer>, string>> boneSettingQueue;
+
+	UINT32 objectCount;
+	FILEIO->ReadFileData(fileHandle, &objectCount, sizeof(UINT32));
+	for (int i = 0; i < objectCount; i++)
+	{
+		shared_ptr<GameObject> go = make_shared<GameObject>();
+		FILEIO->ReadFileData(fileHandle, go->name);
+		FILEIO->ReadFileData(fileHandle, go->psoName);
+
+		XMFLOAT4X4 worldMat;
+		FILEIO->ReadFileData(fileHandle, &worldMat, sizeof(XMFLOAT4X4));
+		go->GetTransform()->SetObjectWorldMatrix(worldMat);
+
+		int parentIdx;
+		FILEIO->ReadFileData(fileHandle, &parentIdx, sizeof(int));
+		objHierarchyIdxPair.push_back({ i, parentIdx });
+
+		UINT32 componentCount;
+		FILEIO->ReadFileData(fileHandle, &componentCount, sizeof(UINT32));
+
+		for (int j = 0; j < componentCount; j++)
+		{
+			ComponentType componentType;
+			FILEIO->ReadFileData(fileHandle, &componentType, sizeof(ComponentType));
+
+			switch (componentType)
+			{
+			case ComponentType::MeshRenderer:
+			{
+				shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+
+				string meshName;
+				FILEIO->ReadFileData(fileHandle, meshName);
+				shared_ptr<Mesh> loadedMesh = LoadMesh(meshName);
+				meshRenderer->SetMesh(loadedMesh);
+
+				string matName;
+				FILEIO->ReadFileData(fileHandle, matName);
+				meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+
+				go->AddComponent(meshRenderer);
+
+				break;
+			}
+
+			case ComponentType::SkinnedMeshRenderer:
+			{
+				shared_ptr<SkinnedMeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
+
+				string meshName;
+				FILEIO->ReadFileData(fileHandle, meshName);
+				shared_ptr<Mesh> loadedMesh = LoadMesh(meshName);
+				meshRenderer->SetMesh(loadedMesh);
+
+				string matName;
+				FILEIO->ReadFileData(fileHandle, matName);
+				meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+
+				string rootBoneName;
+				FILEIO->ReadFileData(fileHandle, rootBoneName);
+
+				string boneDataName;
+				FILEIO->ReadFileData(fileHandle, boneDataName);
+				meshRenderer->SetBoneData(LoadBone(boneDataName));
+
+				boneSettingQueue.push_back({ meshRenderer, rootBoneName });
+				go->AddComponent(meshRenderer);
+
+				break;
+			}
+
+			case ComponentType::Animator:
+			{
+				shared_ptr<Animator> animator = make_shared<Animator>();
+
+				bool isPlayOnInit, isLoop;
+				FILEIO->ReadFileData(fileHandle, &isPlayOnInit, sizeof(bool));
+				FILEIO->ReadFileData(fileHandle, &isLoop, sizeof(bool));
+
+				string currentAnimName;
+				FILEIO->ReadFileData(fileHandle, currentAnimName);
+
+				UINT32 animationCount;
+				FILEIO->ReadFileData(fileHandle, &animationCount, sizeof(UINT32));
+
+				for (int k = 0; k < animationCount; k++)
+				{
+					string animationName;
+					FILEIO->ReadFileData(fileHandle, animationName);
+					animator->AddAnimation(LoadAnimation(animationName));
+				}
+
+				animator->SetPlayOnInit(isPlayOnInit);
+				animator->SetLoop(isLoop);
+				animator->SetCurrentAnimation(currentAnimName);
+
+				go->AddComponent(animator);
+
+				break;
+			}
+			}
+		}
+
+		loadedObjects.push_back(go);
+	}
+
+	for (auto& idxPair : objHierarchyIdxPair)
+	{
+		if (idxPair.second == -1)
+			continue;
+
+		loadedObjects[idxPair.first]->GetTransform()->SetParent(loadedObjects[idxPair.second]->GetTransform());
+	}
+
+	for (auto& renderer : boneSettingQueue)
+	{
+		for (auto& go : loadedObjects)
+		{
+			if (go->name == renderer.second)
+			{
+				renderer.first->SetRootBone(go->GetTransform());
+				break;
+			}
+		}
+	}
+
+	return loadedObjects;
+}

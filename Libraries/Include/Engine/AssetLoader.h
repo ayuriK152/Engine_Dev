@@ -49,17 +49,6 @@ private:
 		return ret;
 	}
 
-	void SaveMeshData();
-	void SaveAnimationData();
-	void SaveBoneData();
-	void SavePrefabData();
-	void WritePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> obj, int parentIdx);
-
-	shared_ptr<Mesh> ReadMeshData(string fileName);
-	shared_ptr<Animation> ReadAnimationData(string fileName);
-	map<string, Bone> ReadBoneData(string fileName);
-	vector<shared_ptr<GameObject>> ReadPrefabObject(string fileName);
-
 private:
 	shared_ptr<Assimp::Importer> _importer;
 
@@ -67,16 +56,17 @@ private:
 	ModelFormat _modelType;
 	wstring _assetName;
 
-	// actual data
+	// temp data
 	map<string, shared_ptr<Node>> _nodes;
 	map<string, Bone> _bones;
 	vector<shared_ptr<Mesh>> _meshes;
+
+	// temp instances
 	vector<shared_ptr<GameObject>> _meshObjs;
 	vector<shared_ptr<GameObject>> _boneObjs;
-
-	// instances
-	vector<shared_ptr<GameObject>> _loadedObject;
 	vector<shared_ptr<Animation>> _animations;
+
+	vector<shared_ptr<GameObject>> _loadedObject;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
 

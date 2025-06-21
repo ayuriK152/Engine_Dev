@@ -153,6 +153,21 @@ void RenderManager::SetDefaultPSO()
 	_isPSOFixed = false;
 }
 
+#pragma endregion
+
+void RenderManager::UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO)
+{
+	for (int i = 0; i < _sortedObjects[obj->psoName].size(); i++)
+	{
+		if (_sortedObjects[obj->psoName][i] == obj)
+		{
+			_sortedObjects[obj->psoName].erase(_sortedObjects[obj->psoName].begin() + i);
+			_sortedObjects[targetPSO].push_back(obj);
+			break;
+		}
+	}
+}
+
 shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 {
 	for (auto& o : _objects)
@@ -167,8 +182,6 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	_objects.push_back(move(obj));
 	return _objects[_objects.size() - 1];
 }
-
-#pragma endregion
 
 
 #pragma region Build_Render_Components

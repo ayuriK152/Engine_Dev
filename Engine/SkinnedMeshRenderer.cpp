@@ -22,6 +22,8 @@ void SkinnedMeshRenderer::Init()
 
 		CreateBoneSRV(_boneTransforms);
 	}
+
+	GetGameObject()->SetPSOName(PSO_OPAQUE_SKINNED);
 }
 
 void SkinnedMeshRenderer::Update()

@@ -144,10 +144,10 @@
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
-      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\MeshRenderer</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedMeshRenderer.h">
-      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\MeshRenderer</Filter>
     </ClInclude>
     <ClInclude Include="FileIOUtil.h">
       <Filter>01. EngineComponents</Filter>
@@ -196,7 +196,7 @@
     <Filter Include="99. ExtLibraries\tinyxml2">
       <UniqueIdentifier>{91de3027-70a4-498d-a84a-0c72b4580e38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Components\Lights\MeshRenderer">
+    <Filter Include="02. GameObject\Components\MeshRenderer">
       <UniqueIdentifier>{a16cbda6-39ad-49f4-891c-365318c88ded}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -323,10 +323,10 @@
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="SkinnedMeshRenderer.cpp">
-      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\MeshRenderer</Filter>
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
-      <Filter>02. GameObject\Components\Lights\MeshRenderer</Filter>
+      <Filter>02. GameObject\Components\MeshRenderer</Filter>
     </ClCompile>
     <ClCompile Include="FileIOUtil.cpp">
       <Filter>01. EngineComponents</Filter>

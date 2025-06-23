@@ -14,8 +14,8 @@ bool Texture::IsTextureExists(wstring& fileName)
 Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 {
 	SetName(fileName);
-	_path = L"..\\Resources\\Textures\\" + fileName;
-	Load(_path);
+	SetPath(L"..\\Resources\\Textures\\" + fileName);
+	Load(_pathw);
 	textureType = TextureType::General;
 	CreateSRV();
 }
@@ -23,8 +23,8 @@ Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 Texture::Texture(wstring fileName, TextureType type) : Super(ResourceType::Texture)
 {
 	SetName(fileName);
-	_path = L"..\\Resources\\Textures\\" + fileName;
-	Load(_path);
+	SetPath(L"..\\Resources\\Textures\\" + fileName);
+	Load(_pathw);
 	textureType = type;
 	CreateSRV();
 }
@@ -42,7 +42,7 @@ void Texture::Load(const wstring& path)
 	ResourceUploadBatch upload(device);
 	upload.Begin();
 	ThrowIfFailed(CreateDDSTextureFromFile(device, upload,
-		_path.c_str(), resource.GetAddressOf()));
+		_pathw.c_str(), resource.GetAddressOf()));
 	auto finish = upload.End(commandQueue);
 	finish.wait();
 }

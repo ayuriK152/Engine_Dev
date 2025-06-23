@@ -26,19 +26,22 @@ public:
 	ResourceType GetType() { return _type; }
 
 	void SetName(const string& name) { 
-		_name = name;
 		_namew = UniversalUtils::ToWString(name);
 	}
-	string GetName() { return _name; }
-
-	void SetName(wstring name) { 
+	void SetName(const wstring& name) { 
 		_namew = name;
-		_name = UniversalUtils::ToString(name);
 	}
+	string GetName() { return UniversalUtils::ToString(_namew); }
 	wstring GetNameW() { return _namew; }
 
-	void SetPath(wstring path) { _path = path; }
-	wstring GetPath() { return _path; }
+	void SetPath(const string& path) {
+		_pathw = UniversalUtils::ToWString(path);
+	}
+	void SetPath(const wstring& path) { 
+		_pathw = path; 
+	}
+	string GetPath() { return UniversalUtils::ToString(_pathw); }
+	wstring GetPathW() { return _pathw; }
 
 protected:
 	virtual void Load(const wstring& path) { }
@@ -46,10 +49,9 @@ protected:
 protected:
 	ResourceType _type;
 
-	string _name;
 	wstring _namew;
 
-	wstring _path;
+	wstring _pathw;
 
 	UINT32 _id = 0;
 };

@@ -3,11 +3,6 @@
 
 void TestScript::Init()
 {
-	//assetLoader = make_shared<AssetLoader>();
-	//{
-	//	assetLoader->ImportAssetFile(L"Y Bot\\Y Bot.fbx");
-	//}
-
 	// 텍스쳐 테스트용 나중에 삭제
 	{
 		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");

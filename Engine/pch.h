@@ -54,6 +54,7 @@ using namespace Microsoft::WRL;
 #include "assimp/postprocess.h"
 #include "tinyxml2/tinyxml2.h"
 #include "ImGUI/imgui.h"
+#include "ImGUI/imgui_stdlib.h"
 #include "ImGUI/imgui_impl_dx12.h"
 #include "ImGUI/imgui_impl_win32.h"
 using namespace tinyxml2;

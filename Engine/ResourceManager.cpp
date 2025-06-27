@@ -55,6 +55,7 @@ void ResourceManager::CreateDefaultResources()
 void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
 {
 	string finalPath = filePath == "" ? mesh->GetName() : filePath;
+	mesh->SetPath(RESOURCE_PATH_MESH + finalPath + BULB_EXT_MESH);
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(finalPath);
 
 	UINT32 vertexCount = mesh->GetVertexCount();
@@ -80,6 +81,7 @@ void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
 void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const string& filePath)
 {
 	string finalPath = filePath == "" ? animation->GetName() : filePath;
+	animation->SetPath(RESOURCE_PATH_ANIMATION + finalPath + BULB_EXT_ANIMATION);
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(finalPath);
 
 	FILEIO->WriteToFile(fileHandle, animation->GetDuration());
@@ -159,8 +161,8 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 			{
 				auto meshRenderer = static_pointer_cast<MeshRenderer>(c.second);
 
-				string meshName = UniversalUtils::ToString(meshRenderer->GetMesh()->GetNameW());
-				FILEIO->WriteToFile(fileHandle, meshName);
+				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
+				FILEIO->WriteToFile(fileHandle, meshPath);
 
 				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
 				FILEIO->WriteToFile(fileHandle, matName);
@@ -172,8 +174,8 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 			{
 				auto meshRenderer = static_pointer_cast<SkinnedMeshRenderer>(c.second);
 
-				string meshName = UniversalUtils::ToString(meshRenderer->GetMesh()->GetNameW());
-				FILEIO->WriteToFile(fileHandle, meshName);
+				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
+				FILEIO->WriteToFile(fileHandle, meshPath);
 
 				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
 				FILEIO->WriteToFile(fileHandle, matName);
@@ -201,10 +203,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 				FILEIO->WriteToFile(fileHandle, (UINT32)animations.size());
 				for (auto& anim : animations)
 				{
-					/* 현재는 애니메이션의 이름만 저장함.
-					*  나중에 Resource 전체 리팩토링을 진행하면서 전체 경로를 저장하는 방식을 고려할 수 있도록
-					*/
-					FILEIO->WriteToFile(fileHandle, anim.first);
+					FILEIO->WriteToFile(fileHandle, anim.second->GetPath());	// ResourcePath
 				}
 
 				break;
@@ -221,6 +220,10 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath);
+
+	string meshName;
+	meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
+	meshName = meshName.substr(0, meshName.find_last_of('.'));
 
 	UINT32 vertexCount;
 	FILEIO->ReadFileData(fileHandle, &vertexCount, sizeof(UINT32));
@@ -250,6 +253,8 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 
 	shared_ptr<Geometry> geometry = make_shared<Geometry>(vertices, indices);
 	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);
+	loadedMesh->SetName(meshName);
+	loadedMesh->SetPath(filePath);
 	loadedMesh->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
 
 	return loadedMesh;
@@ -258,6 +263,11 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath);
+
+	string animName;
+	animName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
+	animName = animName.substr(0, animName.find_last_of('.'));
+
 	float duration, ticks;
 	FILEIO->ReadFileData(fileHandle, &duration, sizeof(float));
 	FILEIO->ReadFileData(fileHandle, &ticks, sizeof(float));
@@ -265,7 +275,8 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	// filePath는 Resources/리소스타입/ 이후의 디렉토리 경로 데이터로 생각중.
 	// 따라서 filePath에서 파일 이름만 추출해서 사용하도록 변경해야함.
 	// 애니메이션 뿐만 아니라 모든 리소스에대해 작업 필요.
-	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(filePath, duration, ticks);
+	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(animName, duration, ticks);
+	loadedAnimation->SetPath(filePath);
 
 	UINT32 animationDataCount;
 	FILEIO->ReadFileData(fileHandle, &animationDataCount, sizeof(UINT32));
@@ -354,10 +365,9 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 			{
 				shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
 
-				string meshName;
-				FILEIO->ReadFileData(fileHandle, meshName);
-				shared_ptr<Mesh> loadedMesh = LoadMesh(meshName);
-				meshRenderer->SetMesh(loadedMesh);
+				string meshPath;
+				FILEIO->ReadFileData(fileHandle, meshPath);
+				meshRenderer->SetMesh(LoadMesh(meshPath));
 
 				string matName;
 				FILEIO->ReadFileData(fileHandle, matName);
@@ -372,10 +382,9 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 			{
 				shared_ptr<SkinnedMeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
 
-				string meshName;
-				FILEIO->ReadFileData(fileHandle, meshName);
-				shared_ptr<Mesh> loadedMesh = LoadMesh(meshName);
-				meshRenderer->SetMesh(loadedMesh);
+				string meshPath;
+				FILEIO->ReadFileData(fileHandle, meshPath);
+				meshRenderer->SetMesh(LoadMesh(meshPath));
 
 				string matName;
 				FILEIO->ReadFileData(fileHandle, matName);
@@ -410,9 +419,9 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 				for (int k = 0; k < animationCount; k++)
 				{
-					string animationName;
-					FILEIO->ReadFileData(fileHandle, animationName);
-					animator->AddAnimation(LoadAnimation(animationName));
+					string animationPath;
+					FILEIO->ReadFileData(fileHandle, animationPath);
+					animator->AddAnimation(LoadAnimation(animationPath));
 				}
 
 				animator->SetPlayOnInit(isPlayOnInit);
@@ -428,6 +437,8 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 		loadedObjects.push_back(go);
 	}
+
+	CloseHandle(fileHandle);
 
 	for (auto& idxPair : objHierarchyIdxPair)
 	{

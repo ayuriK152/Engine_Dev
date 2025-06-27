@@ -31,16 +31,25 @@ template<typename T>
 HANDLE FileIOUtil::CreateFileHandle(string fileName) {
 	string fullPath;
 
-	if (is_same_v<T, Mesh>)
-		fullPath = RESOURCE_PATH_MESH + fileName + BULB_EXT_MESH;
-	else if (is_same_v<T, Animation>)
-		fullPath = RESOURCE_PATH_ANIMATION + fileName + BULB_EXT_ANIMATION;
-	else if (is_same_v<T, Bone>)
-		fullPath = RESOURCE_PATH_BONE + fileName + BULB_EXT_BONE;
-	else if (is_same_v<T, GameObject>)
-		fullPath = RESOURCE_PATH_PREFAB + fileName + BULB_EXT_PREFAB;
+	if (PathFileExistsA(fileName.c_str()))
+		fullPath = fileName;
 	else
-		fullPath = RESOURCE_PATH + fileName + BULB_EXT_UNKNOWN;
+	{
+		if (is_same_v<T, Mesh>)
+			fullPath = RESOURCE_PATH_MESH + fileName + BULB_EXT_MESH;
+		else if (is_same_v<T, Animation>)
+			fullPath = RESOURCE_PATH_ANIMATION + fileName + BULB_EXT_ANIMATION;
+		else if (is_same_v<T, Bone>)
+			fullPath = RESOURCE_PATH_BONE + fileName + BULB_EXT_BONE;
+		else if (is_same_v<T, GameObject>)
+			fullPath = RESOURCE_PATH_PREFAB + fileName + BULB_EXT_PREFAB;
+		else
+			fullPath = RESOURCE_PATH + fileName + BULB_EXT_UNKNOWN;
+
+		string subPath = fullPath.substr(0, fullPath.find_last_of('\\') + 1);
+		if (!filesystem::exists(subPath))
+			filesystem::create_directories(subPath);
+	}
 
 	if (PathFileExistsA(fullPath.c_str())) {
 		return CreateFileA(

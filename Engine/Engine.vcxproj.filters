@@ -152,6 +152,9 @@
     <ClInclude Include="FileIOUtil.h">
       <Filter>01. EngineComponents</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\Include\ImGUI\imgui_stdlib.h">
+      <Filter>99. ExtLibraries\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -330,6 +333,9 @@
     </ClCompile>
     <ClCompile Include="FileIOUtil.cpp">
       <Filter>01. EngineComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\Include\ImGUI\imgui_stdlib.cpp">
+      <Filter>99. ExtLibraries\imgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

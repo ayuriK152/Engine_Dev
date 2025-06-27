@@ -59,13 +59,15 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	// 바이너리 파일 저장
 	{
+		string assetNameStr = UniversalUtils::ToString(_assetName);
+
 		for (auto& mesh : _meshes)
-			RESOURCE->SaveMesh(mesh);
+			RESOURCE->SaveMesh(mesh, assetNameStr + "\\" + mesh->GetName());
 
 		for (auto& animation : _animations)
-			RESOURCE->SaveAnimation(animation);
+			RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
 
-		RESOURCE->SaveBone(_bones, UniversalUtils::ToString(_assetName));
+		RESOURCE->SaveBone(_bones, assetNameStr);
 		RESOURCE->SavePrefab(_loadedObject[0]);
 	}
 

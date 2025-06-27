@@ -174,7 +174,11 @@ void EngineGUIManager::ShowInspectorView()
 		}
 		else
 		{
-			ImGui::Text(_selectedObj->name.c_str());
+			ImGui::InputText("ObjName", &_selectedObj->name);
+			if (ImGui::Button("Save as Prefab"))
+			{
+				RESOURCE->SavePrefab(_selectedObj);
+			}
 			ImGui::Separator();
 
 			// Transform
@@ -333,6 +337,8 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 {
 	if (ImGui::CollapsingHeader("Animator", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		ImGui::SeparatorText("CurrentAnimation");
+		ImGui::Text(animator->GetCurrentAnimation() != nullptr ? animator->GetCurrentAnimation()->GetName().c_str() : "None");
 		ImGui::SeparatorText("Animation Tick");
 		ImGui::Text("%.1f / %.1f", animator->GetCurrentTick(), animator->GetCurrentAnimation()->GetDuration());
 	}

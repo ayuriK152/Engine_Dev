@@ -106,6 +106,7 @@ using namespace tinyxml2;
 #include "Animator.h"
 #include "Light.h"
 #include "DirectionalLight.h"
+#include "Script.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"

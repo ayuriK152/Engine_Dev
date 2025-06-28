@@ -214,6 +214,10 @@ void EngineGUIManager::ShowInspectorView()
 					case ComponentType::Animator:
 						ShowAnimator(static_pointer_cast<Animator>(c.second));
 						break;
+
+					case ComponentType::Script:
+						ShowScript(static_pointer_cast<Script>(c.second));
+						break;
 				}
 			}
 		}
@@ -404,6 +408,14 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 			for (const string& name : removeQueue)
 				animator->RemoveAnimation(name);
 		}
+	}
+}
+
+void EngineGUIManager::ShowScript(shared_ptr<Script> script)
+{
+	if (ImGui::CollapsingHeader("Script", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TestScript.h"
+#include "ComponentScriptTest.h"
 
 void TestScript::Init()
 {
@@ -34,6 +35,8 @@ void TestScript::Init()
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
 		model = loadedObjects[0];	
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		shared_ptr<Script> script = make_shared<ComponentScriptTest>();
+		model->AddComponent(script);
 	}
 
 	sphere = make_shared<GameObject>();

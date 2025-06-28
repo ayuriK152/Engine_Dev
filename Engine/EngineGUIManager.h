@@ -79,14 +79,15 @@ private:
 	void ShowEngineStatus();
 	void ShowHierarchyView();
 	void ShowInspectorView();
-	void ShowTransform();
 	void ShowResourceDirectory();
 
+	void ShowTransform();
 	void ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer);
 	void ShowSkinnedMeshRenderer(shared_ptr<SkinnedMeshRenderer> meshRenderer);
 	void ShowCamera(shared_ptr<Camera> camera);
 	void ShowLight(shared_ptr<Light> light);
 	void ShowAnimator(shared_ptr<Animator> animator);
+	void ShowScript(shared_ptr<Script> script);
 
 
 	void HierarchyObjectRecursion(shared_ptr<Transform> parent);

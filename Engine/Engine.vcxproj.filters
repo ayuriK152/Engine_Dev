@@ -155,6 +155,9 @@
     <ClInclude Include="..\Libraries\Include\ImGUI\imgui_stdlib.h">
       <Filter>99. ExtLibraries\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>02. GameObject\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -336,6 +339,9 @@
     </ClCompile>
     <ClCompile Include="..\Libraries\Include\ImGUI\imgui_stdlib.cpp">
       <Filter>99. ExtLibraries\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>02. GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

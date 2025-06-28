@@ -4,10 +4,12 @@
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestScript.h" />
+    <ClInclude Include="ComponentScriptTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="TestScript.cpp" />
+    <ClCompile Include="ComponentScriptTest.cpp" />
   </ItemGroup>
 </Project>

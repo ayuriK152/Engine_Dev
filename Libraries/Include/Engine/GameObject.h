@@ -85,6 +85,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Collider;
 	if (is_same_v<T, Animator>)
 		return ComponentType::Animator;
+	if (is_same_v<T, Script>)
+		return ComponentType::Script;
 
 	return ComponentType::Undefined;
 }

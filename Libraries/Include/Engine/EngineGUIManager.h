@@ -4,9 +4,12 @@
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
 #define TOGGLEVALUE_GUI_HIERARCHY		"GUI_Hierarchy"
 #define TOGGLEVALUE_GUI_INSPECTOR		"GUI_Inspector"
+#define TOGGLEVALUE_GUI_RESOURCEDIR		"GUI_ResourceDirectory"
 
 #define WIDTH_GUI_HIERARCHY			250
 #define WIDTH_GUI_INSPECTOR			300
+
+#define HEIGHT_GUI_RESOURCEDIR		300
 
 class Transform;
 class MeshRenderer;
@@ -74,11 +77,11 @@ private:
 	void ToggleWindows();
 
 	void ShowEngineStatus();
-
 	void ShowHierarchyView();
-
 	void ShowInspectorView();
 	void ShowTransform();
+	void ShowResourceDirectory();
+
 	void ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer);
 	void ShowSkinnedMeshRenderer(shared_ptr<SkinnedMeshRenderer> meshRenderer);
 	void ShowCamera(shared_ptr<Camera> camera);

@@ -52,6 +52,7 @@ void EngineGUIManager::Init()
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
+	_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = true;
 }
 
 void EngineGUIManager::FixedUpdate()
@@ -78,6 +79,7 @@ void EngineGUIManager::Render()
 
 		ShowHierarchyView();
 		ShowInspectorView();
+		ShowResourceDirectory();
 	}
 
 	ImGui::Render();
@@ -223,6 +225,38 @@ void EngineGUIManager::ShowInspectorView()
 	ImGui::End();
 }
 
+void EngineGUIManager::ShowResourceDirectory()
+{
+	ImGuiWindowFlags windowFlags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoFocusOnAppearing;
+
+	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+
+	ImVec2 windowPos = ImVec2(0, mainViewport->Size.y);
+	ImVec2 windowPivot = ImVec2(0.0f, 1.0f);
+	ImVec2 windowSize = ImVec2(mainViewport->Size.x, HEIGHT_GUI_RESOURCEDIR);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+	ImGui::SetNextWindowBgAlpha(0.35f);
+	ImGui::SetNextWindowSize(windowSize);
+
+	ImGui::SetNextWindowCollapsed(!_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR]);
+
+	if (ImGui::Begin("Resource Directory View", nullptr, windowFlags))
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = true;
+
+	}
+	else if (_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR])
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = false;
+	}
+	ImGui::End();
+}
+
 void EngineGUIManager::ShowTransform()
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
@@ -337,10 +371,39 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 {
 	if (ImGui::CollapsingHeader("Animator", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::SeparatorText("CurrentAnimation");
+		ImGui::SeparatorText("Current Animation");
 		ImGui::Text(animator->GetCurrentAnimation() != nullptr ? animator->GetCurrentAnimation()->GetName().c_str() : "None");
 		ImGui::SeparatorText("Animation Tick");
-		ImGui::Text("%.1f / %.1f", animator->GetCurrentTick(), animator->GetCurrentAnimation()->GetDuration());
+		if (animator->GetCurrentAnimation() != nullptr)
+			ImGui::Text("%.1f / %.1f", animator->GetCurrentTick(), animator->GetCurrentAnimation()->GetDuration());
+		else
+			ImGui::Text("-- / --");
+		ImGui::SeparatorText("Animation List");
+
+		static string addAnimPath;
+		ImGui::InputText("##AddAnimationName", &addAnimPath);
+		if (ImGui::Button("Add Animation"))
+		{
+			animator->AddAnimation(RESOURCE->LoadAnimation(addAnimPath));
+			addAnimPath = "";
+		}
+
+		vector<string> removeQueue;
+		for (auto& a : animator->GetAnimations())
+		{
+			ImGui::Text(a.first.c_str());
+			ImGui::SameLine();
+			string buttonLabel = "-##" + a.second->GetPath();
+			if (ImGui::Button(buttonLabel.c_str()))
+			{
+				removeQueue.push_back(a.first);
+			}
+		}
+		if (removeQueue.size() > 0)
+		{
+			for (const string& name : removeQueue)
+				animator->RemoveAnimation(name);
+		}
 	}
 }
 
@@ -381,6 +444,11 @@ void EngineGUIManager::ToggleWindows()
 	if (INPUTM->IsKeyDown(KeyValue::F4))
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = !_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR];
+	}
+
+	if (INPUTM->IsKeyDown(KeyValue::F5))
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = !_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR];
 	}
 }
 

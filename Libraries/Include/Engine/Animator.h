@@ -27,7 +27,7 @@ public:
 
 	void UpdateBoneTransform();
 
-	shared_ptr<Animation> GetCurrentAnimation() { return _animations[_currentAnimation]; }
+	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_CURRENT_ANIMATION ? _animations[_currentAnimation] : nullptr; }
 	void SetCurrentAnimation(const string& animationName) { _currentAnimation = animationName; }
 	
 	const map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
@@ -35,6 +35,18 @@ public:
 		_animations[animation->GetName()] = animation;
 		if (_currentAnimation == EMPTY_CURRENT_ANIMATION) {
 			_currentAnimation = animation->GetName();
+		}
+	}
+	void RemoveAnimation(shared_ptr<Animation> animation) { 
+		RemoveAnimation(animation->GetName());
+	}
+	void RemoveAnimation(const string& animationName) { 
+		if (_animations.find(animationName) != _animations.end()) {
+			_animations.erase(animationName);
+			if (_currentAnimation == animationName) {
+				_currentAnimation = EMPTY_CURRENT_ANIMATION;
+				_currentTick = 0.0f;
+			}
 		}
 	}
 

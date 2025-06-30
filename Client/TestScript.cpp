@@ -4,6 +4,12 @@
 
 void TestScript::Init()
 {
+	{
+		//AssetLoader* assetLoader = new AssetLoader();
+		//assetLoader->ImportAssetFile(L"Y Bot\\Y Bot.fbx");
+		//delete assetLoader;
+	}
+
 	// 텍스쳐 테스트용 나중에 삭제
 	{
 		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");
@@ -60,6 +66,8 @@ void TestScript::Init()
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
+	//camera->GetTransform()->SetParent(model->GetTransform());
+
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
 
 	{
@@ -96,19 +104,19 @@ void TestScript::Update()
 	sphere->GetTransform()->Rotate(Vector3(0.0f, 30.0f * TIME->DeltaTime(), 0.0f));
 	sphere2->GetTransform()->Rotate(Vector3(0.0f, 0.0f, 70.0f * TIME->DeltaTime()));
 
-	if (INPUTM->IsKeyPress(KeyValue::W))
-		camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
-	if (INPUTM->IsKeyPress(KeyValue::S))
-		camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, -TIME->DeltaTime() * 5.0f));
-	if (INPUTM->IsKeyPress(KeyValue::A))
-		camera->GetTransform()->Translate(MathHelper::VectorMultiply(right, TIME->DeltaTime() * 5.0f));
-	if (INPUTM->IsKeyPress(KeyValue::D))
-		camera->GetTransform()->Translate(MathHelper::VectorMultiply(right, -TIME->DeltaTime() * 5.0f));
-	
-	if (INPUTM->IsKeyPress(KeyValue::Q))
-		camera->GetTransform()->Rotate(Vector3(0.0f, -20.0f * TIME->DeltaTime(), 0.0f));
-	if (INPUTM->IsKeyPress(KeyValue::E))
-		camera->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
+	//if (INPUTM->IsKeyPress(KeyValue::W))
+	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
+	//if (INPUTM->IsKeyPress(KeyValue::S))
+	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, -TIME->DeltaTime() * 5.0f));
+	//if (INPUTM->IsKeyPress(KeyValue::A))
+	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(right, TIME->DeltaTime() * 5.0f));
+	//if (INPUTM->IsKeyPress(KeyValue::D))
+	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(right, -TIME->DeltaTime() * 5.0f));
+	//
+	//if (INPUTM->IsKeyPress(KeyValue::Q))
+	//	camera->GetTransform()->Rotate(Vector3(0.0f, -20.0f * TIME->DeltaTime(), 0.0f));
+	//if (INPUTM->IsKeyPress(KeyValue::E))
+	//	camera->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
 
 
 	if (INPUTM->IsKeyPress(KeyValue::ESC))

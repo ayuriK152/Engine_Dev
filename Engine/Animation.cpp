@@ -38,17 +38,27 @@ Animation::KeyFrame* Animation::Interpolate(const string& boneName, float tick)
 	AnimationData animationData = _animationDatas[boneName];
 	KeyFrame prevFrame, nextFrame;
 	KeyFrame* resultFrame = new KeyFrame();
+
+	// 탐색 알고리즘 변경 고려
+	bool foundFlag = false;
 	for (int i = 0; i < animationData.keyFrames.size() - 1; i++)
 	{
 		if (tick >= animationData.keyFrames[i].tick && tick <= animationData.keyFrames[i + 1].tick)
 		{
 			prevFrame = animationData.keyFrames[i];
 			nextFrame = animationData.keyFrames[i + 1];
+			foundFlag = true;
 			break;
 		}
 	}
 
-	float blendValue = (tick - prevFrame.tick) / (nextFrame.tick - prevFrame.tick);
+	if (!foundFlag)
+	{
+		prevFrame = animationData.keyFrames[animationData.keyFrames.size() - 1];
+		nextFrame = animationData.keyFrames[animationData.keyFrames.size() - 1];
+	}
+
+	float blendValue = foundFlag ? (tick - prevFrame.tick) / (nextFrame.tick - prevFrame.tick) : 0.0f;
 	resultFrame->tick = tick;
 
 	resultFrame->position = Vector3(

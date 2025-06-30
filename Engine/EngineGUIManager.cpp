@@ -52,7 +52,7 @@ void EngineGUIManager::Init()
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
-	_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = true;
+	_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = false;
 }
 
 void EngineGUIManager::FixedUpdate()
@@ -253,6 +253,10 @@ void EngineGUIManager::ShowResourceDirectory()
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = true;
 
+		if (ImGui::Button("Import Asset"))
+		{
+
+		}
 	}
 	else if (_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR])
 	{

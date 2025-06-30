@@ -7,9 +7,9 @@ public:
 	Script();
 	virtual ~Script();
 
-	virtual void Init() override = 0;
-	virtual void FixedUpdate() override = 0;
-	virtual void Update() override = 0;
-	virtual void Render() override = 0;
+	//virtual void Init() override;
+	//virtual void FixedUpdate() override;
+	//virtual void Update() override;
+	//virtual void Render() override;
 };
 

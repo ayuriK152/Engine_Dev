@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Main.h"
 #include "Engine/GameApplication.h"
-#include "TestScript.h"
+#include "TestScene.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {
 	AppDesc desc;
-	desc.app = make_shared<TestScript>();
+	desc.app = make_shared<TestScene>();
 	desc.mainWndCaption = L"GameApplication";
 	desc._4xMsaaState = false;
 	desc._4xMsaaQuality = 0;

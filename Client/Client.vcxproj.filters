@@ -3,13 +3,13 @@
   <ItemGroup>
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="TestScript.h" />
-    <ClInclude Include="ComponentScriptTest.h" />
+    <ClInclude Include="TestScene.h" />
+    <ClInclude Include="PlayerScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="TestScript.cpp" />
-    <ClCompile Include="ComponentScriptTest.cpp" />
+    <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="PlayerScript.cpp" />
   </ItemGroup>
 </Project>

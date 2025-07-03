@@ -3,6 +3,7 @@
 
 Animator::Animator() : Component(ComponentType::Animator)
 {
+	_isPlayOnInit = true;
 	_isPlaying = true;
 	_isLoop = true;
 

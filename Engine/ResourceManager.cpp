@@ -208,6 +208,20 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 
 				break;
 			}
+
+			case ComponentType::Camera:
+			{
+				auto camera = static_pointer_cast<Camera>(c.second);
+
+				FILEIO->WriteToFile(fileHandle, camera->IsMainCamera());
+
+				break;
+			}
+
+			case ComponentType::Script:
+			{
+				// 추후에 추가해야함.
+			}
 		}
 	}
 
@@ -361,77 +375,96 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 			switch (componentType)
 			{
-			case ComponentType::MeshRenderer:
-			{
-				shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-
-				string meshPath;
-				FILEIO->ReadFileData(fileHandle, meshPath);
-				meshRenderer->SetMesh(LoadMesh(meshPath));
-
-				string matName;
-				FILEIO->ReadFileData(fileHandle, matName);
-				meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
-
-				go->AddComponent(meshRenderer);
-
-				break;
-			}
-
-			case ComponentType::SkinnedMeshRenderer:
-			{
-				shared_ptr<SkinnedMeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
-
-				string meshPath;
-				FILEIO->ReadFileData(fileHandle, meshPath);
-				meshRenderer->SetMesh(LoadMesh(meshPath));
-
-				string matName;
-				FILEIO->ReadFileData(fileHandle, matName);
-				meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
-
-				string rootBoneName;
-				FILEIO->ReadFileData(fileHandle, rootBoneName);
-
-				string boneDataName;
-				FILEIO->ReadFileData(fileHandle, boneDataName);
-				meshRenderer->SetBoneData(LoadBone(boneDataName));
-
-				boneSettingQueue.push_back({ meshRenderer, rootBoneName });
-				go->AddComponent(meshRenderer);
-
-				break;
-			}
-
-			case ComponentType::Animator:
-			{
-				shared_ptr<Animator> animator = make_shared<Animator>();
-
-				bool isPlayOnInit, isLoop;
-				FILEIO->ReadFileData(fileHandle, &isPlayOnInit, sizeof(bool));
-				FILEIO->ReadFileData(fileHandle, &isLoop, sizeof(bool));
-
-				string currentAnimName;
-				FILEIO->ReadFileData(fileHandle, currentAnimName);
-
-				UINT32 animationCount;
-				FILEIO->ReadFileData(fileHandle, &animationCount, sizeof(UINT32));
-
-				for (int k = 0; k < animationCount; k++)
+				case ComponentType::MeshRenderer:
 				{
-					string animationPath;
-					FILEIO->ReadFileData(fileHandle, animationPath);
-					animator->AddAnimation(LoadAnimation(animationPath));
+					shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+
+					string meshPath;
+					FILEIO->ReadFileData(fileHandle, meshPath);
+					meshRenderer->SetMesh(LoadMesh(meshPath));
+
+					string matName;
+					FILEIO->ReadFileData(fileHandle, matName);
+					meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+
+					go->AddComponent(meshRenderer);
+
+					break;
 				}
 
-				animator->SetPlayOnInit(isPlayOnInit);
-				animator->SetLoop(isLoop);
-				animator->SetCurrentAnimation(currentAnimName);
+				case ComponentType::SkinnedMeshRenderer:
+				{
+					shared_ptr<SkinnedMeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
 
-				go->AddComponent(animator);
+					string meshPath;
+					FILEIO->ReadFileData(fileHandle, meshPath);
+					meshRenderer->SetMesh(LoadMesh(meshPath));
 
-				break;
-			}
+					string matName;
+					FILEIO->ReadFileData(fileHandle, matName);
+					meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+
+					string rootBoneName;
+					FILEIO->ReadFileData(fileHandle, rootBoneName);
+
+					string boneDataName;
+					FILEIO->ReadFileData(fileHandle, boneDataName);
+					meshRenderer->SetBoneData(LoadBone(boneDataName));
+
+					boneSettingQueue.push_back({ meshRenderer, rootBoneName });
+					go->AddComponent(meshRenderer);
+
+					break;
+				}
+
+				case ComponentType::Animator:
+				{
+					shared_ptr<Animator> animator = make_shared<Animator>();
+
+					bool isPlayOnInit, isLoop;
+					FILEIO->ReadFileData(fileHandle, &isPlayOnInit, sizeof(bool));
+					FILEIO->ReadFileData(fileHandle, &isLoop, sizeof(bool));
+
+					string currentAnimName;
+					FILEIO->ReadFileData(fileHandle, currentAnimName);
+
+					UINT32 animationCount;
+					FILEIO->ReadFileData(fileHandle, &animationCount, sizeof(UINT32));
+
+					for (int k = 0; k < animationCount; k++)
+					{
+						string animationPath;
+						FILEIO->ReadFileData(fileHandle, animationPath);
+						animator->AddAnimation(LoadAnimation(animationPath));
+					}
+
+					animator->SetPlayOnInit(isPlayOnInit);
+					animator->SetLoop(isLoop);
+					animator->SetCurrentAnimation(currentAnimName);
+
+					go->AddComponent(animator);
+
+					break;
+				}
+
+				case ComponentType::Camera:
+				{
+					shared_ptr<Camera> camera = make_shared<Camera>();
+
+					bool isMainCamera;
+					FILEIO->ReadFileData(fileHandle, &isMainCamera, sizeof(bool));
+					if (isMainCamera)
+						camera->SetAsMainCamera();
+
+					go->AddComponent(camera);
+
+					break;
+				}
+
+				case ComponentType::Script:
+				{
+
+				}
 			}
 		}
 

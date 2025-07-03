@@ -52,9 +52,9 @@ public:
 
 private:
 	float _currentTick = 0.0f;
-	bool _isPlayOnInit = true;
-	bool _isPlaying = true;
-	bool _isLoop = true;
+	bool _isPlayOnInit;
+	bool _isPlaying;
+	bool _isLoop;
 
 	map<string, shared_ptr<Animation>> _animations;
 	string _currentAnimation;

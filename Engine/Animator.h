@@ -3,6 +3,12 @@
 
 class Animation;
 
+struct AnimationState
+{
+	string StateName;
+	map<string, float> TransitionMap;	// StateName, fade
+};
+
 class Animator : public Component
 {
 public:

@@ -67,8 +67,6 @@ void TestScene::Init()
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
 
-	camera->GetTransform()->SetParent(sphere->GetTransform());
-
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
 
 	{
@@ -99,6 +97,8 @@ void TestScene::Update()
 {
 	Vector3 look = camera->GetComponent<Transform>()->GetLook();
 	Vector3 right = camera->GetComponent<Transform>()->GetRight();
+
+	//camera->GetTransform()->LookAt(model->GetTransform()->GetPosition());
 
 	//sphere->GetTransform()->Rotate(Vector3(0.0f, 30.0f * TIME->DeltaTime(), 0.0f));
 	//sphere2->GetTransform()->Rotate(Vector3(0.0f, 0.0f, 70.0f * TIME->DeltaTime()));

@@ -5,5 +5,7 @@ class PlayerScript : public Script
 public:
 	void Init() override;
 	void Update() override;
+
+	bool Move();
 };
 

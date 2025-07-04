@@ -181,6 +181,11 @@ void EngineGUIManager::ShowInspectorView()
 			{
 				RESOURCE->SavePrefab(_selectedObj);
 			}
+			if (ImGui::Button("Set Parent"))
+			{
+				_isParentSelectMode = !_isParentSelectMode;
+				cout << _isParentSelectMode << endl;
+			}
 			ImGui::Separator();
 
 			// Transform
@@ -433,7 +438,15 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 
 	bool isNodeOpen = ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags);
 	if (ImGui::IsItemClicked())
+	{
+		if (_isParentSelectMode && _selectedObj != nullptr)
+		{
+			_selectedObj->GetTransform()->SetParent(parent);
+			_isParentSelectMode = false;
+			cout << _isParentSelectMode << endl;
+		}
 		_selectedObj = parent->GetGameObject();
+	}
 	if (isNodeOpen)
 	{
 		for (shared_ptr<Transform> child : parent->GetChilds())

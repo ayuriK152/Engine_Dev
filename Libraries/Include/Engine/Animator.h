@@ -3,6 +3,12 @@
 
 class Animation;
 
+struct AnimationState
+{
+	string StateName;
+	map<string, float> TransitionMap;	// StateName, fade
+};
+
 class Animator : public Component
 {
 public:
@@ -28,10 +34,7 @@ public:
 	void UpdateBoneTransform();
 
 	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_CURRENT_ANIMATION ? _animations[_currentAnimation] : nullptr; }
-	void SetCurrentAnimation(const string& animationName) { 
-		// 현재 재생중인 애니메이션 틱 관리 필요함.ㄴ
-		_currentAnimation = animationName; 
-	}
+	void SetCurrentAnimation(const string& animationName) { _currentAnimation = animationName; }
 	
 	const map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
 	void AddAnimation(shared_ptr<Animation> animation) { 

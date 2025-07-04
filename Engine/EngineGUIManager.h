@@ -89,7 +89,6 @@ private:
 	void ShowAnimator(shared_ptr<Animator> animator);
 	void ShowScript(shared_ptr<Script> script);
 
-
 	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
 
 public:
@@ -101,5 +100,6 @@ private:
 	map<string, bool> _guiToggleValues;
 
 	shared_ptr<GameObject> _selectedObj = nullptr;
+	bool _isParentSelectMode = false;
 };
 

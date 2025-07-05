@@ -15,7 +15,7 @@ public:
 public:
 	virtual bool IsCollide(shared_ptr<Collider>& other)override;
 
-	BoundingOrientedBox GetBoundingBox() { return _boundingBox; }
+	BoundingOrientedBox& GetBoundingBox() { return _boundingBox; }
 
 private:
 	BoundingOrientedBox _boundingBox;

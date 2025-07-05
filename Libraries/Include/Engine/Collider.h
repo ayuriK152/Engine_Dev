@@ -14,6 +14,7 @@ public:
 	Collider(ColliderType type);
 	virtual ~Collider();
 
+public:
 	virtual bool IsCollide(shared_ptr<Collider>& other) = 0;
 
 	ColliderType GetColliderType() { return _colliderType; }

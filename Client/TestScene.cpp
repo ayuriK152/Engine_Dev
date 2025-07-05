@@ -1,15 +1,10 @@
 #include "pch.h"
 #include "TestScene.h"
 #include "PlayerScript.h"
+#include "SphereScript.h"
 
 void TestScene::Init()
 {
-	{
-		//AssetLoader* assetLoader = new AssetLoader();
-		//assetLoader->ImportAssetFile(L"Y Bot\\Y Bot.fbx");
-		//delete assetLoader;
-	}
-
 	// 텍스쳐 테스트용 나중에 삭제
 	{
 		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");
@@ -41,45 +36,45 @@ void TestScene::Init()
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
 		model = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		shared_ptr<Script> script = make_shared<PlayerScript>();
-		model->AddComponent(script);
+		model->AddComponent(make_shared<PlayerScript>());
 	}
 
-	sphere = make_shared<GameObject>();
-	sphere->name = "sphere";
-	sphere->AddComponent(make_shared<MeshRenderer>());
-	sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
-	gameObjects.push_back(sphere);
+	{
+		sphere = make_shared<GameObject>();
+		sphere->name = "sphere";
+		sphere->AddComponent(make_shared<MeshRenderer>());
+		sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+		sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
+		sphere->AddComponent(make_shared<SphereScript>());
+		gameObjects.push_back(sphere);
+	}
 
-	sphere2 = make_shared<GameObject>();
-	sphere2->name = "sphere2";
-	sphere2->AddComponent(make_shared<MeshRenderer>());
-	sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	//gameObjects.push_back(sphere2);
+	{
+		cube1 = make_shared<GameObject>();
+		cube1->name = "cube1";
+		cube1->AddComponent(make_shared<MeshRenderer>());
+		cube1->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		cube1->AddComponent(make_shared<BoxCollider>());
+		gameObjects.push_back(cube1);
+	}
 
-	sphere3 = make_shared<GameObject>();
-	sphere3->name = "sphere3";
-	sphere3->AddComponent(make_shared<MeshRenderer>());
-	sphere3->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	//gameObjects.push_back(sphere3);
+	{
+		cube2 = make_shared<GameObject>();
+		cube2->name = "cube2";
+		cube2->AddComponent(make_shared<MeshRenderer>());
+		cube2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		cube2->AddComponent(make_shared<BoxCollider>());
+		cube2->GetTransform()->SetPosition(Vector3(-3.0f, 0.0f, 0.0f));
+		gameObjects.push_back(cube2);
+	}
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
 
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
 
-	{
-		sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, 0.0f));
-		//sphere2->GetTransform()->SetPosition(Vector3(2.5f, 1.5f, 0.0f));
-		//sphere2->GetTransform()->SetScale(Vector3(0.5f, 0.5f, 0.5f));
-		//sphere2->GetTransform()->SetParent(sphere->GetTransform());
-		//sphere3->GetTransform()->SetPosition(Vector3(3.0f, 1.5f, 0.0f));
-		//sphere3->GetTransform()->SetScale(Vector3(0.2f, 0.2f, 0.2f));
-		//sphere3->GetTransform()->SetParent(sphere2->GetTransform());
-
-		sphere->GetTransform()->SetPosition(Vector3(5.0f, 1.0f, 0.0f));
-	}
+	sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, 0.0f));
+	sphere->GetTransform()->SetPosition(Vector3(3.0f, 1.0f, 0.0f));
 
 	
 	while (gameObjects.size() > 0)
@@ -95,28 +90,15 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
-	Vector3 look = camera->GetComponent<Transform>()->GetLook();
-	Vector3 right = camera->GetComponent<Transform>()->GetRight();
+	if (cube2->GetComponent<Collider>()->IsOnColliding())
+	{
+		cout << "colliding" << endl;
+	}
 
-	//camera->GetTransform()->LookAt(model->GetTransform()->GetPosition());
-
-	//sphere->GetTransform()->Rotate(Vector3(0.0f, 30.0f * TIME->DeltaTime(), 0.0f));
-	//sphere2->GetTransform()->Rotate(Vector3(0.0f, 0.0f, 70.0f * TIME->DeltaTime()));
-
-	//if (INPUTM->IsKeyPress(KeyValue::W))
-	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, TIME->DeltaTime() * 5.0f));
-	//if (INPUTM->IsKeyPress(KeyValue::S))
-	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(look, -TIME->DeltaTime() * 5.0f));
-	//if (INPUTM->IsKeyPress(KeyValue::A))
-	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(right, TIME->DeltaTime() * 5.0f));
-	//if (INPUTM->IsKeyPress(KeyValue::D))
-	//	camera->GetTransform()->Translate(MathHelper::VectorMultiply(right, -TIME->DeltaTime() * 5.0f));
-	//
-	//if (INPUTM->IsKeyPress(KeyValue::Q))
-	//	camera->GetTransform()->Rotate(Vector3(0.0f, -20.0f * TIME->DeltaTime(), 0.0f));
-	//if (INPUTM->IsKeyPress(KeyValue::E))
-	//	camera->GetTransform()->Rotate(Vector3(0.0f, 20.0f * TIME->DeltaTime(), 0.0f));
-
+	if (INPUTM->IsKeyPress(KeyValue::F))
+	{
+		cube2->GetTransform()->Translate(Vector3(1.0f * TIME->DeltaTime(), 0.0f, 0.0f));
+	}
 
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();

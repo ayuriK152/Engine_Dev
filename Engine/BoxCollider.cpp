@@ -15,54 +15,37 @@ BoxCollider::~BoxCollider()
 
 void BoxCollider::Init()
 {
-	auto meshRenderer = GetGameObject()->GetComponent<MeshRenderer>();
-	if (meshRenderer == nullptr) {
-
-	}
-	BoundingOrientedBox::CreateFromPoints(
-		_boundingBox, 
-		meshRenderer->GetMesh()->GetVertexCount(),
-		&meshRenderer->GetMesh()->GetVertices()[0].Position,
-		sizeof(Vertex));
-	_colliders.push_back(static_pointer_cast<BoxCollider>(shared_from_this()));
+	_boundingBox.Center = GetTransform()->GetPosition();
+	_colliders.push_back(static_pointer_cast<Collider>(shared_from_this()));
 }
 
 void BoxCollider::FixedUpdate()
 {
-	_isOnColliding = false;
-	_collidingVec = { 0.0f, 0.0f, 0.0f };
 
-	_boundingBox.Center = GetTransform()->GetPosition();
-	XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&GetTransform()->GetRotationRadian()));
-	XMStoreFloat4(&_boundingBox.Orientation, quaternion);
-	for (auto& c : _colliders)
-	{
-		if (c == shared_from_this())
-			continue;
-
-		if (IsCollide(c)) {
-
-		}
-	}
 }
 
 void BoxCollider::Update()
 {
-	
+	_boundingBox.Center = GetTransform()->GetPosition();
+	for (auto& collider : _colliders)
+	{
+		if (collider == static_pointer_cast<Collider>(shared_from_this()))
+			continue;
+
+		_isOnColliding = IsCollide(collider);
+	}
 }
 
 bool BoxCollider::IsCollide(shared_ptr<Collider>& other)
 {
-	ColliderType otherType = other->GetColliderType();
-
-	if (otherType == ColliderType::Box) {
-		auto boundary = static_pointer_cast<BoxCollider>(other)->GetBoundingBox();
-		if (_boundingBox.Intersects(boundary)) {
-			_collidingVec = MathHelper::VectorAddition(_collidingVec, MathHelper::VectorSubtract(_boundingBox.Center, boundary.Center));
-			_collidingVec = MathHelper::VectorNormalize(_collidingVec);
-			_isOnColliding = true;
-			return true;
+	switch (other->GetColliderType())
+	{
+		case ColliderType::Box:
+		{
+			auto boxCollider = static_pointer_cast<BoxCollider>(other);
+			return _boundingBox.Intersects(boxCollider->GetBoundingBox());
+			break;
 		}
-		return false;
 	}
+	return false;
 }

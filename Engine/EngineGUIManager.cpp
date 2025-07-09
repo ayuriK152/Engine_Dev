@@ -223,6 +223,10 @@ void EngineGUIManager::ShowInspectorView()
 					case ComponentType::Script:
 						ShowScript(static_pointer_cast<Script>(c.second));
 						break;
+
+					case ComponentType::Collider:
+						ShowCollider(static_pointer_cast<Collider>(c.second));
+						break;
 				}
 			}
 		}
@@ -268,6 +272,35 @@ void EngineGUIManager::ShowResourceDirectory()
 		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = false;
 	}
 	ImGui::End();
+}
+
+void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
+{
+	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
+	if (parent->GetChilds().size() == 0)
+		tree_flags |= ImGuiTreeNodeFlags_Leaf;
+	if (_selectedObj == parent->GetGameObject())
+		tree_flags |= ImGuiTreeNodeFlags_Selected;
+
+	bool isNodeOpen = ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags);
+	if (ImGui::IsItemClicked())
+	{
+		if (_isParentSelectMode && _selectedObj != nullptr)
+		{
+			_selectedObj->GetTransform()->SetParent(parent);
+			_isParentSelectMode = false;
+			cout << _isParentSelectMode << endl;
+		}
+		_selectedObj = parent->GetGameObject();
+	}
+	if (isNodeOpen)
+	{
+		for (shared_ptr<Transform> child : parent->GetChilds())
+		{
+			HierarchyObjectRecursion(child);
+		}
+		ImGui::TreePop();
+	}
 }
 
 void EngineGUIManager::ShowTransform()
@@ -365,7 +398,7 @@ void EngineGUIManager::ShowCamera(shared_ptr<Camera> camera)
 {
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::SeparatorText("Mesh");
+		ImGui::SeparatorText("Main Camera");
 		ImGui::Text(camera->IsMainCamera() ? "True" : "False");
 	}
 }
@@ -428,32 +461,26 @@ void EngineGUIManager::ShowScript(shared_ptr<Script> script)
 	}
 }
 
-void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
+void EngineGUIManager::ShowCollider(shared_ptr<Collider> collider)
 {
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
-	if (parent->GetChilds().size() == 0)
-		tree_flags |= ImGuiTreeNodeFlags_Leaf;
-	if (_selectedObj == parent->GetGameObject())
-		tree_flags |= ImGuiTreeNodeFlags_Selected;
+	if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::SeparatorText("Collider Type");
+		switch (collider->GetColliderType())
+		{
+			case ColliderType::Box:
+				ImGui::Text("Box Collider");
+				break;
+			default:
+				ImGui::Text("Unknown Collider Type");
+				break;
+		}
 
-	bool isNodeOpen = ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags);
-	if (ImGui::IsItemClicked())
-	{
-		if (_isParentSelectMode && _selectedObj != nullptr)
-		{
-			_selectedObj->GetTransform()->SetParent(parent);
-			_isParentSelectMode = false;
-			cout << _isParentSelectMode << endl;
-		}
-		_selectedObj = parent->GetGameObject();
-	}
-	if (isNodeOpen)
-	{
-		for (shared_ptr<Transform> child : parent->GetChilds())
-		{
-			HierarchyObjectRecursion(child);
-		}
-		ImGui::TreePop();
+		ImGui::SeparatorText("Is On Collide");
+		if (collider->IsOnColliding())
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "On Collide");
+		else
+			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Not On Collide");
 	}
 }
 

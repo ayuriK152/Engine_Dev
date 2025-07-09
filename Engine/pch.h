@@ -120,6 +120,7 @@ using namespace tinyxml2;
 #include "FileIOUtil.h"
 #include "EngineGUIManager.h"
 #include "EngineStatusManager.h"
+#include "DebugManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

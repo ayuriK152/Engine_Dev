@@ -19,7 +19,6 @@ void SkinnedMeshRenderer::Init()
 		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * _boneTransforms.size();
 
 		_boneTransformUploadBuffer = make_unique<UploadBuffer<XMFLOAT4X4>>(_boneTransforms.size(), false);
-
 		CreateBoneSRV(_boneTransforms);
 	}
 

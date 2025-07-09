@@ -18,11 +18,17 @@ void ResourceManager::CreateDefaultResources()
 	auto opaquePS = make_shared<Shader>(L"DefaultPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"opaquePS", opaquePS);
 
+	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"skyboxVS", skyboxVS);
+
 	auto skyboxPS = make_shared<Shader>(L"SkyboxPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"skyboxPS", skyboxPS);
 
-	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);
-	Add<Shader>(L"skyboxVS", skyboxVS);
+	auto debugVS = make_shared<Shader>(L"DebugVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"debugVS", debugVS);
+
+	auto debugPS = make_shared<Shader>(L"DebugPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"debugPS", debugPS);
 
 
 	//==========Texture==========

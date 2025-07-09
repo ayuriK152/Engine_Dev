@@ -70,3 +70,30 @@ struct Vertex
 	Vector4 boneWeights;
 	INT boneIndices[4] = { -1, -1, -1, -1 };
 };
+
+struct VertexP
+{
+	VertexP() {};
+	VertexP(const Vector3& p) : Position(p) {}
+	VertexP(float px, float py, float pz) : Position(px, py, pz) {}
+
+	Vector3 Position;
+};
+
+struct VertexPC
+{
+	VertexPC() {};
+	VertexPC(
+		const Vector3& p, 
+		const Color& c) : 
+		Position(p), 
+		Color(c) {}
+	VertexPC(
+		float px, float py, float pz, 
+		float cr, float cg, float cb, float ca) : 
+		Position(px, py, pz), 
+		Color(cr, cg, cb, ca) {}
+
+	Vector3 Position;
+	Color Color;
+};

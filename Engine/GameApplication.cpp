@@ -77,6 +77,7 @@ void GameApplication::Update()
 		INPUTM->Update();
 		GRAPHIC->Update();
 		RENDER->Update();
+		DEBUG->Update();
 		ENGINESTAT->Update();
 		ENGINEGUI->Update();
 

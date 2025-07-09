@@ -37,6 +37,7 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="DebugManager.h" />
     <ClInclude Include="FileIOUtil.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="Descriptors.h" />
@@ -108,6 +109,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="FileIOUtil.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="DXUtil.cpp" />

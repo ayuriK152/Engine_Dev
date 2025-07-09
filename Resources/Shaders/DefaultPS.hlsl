@@ -1,4 +1,4 @@
-#include "Default.hlsl"
+#include "Structs.hlsl"
 #include "LightingUtil.hlsl"
 
 float4 PS(VertexOut pin) : SV_Target

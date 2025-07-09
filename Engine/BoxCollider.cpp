@@ -17,6 +17,7 @@ void BoxCollider::Init()
 {
 	_boundingBox.Center = GetTransform()->GetPosition();
 	_colliders.push_back(static_pointer_cast<Collider>(shared_from_this()));
+	DEBUG->AddDebugRender(static_pointer_cast<Collider>(shared_from_this()));
 }
 
 void BoxCollider::FixedUpdate()
@@ -26,7 +27,14 @@ void BoxCollider::FixedUpdate()
 
 void BoxCollider::Update()
 {
-	_boundingBox.Center = GetTransform()->GetPosition();
+	if (GetGameObject()->GetFramesDirty() > 0)
+	{
+		_boundingBox.Center = GetTransform()->GetPosition();
+		Vector4 orientation;
+		XMStoreFloat4(&orientation, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&GetTransform()->GetRotationRadian())));
+		_boundingBox.Orientation = orientation;
+	}
+
 	for (auto& collider : _colliders)
 	{
 		if (collider == static_pointer_cast<Collider>(shared_from_this()))

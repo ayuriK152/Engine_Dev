@@ -158,6 +158,9 @@
     <ClInclude Include="Script.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
+    <ClInclude Include="DebugManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -342,6 +345,9 @@
     </ClCompile>
     <ClCompile Include="Script.cpp">
       <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

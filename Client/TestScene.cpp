@@ -50,22 +50,25 @@ void TestScene::Init()
 	}
 
 	{
-		cube1 = make_shared<GameObject>();
-		cube1->name = "cube1";
-		cube1->AddComponent(make_shared<MeshRenderer>());
-		cube1->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		cube1->AddComponent(make_shared<BoxCollider>());
-		gameObjects.push_back(cube1);
+		ground = make_shared<GameObject>();
+		ground->name = "ground";
+		ground->AddComponent(make_shared<MeshRenderer>());
+		ground->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		ground->AddComponent(make_shared<BoxCollider>());
+		ground->GetTransform()->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
+		ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));
+		gameObjects.push_back(ground);
 	}
 
 	{
-		cube2 = make_shared<GameObject>();
-		cube2->name = "cube2";
-		cube2->AddComponent(make_shared<MeshRenderer>());
-		cube2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		cube2->AddComponent(make_shared<BoxCollider>());
-		cube2->GetTransform()->SetPosition(Vector3(-3.0f, 0.0f, 0.0f));
-		gameObjects.push_back(cube2);
+		box = make_shared<GameObject>();
+		box->name = "box";
+		box->AddComponent(make_shared<MeshRenderer>());
+		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		box->AddComponent(make_shared<BoxCollider>());
+		box->AddComponent(make_shared<Rigidbody>());
+		box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
+		gameObjects.push_back(box);
 	}
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
@@ -90,16 +93,6 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
-	if (cube2->GetComponent<Collider>()->IsOnColliding())
-	{
-		cout << "colliding" << endl;
-	}
-
-	if (INPUTM->IsKeyPress(KeyValue::F))
-	{
-		cube2->GetTransform()->Translate(Vector3(1.0f * TIME->DeltaTime(), 0.0f, 0.0f));
-	}
-
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 

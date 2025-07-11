@@ -7,6 +7,13 @@ enum ColliderType
 	Sphere
 };
 
+struct CollisionInfo
+{
+	bool IsCollide;
+	Vector3 Normal;
+	float Depth;
+};
+
 class Collider : public Component
 {
 	using Super = Component;
@@ -15,17 +22,18 @@ public:
 	virtual ~Collider();
 
 public:
-	virtual bool IsCollide(shared_ptr<Collider>& other) = 0;
+	virtual CollisionInfo CheckCollide(shared_ptr<Collider>& other) = 0;
 
 	ColliderType GetColliderType() { return _colliderType; }
-	Vector3 GetCollidingVector() { return _collidingVec; }
+	Vector3 GetCollidingDirection() { return _collidingDir; }
 	bool IsOnColliding() { return _isOnColliding; }
 
 protected:
 	ColliderType _colliderType;
-	static vector<shared_ptr<Collider>> _colliders;
 
-	Vector3 _collidingVec;
-	bool _isOnColliding;
+	Vector3 _collidingDir;
+	bool _isOnColliding = false;
+
+	friend class PhysicsManager;
 };
 

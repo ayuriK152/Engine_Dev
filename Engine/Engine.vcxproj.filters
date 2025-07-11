@@ -161,6 +161,9 @@
     <ClInclude Include="DebugManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -347,6 +350,9 @@
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="DebugManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
   </ItemGroup>

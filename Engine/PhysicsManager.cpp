@@ -55,6 +55,18 @@ void PhysicsManager::LateUpdate()
 
 }
 
+void PhysicsManager::DeleteCollider(shared_ptr<Collider> collider)
+{
+	for (int i = 0; i < _colliders.size(); i++)
+	{
+		if (_colliders[i] == collider)
+		{
+			_colliders.erase(_colliders.begin() + i);
+			break;
+		}
+	}
+}
+
 void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigidbody>& rba, shared_ptr<Rigidbody>& rbb)
 {
 	float massA = rba != nullptr ? rba->GetMass() : 0.0f;

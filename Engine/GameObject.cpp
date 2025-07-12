@@ -44,6 +44,8 @@ void GameObject::Update()
 	}
 	for (auto& c : components)
 	{
+		if (c.second->type == ComponentType::Collider)
+			continue;
 		c.second->Update();
 	}
 }

@@ -13,6 +13,7 @@ public:
 
 public:
 	void AddCollider(shared_ptr<Collider> collider) { _colliders.push_back(collider); }
+	void DeleteCollider(shared_ptr<Collider> collider);
 
 	void ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigidbody>& rba, shared_ptr<Rigidbody>& rbb);
 

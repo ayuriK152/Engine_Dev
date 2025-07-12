@@ -8,5 +8,11 @@ Collider::Collider(ColliderType type) : Super(ComponentType::Collider), _collide
 
 Collider::~Collider()
 {
+	try
+	{
+		PHYSICS->DeleteCollider(static_pointer_cast<Collider>(shared_from_this()));
+	} catch (exception e)
+	{
 
+	}
 }

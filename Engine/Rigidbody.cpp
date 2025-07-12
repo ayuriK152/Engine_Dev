@@ -8,7 +8,7 @@ Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 	_velocity = { 0.0f, 0.0f, 0.0f };
 	_netForce = { 0.0f, 0.0f, 0.0f };
 	_elasticModulus = 0.5f;
-	_friction = 0.5f;
+	_friction = 0.2f;
 	_mass = 1.0f;
 	_drag = 0.0f;
 }

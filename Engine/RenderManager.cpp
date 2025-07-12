@@ -305,6 +305,7 @@ void RenderManager::UpdateMaterialCB()
 			matConstants.Diffuse = mat->diffuse;
 			matConstants.Specular = mat->specular;
 			matConstants.Emissive = mat->emissive;
+			matConstants.Tilling = mat->tilling;
 			matConstants.Shiness = mat->shiness;
 
 			_materialCB->CopyData(mat->matCBIndex, matConstants);

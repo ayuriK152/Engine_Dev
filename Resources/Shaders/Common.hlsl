@@ -25,6 +25,7 @@ cbuffer cbMaterial : register(b2)
 	float4   Diffuse;
     float4   Specular;
     float4   Emissive;
+    float2   Tilling;
     float    Shiness;
 };
 

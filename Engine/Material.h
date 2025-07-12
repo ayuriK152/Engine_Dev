@@ -29,6 +29,7 @@ public:
 	Color diffuse;
 	Color specular;
 	Color emissive;
+	Vector2 tilling;
 	float shiness;
 
 private:

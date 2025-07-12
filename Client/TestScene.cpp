@@ -9,6 +9,9 @@ void TestScene::Init()
 	{
 		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");
 		RESOURCE->Add<Texture>(L"0dot001mm_1", koyuki);
+
+		shared_ptr<Texture> proto1 = make_shared<Texture>(L"prototype_dark1.dds");
+		RESOURCE->Add<Texture>(L"proto_dark1", proto1);
 	}
 
 	skybox = make_shared<GameObject>();
@@ -33,10 +36,10 @@ void TestScene::Init()
 	gameObjects.push_back(globalLight);
 
 	{
-		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
-		model = loadedObjects[0];
-		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		model->AddComponent(make_shared<PlayerScript>());
+		//auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
+		//model = loadedObjects[0];
+		//gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		//model->AddComponent(make_shared<PlayerScript>());
 	}
 
 	{
@@ -54,6 +57,10 @@ void TestScene::Init()
 		ground->name = "ground";
 		ground->AddComponent(make_shared<MeshRenderer>());
 		ground->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		auto mat = make_shared<Material>("Proto_dark1", L"proto_dark1");
+		mat->tilling = { 100.0f, 100.0f };
+		RESOURCE->Add<Material>(L"Mat_Proto_dark1", mat);
+		ground->GetComponent<MeshRenderer>()->SetMaterial(mat);
 		ground->AddComponent(make_shared<BoxCollider>());
 		ground->GetTransform()->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
 		ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));

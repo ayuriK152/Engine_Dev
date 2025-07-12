@@ -19,7 +19,7 @@ struct MaterialConstants
 	Color Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Color Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
 	Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
-
+	Vector2 Tilling = { 1.0f, 1.0f };
 	float Shiness = 0.25f;
 };
 

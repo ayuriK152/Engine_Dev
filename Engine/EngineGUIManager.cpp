@@ -327,7 +327,14 @@ void EngineGUIManager::ShowTransform()
 			isChanged = true;
 
 		if (isChanged)
+		{
 			_selectedObj->GetTransform()->SetLocalPosition(pos);
+			auto rb = _selectedObj->GetComponent<Rigidbody>();
+			if (rb != nullptr)
+			{
+				rb->SetVelocity(Vector3(0.0f, 0.0f, 0.0f));
+			}
+		}
 
 		isChanged = false;
 		ImGui::SeparatorText("Rotation");

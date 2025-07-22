@@ -43,16 +43,6 @@ void TestScene::Init()
 	}
 
 	{
-		sphere = make_shared<GameObject>();
-		sphere->name = "sphere";
-		sphere->AddComponent(make_shared<MeshRenderer>());
-		sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-		sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
-		sphere->AddComponent(make_shared<SphereScript>());
-		gameObjects.push_back(sphere);
-	}
-
-	{
 		ground = make_shared<GameObject>();
 		ground->name = "ground";
 		ground->AddComponent(make_shared<MeshRenderer>());
@@ -68,14 +58,39 @@ void TestScene::Init()
 	}
 
 	{
-		box = make_shared<GameObject>();
-		box->name = "box";
-		box->AddComponent(make_shared<MeshRenderer>());
-		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		box->AddComponent(make_shared<BoxCollider>());
-		box->AddComponent(make_shared<Rigidbody>());
-		box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
-		gameObjects.push_back(box);
+		//box = make_shared<GameObject>();
+		//box->name = "box";
+		//box->AddComponent(make_shared<MeshRenderer>());
+		//box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		//box->AddComponent(make_shared<BoxCollider>());
+		//box->AddComponent(make_shared<Rigidbody>());
+		//box->GetTransform()->SetPosition(Vector3(2.0f, 5.0f, 0.0f));
+		//gameObjects.push_back(box);
+	}
+
+	{
+		sphere = make_shared<GameObject>();
+		sphere->name = "sphere";
+		sphere->AddComponent(make_shared<MeshRenderer>());
+		sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+		sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
+		sphere->AddComponent(make_shared<SphereCollider>());
+		sphere->AddComponent(make_shared<SphereScript>());
+		sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+		gameObjects.push_back(sphere);
+	}
+
+	{
+		sphere2 = make_shared<GameObject>();
+		sphere2->name = "sphere2";
+		sphere2->AddComponent(make_shared<MeshRenderer>());
+		sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+		sphere2->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
+		sphere2->AddComponent(make_shared<SphereCollider>());
+		sphere2->AddComponent(make_shared<SphereScript>());
+		sphere2->AddComponent(make_shared<Rigidbody>());
+		sphere2->GetTransform()->SetPosition(Vector3(2.0f, 4.0f, 0.0f));
+		gameObjects.push_back(sphere2);
 	}
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
@@ -83,10 +98,6 @@ void TestScene::Init()
 
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -1.0f, 1.0f));
 
-	sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, 0.0f));
-	sphere->GetTransform()->SetPosition(Vector3(3.0f, 1.0f, 0.0f));
-
-	
 	while (gameObjects.size() > 0)
 	{
 		RENDER->AddGameObject(gameObjects[0]);

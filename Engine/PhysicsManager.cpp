@@ -69,8 +69,8 @@ void PhysicsManager::DeleteCollider(shared_ptr<Collider> collider)
 
 void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigidbody>& rba, shared_ptr<Rigidbody>& rbb)
 {
-	float massA = rba != nullptr ? rba->GetMass() : 0.0f;
-	float massB = rbb != nullptr ? rbb->GetMass() : 0.0f;
+	float massA = rba != nullptr ? rba->mass : 0.0f;
+	float massB = rbb != nullptr ? rbb->mass : 0.0f;
 
 	float resolveValue = massA == 0.0f || massB == 0.0f ? 1.0f : 0.5f;
 
@@ -80,18 +80,20 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 	if (rba != nullptr)
 	{
 		Vector3 pos = rba->GetTransform()->GetPosition();
-		Vector3 vel = MathHelper::VectorReflect(MathHelper::VectorMultiply(rba->GetVelocity(), rba->GetElastic()), collInfo.Normal);
+		Vector3 vel = MathHelper::VectorReflect(MathHelper::VectorMultiply(rba->GetVelocity(), rba->elasticModulus), collInfo.Normal);
 		rba->SetVelocity(vel);
 		Vector3 finalPos = MathHelper::VectorAddition(MathHelper::VectorSubtract(pos, correctionA), MathHelper::VectorMultiply(vel, collInfo.Depth * resolveValue));
+
 		rba->GetTransform()->SetPosition(finalPos);
 	}
 
 	if (rbb != nullptr)
 	{
 		Vector3 pos = rbb->GetTransform()->GetPosition();
-		Vector3 vel = MathHelper::VectorReflect(MathHelper::VectorMultiply(rbb->GetVelocity(), rbb->GetElastic()), collInfo.Normal);
-		rbb->SetVelocity(MathHelper::VectorReflect(MathHelper::VectorMultiply(rbb->GetVelocity(), rbb->GetElastic()), collInfo.Normal));
+		Vector3 vel = MathHelper::VectorReflect(MathHelper::VectorMultiply(rbb->GetVelocity(), rbb->elasticModulus), collInfo.Normal);
+		rbb->SetVelocity(MathHelper::VectorReflect(MathHelper::VectorMultiply(rbb->GetVelocity(), rbb->elasticModulus), collInfo.Normal));
 		Vector3 finalPos = MathHelper::VectorAddition(MathHelper::VectorAddition(pos, correctionB), MathHelper::VectorMultiply(vel, collInfo.Depth * resolveValue));
+
 		rbb->GetTransform()->SetPosition(finalPos);
 	}
 }

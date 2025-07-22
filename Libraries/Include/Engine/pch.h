@@ -102,6 +102,7 @@ using namespace tinyxml2;
 #include "Camera.h"
 #include "Collider.h"
 #include "BoxCollider.h"
+#include "SphereCollider.h"
 #include "Rigidbody.h"
 #include "Animator.h"
 #include "Light.h"

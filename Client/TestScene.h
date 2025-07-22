@@ -13,6 +13,7 @@ private:
 	shared_ptr<GameObject> camera;
 	shared_ptr<GameObject> globalLight;
 	shared_ptr<GameObject> sphere;
+	shared_ptr<GameObject> sphere2;
 	shared_ptr<GameObject> ground;
 	shared_ptr<GameObject> box;
 	shared_ptr<GameObject> model;

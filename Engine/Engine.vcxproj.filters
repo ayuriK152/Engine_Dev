@@ -83,14 +83,11 @@
     <ClInclude Include="InputManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Rigidbody.h">
-      <Filter>02. GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="BoxCollider.h">
-      <Filter>02. GameObject\Components\Colliders</Filter>
+      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>02. GameObject\Components\Colliders</Filter>
+      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="AssetLoader.h">
       <Filter>98. Utils</Filter>
@@ -164,6 +161,12 @@
     <ClInclude Include="PhysicsManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>02. GameObject\Components\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -180,9 +183,6 @@
     </Filter>
     <Filter Include="01. EngineComponents\01. Managers">
       <UniqueIdentifier>{dca9fbf7-1588-499f-9f07-24cfaeca83fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Components\Colliders">
-      <UniqueIdentifier>{8bb58b28-1335-4c2a-8060-d0f1c386fe42}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Components\Lights">
       <UniqueIdentifier>{5f7195c8-cd84-4c3d-b226-554064946b1c}</UniqueIdentifier>
@@ -210,6 +210,12 @@
     </Filter>
     <Filter Include="02. GameObject\Components\MeshRenderer">
       <UniqueIdentifier>{a16cbda6-39ad-49f4-891c-365318c88ded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Components\Physics">
+      <UniqueIdentifier>{465baf47-2de3-44fb-961d-91a5fa577afb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Components\Physics\Colliders">
+      <UniqueIdentifier>{8bb58b28-1335-4c2a-8060-d0f1c386fe42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -280,14 +286,11 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Rigidbody.cpp">
-      <Filter>02. GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
-      <Filter>02. GameObject\Components\Colliders</Filter>
+      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">
-      <Filter>02. GameObject\Components\Colliders</Filter>
+      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="AssetLoader.cpp">
       <Filter>98. Utils</Filter>
@@ -354,6 +357,12 @@
     </ClCompile>
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>02. GameObject\Components\Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

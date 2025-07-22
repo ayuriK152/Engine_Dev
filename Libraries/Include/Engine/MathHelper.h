@@ -26,6 +26,7 @@ public:
 
 	static Vector3 VectorNormalize(const Vector3& v);
 	static Vector3 VectorReflect(const Vector3& v, const Vector3& vn);
+	static float VectorLength(const Vector3& v);
 
 	static Vector3 RadianToDegree(const Vector3& radian);
 	static Vector3 DegreeToRadian(const Vector3& degree);

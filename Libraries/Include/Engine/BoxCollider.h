@@ -15,13 +15,13 @@ public:
 public:
 	virtual CollisionInfo CheckCollide(shared_ptr<Collider>& other)override;
 
-	float CheckAxis(XMVECTOR& axis, XMMATRIX& rotA, XMMATRIX& rotB, BoundingOrientedBox& target);
+	float CheckOBB(XMVECTOR& axis, XMMATRIX& rotA, XMMATRIX& rotB, BoundingOrientedBox& target);
+	XMVECTOR CheckSphere(XMVECTOR& axis, XMVECTOR& dist, float extent);
 
 	BoundingOrientedBox& GetBoundingBox() { return _boundingBox; }
 	XMMATRIX& GetBoundingBoxRotationMatrix() { return XMMatrixRotationQuaternion(XMLoadFloat4(&_boundingBox.Orientation)); }
 
 private:
 	BoundingOrientedBox _boundingBox;
-	Vector3 _axis[3];
 };
 

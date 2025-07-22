@@ -12,6 +12,12 @@ struct CollisionInfo
 	bool IsCollide;
 	Vector3 Normal;
 	float Depth;
+
+	CollisionInfo() {
+		IsCollide = false;
+		Normal = { 0.0f, 0.0f, 0.0f };
+		Depth = FLT_MAX;
+	}
 };
 
 class Collider : public Component

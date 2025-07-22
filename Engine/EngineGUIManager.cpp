@@ -287,7 +287,7 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 		tree_flags |= ImGuiTreeNodeFlags_Selected;
 
 	// label값 id추가해서 중복 방지하도록 조치 필요함
-	bool isNodeOpen = ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags);
+	bool isNodeOpen = ImGui::TreeNodeEx((parent->GetGameObject()->name + "##" + to_string(parent->GetGameObject()->objCBIndex)).c_str(), tree_flags);
 	if (ImGui::IsItemClicked())
 	{
 		if (_isParentSelectMode && _selectedObj != nullptr)

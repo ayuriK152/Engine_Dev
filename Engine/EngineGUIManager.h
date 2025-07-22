@@ -92,6 +92,7 @@ private:
 	void ShowAnimator(shared_ptr<Animator> animator);
 	void ShowScript(shared_ptr<Script> script);
 	void ShowCollider(shared_ptr<Collider> collider);
+	void ShowRigidbody(shared_ptr<Rigidbody> rigidbody);
 #pragma endregion
 
 public:

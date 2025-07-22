@@ -22,6 +22,8 @@ void Rigidbody::FixedUpdate()
 {
 	if (isGravity)
 		_netForce.y = GRAVITY;
+	else
+		_netForce.y = 0.0f;
 }
 
 void Rigidbody::Update()

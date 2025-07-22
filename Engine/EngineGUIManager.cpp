@@ -227,6 +227,10 @@ void EngineGUIManager::ShowInspectorView()
 					case ComponentType::Collider:
 						ShowCollider(static_pointer_cast<Collider>(c.second));
 						break;
+
+					case ComponentType::Rigidbody:
+						ShowRigidbody(static_pointer_cast<Rigidbody>(c.second));
+						break;
 				}
 			}
 		}
@@ -282,6 +286,7 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 	if (_selectedObj == parent->GetGameObject())
 		tree_flags |= ImGuiTreeNodeFlags_Selected;
 
+	// label값 id추가해서 중복 방지하도록 조치 필요함
 	bool isNodeOpen = ImGui::TreeNodeEx(parent->GetGameObject()->name.c_str(), tree_flags);
 	if (ImGui::IsItemClicked())
 	{
@@ -315,15 +320,15 @@ void EngineGUIManager::ShowTransform()
 		ImGui::SeparatorText("Position");
 		ImGui::Text("X");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Position_X", &pos.x))
+		if (ImGui::InputFloat("##Transform_Position_X", &pos.x))
 			isChanged = true;
 		ImGui::Text("Y");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Position_Y", &pos.y))
+		if (ImGui::InputFloat("##Transform_Position_Y", &pos.y))
 			isChanged = true;
 		ImGui::Text("Z");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Position_Z", &pos.z))
+		if (ImGui::InputFloat("##Transform_Position_Z", &pos.z))
 			isChanged = true;
 
 		if (isChanged)
@@ -340,15 +345,15 @@ void EngineGUIManager::ShowTransform()
 		ImGui::SeparatorText("Rotation");
 		ImGui::Text("X");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Rotation_X", &rot.x))
+		if (ImGui::InputFloat("##Transform_Rotation_X", &rot.x))
 			isChanged = true;
 		ImGui::Text("Y");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Rotation_Y", &rot.y))
+		if (ImGui::InputFloat("##Transform_Rotation_Y", &rot.y))
 			isChanged = true;
 		ImGui::Text("Z");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Rotation_Z", &rot.z))
+		if (ImGui::InputFloat("##Transform_Rotation_Z", &rot.z))
 			isChanged = true;
 
 		if (isChanged)
@@ -358,15 +363,15 @@ void EngineGUIManager::ShowTransform()
 		ImGui::SeparatorText("Scale");
 		ImGui::Text("X");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Scale_X", &scale.x))
+		if (ImGui::InputFloat("##Transform_Scale_X", &scale.x))
 			isChanged = true;
 		ImGui::Text("Y");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Scale_Y", &scale.y))
+		if (ImGui::InputFloat("##Transform_Scale_Y", &scale.y))
 			isChanged = true;
 		ImGui::Text("Z");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##Inspector_Scale_Z", &scale.z))
+		if (ImGui::InputFloat("##Transform_Scale_Z", &scale.z))
 			isChanged = true;
 
 		if (isChanged)
@@ -478,6 +483,9 @@ void EngineGUIManager::ShowCollider(shared_ptr<Collider> collider)
 			case ColliderType::Box:
 				ImGui::Text("Box Collider");
 				break;
+			case ColliderType::Sphere:
+				ImGui::Text("Sphere Collider");
+				break;
 			default:
 				ImGui::Text("Unknown Collider Type");
 				break;
@@ -488,6 +496,18 @@ void EngineGUIManager::ShowCollider(shared_ptr<Collider> collider)
 			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "On Collide");
 		else
 			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Not On Collide");
+	}
+}
+
+void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
+{
+	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Checkbox("Gravity", &rigidbody->isGravity);
+		ImGui::InputFloat("Elastic Modulus", &rigidbody->elasticModulus, 0.0f, 0.0f, "%.2f");
+		ImGui::InputFloat("Friction", &rigidbody->friction, 0.0f, 0.0f, "%.2f");
+		ImGui::InputFloat("Mass", &rigidbody->mass, 0.0f, 0.0f, "%.2f");
+		ImGui::InputFloat("Drag", &rigidbody->drag, 0.0f, 0.0f, "%.2f");
 	}
 }
 

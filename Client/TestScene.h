@@ -16,6 +16,7 @@ private:
 	shared_ptr<GameObject> sphere2;
 	shared_ptr<GameObject> ground;
 	shared_ptr<GameObject> box;
+	shared_ptr<GameObject> box2;
 	shared_ptr<GameObject> model;
 
 	vector<shared_ptr<GameObject>> gameObjects;

@@ -108,6 +108,9 @@ CollisionInfo BoxCollider::CheckCollide(shared_ptr<Collider>& other)
 				}
 			}
 
+			XMVECTOR contactPoint = GetContactPoint(boxCollider->GetBoundingBox(), rotA, rotB);
+			cout << contactPoint.m128_f32[0] << ", " << contactPoint.m128_f32[1] << ", " << contactPoint.m128_f32[2] << endl;
+
 			break;
 		}
 
@@ -163,4 +166,32 @@ XMVECTOR BoxCollider::CheckSphere(XMVECTOR& axis, XMVECTOR& dist, float extent)
 	float centerDist = fabs(XMVector3Dot(dist, axis).m128_f32[0]);
 	centerDist = clamp(centerDist, -extent, extent);
 	return axis * centerDist;
+}
+
+XMVECTOR BoxCollider::GetContactPoint(const BoundingOrientedBox& box, XMMATRIX& rotA, XMMATRIX& rotB)
+{
+	XMVECTOR centerA = XMLoadFloat3(&_boundingBox.Center);
+	XMVECTOR centerB = XMLoadFloat3(&box.Center);
+
+	XMVECTOR pointOnA = GetClosestPoint(centerB, rotA, _boundingBox);
+	XMVECTOR pointOnB = GetClosestPoint(centerA, rotB, box);
+
+	XMVECTOR contact = 0.5f * (pointOnA + pointOnB);
+	return contact;
+}
+
+XMVECTOR BoxCollider::GetClosestPoint(const XMVECTOR& point, const XMMATRIX& rotation, const BoundingOrientedBox& box)
+{
+	XMVECTOR center = XMLoadFloat3(&box.Center);
+	XMVECTOR dist = point - center;
+
+	float x = XMVectorGetX(XMVector3Dot(dist, rotation.r[0]));
+	float y = XMVectorGetX(XMVector3Dot(dist, rotation.r[1]));
+	float z = XMVectorGetX(XMVector3Dot(dist, rotation.r[2]));
+
+	x = max(-box.Extents.x, min(x, box.Extents.x));
+	y = max(-box.Extents.y, min(y, box.Extents.y));
+	z = max(-box.Extents.z, min(z, box.Extents.z));
+
+	return center + rotation.r[0] * x + rotation.r[1] * y + rotation.r[2] * z;
 }

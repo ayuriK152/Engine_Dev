@@ -18,10 +18,15 @@ public:
 	float CheckOBB(XMVECTOR& axis, XMMATRIX& rotA, XMMATRIX& rotB, BoundingOrientedBox& target);
 	XMVECTOR CheckSphere(XMVECTOR& axis, XMVECTOR& dist, float extent);
 
+	XMVECTOR GetContactPoint(const BoundingOrientedBox& box, XMMATRIX& rotA, XMMATRIX& rotB);
+
 	BoundingOrientedBox& GetBoundingBox() { return _boundingBox; }
 	XMMATRIX& GetBoundingBoxRotationMatrix() { return XMMatrixRotationQuaternion(XMLoadFloat4(&_boundingBox.Orientation)); }
 
 private:
+
+	XMVECTOR GetClosestPoint(const XMVECTOR& point, const XMMATRIX& rotation, const BoundingOrientedBox& box);
+
 	BoundingOrientedBox _boundingBox;
 };
 

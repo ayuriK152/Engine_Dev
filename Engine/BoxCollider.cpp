@@ -31,9 +31,8 @@ void BoxCollider::Update()
 	if (GetGameObject()->GetFramesDirty() > 0)
 	{
 		_boundingBox.Center = GetTransform()->GetPosition();
-		Vector4 orientation;
-		XMStoreFloat4(&orientation, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&GetTransform()->GetRotationRadian())));
-		_boundingBox.Orientation = orientation;
+		//XMStoreFloat4(&_boundingBox.Orientation, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&GetTransform()->GetRotationRadian())));
+		XMStoreFloat4(&_boundingBox.Orientation, GetTransform()->GetQuaternion());
 	}
 }
 

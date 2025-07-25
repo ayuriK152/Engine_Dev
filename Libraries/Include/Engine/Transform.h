@@ -28,11 +28,7 @@ public:
 	}
 	// Get/Set Local Rotation With Radian
 	Vector3 GetLocalRotationRadian() { return _localRotation; }
-	void SetLocalRotationRadian(const Vector3& rotation) { 
-		_localRotation = rotation;
-		UpdateTransform();
-		GetGameObject()->SetFramesDirty();
-	}
+	void SetLocalRotationRadian(const Vector3& rotation);
 
 	Vector3 GetLocalScale() { return _localScale; }
 	void SetLocalScale(const Vector3& scale) { 
@@ -47,11 +43,15 @@ public:
 	// Get/Set Rotation With Degree
 	Vector3 GetRotation() { return MathHelper::RadianToDegree(_rotation); }
 	void SetRotation(const Vector3& worldRotation) { SetRotationRadian(MathHelper::DegreeToRadian(worldRotation)); }
+
 	// Get/Set Rotation With Radian
 	Vector3 GetRotationRadian() { return _rotation; }
 	void SetRotationRadian(const Vector3& worldRotation);
 	Vector3 GetScale() { return _scale; }
 	void SetScale(const Vector3& worldScale);
+
+	XMVECTOR GetQuaternion() { return XMLoadFloat4(&_quaternion); }
+	XMMATRIX GetRotationMatrix();
 
 	Vector3 GetRight();
 	Vector3 GetLeft();
@@ -90,6 +90,8 @@ private:
 	Vector3 _position;
 	Vector3 _rotation;
 	Vector3 _scale;
+
+	Vector4 _quaternion;
 
 	XMFLOAT4X4 _matLocal;
 	XMFLOAT4X4 _matWorld;

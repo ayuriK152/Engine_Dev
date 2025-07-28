@@ -43,6 +43,20 @@ void TestScene::Init()
 	}
 
 	{
+		box = make_shared<GameObject>();
+		box->name = "box";
+		box->AddComponent(make_shared<MeshRenderer>());
+		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
+		box->AddComponent(make_shared<BoxCollider>());
+		box->AddComponent(make_shared<Rigidbody>());
+		box->GetComponent<Rigidbody>()->isGravity = false;
+		box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
+		box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+		gameObjects.push_back(box);
+	}
+
+	{
 		ground = make_shared<GameObject>();
 		ground->name = "ground";
 		ground->AddComponent(make_shared<MeshRenderer>());
@@ -54,31 +68,20 @@ void TestScene::Init()
 		ground->AddComponent(make_shared<BoxCollider>());
 		ground->GetTransform()->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
 		ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));
+		ground->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 		gameObjects.push_back(ground);
 	}
 
 	{
-		box = make_shared<GameObject>();
-		box->name = "box";
-		box->AddComponent(make_shared<MeshRenderer>());
-		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
-		box->AddComponent(make_shared<BoxCollider>());
-		//box->AddComponent(make_shared<Rigidbody>());
-		box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
-		gameObjects.push_back(box);
-	}
-
-	{
-		box2 = make_shared<GameObject>();
-		box2->name = "box";
-		box2->AddComponent(make_shared<MeshRenderer>());
-		box2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		box2->AddComponent(make_shared<BoxCollider>());
-		//box2->AddComponent(make_shared<Rigidbody>());
-		box2->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, 0.0f));
-		box2->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, -45.0f));
-		gameObjects.push_back(box2);
+		//box2 = make_shared<GameObject>();
+		//box2->name = "box";
+		//box2->AddComponent(make_shared<MeshRenderer>());
+		//box2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		//box2->AddComponent(make_shared<BoxCollider>());
+		////box2->AddComponent(make_shared<Rigidbody>());
+		//box2->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, 0.0f));
+		//box2->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, -45.0f));
+		//gameObjects.push_back(box2);
 	}
 
 	//{
@@ -124,10 +127,12 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
-	box->GetTransform()->Rotate(Vector3(0.0f, 1.0f * TIME->DeltaTime(), 1.0f * TIME->DeltaTime()));
+	//box->GetTransform()->Rotate(Vector3(0.0f, 1.0f * TIME->DeltaTime(), 1.0f * TIME->DeltaTime()));
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 
+	if (INPUTM->IsKeyDown(KeyValue::A))
+		box->GetComponent<Rigidbody>()->AddTorque(Vector3(0.0f, 0.0f, 1.0f));
 	if (INPUTM->IsKeyPress(KeyValue::V))
 		RENDER->SetCurrPSO(PSO_WIREFRAME);
 	else

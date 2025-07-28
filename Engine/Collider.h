@@ -10,6 +10,7 @@ enum ColliderType
 struct CollisionInfo
 {
 	bool IsCollide;
+	Vector3 ContactPoint;
 	Vector3 Normal;
 	float Depth;
 

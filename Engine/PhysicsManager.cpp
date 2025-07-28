@@ -69,6 +69,8 @@ void PhysicsManager::DeleteCollider(shared_ptr<Collider> collider)
 
 void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigidbody>& rba, shared_ptr<Rigidbody>& rbb)
 {
+	// 회전을 구현해두긴 했는데 조금 이상함. 개선 작업을 추후에 진행할 예정. 그 전까지 건드리지 않기.
+
 	float massA = rba != nullptr ? rba->mass : 0.0f;
 	float massB = rbb != nullptr ? rbb->mass : 0.0f;
 
@@ -77,6 +79,9 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 	Vector3 correctionA = MathHelper::VectorMultiply(collInfo.Normal, collInfo.Depth * resolveValue);
 	Vector3 correctionB = MathHelper::VectorMultiply(collInfo.Normal, collInfo.Depth * resolveValue);
 
+	// 회전 운동 임펄스
+	Vector3 impulse = MathHelper::VectorMultiply(collInfo.Normal, collInfo.Depth);
+	
 	if (rba != nullptr)
 	{
 		Vector3 pos = rba->GetTransform()->GetPosition();
@@ -85,15 +90,27 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 		Vector3 finalPos = MathHelper::VectorAddition(MathHelper::VectorSubtract(pos, correctionA), MathHelper::VectorMultiply(vel, collInfo.Depth * resolveValue));
 
 		rba->GetTransform()->SetPosition(finalPos);
+
+		float velocityPower = XMVector3Length(XMLoadFloat3(&vel)).m128_f32[0];
+		Vector3 r = MathHelper::VectorSubtract(collInfo.ContactPoint, rba->GetTransform()->GetPosition());
+		Vector3 torque;
+		XMStoreFloat3(&torque, XMVector3Cross(XMLoadFloat3(&impulse), XMLoadFloat3(&r)) * velocityPower);
+		rba->AddTorque(torque);
 	}
 
 	if (rbb != nullptr)
 	{
 		Vector3 pos = rbb->GetTransform()->GetPosition();
 		Vector3 vel = MathHelper::VectorReflect(MathHelper::VectorMultiply(rbb->GetVelocity(), rbb->elasticModulus), collInfo.Normal);
-		rbb->SetVelocity(MathHelper::VectorReflect(MathHelper::VectorMultiply(rbb->GetVelocity(), rbb->elasticModulus), collInfo.Normal));
+		rbb->SetVelocity(vel);
 		Vector3 finalPos = MathHelper::VectorAddition(MathHelper::VectorAddition(pos, correctionB), MathHelper::VectorMultiply(vel, collInfo.Depth * resolveValue));
 
 		rbb->GetTransform()->SetPosition(finalPos);
+
+		float velocityPower = XMVector3Length(XMLoadFloat3(&vel)).m128_f32[0];
+		Vector3 r = MathHelper::VectorSubtract(collInfo.ContactPoint, rbb->GetTransform()->GetPosition());
+		Vector3 torque;
+		XMStoreFloat3(&torque, XMVector3Cross(XMLoadFloat3(&MathHelper::VectorMultiply(impulse, -1.0f)), XMLoadFloat3(&r)) * velocityPower);
+		rbb->AddTorque(torque);
 	}
 }

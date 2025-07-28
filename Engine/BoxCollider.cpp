@@ -17,7 +17,7 @@ void BoxCollider::Init()
 {
 	_boundingBox.Center = GetTransform()->GetPosition();
 	_boundingBox.Extents = MathHelper::VectorMultiply(GetTransform()->GetScale(), 0.5f);
-	DEBUG->AddDebugRender(static_pointer_cast<Collider>(shared_from_this()));
+	//DEBUG->AddDebugRender(static_pointer_cast<Collider>(shared_from_this()));
 	PHYSICS->AddCollider(static_pointer_cast<Collider>(shared_from_this()));
 }
 
@@ -107,8 +107,13 @@ CollisionInfo BoxCollider::CheckCollide(shared_ptr<Collider>& other)
 				}
 			}
 
+			XMVECTOR centerVec = XMLoadFloat3(&boxCollider->GetBoundingBox().Center) - XMLoadFloat3(&_boundingBox.Center);
+			float dot = XMVector3Dot(centerVec, XMLoadFloat3(&collInfo.Normal)).m128_f32[0];
+			if (dot < 0.0f)
+				collInfo.Normal = MathHelper::VectorMultiply(collInfo.Normal, -1.0f);
+
 			XMVECTOR contactPoint = GetContactPoint(boxCollider->GetBoundingBox(), rotA, rotB);
-			cout << contactPoint.m128_f32[0] << ", " << contactPoint.m128_f32[1] << ", " << contactPoint.m128_f32[2] << endl;
+			collInfo.ContactPoint = Vector3(contactPoint.m128_f32[0], contactPoint.m128_f32[1], contactPoint.m128_f32[2]);
 
 			break;
 		}

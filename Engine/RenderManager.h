@@ -4,6 +4,7 @@
 #define		PSO_OPAQUE_SKINNED	"opaque_skinned"
 #define		PSO_SKYBOX			"skybox"
 #define		PSO_WIREFRAME		"wireframe"
+#define		PSO_DEBUG			"debug"
 
 #define		ROOT_PARAMETER_SKYBOX_SR	0
 #define		ROOT_PARAMETER_TEXTURE_SR	1
@@ -28,11 +29,12 @@ public:
 public:
 	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const { return _srvHeap; }
 	
-	vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
-	ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
-	unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
+	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
+	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
+	const unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
 	void UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO);
@@ -69,6 +71,7 @@ private:
 	vector<D3D12_INPUT_ELEMENT_DESC> _solidInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skyInputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _debugInputLayout;
 
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;

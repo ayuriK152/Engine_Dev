@@ -115,6 +115,11 @@ Vector3 MathHelper::VectorReflect(const Vector3& v, const Vector3& vn)
 	return result;
 }
 
+float MathHelper::VectorLength(const Vector3& v)
+{
+	return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
 Vector3 MathHelper::RadianToDegree(const Vector3& radian)
 {
 	Vector3 result;

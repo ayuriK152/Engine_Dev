@@ -81,6 +81,9 @@ private:
 	void ShowInspectorView();
 	void ShowResourceDirectory();
 
+	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
+
+#pragma region Component
 	void ShowTransform();
 	void ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer);
 	void ShowSkinnedMeshRenderer(shared_ptr<SkinnedMeshRenderer> meshRenderer);
@@ -88,8 +91,9 @@ private:
 	void ShowLight(shared_ptr<Light> light);
 	void ShowAnimator(shared_ptr<Animator> animator);
 	void ShowScript(shared_ptr<Script> script);
-
-	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
+	void ShowCollider(shared_ptr<Collider> collider);
+	void ShowRigidbody(shared_ptr<Rigidbody> rigidbody);
+#pragma endregion
 
 public:
 	bool isShowDemoWindow = true;

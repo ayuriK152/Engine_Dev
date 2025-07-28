@@ -7,6 +7,8 @@ Transform::Transform() : Super(ComponentType::Transform)
 	_localRotation = { 0.0f, 0.0f, 0.0f };
 	_localScale = { 1.0f, 1.0f, 1.0f };
 
+	_quaternion = { 0.0f, 0.0f, 0.0f ,1.0f };
+
 	_parent = nullptr;
 
 	UpdateTransform();
@@ -30,17 +32,15 @@ void Transform::Render()
 void Transform::UpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
-	XMMATRIX matRotation = XMMatrixRotationX(_localRotation.x);
-	matRotation *= XMMatrixRotationY(_localRotation.y);
-	matRotation *= XMMatrixRotationZ(_localRotation.z);
+	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
 	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
 
 	XMStoreFloat4x4(&_matLocal, matScale * matRotation * matTranslation);
 
 	if (HasParent())
 	{
-		XMMATRIX matWorld = XMLoadFloat4x4(&GetWorldMatrix());
-		XMStoreFloat4x4(&_matWorld, matWorld);
+		XMMATRIX parentWorld = XMLoadFloat4x4(&_parent->GetWorldMatrix());
+		XMStoreFloat4x4(&_matWorld, matScale * matRotation * matTranslation * parentWorld);
 	}
 	else
 	{
@@ -67,6 +67,16 @@ void Transform::UpdateTransform()
 	}
 }
 
+void Transform::SetLocalRotationRadian(const Vector3& rotation)
+{
+	_localRotation = rotation;
+
+	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
+
+	UpdateTransform();
+	GetGameObject()->SetFramesDirty();
+}
+
 void Transform::SetPosition(const Vector3& worldPosition)
 {
 	if (HasParent())
@@ -85,18 +95,23 @@ void Transform::SetPosition(const Vector3& worldPosition)
 
 void Transform::SetRotationRadian(const Vector3& worldRotation)
 {
+	XMVECTOR qWorld = XMQuaternionRotationRollPitchYaw(
+		worldRotation.x,
+		worldRotation.y,
+		worldRotation.z);
+
+	Vector3 localEuler = worldRotation;
 	if (HasParent())
 	{
-		XMMATRIX inverseWorldMat = XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix()));
-		Vector3 rotation;
-		XMStoreFloat3(&rotation, XMVector3TransformNormal(XMLoadFloat3(&worldRotation), inverseWorldMat));
-		
-		SetLocalRotationRadian(rotation);
+		XMMATRIX parentRotMat = _parent->GetRotationMatrix();
+		XMVECTOR qParent = XMQuaternionRotationMatrix(parentRotMat);
+
+		// 로컬 회전 = 부모^-1 * 월드
+		XMVECTOR qLocal = XMQuaternionMultiply(qWorld, XMQuaternionInverse(qParent));
+		localEuler = MathHelper::ConvertQuaternionToEuler(qLocal);
 	}
-	else
-	{
-		SetLocalRotationRadian(worldRotation);
-	}
+
+	SetLocalRotationRadian(localEuler);
 }
 
 void Transform::SetScale(const Vector3& worldScale)
@@ -115,6 +130,11 @@ void Transform::SetScale(const Vector3& worldScale)
 	{
 		SetLocalScale(worldScale);
 	}
+}
+
+XMMATRIX Transform::GetRotationMatrix()
+{
+	return XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
 }
 
 Vector3 Transform::GetRight()
@@ -160,12 +180,15 @@ void Transform::Translate(const Vector3& moveVec)
 	GetGameObject()->SetFramesDirty();
 }
 
-// 반드시 수정이 필요함
 void Transform::Rotate(const Vector3& angle)
 {
-	_localRotation.x += XMConvertToRadians(angle.x);
-	_localRotation.y += XMConvertToRadians(angle.y);
-	_localRotation.z += XMConvertToRadians(angle.z);
+	XMVECTOR currentQuat = XMLoadFloat4(&_quaternion);
+	XMVECTOR deltaQuat = XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
+	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
+
+	_quaternion = { newQuat.m128_f32[0], newQuat.m128_f32[1], newQuat.m128_f32[2], newQuat.m128_f32[3] };
+	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
+
 	UpdateTransform();
 	GetGameObject()->SetFramesDirty();
 }

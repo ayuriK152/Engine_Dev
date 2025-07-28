@@ -18,11 +18,17 @@ void ResourceManager::CreateDefaultResources()
 	auto opaquePS = make_shared<Shader>(L"DefaultPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"opaquePS", opaquePS);
 
+	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"skyboxVS", skyboxVS);
+
 	auto skyboxPS = make_shared<Shader>(L"SkyboxPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"skyboxPS", skyboxPS);
 
-	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);
-	Add<Shader>(L"skyboxVS", skyboxVS);
+	auto debugVS = make_shared<Shader>(L"DebugVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"debugVS", debugVS);
+
+	auto debugPS = make_shared<Shader>(L"DebugPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"debugPS", debugPS);
 
 
 	//==========Texture==========
@@ -45,7 +51,7 @@ void ResourceManager::CreateDefaultResources()
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
 	Add<Mesh>(L"Mesh_BasicBox", boxMesh);
 
-	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(1.0f, 3));
+	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 3));
 	Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
 
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());

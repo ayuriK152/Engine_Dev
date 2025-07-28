@@ -76,9 +76,13 @@ void GameApplication::Update()
 	{
 		INPUTM->Update();
 		GRAPHIC->Update();
+		PHYSICS->Update();
 		RENDER->Update();
+		DEBUG->Update();
 		ENGINESTAT->Update();
 		ENGINEGUI->Update();
+
+		PHYSICS->LateUpdate();
 
 		GRAPHIC->RenderBegin();
 		RENDER->Render();

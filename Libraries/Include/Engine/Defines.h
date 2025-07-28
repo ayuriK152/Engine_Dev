@@ -24,6 +24,8 @@ public:									\
 #define INPUTM		GET_SINGLE(InputManager)
 #define ENGINEGUI	GET_SINGLE(EngineGUIManager)
 #define ENGINESTAT	GET_SINGLE(EngineStatusManager)
+#define DEBUG		GET_SINGLE(DebugManager)
+#define PHYSICS		GET_SINGLE(PhysicsManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 

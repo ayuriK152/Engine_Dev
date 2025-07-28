@@ -1,4 +1,4 @@
-#include "Default.hlsl"
+#include "Structs.hlsl"
 
 VertexOut VS(VertexIn vin)
 {

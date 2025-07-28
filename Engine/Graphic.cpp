@@ -32,6 +32,7 @@ bool Graphic::Initialize()
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
 	ENGINEGUI->Init();
+	DEBUG->Init();
 
 	BuildFrameResources();
 

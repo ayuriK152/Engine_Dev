@@ -1,11 +1,11 @@
-#include "Default.hlsl"
+#include "Structs.hlsl"
 #include "LightingUtil.hlsl"
 
 float4 PS(VertexOut pin) : SV_Target
 {
     float4 totalResult;
     float3 eyePos = GetCameraPosition();
-    float4 albedo = DiffuseMap.Sample(samAnisotropicWrap, pin.texUV);
+    float4 albedo = DiffuseMap.Sample(samAnisotropicWrap, pin.texUV * Tilling);
     float3 eyeDir = normalize(eyePos - pin.positionWorld);
     pin.normal = normalize(pin.normal);
 

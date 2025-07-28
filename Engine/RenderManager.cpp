@@ -19,10 +19,20 @@ void RenderManager::Init()
 		skybox.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
+		auto debug = CreatePSODesc(_debugInputLayout, L"debugVS", L"debugPS");
+		debug.DepthStencilState.DepthEnable = false;
+		debug.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		debug.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		debug.DepthStencilState.StencilEnable = false;
+		debug.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		debug.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 		BuildPSO(PSO_SKYBOX, skybox);
+
+		BuildPSO(PSO_DEBUG, debug);
 		SetDefaultPSO();
 	}
 
@@ -47,26 +57,30 @@ void RenderManager::Update()
 
 void RenderManager::Render()
 {
+	auto cmdList = GRAPHIC->GetCommandList();
 	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
-	GRAPHIC->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	GRAPHIC->GetCommandList()->SetGraphicsRootSignature(_rootSignature.Get());
+	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
 
 	auto lightCB = GRAPHIC->GetCurrFrameResource()->lightCB->GetResource();
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, lightCB->GetGPUVirtualAddress());
-	GRAPHIC->GetCommandList()->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, lightCB->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// 이거 최적화할 필요 있을듯
 	for (auto& p : _sortedObjects)
 	{
 		if (_isPSOFixed && p.first != PSO_SKYBOX)
-			GRAPHIC->GetCommandList()->SetPipelineState(_currPSO.Get());
+			cmdList->SetPipelineState(_currPSO.Get());
 		else
-			GRAPHIC->GetCommandList()->SetPipelineState(_PSOs[p.first].Get());
+			cmdList->SetPipelineState(_PSOs[p.first].Get());
 
 		for (int i = 0; i < p.second.size(); i++)
 			p.second[i]->Render();
 	}
+
+	cmdList->SetPipelineState(_PSOs[PSO_DEBUG].Get());
+	DEBUG->Render();
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
@@ -252,13 +266,19 @@ void RenderManager::BuildInputLayout()
 		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
+
+	_debugInputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
 }
 
 void RenderManager::BuildSRVDescriptorHeap()
 {
 	// Descriptor의 갯수를 50으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 50;
+	srvHeapDesc.NumDescriptors = 100;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
@@ -285,6 +305,7 @@ void RenderManager::UpdateMaterialCB()
 			matConstants.Diffuse = mat->diffuse;
 			matConstants.Specular = mat->specular;
 			matConstants.Emissive = mat->emissive;
+			matConstants.Tilling = mat->tilling;
 			matConstants.Shiness = mat->shiness;
 
 			_materialCB->CopyData(mat->matCBIndex, matConstants);

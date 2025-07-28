@@ -127,12 +127,10 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
-	//box->GetTransform()->Rotate(Vector3(0.0f, 1.0f * TIME->DeltaTime(), 1.0f * TIME->DeltaTime()));
+	box->GetTransform()->Rotate(Vector3(0.0f, 1.0f * TIME->DeltaTime(), 1.0f * TIME->DeltaTime()));
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 
-	if (INPUTM->IsKeyDown(KeyValue::A))
-		box->GetComponent<Rigidbody>()->AddTorque(Vector3(0.0f, 0.0f, 1.0f));
 	if (INPUTM->IsKeyPress(KeyValue::V))
 		RENDER->SetCurrPSO(PSO_WIREFRAME);
 	else

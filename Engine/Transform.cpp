@@ -71,7 +71,7 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 {
 	_localRotation = rotation;
 
-	XMStoreFloat4(&_quaternion, XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z));
+	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
 
 	UpdateTransform();
 	GetGameObject()->SetFramesDirty();
@@ -184,7 +184,7 @@ void Transform::Rotate(const Vector3& angle)
 {
 	XMVECTOR currentQuat = XMLoadFloat4(&_quaternion);
 	XMVECTOR deltaQuat = XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
-	XMVECTOR newQuat = XMQuaternionMultiply(currentQuat, deltaQuat);
+	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
 
 	_quaternion = { newQuat.m128_f32[0], newQuat.m128_f32[1], newQuat.m128_f32[2], newQuat.m128_f32[3] };
 	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);

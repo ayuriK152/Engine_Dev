@@ -2,6 +2,8 @@
 
 struct Light
 {
+    float4x4 View;
+    float4x4 Proj;
     float4  Ambient;
     float4  Diffuse;
     float4  Specular;

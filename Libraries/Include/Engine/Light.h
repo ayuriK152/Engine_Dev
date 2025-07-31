@@ -17,12 +17,19 @@ public:
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
+	XMFLOAT4X4& GetViewMatrix() { return _matView; }
+	XMFLOAT4X4& GetProjMatrix() { return _matProj; }
+
 	virtual LightConstants GetLightConstants() = 0;
 
 public:
 	XMFLOAT4 ambient;
 	XMFLOAT4 diffuse;
 	XMFLOAT4 specular;
+
+protected:
+	XMFLOAT4X4 _matView;
+	XMFLOAT4X4 _matProj;
 
 private:
 	int _numFramesDirty = 0;

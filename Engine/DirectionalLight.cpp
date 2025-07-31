@@ -22,6 +22,8 @@ DirectionalLight::~DirectionalLight()
 
 void DirectionalLight::Init()
 {
+	_matProj = MathHelper::Identity4x4();
+
 	direction = GetTransform()->GetLook();
 
 	RENDER->AddLight(this);
@@ -32,6 +34,16 @@ void DirectionalLight::Update()
 	if (GetGameObject()->GetFramesDirty() > 0)
 	{
 		direction = GetTransform()->GetLook();
+
+		XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
+		XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
+		XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
+
+		XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
+		XMStoreFloat4x4(&_matView, matView);
+
+		// projMat 갱신 부분 추가해야함
+
 		SetFramesDirty();
 	}
 }
@@ -39,6 +51,8 @@ void DirectionalLight::Update()
 LightConstants DirectionalLight::GetLightConstants()
 {
 	LightConstants constants;
+	constants.View = _matView;
+	constants.Proj = _matProj;
 	constants.Ambient = ambient;
 	constants.Diffuse = diffuse;
 	constants.Specular = specular;

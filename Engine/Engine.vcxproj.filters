@@ -167,6 +167,7 @@
     <ClInclude Include="Rigidbody.h">
       <Filter>02. GameObject\Components\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowMap.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -364,5 +365,6 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>02. GameObject\Components\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMap.cpp" />
   </ItemGroup>
 </Project>

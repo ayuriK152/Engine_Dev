@@ -3,8 +3,9 @@
 /***********/
 
 TextureCube CubeMap : register(t0);
-Texture2D    DiffuseMap : register(t1);
-StructuredBuffer<float4x4> BoneTransforms: register(t2);
+Texture2D   DiffuseMap : register(t1);
+Texture2D   ShadowMap : register(t2);
+StructuredBuffer<float4x4> BoneTransforms: register(t0, space1);
 
 SamplerState samPointWrap        : register(s0);
 SamplerState samPointClamp       : register(s1);

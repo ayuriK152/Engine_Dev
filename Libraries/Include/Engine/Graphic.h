@@ -47,8 +47,14 @@ public:
 			_currBackBuffer,
 			_rtvDescriptorSize);
 	}
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView()const { return _dsvHeap->GetCPUDescriptorHandleForHeapStart(); }
 
+	UINT GetAndIncreaseDSVHeapIndex() {
+		return _dsvHeapIndex++;
+	}
+	ComPtr<ID3D12DescriptorHeap> GetDSVHeap()const { return _dsvHeap; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return _dsvHeap->GetCPUDescriptorHandleForHeapStart(); }
+
+	UINT GetDSVDescriptorSize()const { return _dsvDescriptorSize; }
 	UINT GetCBVSRVDescriptorSize()const { return _cbvSrvUavDescriptorSize; }
 
 	DXGI_FORMAT GetBackBufferFormat()const { return _backBufferFormat; }
@@ -93,6 +99,8 @@ private:
 	int _currBackBuffer = 0;
 	ComPtr<ID3D12Resource> _swapChainBuffer[_SwapChainBufferCount];
 	ComPtr<ID3D12Resource> _depthStencilBuffer;
+
+	UINT _dsvHeapIndex = 0;
 
 	ComPtr<ID3D12DescriptorHeap> _rtvHeap;
 	ComPtr<ID3D12DescriptorHeap> _dsvHeap;

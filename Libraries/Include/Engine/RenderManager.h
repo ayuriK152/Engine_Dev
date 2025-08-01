@@ -6,13 +6,14 @@
 #define		PSO_WIREFRAME		"wireframe"
 #define		PSO_DEBUG			"debug"
 
-#define		ROOT_PARAMETER_SKYBOX_SR	0
-#define		ROOT_PARAMETER_TEXTURE_SR	1
-#define		ROOT_PARAMETER_BONE_SB		2
-#define		ROOT_PARAMETER_LIGHT_CB		3
-#define		ROOT_PARAMETER_OBJECT_CB	4
-#define		ROOT_PARAMETER_MATERIAL_CB	5
-#define		ROOT_PARAMETER_CAMERA_CB	6
+#define		ROOT_PARAMETER_SKYBOX_SR		0
+#define		ROOT_PARAMETER_TEXTURE_SR		1
+#define		ROOT_PARAMETER_BONE_SB			2
+#define		ROOT_PARAMETER_LIGHT_CB			3
+#define		ROOT_PARAMETER_LIGHTINFO_CB		4
+#define		ROOT_PARAMETER_OBJECT_CB		5
+#define		ROOT_PARAMETER_MATERIAL_CB		6
+#define		ROOT_PARAMETER_CAMERA_CB		7
 
 class RenderManager
 {
@@ -88,5 +89,7 @@ private:
 
 	CameraConstants _cameraConstants;
 	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
+
+	unique_ptr<ShadowMap> _shadowMap = nullptr;
 };
 

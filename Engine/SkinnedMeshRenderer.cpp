@@ -16,8 +16,6 @@ void SkinnedMeshRenderer::Init()
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
 	if (_rootBone != nullptr)
 	{
-		UINT64 boneByteSize = sizeof(XMFLOAT4X4) * _boneTransforms.size();
-
 		_boneTransformUploadBuffer = make_unique<UploadBuffer<XMFLOAT4X4>>(_boneTransforms.size(), false);
 		CreateBoneSRV(_boneTransforms);
 	}

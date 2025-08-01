@@ -67,6 +67,7 @@
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Texture.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Texture.cpp" />

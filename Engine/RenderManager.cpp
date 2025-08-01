@@ -38,6 +38,9 @@ void RenderManager::Init()
 
 	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(20, true);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
+	
+	_shadowMap = make_unique<ShadowMap>(2048, 2048);
+	_shadowMap->BuildDescriptors();
 }
 
 void RenderManager::FixedUpdate()
@@ -63,8 +66,13 @@ void RenderManager::Render()
 
 	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
 
-	auto lightCB = GRAPHIC->GetCurrFrameResource()->lightCB->GetResource();
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT_CB, lightCB->GetGPUVirtualAddress());
+	auto lightSB = GRAPHIC->GetCurrFrameResource()->lightSB->GetResource();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
+	auto aaa = GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex();
+	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_LIGHT_CB, lightDesc);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAMETER_LIGHTINFO_CB, _lights.size(), 0);
 	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// 이거 최적화할 필요 있을듯
@@ -208,25 +216,30 @@ void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC pso
 void RenderManager::BuildRootSignature()
 {
 	CD3DX12_DESCRIPTOR_RANGE cubemapTable;
-	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_SKYBOX_SR);
+	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_TEXTURE_SR);
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+	CD3DX12_DESCRIPTOR_RANGE lightTable;
+	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
-	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, ROOT_PARAMETER_BONE_SB);
+	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[7];
 
-	slotRootParameter[ROOT_PARAMETER_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);	// CubemapSR
+	CD3DX12_ROOT_PARAMETER slotRootParameter[8];
+
+	slotRootParameter[ROOT_PARAMETER_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);		// CubemapSR
 	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);		// TextureSR
 	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);			// BoneSB
-	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsConstantBufferView(0);		// LightCB
+	//slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsConstantBufferView(0);		// LightCB
+	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsDescriptorTable(1, &lightTable);		// LightSB
+	slotRootParameter[ROOT_PARAMETER_LIGHTINFO_CB].InitAsConstantBufferView(0);	// ObjectCB
 	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(1);	// ObjectCB
 	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(2);	// MaterialCB
 	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(3);	// CameraCB
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(7, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(8, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -278,7 +291,7 @@ void RenderManager::BuildSRVDescriptorHeap()
 {
 	// Descriptor의 갯수를 50으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 100;
+	srvHeapDesc.NumDescriptors = 150;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));

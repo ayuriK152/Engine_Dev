@@ -111,6 +111,7 @@ using namespace tinyxml2;
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"
+#include "ShadowMap.h"
 
 /************/
 /* Managers */

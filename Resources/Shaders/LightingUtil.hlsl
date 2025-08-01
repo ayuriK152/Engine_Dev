@@ -1,5 +1,3 @@
-#define MaxLights 20
-
 struct Light
 {
     float4x4 View;
@@ -23,11 +21,13 @@ struct Material
     float   Shiness;
 };
 
-cbuffer cbLight : register(b0)
+
+StructuredBuffer<Light> Lights: register(t2);
+
+cbuffer LightInfo : register(b0)
 {
-    Light GlobalLight;
-    Light Lights[MaxLights];
-};
+    uint gNumLights;
+}
 
 float4 ProcessAmbient(float4 ambient, float4 albedo)
 {
@@ -94,27 +94,27 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
 
     // Global Light Process
     {
-        float3 lightDir = normalize(GlobalLight.Direction);
+        float3 lightDir = normalize(Lights[0].Direction);
 
-        float4 ambient = ProcessAmbient(GlobalLight.Ambient * mat.Ambient, albedo);
-        float4 diffuse = ProcessDiffuse(GlobalLight.Diffuse * mat.Diffuse, albedo, lightDir, normal);
-        float4 specular = ProcessSpecular(GlobalLight.Specular * mat.Specular, mat.Shiness, lightDir, normal, eyeDir);
+        float4 ambient = ProcessAmbient(Lights[0].Ambient * mat.Ambient, albedo);
+        float4 diffuse = ProcessDiffuse(Lights[0].Diffuse * mat.Diffuse, albedo, lightDir, normal);
+        float4 specular = ProcessSpecular(Lights[0].Specular * mat.Specular, mat.Shiness, lightDir, normal, eyeDir);
         float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
 
         totalColor = ambient + diffuse + specular;
         //totalColor = ambient + diffuse;
     }
 
-    // General Light Process
-    {
-        for (int i = 0; i < MaxLights; i++)
-        {
-            float4 diffuse = ProcessDiffuse(Lights[i].Diffuse * mat.Diffuse, albedo, Lights[i].Direction, normal);
-            float4 specular = ProcessSpecular(Lights[i].Specular * mat.Specular, mat.Shiness, Lights[i].Direction, normal, eyeDir);
+    // // General Light Process
+    // {
+    //     for (int i = 1; i < gNumLights; i++)
+    //     {
+    //         float4 diffuse = ProcessDiffuse(Lights[i].Diffuse * mat.Diffuse, albedo, Lights[i].Direction, normal);
+    //         float4 specular = ProcessSpecular(Lights[i].Specular * mat.Specular, mat.Shiness, Lights[i].Direction, normal, eyeDir);
         
-            totalColor += diffuse;
-        }
-    }
+    //         totalColor += diffuse;
+    //     }
+    // }
 
     float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
     totalColor += emissive;

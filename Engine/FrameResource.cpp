@@ -53,8 +53,6 @@ void FrameResource::UpdateObjectCB()
 
 void FrameResource::UpdateLightCB()
 {
-	bool flag = false;
-	LightConstants lightConstants;
 	auto lights = RENDER->GetLights();
 
 	if (lights.size() == 0)
@@ -62,32 +60,11 @@ void FrameResource::UpdateLightCB()
 
 	for (int i = 0; i < lights.size(); i++)
 	{
+		if (lights[i]->GetFramesDirty() <= 0)
+			continue;
+		
 		lightSB->CopyData(i, lights[i]->GetLightConstants());
 	}
-
-	//// Global Light
-	//if (lights[0]->GetFramesDirty() > 0)
-	//{
-	//	lightConstants.GlobalLight = lights[0]->GetLightConstants();
-	//	lights[0]->ReleaseFramesDirty();
-	//	flag = true;
-	//}
-
-	//// General Light
-	//for (int i = 1; i < lights.size(); i++)
-	//{
-	//	if (lights[i]->GetFramesDirty() > 0)
-	//	{
-	//		lightConstants.Lights[i - 1] = lights[i]->GetLightConstants();
-	//		lights[i]->ReleaseFramesDirty();
-	//		flag = true;
-	//	}
-	//}
-
-	//if (flag)
-	//{
-	//	lightSB->CopyData(0, lightConstants);
-	//}
 }
 
 void FrameResource::CreateLightSRV()

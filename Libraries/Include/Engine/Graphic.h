@@ -54,6 +54,9 @@ public:
 	ComPtr<ID3D12DescriptorHeap> GetDSVHeap()const { return _dsvHeap; }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return _dsvHeap->GetCPUDescriptorHandleForHeapStart(); }
 
+	D3D12_VIEWPORT GetViewport()const { return _screenViewport; }
+	D3D12_RECT GetScissorRect()const { return _scissorRect; }
+
 	UINT GetDSVDescriptorSize()const { return _dsvDescriptorSize; }
 	UINT GetCBVSRVDescriptorSize()const { return _cbvSrvUavDescriptorSize; }
 

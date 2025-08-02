@@ -97,3 +97,20 @@ struct VertexPC
 	Vector3 Position;
 	Color Color;
 };
+
+struct VertexPT
+{
+	VertexPT() {};
+	VertexPT(
+		const Vector3& p, 
+		const Vector2& t) : 
+		Position(p), 
+		TexC(t) {}
+	VertexPT(
+		float px, float py, float pz, 
+		float u, float v) : 
+		Position(px, py, pz), 
+		TexC(u, v) {}
+	Vector3 Position;
+	Vector2 TexC;
+};

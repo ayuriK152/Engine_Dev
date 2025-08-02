@@ -3,17 +3,20 @@
 #define		PSO_OPAQUE_SOLID	"opaque_solid"
 #define		PSO_OPAQUE_SKINNED	"opaque_skinned"
 #define		PSO_SKYBOX			"skybox"
+#define		PSO_SHADOWMAP		"shadowmap"
 #define		PSO_WIREFRAME		"wireframe"
-#define		PSO_DEBUG			"debug"
+#define		PSO_DEBUG_PHYSICS	"debug_physics"
+#define		PSO_DEBUG_SHADOW	"debug_shadow"
 
 #define		ROOT_PARAMETER_SKYBOX_SR		0
 #define		ROOT_PARAMETER_TEXTURE_SR		1
-#define		ROOT_PARAMETER_BONE_SB			2
-#define		ROOT_PARAMETER_LIGHT_CB			3
-#define		ROOT_PARAMETER_LIGHTINFO_CB		4
-#define		ROOT_PARAMETER_OBJECT_CB		5
-#define		ROOT_PARAMETER_MATERIAL_CB		6
-#define		ROOT_PARAMETER_CAMERA_CB		7
+#define		ROOT_PARAMETER_SHADOWTEX_SR		2
+#define		ROOT_PARAMETER_BONE_SB			3
+#define		ROOT_PARAMETER_LIGHT_CB			4
+#define		ROOT_PARAMETER_LIGHTINFO_CB		5
+#define		ROOT_PARAMETER_OBJECT_CB		6
+#define		ROOT_PARAMETER_MATERIAL_CB		7
+#define		ROOT_PARAMETER_CAMERA_CB		8
 
 class RenderManager
 {
@@ -52,6 +55,8 @@ public:
 		_skyboxTexSrvHeapIndex = tex->GetSRVHeapIndex();
 	}
 
+	const ShadowMap* GetShadowMap() { return _shadowMap.get(); }
+
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
@@ -72,7 +77,8 @@ private:
 	vector<D3D12_INPUT_ELEMENT_DESC> _solidInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skyInputLayout;
-	vector<D3D12_INPUT_ELEMENT_DESC> _debugInputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _colliderDebugInputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _shadowDebugInputLayout;
 
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;

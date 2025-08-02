@@ -210,6 +210,7 @@ void Transform::LookAt(const Vector3& targetPos)
 	if (upVec.m128_f32[1] < 0.0f)
 		upVec = -upVec;
 
+	upVec = { 0.0f, 1.0f, 0.0f };
 	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&_position), XMLoadFloat3(&targetPos), upVec);
 	
 	viewMat = XMMatrixTranspose(viewMat);

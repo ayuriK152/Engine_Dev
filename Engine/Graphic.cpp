@@ -108,6 +108,9 @@ void Graphic::OnResize()
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = _depthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDsv(GetDSVHandle());
+	hDsv.Offset(GetAndIncreaseDSVHeapIndex(), _dsvDescriptorSize);
 	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, GetDSVHandle());
 
 	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_depthStencilBuffer.Get(),
@@ -162,17 +165,6 @@ void Graphic::RenderBegin()
 	ThrowIfFailed(cmdListAlloc->Reset());
 
 	ThrowIfFailed(_commandList->Reset(cmdListAlloc.Get(), RENDER->GetCurrPSO().Get()));
-
-	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-	_commandList->RSSetViewports(1, &_screenViewport);
-	_commandList->RSSetScissorRects(1, &_scissorRect);
-
-	_commandList->ClearRenderTargetView(GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	_commandList->ClearDepthStencilView(GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-	_commandList->OMSetRenderTargets(1, &GetCurrentBackBufferView(), true, &GetDSVHandle());
 }
 
 

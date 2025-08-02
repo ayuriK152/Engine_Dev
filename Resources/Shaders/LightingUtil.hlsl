@@ -17,12 +17,12 @@ struct Material
     float4  Ambient;
     float4  Diffuse;
     float4  Specular;
-    float4  Emmissive;
+    float4  Emissive;
     float   Shiness;
 };
 
 
-StructuredBuffer<Light> Lights: register(t2);
+StructuredBuffer<Light> Lights: register(t3);
 
 cbuffer LightInfo : register(b0)
 {
@@ -99,7 +99,7 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
         float4 ambient = ProcessAmbient(Lights[0].Ambient * mat.Ambient, albedo);
         float4 diffuse = ProcessDiffuse(Lights[0].Diffuse * mat.Diffuse, albedo, lightDir, normal);
         float4 specular = ProcessSpecular(Lights[0].Specular * mat.Specular, mat.Shiness, lightDir, normal, eyeDir);
-        float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
+        float4 emissive = ProcessEmissive(mat.Emissive, albedo);
 
         totalColor = ambient + diffuse + specular;
         //totalColor = ambient + diffuse;
@@ -116,7 +116,7 @@ float4 ComputeLight(Material mat, float4 albedo, float3 normal, float3 eyeDir)
     //     }
     // }
 
-    float4 emissive = ProcessEmissive(mat.Emmissive, albedo);
+    float4 emissive = ProcessEmissive(mat.Emissive, albedo);
     totalColor += emissive;
 
     return totalColor;

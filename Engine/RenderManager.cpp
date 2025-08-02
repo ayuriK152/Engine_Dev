@@ -19,7 +19,7 @@ void RenderManager::Init()
 		skybox.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
-		auto debug = CreatePSODesc(_debugInputLayout, L"debugVS", L"debugPS");
+		auto debug = CreatePSODesc(_colliderDebugInputLayout, L"debugVS", L"debugPS");
 		debug.DepthStencilState.DepthEnable = false;
 		debug.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		debug.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
@@ -27,12 +27,26 @@ void RenderManager::Init()
 		debug.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		debug.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
 
+		auto shadow = CreatePSODesc(_solidInputLayout, L"shadowVS", L"shadowPS");
+		shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // 깊이만
+		shadow.NumRenderTargets = 0;
+		shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		shadow.RasterizerState.DepthBias = 100;
+		shadow.RasterizerState.DepthBiasClamp = 0.0f;
+		shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
+
+		auto shadowDebug = CreatePSODesc(_shadowDebugInputLayout, L"shadowDebugVS", L"shadowDebugPS");
+		shadowDebug.DepthStencilState.DepthEnable = FALSE;
+
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 		BuildPSO(PSO_SKYBOX, skybox);
+		BuildPSO(PSO_SHADOWMAP, shadow);
 
-		BuildPSO(PSO_DEBUG, debug);
+		BuildPSO(PSO_DEBUG_PHYSICS, debug);
+		BuildPSO(PSO_DEBUG_SHADOW, shadowDebug);
 		SetDefaultPSO();
 	}
 
@@ -68,12 +82,51 @@ void RenderManager::Render()
 
 	auto lightSB = GRAPHIC->GetCurrFrameResource()->lightSB->GetResource();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
-	auto aaa = GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex();
 	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_SHADOWTEX_SR, _shadowMap->GetSrv());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_LIGHT_CB, lightDesc);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAMETER_LIGHTINFO_CB, _lights.size(), 0);
 	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
+
+	// ShadowMap Pass
+	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
+		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+
+	cmdList->RSSetViewports(1, &_shadowMap->GetViewport());
+	cmdList->RSSetScissorRects(1, &_shadowMap->GetScissorRect());
+
+	cmdList->ClearDepthStencilView(_shadowMap->GetDsv(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	cmdList->OMSetRenderTargets(0, nullptr, false, &_shadowMap->GetDsv());
+
+	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
+
+	for (auto& p : _sortedObjects)
+	{
+		if (p.first == PSO_SKYBOX)
+			continue;
+
+		for (int i = 0; i < p.second.size(); i++)
+			p.second[i]->Render();
+	}
+
+	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
+		D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
+
+	// Debug Pass
+	cmdList->SetPipelineState(_PSOs[PSO_DEBUG_SHADOW].Get());
+
+	// Main Pass
+	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+	cmdList->RSSetViewports(1, &GRAPHIC->GetViewport());
+	cmdList->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
+
+	cmdList->ClearRenderTargetView(GRAPHIC->GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	cmdList->ClearDepthStencilView(GRAPHIC->GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+	cmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
 
 	// 이거 최적화할 필요 있을듯
 	for (auto& p : _sortedObjects)
@@ -87,7 +140,7 @@ void RenderManager::Render()
 			p.second[i]->Render();
 	}
 
-	cmdList->SetPipelineState(_PSOs[PSO_DEBUG].Get());
+	cmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
 	DEBUG->Render();
 }
 
@@ -219,27 +272,30 @@ void RenderManager::BuildRootSignature()
 	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	CD3DX12_DESCRIPTOR_RANGE texTable;
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+	CD3DX12_DESCRIPTOR_RANGE shadowTexTable;
+	shadowTexTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
 	CD3DX12_DESCRIPTOR_RANGE lightTable;
-	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
+	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
 
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[8];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[9];
 
 	slotRootParameter[ROOT_PARAMETER_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);		// CubemapSR
 	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);		// TextureSR
+	slotRootParameter[ROOT_PARAMETER_SHADOWTEX_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);			// BoneSB
-	//slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsConstantBufferView(0);		// LightCB
 	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsDescriptorTable(1, &lightTable);		// LightSB
-	slotRootParameter[ROOT_PARAMETER_LIGHTINFO_CB].InitAsConstantBufferView(0);	// ObjectCB
+
+	slotRootParameter[ROOT_PARAMETER_LIGHTINFO_CB].InitAsConstantBufferView(0);	// LightInfoCB
 	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(1);	// ObjectCB
 	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(2);	// MaterialCB
 	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(3);	// CameraCB
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(8, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(9, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -280,10 +336,16 @@ void RenderManager::BuildInputLayout()
 		{ "BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 60, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 
-	_debugInputLayout =
+	_colliderDebugInputLayout =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+
+	_shadowDebugInputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 

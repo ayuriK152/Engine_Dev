@@ -24,11 +24,23 @@ void ResourceManager::CreateDefaultResources()
 	auto skyboxPS = make_shared<Shader>(L"SkyboxPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"skyboxPS", skyboxPS);
 
+	auto shadowVS = make_shared<Shader>(L"ShadowVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"shadowVS", shadowVS);
+
+	auto shadowPS = make_shared<Shader>(L"ShadowPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"shadowPS", shadowPS);
+
 	auto debugVS = make_shared<Shader>(L"DebugVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"debugVS", debugVS);
 
 	auto debugPS = make_shared<Shader>(L"DebugPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"debugPS", debugPS);
+
+	auto shadowDebugVS = make_shared<Shader>(L"ShadowDebugVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"shadowDebugVS", shadowDebugVS);
+
+	auto shadowDebugPS = make_shared<Shader>(L"ShadowDebugPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"shadowDebugPS", shadowDebugPS);
 
 
 	//==========Texture==========

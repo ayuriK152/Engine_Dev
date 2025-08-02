@@ -36,13 +36,22 @@ void DirectionalLight::Update()
 		direction = GetTransform()->GetLook();
 
 		XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
-		XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
-		XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
+		XMVECTOR targetPos = eyePos + XMLoadFloat3(&direction);
+		//XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
+		XMVECTOR upVec = { 0.0f, 1.0f, 0.0f };
 
 		XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
-		XMStoreFloat4x4(&_matView, matView);
+		XMStoreFloat4x4(&_matView, XMMatrixTranspose(matView));
 
 		// projMat 갱신 부분 추가해야함
+		auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
+		XMMATRIX matProj = XMMatrixOrthographicLH(
+			30.0f,
+			30.0f,
+			-50.0f,
+			50.0f
+		);
+		XMStoreFloat4x4(&_matProj, XMMatrixTranspose(matProj));
 
 		SetFramesDirty();
 	}

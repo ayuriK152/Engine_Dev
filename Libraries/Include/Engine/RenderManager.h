@@ -18,6 +18,8 @@
 #define		ROOT_PARAMETER_MATERIAL_CB		7
 #define		ROOT_PARAMETER_CAMERA_CB		8
 
+#define		STATIC_SAMPLER_COUNT			6
+
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
@@ -66,7 +68,7 @@ private:
 	void UpdateMaterialCB();
 	void UpdateCameraCB();
 
-	array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
 private:
 	ComPtr<ID3D12RootSignature> _rootSignature;

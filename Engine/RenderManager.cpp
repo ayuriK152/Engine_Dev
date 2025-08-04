@@ -32,8 +32,8 @@ void RenderManager::Init()
 		shadow.NumRenderTargets = 0;
 		shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		shadow.RasterizerState.DepthBias = 100;
-		shadow.RasterizerState.DepthBiasClamp = 0.0f;
+		shadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		shadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
 		shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
 
 		auto shadowDebug = CreatePSODesc(_shadowDebugInputLayout, L"shadowDebugVS", L"shadowDebugPS");
@@ -416,7 +416,7 @@ void RenderManager::UpdateCameraCB()
 #pragma endregion
 
 
-std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> RenderManager::GetStaticSamplers()
+std::array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> RenderManager::GetStaticSamplers()
 {
 	// Applications usually only need a handful of samplers.  So just define them all up front
 	// and keep them available as part of the root signature.  

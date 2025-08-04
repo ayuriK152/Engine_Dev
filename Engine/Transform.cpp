@@ -77,6 +77,11 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 	GetGameObject()->SetFramesDirty();
 }
 
+void Transform::SetLocalQuaternion(const Vector4& quaternion)
+{
+	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
+}
+
 void Transform::SetPosition(const Vector3& worldPosition)
 {
 	if (HasParent())
@@ -239,7 +244,7 @@ void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
 	XMStoreFloat3(&_localPosition, position);
 
-	UpdateTransform();
+	//UpdateTransform();
 	GetGameObject()->SetFramesDirty();
 }
 

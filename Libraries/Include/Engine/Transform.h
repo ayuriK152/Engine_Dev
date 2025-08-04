@@ -30,6 +30,9 @@ public:
 	Vector3 GetLocalRotationRadian() { return _localRotation; }
 	void SetLocalRotationRadian(const Vector3& rotation);
 
+	Vector4 GetLocalQuaternion() { return _quaternion; }
+	void SetLocalQuaternion(const Vector4& quaternion);
+
 	Vector3 GetLocalScale() { return _localScale; }
 	void SetLocalScale(const Vector3& scale) { 
 		_localScale = scale; 

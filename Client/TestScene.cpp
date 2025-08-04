@@ -29,17 +29,19 @@ void TestScene::Init()
 	gameObjects.push_back(camera);
 
 	globalLight = make_shared<GameObject>();
+	globalLight->name = "GlobalLight";
 	XMFLOAT4 ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
+	globalLight->GetTransform()->LookAt(Vector3(1.0f, -2.0f, 1.0f));
 	gameObjects.push_back(globalLight);
 
 	{
-		//auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
-		//model = loadedObjects[0];
-		//gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		//model->AddComponent(make_shared<PlayerScript>());
+		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
+		model = loadedObjects[0];
+		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		model->AddComponent(make_shared<PlayerScript>());
 	}
 
 	{
@@ -111,8 +113,6 @@ void TestScene::Init()
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
-
-	globalLight->GetTransform()->LookAt(Vector3(1.0f, -2.0f, 1.0f));
 
 	while (gameObjects.size() > 0)
 	{

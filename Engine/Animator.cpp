@@ -73,13 +73,9 @@ void Animator::UpdateBoneTransform()
 		if (keyFrame == nullptr)
 			continue;
 
-		XMMATRIX matScale = XMMatrixScaling(keyFrame->scale.x, keyFrame->scale.y, keyFrame->scale.z);
-		XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&keyFrame->rotation));
-		XMMATRIX matTranslate = XMMatrixTranslation(keyFrame->position.x, keyFrame->position.y, keyFrame->position.z);
-
-		XMFLOAT4X4 finalMat;
-		XMStoreFloat4x4(&finalMat, matScale * matRotation * matTranslate);
-		child->SetLocalMatrix(finalMat);
+		child->SetLocalScale(keyFrame->scale);
+		child->SetLocalQuaternion(keyFrame->rotation);
+		child->SetLocalPosition(keyFrame->position);
 
 		delete keyFrame;
 	}

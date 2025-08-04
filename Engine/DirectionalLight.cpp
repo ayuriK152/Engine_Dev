@@ -37,8 +37,7 @@ void DirectionalLight::Update()
 
 		XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
 		XMVECTOR targetPos = eyePos + XMLoadFloat3(&direction);
-		//XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
-		XMVECTOR upVec = { 0.0f, 1.0f, 0.0f };
+		XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
 
 		XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
 		XMStoreFloat4x4(&_matView, XMMatrixTranspose(matView));
@@ -46,8 +45,8 @@ void DirectionalLight::Update()
 		// projMat 갱신 부분 추가해야함
 		auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
 		XMMATRIX matProj = XMMatrixOrthographicLH(
-			30.0f,
-			30.0f,
+			80.0f,
+			80.0f,
 			-50.0f,
 			50.0f
 		);

@@ -43,6 +43,7 @@ void FrameResource::UpdateObjectCB()
 
 			ObjectConstants objConstants;
 			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&objConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
 
 			objectCB->CopyData(o->objCBIndex, objConstants);
 

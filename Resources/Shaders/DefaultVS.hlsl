@@ -34,16 +34,16 @@ VertexOut VS(VertexIn vin)
 
 #ifdef SKINNED
     posW = float4(vin.Pos, 1.0f);
+    vout.normal =  vin.Normal;
 #else
     posW = mul(float4(vin.Pos, 1.0f), World);
+    vout.normal =  normalize(mul(vin.Normal, (float3x3)World));
 #endif
     vout.positionWorld = posW.xyz;
-    vout.normal = mul(vin.Normal, (float3x3)World);
+    //vout.normal =  normalize(mul(vin.Normal, (float3x3)World));
     vout.position = mul(posW, ViewProj);
 	vout.texUV = mul(float4(vin.TexC, 0.0f, 1.0f), MatTransform).xy;
 
-    //float4 lightViewPos = mul(posW, mul(Lights[0].View, Lights[0].Proj));
-    //vout.shadowPos = mul(lightViewPos, Lights[0].Proj);
     vout.shadowPos = mul(posW, mul(Lights[0].View, Lights[0].Proj));
 	
     return vout;

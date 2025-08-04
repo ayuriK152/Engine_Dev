@@ -12,7 +12,7 @@ void PlayerScript::Update()
 {
 	// Camera Controll
 	{
-
+		transform->Rotate(Vector3(0.0f, 2.0f * TIME->DeltaTime(), 0.0f));
 	}
 
 	if (!Move())

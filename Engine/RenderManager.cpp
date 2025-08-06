@@ -36,6 +36,12 @@ void RenderManager::Init()
 		shadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
 		shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
 
+		auto skinnedShadow = CreatePSODesc(_skinnedInputLayout, L"skinnedShadowVS", L"shadowPS");
+		skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+		skinnedShadow.NumRenderTargets = 0;
+		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		skinnedShadow.RasterizerState = shadow.RasterizerState;
+
 		auto shadowDebug = CreatePSODesc(_shadowDebugInputLayout, L"shadowDebugVS", L"shadowDebugPS");
 		shadowDebug.DepthStencilState.DepthEnable = FALSE;
 
@@ -44,6 +50,7 @@ void RenderManager::Init()
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 		BuildPSO(PSO_SKYBOX, skybox);
 		BuildPSO(PSO_SHADOWMAP, shadow);
+		BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
 
 		BuildPSO(PSO_DEBUG_PHYSICS, debug);
 		BuildPSO(PSO_DEBUG_SHADOW, shadowDebug);
@@ -103,7 +110,18 @@ void RenderManager::Render()
 
 	for (auto& p : _sortedObjects)
 	{
-		if (p.first == PSO_SKYBOX)
+		if (p.first == PSO_SKYBOX || p.first == PSO_OPAQUE_SKINNED)
+			continue;
+
+		for (int i = 0; i < p.second.size(); i++)
+			p.second[i]->Render();
+	}
+
+	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
+
+	for (auto& p : _sortedObjects)
+	{
+		if (p.first == PSO_SKYBOX || p.first == PSO_OPAQUE_SOLID)
 			continue;
 
 		for (int i = 0; i < p.second.size(); i++)

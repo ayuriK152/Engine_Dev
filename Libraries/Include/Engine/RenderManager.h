@@ -1,12 +1,13 @@
 #pragma once
 
-#define		PSO_OPAQUE_SOLID	"opaque_solid"
-#define		PSO_OPAQUE_SKINNED	"opaque_skinned"
-#define		PSO_SKYBOX			"skybox"
-#define		PSO_SHADOWMAP		"shadowmap"
-#define		PSO_WIREFRAME		"wireframe"
-#define		PSO_DEBUG_PHYSICS	"debug_physics"
-#define		PSO_DEBUG_SHADOW	"debug_shadow"
+#define		PSO_OPAQUE_SOLID		"opaque_solid"
+#define		PSO_OPAQUE_SKINNED		"opaque_skinned"
+#define		PSO_SKYBOX				"skybox"
+#define		PSO_SHADOWMAP			"shadowmap"
+#define		PSO_SHADOWMAP_SKINNED	"shadowmap_skinned"
+#define		PSO_WIREFRAME			"wireframe"
+#define		PSO_DEBUG_PHYSICS		"debug_physics"
+#define		PSO_DEBUG_SHADOW		"debug_shadow"
 
 #define		ROOT_PARAMETER_SKYBOX_SR		0
 #define		ROOT_PARAMETER_TEXTURE_SR		1

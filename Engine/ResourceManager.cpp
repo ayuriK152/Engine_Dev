@@ -11,34 +11,30 @@ void ResourceManager::CreateDefaultResources()
 
 	auto stdVS = make_shared<Shader>(L"DefaultVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"standardVS", stdVS);
-	
 	auto skinnedVS = make_shared<Shader>(L"DefaultVS.hlsl", skinnedDefines, ShaderType::VS);
 	Add<Shader>(L"skinnedVS", skinnedVS);
-	
 	auto opaquePS = make_shared<Shader>(L"DefaultPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"opaquePS", opaquePS);
 
 	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"skyboxVS", skyboxVS);
-
 	auto skyboxPS = make_shared<Shader>(L"SkyboxPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"skyboxPS", skyboxPS);
 
 	auto shadowVS = make_shared<Shader>(L"ShadowVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"shadowVS", shadowVS);
-
+	auto skinnedShadowVS = make_shared<Shader>(L"ShadowVS.hlsl", skinnedDefines, ShaderType::VS);
+	Add<Shader>(L"skinnedShadowVS", skinnedShadowVS);
 	auto shadowPS = make_shared<Shader>(L"ShadowPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"shadowPS", shadowPS);
 
 	auto debugVS = make_shared<Shader>(L"DebugVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"debugVS", debugVS);
-
 	auto debugPS = make_shared<Shader>(L"DebugPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"debugPS", debugPS);
 
 	auto shadowDebugVS = make_shared<Shader>(L"ShadowDebugVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"shadowDebugVS", shadowDebugVS);
-
 	auto shadowDebugPS = make_shared<Shader>(L"ShadowDebugPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"shadowDebugPS", shadowDebugPS);
 

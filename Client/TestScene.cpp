@@ -15,21 +15,21 @@ void TestScene::Init()
 	}
 
 	skybox = make_shared<GameObject>();
-	skybox->name = "skybox";
+	skybox->SetName("skybox");
 	skybox->AddComponent(make_shared<MeshRenderer>());
 	skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 	skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
-	skybox->psoName = PSO_SKYBOX;
+	skybox->SetPSOName(PSO_SKYBOX);
 	gameObjects.push_back(skybox);
 	RENDER->SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
 
 	camera = make_shared<GameObject>();
-	camera->name = "camera";
+	camera->SetName("camera");
 	camera->AddComponent(make_shared<Camera>());
 	gameObjects.push_back(camera);
 
 	globalLight = make_shared<GameObject>();
-	globalLight->name = "GlobalLight";
+	globalLight->SetName("GlobalLight");
 	XMFLOAT4 ambient = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 diffuse = { 0.5f, 0.5f, 0.5f, 1.0f };
 	XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -46,7 +46,7 @@ void TestScene::Init()
 
 	{
 		box = make_shared<GameObject>();
-		box->name = "box";
+		box->SetName("box");
 		box->AddComponent(make_shared<MeshRenderer>());
 		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
@@ -60,7 +60,7 @@ void TestScene::Init()
 
 	{
 		ground = make_shared<GameObject>();
-		ground->name = "ground";
+		ground->SetName("ground");
 		ground->AddComponent(make_shared<MeshRenderer>());
 		ground->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 		auto mat = make_shared<Material>("Proto_dark1", L"proto_dark1");
@@ -76,7 +76,7 @@ void TestScene::Init()
 
 	{
 		//box2 = make_shared<GameObject>();
-		//box2->name = "box";
+		//box2->SetName("box");
 		//box2->AddComponent(make_shared<MeshRenderer>());
 		//box2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 		//box2->AddComponent(make_shared<BoxCollider>());
@@ -88,7 +88,7 @@ void TestScene::Init()
 
 	{
 		sphere = make_shared<GameObject>();
-		sphere->name = "sphere";
+		sphere->SetName("sphere");
 		sphere->AddComponent(make_shared<MeshRenderer>());
 		sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 		sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
@@ -100,7 +100,7 @@ void TestScene::Init()
 
 	{
 		sphere2 = make_shared<GameObject>();
-		sphere2->name = "sphere2";
+		sphere2->SetName("sphere2");
 		sphere2->AddComponent(make_shared<MeshRenderer>());
 		sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 		sphere2->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제

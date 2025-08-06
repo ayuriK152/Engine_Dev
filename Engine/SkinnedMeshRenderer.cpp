@@ -34,7 +34,7 @@ void SkinnedMeshRenderer::Update()
 
 			// 얘 왜 곱셈 순서 반대로 해야되고 전치행렬 해줘야 작동하는지 이유를 모르겠음
 			XMMATRIX finalMat = XMLoadFloat4x4(&_boneTransforms[i]->GetWorldMatrix());
-			finalMat = XMLoadFloat4x4(&_bones[_boneTransforms[i]->GetGameObject()->_name].offsetTransform) * finalMat;
+			finalMat = XMLoadFloat4x4(&_bones[_boneTransforms[i]->GetGameObject()->GetName()].offsetTransform) * finalMat;
 			finalMat = XMMatrixTranspose(finalMat);
 
 			XMFLOAT4X4 finalTransform;

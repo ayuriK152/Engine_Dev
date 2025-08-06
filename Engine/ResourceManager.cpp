@@ -144,11 +144,11 @@ void ResourceManager::SavePrefab(shared_ptr<GameObject> prefabObject, const stri
 		allObjects.insert(allObjects.end(), allObjects[i]->GetChilds().begin(), allObjects[i]->GetChilds().end());
 	}
 
-	string finalPath = filePath == "" ? prefabObject->_name : filePath;
-	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(prefabObject->_name);
+	string finalPath = filePath == "" ? prefabObject->GetName() : filePath;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(prefabObject->GetName());
 	
 	FILEIO->WriteToFile(fileHandle, (UINT32)allObjects.size());
-	SavePrefabRecursive(fileHandle, prefabObject, -1, prefabObject->_name);
+	SavePrefabRecursive(fileHandle, prefabObject, -1, prefabObject->GetName());
 	CloseHandle(fileHandle);
 }
 
@@ -157,8 +157,8 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 	static int objectIdx = 0;
 	int currentIdx = objectIdx++;
 
-	FILEIO->WriteToFile(fileHandle, object->_name);
-	FILEIO->WriteToFile(fileHandle, object->_psoName);
+	FILEIO->WriteToFile(fileHandle, object->GetName());
+	FILEIO->WriteToFile(fileHandle, object->GetPSOName());
 	FILEIO->WriteToFile(fileHandle, object->GetTransform()->GetWorldMatrix());
 	FILEIO->WriteToFile(fileHandle, parentIdx);		// ºÎ¸ð ÀÎµ¦½º
 	FILEIO->WriteToFile(fileHandle, (UINT32)object->GetComponents().size() - 1);
@@ -194,7 +194,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
 				FILEIO->WriteToFile(fileHandle, matName);
 
-				string rootBoneName = meshRenderer->GetRootBone()->GetGameObject()->_name;
+				string rootBoneName = meshRenderer->GetRootBone()->GetGameObject()->GetName();
 				FILEIO->WriteToFile(fileHandle, rootBoneName);
 
 				string boneDataName = prefabName;
@@ -368,8 +368,11 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	for (int i = 0; i < objectCount; i++)
 	{
 		shared_ptr<GameObject> go = make_shared<GameObject>();
-		FILEIO->ReadFileData(fileHandle, go->_name);
-		FILEIO->ReadFileData(fileHandle, go->_psoName);
+		string name, psoName;
+		FILEIO->ReadFileData(fileHandle, name);
+		FILEIO->ReadFileData(fileHandle, psoName);
+		go->SetName(name);
+		go->SetPSOName(psoName);
 
 		XMFLOAT4X4 worldMat;
 		FILEIO->ReadFileData(fileHandle, &worldMat, sizeof(XMFLOAT4X4));
@@ -499,7 +502,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	{
 		for (auto& go : loadedObjects)
 		{
-			if (go->_name == renderer.second)
+			if (go->GetName() == renderer.second)
 			{
 				renderer.first->SetRootBone(go->GetTransform());
 				break;

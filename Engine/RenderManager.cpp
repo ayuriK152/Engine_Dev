@@ -250,11 +250,11 @@ void RenderManager::SetDefaultPSO()
 
 void RenderManager::UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO)
 {
-	for (int i = 0; i < _sortedObjects[obj->_psoName].size(); i++)
+	for (int i = 0; i < _sortedObjects[obj->GetPSOName()].size(); i++)
 	{
-		if (_sortedObjects[obj->_psoName][i] == obj)
+		if (_sortedObjects[obj->GetPSOName()][i] == obj)
 		{
-			_sortedObjects[obj->_psoName].erase(_sortedObjects[obj->_psoName].begin() + i);
+			_sortedObjects[obj->GetPSOName()].erase(_sortedObjects[obj->GetPSOName()].begin() + i);
 			_sortedObjects[targetPSO].push_back(obj);
 			break;
 		}
@@ -271,7 +271,7 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	obj->objCBIndex = _objects.size();
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	_sortedObjects[obj->_psoName].push_back(obj);
+	_sortedObjects[obj->GetPSOName()].push_back(obj);
 	_objects.push_back(move(obj));
 	return _objects[_objects.size() - 1];
 }

@@ -74,7 +74,7 @@ void Animator::UpdateBoneTransform()
 {
 	for (int i = 0; i < _childs.size(); i++)
 	{
-		string objName = _childs[i]->GetGameObject()->_name;
+		string objName = _childs[i]->GetGameObject()->GetName();
 		Animation::KeyFrame keyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick);
 
 		if (keyFrame.tick < 0.0)

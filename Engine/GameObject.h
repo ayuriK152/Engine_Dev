@@ -25,6 +25,7 @@ public:
 	void Update();
 	void Render();
 
+public:
 	void AddComponent(shared_ptr<Component> component);
 	shared_ptr<Transform> GetTransform();
 
@@ -36,8 +37,18 @@ public:
 	template<typename T>
 	ComponentType GetComponentType();
 
+	// 인스턴스 ID는 프리팹에 저장하지 않는 정보
+	// CB 인덱스와 다르게 숫자 밀려도 상관없음. 그냥 식별할 수 있기만 하면 됨.
+	// 그래서 Setter 구현해두지 않음.
+	int GetId() { return _id; }
+
+	string GetName() { return _name; };
+	void SetName(const string& name) { _name = name; }
+
+	string GetPSOName() { return _psoName; }
 	void SetPSOName(const string& name) { _psoName = name; }
 	void SetPSONameIncludeChilds(const string& name);
+
 	void SetFramesDirty();
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
@@ -50,6 +61,8 @@ public:
 	map<ComponentType, shared_ptr<Component>> components;
 
 private:
+	static int _nextId;
+	int _id;
 	string _name;
 	string _psoName;
 

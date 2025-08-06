@@ -44,7 +44,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
 	shared_ptr<GameObject> rootObj = make_shared<GameObject>();
-	rootObj->_name = UniversalUtils::ToString(_assetName);
+	rootObj->GetName() = UniversalUtils::ToString(_assetName);
 	_loadedObject.push_back(rootObj);
 
 	ProcessMaterials(_scene);
@@ -152,7 +152,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
-		meshObj->_name = UniversalUtils::ToString(m->GetNameW());
+		meshObj->GetName() = UniversalUtils::ToString(m->GetNameW());
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
 		meshObj->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
@@ -235,7 +235,7 @@ void AssetLoader::BuildBones()
 		}
 
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
-		boneObj->_name = b.name;
+		boneObj->GetName() = b.name;
 
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());

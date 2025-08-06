@@ -1,9 +1,13 @@
 #include "pch.h"
 #include "GameObject.h"
 
+int GameObject::_nextId = 0;
+
 GameObject::GameObject()
 {
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	_id = _nextId++;
 
 	_name = "GameObject";
 	_psoName = PSO_OPAQUE_SOLID;

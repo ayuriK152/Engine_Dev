@@ -6,6 +6,9 @@ class Animation : public Resource
 public:
 	struct KeyFrame
 	{
+		// 초기값 -1.0으로 null 체크
+		KeyFrame() : tick(-1.0) {}
+
 		double tick;
 		Vector3 position;
 		Vector4 rotation;
@@ -31,7 +34,7 @@ public:
 	void AddAnimationData(const AnimationData animation);
 	unordered_map<string, AnimationData>& GetAnimationDatas() { return _animationDatas; }
 
-	KeyFrame* Interpolate(const string& boneName, float tick);
+	KeyFrame Interpolate(const string& boneName, float tick);
 
 private:
 	float _duration;

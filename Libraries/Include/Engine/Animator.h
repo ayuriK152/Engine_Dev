@@ -31,6 +31,7 @@ public:
 	bool IsLoop() { return _isLoop; }
 	void SetLoop(bool loop) { _isLoop = loop; }
 
+	void UpdateChildList();
 	void UpdateBoneTransform();
 
 	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_CURRENT_ANIMATION ? _animations[_currentAnimation] : nullptr; }
@@ -64,5 +65,7 @@ private:
 
 	map<string, shared_ptr<Animation>> _animations;
 	string _currentAnimation;
+
+	vector<shared_ptr<Transform>> _childs;
 };
 

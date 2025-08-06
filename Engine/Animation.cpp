@@ -18,37 +18,44 @@ void Animation::AddAnimationData(const AnimationData animation)
 	_animationDatas[animation.boneName] = animation;
 }
 
-Animation::KeyFrame* Animation::Interpolate(const string& boneName, float tick)
+Animation::KeyFrame Animation::Interpolate(const string& boneName, float tick)
 {
+	KeyFrame resultFrame;
+
 	if (!_animationDatas.contains(boneName))
-		return nullptr;
+		return resultFrame;
 	if (_animationDatas[boneName].keyFrames.empty())
-		return nullptr;
+		return resultFrame;
+
 	if (_animationDatas[boneName].keyFrames.size() == 1)
 	{
-		KeyFrame* resultFrame = new KeyFrame();
-		resultFrame->tick = _animationDatas[boneName].keyFrames[0].tick;
-		resultFrame->position = _animationDatas[boneName].keyFrames[0].position;
-		resultFrame->rotation = _animationDatas[boneName].keyFrames[0].rotation;
-		resultFrame->scale = _animationDatas[boneName].keyFrames[0].scale;
-
-		return resultFrame;
+		return _animationDatas[boneName].keyFrames[0];
 	}
 
 	AnimationData animationData = _animationDatas[boneName];
 	KeyFrame prevFrame, nextFrame;
-	KeyFrame* resultFrame = new KeyFrame();
 
-	// 탐색 알고리즘 변경 고려
+	// 이진 탐색 알고리즘 채택
 	bool foundFlag = false;
-	for (int i = 0; i < animationData.keyFrames.size() - 1; i++)
+	int left = 0, right = animationData.keyFrames.size() - 2;
+	int mid;
+	while (left <= right)
 	{
-		if (tick >= animationData.keyFrames[i].tick && tick <= animationData.keyFrames[i + 1].tick)
+		mid = left + (right - left) / 2;
+		if (tick >= animationData.keyFrames[mid].tick && tick <= animationData.keyFrames[mid + 1].tick)
 		{
-			prevFrame = animationData.keyFrames[i];
-			nextFrame = animationData.keyFrames[i + 1];
+			prevFrame = animationData.keyFrames[mid];
+			nextFrame = animationData.keyFrames[mid + 1];
 			foundFlag = true;
 			break;
+		}
+		else if (tick < animationData.keyFrames[mid].tick)
+		{
+			right = mid - 1;
+		}
+		else if (tick > animationData.keyFrames[mid + 1].tick)
+		{
+			left = mid + 1;
 		}
 	}
 
@@ -59,15 +66,15 @@ Animation::KeyFrame* Animation::Interpolate(const string& boneName, float tick)
 	}
 
 	float blendValue = foundFlag ? (tick - prevFrame.tick) / (nextFrame.tick - prevFrame.tick) : 0.0f;
-	resultFrame->tick = tick;
+	resultFrame.tick = tick;
 
-	resultFrame->position = Vector3(
+	resultFrame.position = Vector3(
 		prevFrame.position.x + blendValue * (nextFrame.position.x - prevFrame.position.x),
 		prevFrame.position.y + blendValue * (nextFrame.position.y - prevFrame.position.y),
 		prevFrame.position.z + blendValue * (nextFrame.position.z - prevFrame.position.z)
 	);
-	XMStoreFloat4(&resultFrame->rotation, XMQuaternionSlerp(XMLoadFloat4(&prevFrame.rotation), XMLoadFloat4(&nextFrame.rotation), blendValue));
-	resultFrame->scale = Vector3(
+	XMStoreFloat4(&resultFrame.rotation, XMQuaternionSlerp(XMLoadFloat4(&prevFrame.rotation), XMLoadFloat4(&nextFrame.rotation), blendValue));
+	resultFrame.scale = Vector3(
 		prevFrame.scale.x + blendValue * (nextFrame.scale.x - prevFrame.scale.x),
 		prevFrame.scale.y + blendValue * (nextFrame.scale.y - prevFrame.scale.y),
 		prevFrame.scale.z + blendValue * (nextFrame.scale.z - prevFrame.scale.z)

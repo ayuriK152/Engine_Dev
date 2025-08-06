@@ -36,7 +36,8 @@ public:
 	template<typename T>
 	ComponentType GetComponentType();
 
-	void SetPSOName(const string& name);
+	void SetPSOName(const string& name) { _psoName = name; }
+	void SetPSONameIncludeChilds(const string& name);
 	void SetFramesDirty();
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
@@ -44,14 +45,14 @@ public:
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
-	string name;
-	string psoName;
-
 	UINT objCBIndex;
 
 	map<ComponentType, shared_ptr<Component>> components;
 
 private:
+	string _name;
+	string _psoName;
+
 	bool _isInitialized;
 	int _numFramesDirty;
 };

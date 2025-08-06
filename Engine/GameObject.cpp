@@ -5,8 +5,8 @@ GameObject::GameObject()
 {
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	name = "GameObject";
-	psoName = PSO_OPAQUE_SOLID;
+	_name = "GameObject";
+	_psoName = PSO_OPAQUE_SOLID;
 
 	objCBIndex = -1;
 
@@ -74,10 +74,10 @@ shared_ptr<Transform> GameObject::GetTransform()
 	return transform;
 }
 
-void GameObject::SetPSOName(const string& name)
+void GameObject::SetPSONameIncludeChilds(const string& name)
 {
 	RENDER->UpdateObjectPSO(shared_from_this(), name);
-	psoName = name;
+	_psoName = name;
 }
 
 void GameObject::SetFramesDirty()

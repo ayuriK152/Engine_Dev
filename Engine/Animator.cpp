@@ -18,6 +18,7 @@ Animator::~Animator()
 void Animator::Init()
 {
 	_isPlaying = _isPlayOnInit;
+	UpdateChildList();
 }
 
 void Animator::Update()
@@ -60,23 +61,27 @@ void Animator::PauseAnimation()
 	_isPlaying = false;
 }
 
+void Animator::UpdateChildList()
+{
+	_childs = GetTransform()->GetChilds();
+	for (int i = 0; i < _childs.size(); i++)
+	{
+		_childs.insert(_childs.end(), _childs[i]->GetChilds().begin(), _childs[i]->GetChilds().end());
+	}
+}
+
 void Animator::UpdateBoneTransform()
 {
-	vector<shared_ptr<Transform>> childs = GetTransform()->GetChilds();
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < _childs.size(); i++)
 	{
-		shared_ptr<Transform> child = childs[i];
-		childs.insert(childs.end(), child->GetChilds().begin(), child->GetChilds().end());
-		string objName = child->GetGameObject()->name;
-		Animation::KeyFrame* keyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick);
+		string objName = _childs[i]->GetGameObject()->_name;
+		Animation::KeyFrame keyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick);
 
-		if (keyFrame == nullptr)
+		if (keyFrame.tick < 0.0)
 			continue;
 
-		child->SetLocalScale(keyFrame->scale);
-		child->SetLocalQuaternion(keyFrame->rotation);
-		child->SetLocalPosition(keyFrame->position);
-
-		delete keyFrame;
+		_childs[i]->SetLocalScale(keyFrame.scale);
+		_childs[i]->SetLocalQuaternion(keyFrame.rotation);
+		_childs[i]->SetLocalPosition(keyFrame.position);
 	}
 }

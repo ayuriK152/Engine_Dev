@@ -37,8 +37,8 @@ void Rigidbody::FixedUpdate()
 void Rigidbody::Update()
 {
 	// 선형 운동
-	_velocity = MathHelper::VectorAddition(_velocity, MathHelper::VectorMultiply(_netForce, TIME->DeltaTime()));
-	GetTransform()->Translate(MathHelper::VectorMultiply(_velocity, TIME->DeltaTime()));
+	_velocity = _velocity + _netForce * TIME->DeltaTime();
+	GetTransform()->Translate(_velocity * TIME->DeltaTime());
 
 	// 회전 운동
 	if (isAngular)
@@ -48,11 +48,11 @@ void Rigidbody::Update()
 			_netTorque.y / _inertiaTensor.y * angularVelocityPower,
 			_netTorque.z / _inertiaTensor.z * angularVelocityPower
 		);
-		_angularVelocity = MathHelper::VectorAddition(_angularVelocity, MathHelper::VectorMultiply(angularAcceleration, TIME->DeltaTime()));
-		_angularVelocity = MathHelper::VectorMultiply(_angularVelocity, 1.0f - angularDrag * TIME->DeltaTime()); // 회전 저항 적용
+		_angularVelocity = _angularVelocity + angularAcceleration * TIME->DeltaTime();
+		_angularVelocity = _angularVelocity * (1.0f - angularDrag * TIME->DeltaTime()); // 회전 저항 적용
 
 		// 오일러 통합
-		GetTransform()->Rotate(MathHelper::VectorMultiply(_angularVelocity, TIME->DeltaTime()));
+		GetTransform()->Rotate(_angularVelocity * TIME->DeltaTime());
 	}
 
 	_netTorque = { 0.0f, 0.0f, 0.0f }; // 매 프레임 토크 초기화
@@ -60,11 +60,10 @@ void Rigidbody::Update()
 
 void Rigidbody::AddForce(const Vector3& force)
 {
-	_velocity = MathHelper::VectorAddition(_velocity, force);
+	_velocity = _velocity + force;
 }
 
 void Rigidbody::AddTorque(const Vector3& torque)
 {
-	_netTorque = MathHelper::VectorAddition(_netTorque, torque);
+	_netTorque = _netTorque + torque;
 }
-

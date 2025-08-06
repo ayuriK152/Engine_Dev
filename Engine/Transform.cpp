@@ -180,7 +180,7 @@ Vector3 Transform::GetBack()
 
 void Transform::Translate(const Vector3& moveVec)
 {
-	_localPosition = MathHelper::VectorAddition(_localPosition, moveVec);
+	_localPosition = _localPosition + moveVec;
 	UpdateTransform();
 	GetGameObject()->SetFramesDirty();
 }
@@ -200,14 +200,14 @@ void Transform::Rotate(const Vector3& angle)
 
 void Transform::Rotate(const XMVECTOR& angle)
 {
-	XMFLOAT3 f3_angle;
+	Vector3 f3_angle;
 	XMStoreFloat3(&f3_angle, angle);
 	Rotate(f3_angle);
 }
 
 void Transform::LookAt(const Vector3& targetPos)
 {
-	XMVECTOR targetVec = XMLoadFloat3(&MathHelper::VectorSubtract(targetPos, _position));
+	XMVECTOR targetVec = XMLoadFloat3(&(targetPos - _position));
 	
 	XMVECTOR sideVec = XMVector3Normalize(XMVector3Cross(targetVec, XMVECTOR({ 0.0f, 1.0f, 0.0f })));
 	XMVECTOR upVec = XMVector3Normalize(XMVector3Cross(targetVec, sideVec));

@@ -70,14 +70,14 @@ CollisionInfo SphereCollider::CheckCollide(shared_ptr<Collider>& other)
 		{
 			auto sphereCollider = static_pointer_cast<SphereCollider>(other);
 
-			float dist = MathHelper::VectorLength(MathHelper::VectorSubtract(_boundingSphere.Center, sphereCollider->GetBoundingSphere().Center));
+			float dist = (Vector3(_boundingSphere.Center) - Vector3(sphereCollider->GetBoundingSphere().Center)).Length();
 			float overlap = _boundingSphere.Radius + sphereCollider->GetBoundingSphere().Radius - dist;
 
 			if (overlap < 0.0f)
 				break;
 
 			collInfo.IsCollide = true;
-			collInfo.Normal = MathHelper::VectorNormalize(MathHelper::VectorSubtract(sphereCollider->GetBoundingSphere().Center, _boundingSphere.Center));
+			collInfo.Normal = (Vector3(sphereCollider->GetBoundingSphere().Center) - Vector3(_boundingSphere.Center)).Normalize();
 			collInfo.Depth = overlap;
 
 			break;

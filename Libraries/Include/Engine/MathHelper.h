@@ -13,21 +13,6 @@ public:
 	static Vector3 ConvertQuaternionToEuler(const Vector4& quat);
 	static Vector3 ConvertQuaternionToEuler(const XMVECTOR& quat);
 
-	static Vector2 VectorSubtract(const Vector2& va, const Vector2& vb);
-	static Vector3 VectorSubtract(const Vector3& va, const Vector3& vb);
-
-	static Vector2 VectorAddition(const Vector2& va, const Vector2& vb);
-	static Vector3 VectorAddition(const Vector3& va, const Vector3& vb);
-
-	static Vector3 VectorMultiply(const Vector3& va, const Vector3& vb);
-	static Vector3 VectorMultiply(const Vector3& va, const float& vb);
-
-	static Vector3 VectorReverseSign(const Vector3& v);
-
-	static Vector3 VectorNormalize(const Vector3& v);
-	static Vector3 VectorReflect(const Vector3& v, const Vector3& vn);
-	static float VectorLength(const Vector3& v);
-
 	static Vector3 RadianToDegree(const Vector3& radian);
 	static Vector3 DegreeToRadian(const Vector3& degree);
 

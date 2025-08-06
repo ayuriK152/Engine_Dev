@@ -10,11 +10,6 @@ void PlayerScript::Init()
 
 void PlayerScript::Update()
 {
-	// Camera Controll
-	{
-		transform->Rotate(Vector3(0.0f, 2.0f * TIME->DeltaTime(), 0.0f));
-	}
-
 	if (!Move())
 	{
 		animator->SetCurrentAnimation("idle");
@@ -31,31 +26,28 @@ bool PlayerScript::Move()
 	Vector3 targetPos = transform->GetPosition();
 	if (INPUTM->IsKeyPress(KeyValue::W))
 	{
-		transform->Translate(MathHelper::VectorMultiply(Vector3(0.0f, 0.0f, 1.0f), TIME->DeltaTime() * speed));
-		//targetPos = MathHelper::VectorAddition(targetPos, MathHelper::VectorSubtract(Camera::GetEyePos(), ::transform->GetPosition()));
-		//targetPos.y = ::transform->GetPosition().y;
+		transform->Translate(Vector3(0.0f, 0.0f, 1.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
 
 		flag = true;
 	}
 	if (INPUTM->IsKeyPress(KeyValue::S))
 	{
-		transform->Translate(MathHelper::VectorMultiply(Vector3(0.0f, 0.0f, 1.0f), -TIME->DeltaTime() * speed));
-		//targetPos = MathHelper::VectorAddition(targetPos, MathHelper::VectorSubtract(::transform->GetPosition(), Camera::GetEyePos()));
+		transform->Translate(Vector3(0.0f, 0.0f, -1.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
 
 		flag = true;
 	}
 	if (INPUTM->IsKeyPress(KeyValue::A))
 	{
-		transform->Translate(MathHelper::VectorMultiply(Vector3(1.0f, 0.0f, 0.0f), -TIME->DeltaTime() * speed));
+		transform->Translate(Vector3(-1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
 
 		flag = true;
 	}
 	if (INPUTM->IsKeyPress(KeyValue::D))
 	{
-		transform->Translate(MathHelper::VectorMultiply(Vector3(1.0f, 0.0f, 0.0f), TIME->DeltaTime() * speed));
+		transform->Translate(Vector3(1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
 
 		flag = true;

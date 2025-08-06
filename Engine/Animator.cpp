@@ -68,6 +68,8 @@ void Animator::UpdateChildList()
 	{
 		_childs.insert(_childs.end(), _childs[i]->GetChilds().begin(), _childs[i]->GetChilds().end());
 	}
+	_lastKeyframeIndex.clear();
+	_lastKeyframeIndex.resize(_childs.size(), 0);
 }
 
 void Animator::UpdateBoneTransform()
@@ -75,7 +77,7 @@ void Animator::UpdateBoneTransform()
 	for (int i = 0; i < _childs.size(); i++)
 	{
 		string objName = _childs[i]->GetGameObject()->GetName();
-		Animation::KeyFrame keyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick);
+		Animation::KeyFrame keyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick, _lastKeyframeIndex[i]);
 
 		if (keyFrame.tick < 0.0)
 			continue;
@@ -84,4 +86,9 @@ void Animator::UpdateBoneTransform()
 		_childs[i]->SetLocalQuaternion(keyFrame.rotation);
 		_childs[i]->SetLocalPosition(keyFrame.position);
 	}
+}
+
+void Animator::SetCurrentAnimation(const string& animationName)
+{
+	_currentAnimation = animationName;
 }

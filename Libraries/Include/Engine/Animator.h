@@ -35,7 +35,7 @@ public:
 	void UpdateBoneTransform();
 
 	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_CURRENT_ANIMATION ? _animations[_currentAnimation] : nullptr; }
-	void SetCurrentAnimation(const string& animationName) { _currentAnimation = animationName; }
+	void SetCurrentAnimation(const string& animationName);
 	
 	const map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
 	void AddAnimation(shared_ptr<Animation> animation) { 
@@ -67,5 +67,5 @@ private:
 	string _currentAnimation;
 
 	vector<shared_ptr<Transform>> _childs;
+	vector<int> _lastKeyframeIndex;
 };
-

@@ -34,7 +34,7 @@ public:
 	void AddAnimationData(const AnimationData animation);
 	unordered_map<string, AnimationData>& GetAnimationDatas() { return _animationDatas; }
 
-	KeyFrame Interpolate(const string& boneName, float tick);
+	KeyFrame Interpolate(const string& boneName, float tick, int& lastIdx);
 
 private:
 	float _duration;

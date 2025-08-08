@@ -53,8 +53,8 @@ bool PlayerScript::Move()
 		flag = true;
 	}
 
-	if (flag)
-		transform->LookAt(targetPos);
+	//if (flag)
+	//	transform->LookAt(targetPos);
 
 	return flag;
 }

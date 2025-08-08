@@ -376,7 +376,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 		XMFLOAT4X4 worldMat;
 		FILEIO->ReadFileData(fileHandle, &worldMat, sizeof(XMFLOAT4X4));
-		go->GetTransform()->SetObjectWorldMatrix(worldMat);
+		go->GetTransform()->SetWorldMatrix(worldMat);
 
 		int parentIdx;
 		FILEIO->ReadFileData(fileHandle, &parentIdx, sizeof(int));

@@ -12,48 +12,95 @@ public:
 	void Render() override;
 
 public:
-	void UpdateTransform();
 
-	Vector3 GetLocalPosition() { return _localPosition; }
+	Vector3 GetLocalPosition() { 
+		if (_isDirty)
+			UpdateTransform();
+
+		return _localPosition; 
+	}
 	void SetLocalPosition(const Vector3& position) { 
 		_localPosition = position; 
-		UpdateTransform();
-		GetGameObject()->SetFramesDirty();
+		SetDirtyFlag();
 	}
 	
 	// Get/Set Local Rotation With Degree
-	Vector3 GetLocalRotation() { return MathHelper::RadianToDegree(_localRotation); }
+	Vector3 GetLocalRotation() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return MathHelper::RadianToDegree(_localRotation);
+	}
 	void SetLocalRotation(const Vector3& rotation) {
 		SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation));
 	}
 	// Get/Set Local Rotation With Radian
-	Vector3 GetLocalRotationRadian() { return _localRotation; }
+	Vector3 GetLocalRotationRadian() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return _localRotation;
+	}
 	void SetLocalRotationRadian(const Vector3& rotation);
 
-	Vector4 GetLocalQuaternion() { return _quaternion; }
+	Vector4 GetLocalQuaternion() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return _quaternion;
+	}
 	void SetLocalQuaternion(const Vector4& quaternion);
 
-	Vector3 GetLocalScale() { return _localScale; }
+	Vector3 GetLocalScale() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return _localScale;
+	}
 	void SetLocalScale(const Vector3& scale) { 
 		_localScale = scale; 
-		UpdateTransform();
-		GetGameObject()->SetFramesDirty();
+		SetDirtyFlag();
 	}
 
-	Vector3 GetPosition() { return _position; }
+	Vector3 GetPosition() { 
+		if (_isDirty)
+			UpdateTransform();
+
+		return _position; 
+	}
 	void SetPosition(const Vector3& worldPosition);
 
 	// Get/Set Rotation With Degree
-	Vector3 GetRotation() { return MathHelper::RadianToDegree(_rotation); }
+	Vector3 GetRotation() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return MathHelper::RadianToDegree(_rotation); 
+	}
 	void SetRotation(const Vector3& worldRotation) { SetRotationRadian(MathHelper::DegreeToRadian(worldRotation)); }
 
 	// Get/Set Rotation With Radian
-	Vector3 GetRotationRadian() { return _rotation; }
+	Vector3 GetRotationRadian() {
+		if (_isDirty)
+			UpdateTransform(); 
+
+		return _rotation;
+	}
 	void SetRotationRadian(const Vector3& worldRotation);
-	Vector3 GetScale() { return _scale; }
+	Vector3 GetScale() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return _scale;
+	}
 	void SetScale(const Vector3& worldScale);
 
-	XMVECTOR GetQuaternion() { return XMLoadFloat4(&_quaternion); }
+	XMVECTOR GetQuaternion() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return XMLoadFloat4(&_quaternion);
+	}
 	XMMATRIX GetRotationMatrix();
 
 	Vector3 GetRight();
@@ -71,9 +118,9 @@ public:
 	void LookAt(const Vector3& targetPos);
 
 	void SetLocalMatrix(XMFLOAT4X4 mat);
-	void SetObjectWorldMatrix(XMFLOAT4X4 mat);
+	void SetWorldMatrix(XMFLOAT4X4 mat);
 
-	XMFLOAT4X4 GetLocalMatrix() { return _matLocal; }
+	XMFLOAT4X4 GetLocalMatrix();
 	XMFLOAT4X4 GetWorldMatrix();
 
 	shared_ptr<Transform> GetParent() { return _parent; }
@@ -81,11 +128,17 @@ public:
 
 	const vector<shared_ptr<Transform>>& GetChilds() { return _childs; }
 	void AddChild(shared_ptr<Transform> child);
-	// bool RemoveChild(shared_ptr<GameObject> object);
 
 	bool HasParent() { return _parent != nullptr; }
 
+	void SetDirtyFlag();
+
 private:
+	void UpdateTransform();
+
+private:
+	bool _isDirty = false;
+
 	Vector3 _localPosition;
 	Vector3 _localRotation;
 	Vector3 _localScale;

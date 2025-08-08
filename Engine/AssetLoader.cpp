@@ -239,7 +239,7 @@ void AssetLoader::BuildBones()
 
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
-		boneObj->GetTransform()->SetObjectWorldMatrix(b.node->transform);
+		boneObj->GetTransform()->SetWorldMatrix(b.node->transform);
 
 		_boneObjs.push_back(boneObj);
 		_loadedObject.push_back(boneObj);

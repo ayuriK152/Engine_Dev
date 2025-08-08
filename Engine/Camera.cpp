@@ -27,6 +27,9 @@ void Camera::Init()
 
 void Camera::Update()
 {
+	if (GetGameObject()->GetFramesDirty() <= 0)
+		return;
+
 	XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
 	XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
 	XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());

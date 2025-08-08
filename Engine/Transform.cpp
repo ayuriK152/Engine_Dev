@@ -11,6 +11,7 @@ Transform::Transform() : Super(ComponentType::Transform)
 
 	_parent = nullptr;
 
+	_isDirty = true;
 	UpdateTransform();
 }
 
@@ -31,21 +32,28 @@ void Transform::Render()
 
 void Transform::UpdateTransform()
 {
+	if (!_isDirty)
+		return;
+
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
 	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
 	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
 
-	XMStoreFloat4x4(&_matLocal, matScale * matRotation * matTranslation);
+	XMMATRIX matTransform = matScale * matRotation * matTranslation;
+
+	XMStoreFloat4x4(&_matLocal, matTransform);
 
 	if (HasParent())
 	{
 		XMMATRIX parentWorld = XMLoadFloat4x4(&_parent->GetWorldMatrix());
-		XMStoreFloat4x4(&_matWorld, matScale * matRotation * matTranslation * parentWorld);
+		XMStoreFloat4x4(&_matWorld, matTransform * parentWorld);
 	}
 	else
 	{
 		_matWorld = _matLocal;
 	}
+
+	_isDirty = false;
 
 	XMVECTOR scale;
 	XMVECTOR quaternion;
@@ -62,8 +70,7 @@ void Transform::UpdateTransform()
 
 	for (auto& child : _childs)
 	{
-		child->UpdateTransform();
-		child->GetGameObject()->SetFramesDirty();
+		child->SetDirtyFlag();
 	}
 }
 
@@ -72,14 +79,15 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 	_localRotation = rotation;
 
 	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
-
-	UpdateTransform();
-	GetGameObject()->SetFramesDirty();
+	//GetGameObject()->SetFramesDirty();
+	SetDirtyFlag();
 }
 
 void Transform::SetLocalQuaternion(const Vector4& quaternion)
 {
 	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
+	//GetGameObject()->SetFramesDirty();
+	SetDirtyFlag();
 }
 
 void Transform::SetPosition(const Vector3& worldPosition)
@@ -144,36 +152,54 @@ XMMATRIX Transform::GetRotationMatrix()
 
 Vector3 Transform::GetRight()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	Vector3 right(-_matLocal._11, -_matLocal._21, _matLocal._31);
 	return right;
 }
 
 Vector3 Transform::GetLeft()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	Vector3 left(_matLocal._11, _matLocal._21, -_matLocal._31);
 	return left;
 }
 
 Vector3 Transform::GetUp()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	Vector3 up(_matLocal._12, _matLocal._22, -_matLocal._32);
 	return up;
 }
 
 Vector3 Transform::GetDown()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	Vector3 down(-_matLocal._12, -_matLocal._22, _matLocal._32);
 	return down;
 }
 
 Vector3 Transform::GetLook()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	Vector3 look(-_matLocal._13, -_matLocal._23, _matLocal._33);
 	return look;
 }
 
 Vector3 Transform::GetBack()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	Vector3 look(_matLocal._13, _matLocal._23, -_matLocal._33);
 	return look;
 }
@@ -181,8 +207,8 @@ Vector3 Transform::GetBack()
 void Transform::Translate(const Vector3& moveVec)
 {
 	_localPosition = _localPosition + moveVec;
-	UpdateTransform();
-	GetGameObject()->SetFramesDirty();
+
+	SetDirtyFlag();
 }
 
 void Transform::Rotate(const Vector3& angle)
@@ -194,8 +220,7 @@ void Transform::Rotate(const Vector3& angle)
 	_quaternion = { newQuat.m128_f32[0], newQuat.m128_f32[1], newQuat.m128_f32[2], newQuat.m128_f32[3] };
 	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
 
-	UpdateTransform();
-	GetGameObject()->SetFramesDirty();
+	SetDirtyFlag();
 }
 
 void Transform::Rotate(const XMVECTOR& angle)
@@ -207,7 +232,7 @@ void Transform::Rotate(const XMVECTOR& angle)
 
 void Transform::LookAt(const Vector3& targetPos)
 {
-	XMVECTOR targetVec = XMLoadFloat3(&(targetPos - _position));
+	XMVECTOR targetVec = XMLoadFloat3(&(targetPos - GetPosition()));
 	
 	XMVECTOR sideVec = XMVector3Normalize(XMVector3Cross(targetVec, XMVECTOR({ 0.0f, 1.0f, 0.0f })));
 	XMVECTOR upVec = XMVector3Normalize(XMVector3Cross(targetVec, sideVec));
@@ -216,15 +241,15 @@ void Transform::LookAt(const Vector3& targetPos)
 		upVec = -upVec;
 
 	upVec = { 0.0f, 1.0f, 0.0f };
-	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&_position), XMLoadFloat3(&targetPos), upVec);
+	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&GetPosition()), XMLoadFloat3(&targetPos), upVec);
 	
 	viewMat = XMMatrixTranspose(viewMat);
 	XMVECTOR quat = XMQuaternionRotationMatrix(viewMat);
 
 	Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
 	SetRotationRadian(euler);
-	UpdateTransform();
-	GetGameObject()->SetFramesDirty();
+
+	SetDirtyFlag();
 }
 
 void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
@@ -244,11 +269,11 @@ void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
 	XMStoreFloat3(&_localPosition, position);
 
-	//UpdateTransform();
-	GetGameObject()->SetFramesDirty();
+	//GetGameObject()->SetFramesDirty();
+	SetDirtyFlag();
 }
 
-void Transform::SetObjectWorldMatrix(XMFLOAT4X4 mat)
+void Transform::SetWorldMatrix(XMFLOAT4X4 mat)
 {
 	_matWorld = mat;
 
@@ -260,18 +285,35 @@ void Transform::SetObjectWorldMatrix(XMFLOAT4X4 mat)
 	SetLocalMatrix(_matLocal);
 }
 
+XMFLOAT4X4 Transform::GetLocalMatrix()
+{
+	if (_isDirty)
+		UpdateTransform();
+
+	return _matLocal;
+}
+
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	if (HasParent())
 	{
 		XMMATRIX parent = XMLoadFloat4x4(&_parent->GetWorldMatrix());
+
+		if (_isDirty)
+			UpdateTransform();
+
 		XMMATRIX local = XMLoadFloat4x4(&_matLocal);
 		XMFLOAT4X4 result;
 		XMStoreFloat4x4(&result, local * parent);
 		return result;
 	}
 	else
+	{
+		if (_isDirty)
+			UpdateTransform();
+
 		return _matWorld;
+	}
 }
 
 void Transform::SetParent(shared_ptr<Transform> parent)
@@ -293,7 +335,11 @@ void Transform::AddChild(shared_ptr<Transform> child)
 	_childs.push_back(child);
 }
 
-//bool Transform::RemoveChild(shared_ptr<GameObject> object)
-//{
-//
-//}
+void Transform::SetDirtyFlag()
+{
+	_isDirty = true;
+	GetGameObject()->SetFramesDirty();
+
+	for (auto& child : _childs)
+		child->SetDirtyFlag();
+}

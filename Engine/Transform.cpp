@@ -32,6 +32,7 @@ void Transform::Render()
 
 void Transform::UpdateTransform()
 {
+	// 앞에서 조건 다 걸러내긴 하는데 혹시 몰라서 한번 더 확인
 	if (!_isDirty)
 		return;
 
@@ -79,14 +80,12 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 	_localRotation = rotation;
 
 	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
-	//GetGameObject()->SetFramesDirty();
 	SetDirtyFlag();
 }
 
 void Transform::SetLocalQuaternion(const Vector4& quaternion)
 {
 	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
-	//GetGameObject()->SetFramesDirty();
 	SetDirtyFlag();
 }
 
@@ -118,8 +117,6 @@ void Transform::SetRotationRadian(const Vector3& worldRotation)
 	{
 		XMMATRIX parentRotMat = _parent->GetRotationMatrix();
 		XMVECTOR qParent = XMQuaternionRotationMatrix(parentRotMat);
-
-		// 로컬 회전 = 부모^-1 * 월드
 		XMVECTOR qLocal = XMQuaternionMultiply(qWorld, XMQuaternionInverse(qParent));
 		localEuler = MathHelper::ConvertQuaternionToEuler(qLocal);
 	}
@@ -155,8 +152,7 @@ Vector3 Transform::GetRight()
 	if (_isDirty)
 		UpdateTransform();
 
-	Vector3 right(-_matLocal._11, -_matLocal._21, _matLocal._31);
-	return right;
+	return Vector3(-_matLocal._11, -_matLocal._21, _matLocal._31);
 }
 
 Vector3 Transform::GetLeft()
@@ -164,8 +160,7 @@ Vector3 Transform::GetLeft()
 	if (_isDirty)
 		UpdateTransform();
 
-	Vector3 left(_matLocal._11, _matLocal._21, -_matLocal._31);
-	return left;
+	return Vector3(_matLocal._11, _matLocal._21, -_matLocal._31);
 }
 
 Vector3 Transform::GetUp()
@@ -173,8 +168,7 @@ Vector3 Transform::GetUp()
 	if (_isDirty)
 		UpdateTransform();
 
-	Vector3 up(_matLocal._12, _matLocal._22, -_matLocal._32);
-	return up;
+	return Vector3(_matLocal._12, _matLocal._22, -_matLocal._32);
 }
 
 Vector3 Transform::GetDown()
@@ -182,8 +176,7 @@ Vector3 Transform::GetDown()
 	if (_isDirty)
 		UpdateTransform();
 
-	Vector3 down(-_matLocal._12, -_matLocal._22, _matLocal._32);
-	return down;
+	return Vector3(-_matLocal._12, -_matLocal._22, _matLocal._32);
 }
 
 Vector3 Transform::GetLook()
@@ -191,8 +184,7 @@ Vector3 Transform::GetLook()
 	if (_isDirty)
 		UpdateTransform();
 
-	Vector3 look(-_matLocal._13, -_matLocal._23, _matLocal._33);
-	return look;
+	return Vector3(-_matLocal._13, -_matLocal._23, _matLocal._33);
 }
 
 Vector3 Transform::GetBack()
@@ -200,8 +192,7 @@ Vector3 Transform::GetBack()
 	if (_isDirty)
 		UpdateTransform();
 
-	Vector3 look(_matLocal._13, _matLocal._23, -_matLocal._33);
-	return look;
+	return Vector3(_matLocal._13, _matLocal._23, -_matLocal._33);
 }
 
 void Transform::Translate(const Vector3& moveVec)
@@ -269,7 +260,6 @@ void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
 	XMStoreFloat3(&_localPosition, position);
 
-	//GetGameObject()->SetFramesDirty();
 	SetDirtyFlag();
 }
 

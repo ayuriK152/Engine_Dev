@@ -60,6 +60,9 @@ public:
 
 	const ShadowMap* GetShadowMap() { return _shadowMap.get(); }
 
+	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
+	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
+
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
@@ -72,6 +75,8 @@ private:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
 private:
+	bool _isPhysicsDebugRenderEnabled = false;
+
 	ComPtr<ID3D12RootSignature> _rootSignature;
 
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;

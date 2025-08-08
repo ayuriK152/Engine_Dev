@@ -53,6 +53,7 @@ void EngineGUIManager::Init()
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = false;
+	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = false;
 }
 
 void EngineGUIManager::FixedUpdate()
@@ -74,8 +75,11 @@ void EngineGUIManager::Render()
 	{
 		if (_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW])
 			ImGui::ShowDemoWindow();
+
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS])
 			ShowEngineStatus();
+		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS])
+			ShowEngineSettings();
 
 		ShowHierarchyView();
 		ShowInspectorView();
@@ -107,6 +111,32 @@ void EngineGUIManager::ShowEngineStatus()
 	{
 		ImGui::Text("FPS: %s", ENGINESTAT->GetFrameCountString().c_str());
 		ImGui::Text("AVG: %s", ENGINESTAT->GetAverageFrameCountString().c_str());
+	}
+	ImGui::End();
+}
+
+void EngineGUIManager::ShowEngineSettings()
+{
+	ImGuiWindowFlags windowFlags =
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoSavedSettings;
+
+	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+	ImVec2 windowPos = ImVec2(mainViewport->Size.x / 2.0f, mainViewport->Size.y / 2.0f);
+	ImVec2 windowPivot = ImVec2(0.5f, 0.5f);
+	ImVec2 windowSize = ImVec2(480, 300);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+	ImGui::SetNextWindowBgAlpha(0.60f);
+	ImGui::SetNextWindowSize(windowSize);
+
+	if (ImGui::Begin("Engine Settings", &_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS], windowFlags))
+	{
+		bool isPysicsDebugRenderEnabled = RENDER->IsPhysicsDebugRenderEnabled();
+		if (ImGui::Checkbox("Pysics Debug Render", &isPysicsDebugRenderEnabled))
+			RENDER->SetPhysicsDebugRenderEnabled(isPysicsDebugRenderEnabled);
 	}
 	ImGui::End();
 }
@@ -521,15 +551,20 @@ void EngineGUIManager::ToggleWindows()
 
 	if (INPUTM->IsKeyDown(KeyValue::F3))
 	{
+		_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = !_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS];
+	}
+
+	if (INPUTM->IsKeyDown(KeyValue::F4))
+	{
 		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = !_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY];
 	}
 	
-	if (INPUTM->IsKeyDown(KeyValue::F4))
+	if (INPUTM->IsKeyDown(KeyValue::F5))
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = !_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR];
 	}
 
-	if (INPUTM->IsKeyDown(KeyValue::F5))
+	if (INPUTM->IsKeyDown(KeyValue::F6))
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = !_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR];
 	}

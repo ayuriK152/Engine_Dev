@@ -2,6 +2,7 @@
 
 #define TOGGLEVALUE_GUI_DEMOWINDOW		"GUI_DemoWindow"
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
+#define TOGGLEVALUE_GUI_ENGINESETTINGS	"GUI_EngineSettings"
 #define TOGGLEVALUE_GUI_HIERARCHY		"GUI_Hierarchy"
 #define TOGGLEVALUE_GUI_INSPECTOR		"GUI_Inspector"
 #define TOGGLEVALUE_GUI_RESOURCEDIR		"GUI_ResourceDirectory"
@@ -77,6 +78,7 @@ private:
 	void ToggleWindows();
 
 	void ShowEngineStatus();
+	void ShowEngineSettings();
 	void ShowHierarchyView();
 	void ShowInspectorView();
 	void ShowResourceDirectory();

@@ -155,8 +155,11 @@ void RenderManager::Render()
 			p.second[i]->Render();
 	}
 
-	cmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
-	DEBUG->Render();
+	if (_isPhysicsDebugRenderEnabled)
+	{
+		cmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
+		DEBUG->Render();
+	}
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)

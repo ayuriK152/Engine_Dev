@@ -28,6 +28,8 @@
     <ClInclude Include="..\Libraries\Include\ImGUI\imstb_rectpack.h" />
     <ClInclude Include="..\Libraries\Include\ImGUI\imstb_textedit.h" />
     <ClInclude Include="..\Libraries\Include\ImGUI\imstb_truetype.h" />
+    <ClInclude Include="..\Libraries\Include\stb\stb_image.h" />
+    <ClInclude Include="..\Libraries\Include\stb\stb_image_write.h" />
     <ClInclude Include="..\Libraries\Include\tinyxml2\tinyxml2.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Animator.h" />

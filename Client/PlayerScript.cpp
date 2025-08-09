@@ -28,6 +28,7 @@ bool PlayerScript::Move()
 	{
 		transform->Translate(Vector3(0.0f, 0.0f, 1.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
+		targetPos = targetPos + Vector3(0.0f, 0.0f, -1.0f);
 
 		flag = true;
 	}
@@ -35,6 +36,7 @@ bool PlayerScript::Move()
 	{
 		transform->Translate(Vector3(0.0f, 0.0f, -1.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
+		targetPos = targetPos + Vector3(0.0f, 0.0f, 1.0f);
 
 		flag = true;
 	}
@@ -42,6 +44,7 @@ bool PlayerScript::Move()
 	{
 		transform->Translate(Vector3(-1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
+		targetPos = targetPos + Vector3(1.0f, 0.0f, 0.0f);
 
 		flag = true;
 	}
@@ -49,12 +52,13 @@ bool PlayerScript::Move()
 	{
 		transform->Translate(Vector3(1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
 		animator->SetCurrentAnimation("walk");
+		targetPos = targetPos + Vector3(-1.0f, 0.0f, 0.0f);
 
 		flag = true;
 	}
 
-	//if (flag)
-	//	transform->LookAt(targetPos);
+	if (flag)
+		transform->LookAt(targetPos);
 
 	return flag;
 }

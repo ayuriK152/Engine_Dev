@@ -19,6 +19,8 @@ private:
 	shared_ptr<GameObject> box2;
 	shared_ptr<GameObject> model;
 
+	shared_ptr<GameObject> test;
+
 	vector<shared_ptr<GameObject>> gameObjects;
 };
 

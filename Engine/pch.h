@@ -6,6 +6,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 
+//#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+
 // STL
 #include <memory>
 #include <iostream>
@@ -57,6 +60,8 @@ using namespace Microsoft::WRL;
 #include "ImGUI/imgui_stdlib.h"
 #include "ImGUI/imgui_impl_dx12.h"
 #include "ImGUI/imgui_impl_win32.h"
+//#include "stb/stb_image.h"
+//#include "stb/stb_image_write.h"
 using namespace tinyxml2;
 
 #pragma comment(lib, "d3dcompiler.lib")

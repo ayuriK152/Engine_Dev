@@ -17,6 +17,8 @@ public:
 	template<typename T>
 	HANDLE CreateFileHandle(string fileName);
 
+	HANDLE CreateFileHandle(string fileName, string ext = "");
+
 	template<typename T>
 	void WriteToFile(HANDLE fileHandle, const T& data);
 

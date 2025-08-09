@@ -151,6 +151,48 @@ void FileIOUtil::LoadMaterials()
 	}
 }
 
+HANDLE FileIOUtil::CreateFileHandle(string fileName, string ext)
+{
+	string fullPath;
+
+	if (PathFileExistsA(fileName.c_str()))
+		fullPath = fileName;
+	else
+	{
+		if (ext == "")
+			fullPath = RESOURCE_PATH + fileName + BULB_EXT_UNKNOWN;
+		else
+			fullPath = RESOURCE_PATH + fileName + "." + ext;
+
+		string subPath = fullPath.substr(0, fullPath.find_last_of('\\') + 1);
+		if (!filesystem::exists(subPath))
+			filesystem::create_directories(subPath);
+	}
+
+	if (PathFileExistsA(fullPath.c_str())) {
+		return CreateFileA(
+			fullPath.c_str(),
+			GENERIC_READ | GENERIC_WRITE,
+			0,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL
+		);
+	}
+	else {
+		return CreateFileA(
+			fullPath.c_str(),
+			GENERIC_READ | GENERIC_WRITE,
+			0,
+			NULL,
+			CREATE_NEW,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL
+		);
+	}
+}
+
 void FileIOUtil::WriteToFile(HANDLE fileHandle, void* data, UINT32 size)
 {
 	WriteFile(

@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "AssetLoader.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+
 AssetLoader::AssetLoader()
 {
 
@@ -37,7 +42,13 @@ void AssetLoader::ImportAssetFile(wstring file)
 		aiProcess_Triangulate |
 		aiProcess_GenUVCoords |
 		aiProcess_GenNormals |
-		aiProcess_CalcTangentSpace
+		aiProcess_CalcTangentSpace |
+		aiProcess_SortByPType |
+		aiProcess_OptimizeMeshes |
+		aiProcess_ValidateDataStructure |
+		aiProcess_LimitBoneWeights |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_FlipWindingOrder
 	);
 
 	assert(_scene != nullptr);
@@ -78,6 +89,46 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 void AssetLoader::ProcessMaterials(const aiScene* scene)
 {
+	// 텍스처 로드 부분
+	for (UINT i = 0; i < scene->mNumTextures; i++)
+	{
+		aiTexture* aiTex = scene->mTextures[i];
+
+		if (aiTex->mHeight == 0)
+		{
+			int width, height, channels;
+			unsigned char* decodedData = stbi_load_from_memory(
+				reinterpret_cast<unsigned char*>(aiTex->pcData),
+				aiTex->mWidth,
+				&width,
+				&height,
+				&channels,
+				4);
+
+			string textureFullPath = RESOURCE_PATH_TEXTURE;
+			string texturePathStr(aiTex->mFilename.C_Str());
+			texturePathStr = texturePathStr.substr(texturePathStr.find_last_of('/') + 1);
+			textureFullPath += texturePathStr;
+
+			// 이미 존재하는지 확인
+			if (filesystem::exists(filesystem::path(textureFullPath)))
+			{
+				stbi_image_free(decodedData);
+				continue;
+			}
+
+			stbi_write_png(textureFullPath.c_str(), width, height, 4, decodedData, width * 4);
+			stbi_image_free(decodedData);
+		}
+
+		// 비압축 raw 데이터의 경우
+		else
+		{
+
+		}
+	}
+
+	// 머터리얼 로드 부분
 	for (UINT i = 0; i < scene->mNumMaterials; i++)
 	{
 		wstring matName = GetAIMaterialName(scene, i);
@@ -98,20 +149,17 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		mat->specular = { color.r, color.g, color.b, color.a };
 		aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, color);
 		mat->emissive = { color.r, color.g, color.b, color.a };
+		
+		bool isIncludeTexture = false;
 
-		// 텍스쳐 로드부분 수정해야함
-		/*
-		* 1. 모델 파일 자체에 텍스쳐 정보가 있는지 확인
-		* 2. 없다면 머터리얼과 같은 이름의 텍스쳐 파일이 있는지 확인
-		* 3. 없다면 기본 생성자 적용
-		*
-		* 단, 텍스쳐 종류가 여러 가지 있는듯 하니 어떻게 적용할지 계획을 세워서 구현할 것
-		*/
-		if (Texture::IsTextureExists(matName + L".dds"))
+		if (!isIncludeTexture)
 		{
-			shared_ptr<Texture> texture = make_shared<Texture>(matName + L".dds");
-			RESOURCE->Add<Texture>(matName, texture);
-			mat->SetTexture(RESOURCE->Get<Texture>(matName));
+			if (Texture::IsTextureExists(matName + L".dds"))
+			{
+				shared_ptr<Texture> texture = make_shared<Texture>(matName + L".dds");
+				RESOURCE->Add<Texture>(matName, texture);
+				mat->SetTexture(RESOURCE->Get<Texture>(matName));
+			}
 		}
 		RESOURCE->Add<Material>(matName, mat);
 

@@ -89,9 +89,6 @@
     <ClInclude Include="Collider.h">
       <Filter>02. GameObject\Components\Physics\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="AssetLoader.h">
-      <Filter>98. Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Constants.h">
       <Filter>05. Defines</Filter>
     </ClInclude>
@@ -301,9 +298,6 @@
     </ClCompile>
     <ClCompile Include="Collider.cpp">
       <Filter>02. GameObject\Components\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetLoader.cpp">
-      <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>

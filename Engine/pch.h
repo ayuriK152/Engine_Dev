@@ -1,7 +1,7 @@
 #pragma once
 
 // Debuging Console
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -67,7 +67,11 @@ using namespace tinyxml2;
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "DirectXTK/DirectXTK12.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTK/Debug/DirectXTK12.lib")
+#else
+#pragma comment(lib, "DirectXTK/Release/DirectXTK12.lib")
+#endif
 #pragma comment(lib, "assimp/assimp-vc143-mtd.lib")
 
 #include "Types.h"
@@ -79,7 +83,6 @@ using namespace tinyxml2;
 #include "MathHelper.h"
 #include "DXUtil.h"
 #include "GeometryGenerator.h"
-#include "AssetLoader.h"
 
 #include "Constants.h"
 

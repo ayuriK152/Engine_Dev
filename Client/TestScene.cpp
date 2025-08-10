@@ -13,9 +13,6 @@ void TestScene::Init()
 		shared_ptr<Texture> proto1 = make_shared<Texture>(L"prototype_dark1.dds");
 		RESOURCE->Add<Texture>(L"proto_dark1", proto1);
 
-		shared_ptr<AssetLoader> loader = make_shared<AssetLoader>();
-		loader->ImportAssetFile(L"Knight\\Paladin WProp J Nordstrom.fbx");
-
 		//test = make_shared<GameObject>();
 		//test->SetName("test");
 		//test->AddComponent(make_shared<MeshRenderer>());

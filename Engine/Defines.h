@@ -64,3 +64,5 @@ public:									\
 #define RESOURCE_PATH_BONEW				L"..\\Resources\\Bones\\"
 #define RESOURCE_PATH_PREFAB			"..\\Resources\\Prefabs\\"
 #define RESOURCE_PATH_PREFABW			L"..\\Resources\\Prefabs\\"
+#define RESOURCE_PATH_ASSET				"..\\Resources\\Assets\\"
+#define RESOURCE_PATH_ASSETW			L"..\\Resources\\Assets\\"

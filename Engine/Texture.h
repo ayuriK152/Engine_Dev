@@ -31,7 +31,7 @@ public:
 	ComPtr<ID3D12Resource> uploadHeap = nullptr;
 
 private:
-
+	string _textureFormat;
 	int _srvHeapIndex;
 };
 

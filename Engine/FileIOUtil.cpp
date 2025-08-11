@@ -77,13 +77,11 @@ void FileIOUtil::LoadTextures()
 		ss = istringstream(fileName);
 		string format;
 		while (getline(ss, format, '.'));
-		if (format != "dds")
+		if (format != "dds" && format != "png")
 			continue;
 
-		auto ssss = UniversalUtils::ToWString(fileName.substr(0, fileName.length() - 4));
 		auto defaultTex = make_shared<Texture>(UniversalUtils::ToWString(fileName));
-		RESOURCE->Add<Texture>(UniversalUtils::ToWString(fileName.substr(0, fileName.length() - 4)), defaultTex);
-		auto asdf = RESOURCE->Get<Texture>(ssss);
+		RESOURCE->Add<Texture>(UniversalUtils::ToWString(fileName.substr(0, fileName.size() - (format.size() + 1))), defaultTex);
 	}
 }
 

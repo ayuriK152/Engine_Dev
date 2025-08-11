@@ -14,6 +14,7 @@ bool Texture::IsTextureExists(wstring& fileName)
 Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 {
 	SetName(fileName);
+	_textureFormat = UniversalUtils::ToString(fileName.substr(fileName.find_last_of('.') + 1));
 	SetPath(L"..\\Resources\\Textures\\" + fileName);
 	Load(_pathw);
 	textureType = TextureType::General;
@@ -23,6 +24,7 @@ Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
 Texture::Texture(wstring fileName, TextureType type) : Super(ResourceType::Texture)
 {
 	SetName(fileName);
+	_textureFormat = UniversalUtils::ToString(fileName.substr(fileName.find_last_of('.') + 1));
 	SetPath(L"..\\Resources\\Textures\\" + fileName);
 	Load(_pathw);
 	textureType = type;
@@ -41,8 +43,17 @@ void Texture::Load(const wstring& path)
 
 	ResourceUploadBatch upload(device);
 	upload.Begin();
-	ThrowIfFailed(CreateDDSTextureFromFile(device, upload,
-		_pathw.c_str(), resource.GetAddressOf()));
+
+	if (_textureFormat == "dds")
+	{
+		ThrowIfFailed(CreateDDSTextureFromFile(device, upload,
+			_pathw.c_str(), resource.GetAddressOf()));
+	}
+	else
+	{
+		ThrowIfFailed(CreateWICTextureFromFile(device, upload,
+			_pathw.c_str(), resource.GetAddressOf()));
+	}
 	auto finish = upload.End(commandQueue);
 	finish.wait();
 }

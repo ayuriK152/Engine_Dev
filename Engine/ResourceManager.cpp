@@ -46,7 +46,6 @@ void ResourceManager::CreateDefaultResources()
 	auto skyboxTex = make_shared<Texture>(L"Skybox_Daylight.dds", TextureType::Skybox);
 	Add<Texture>(L"Tex_DefaultSkybox", skyboxTex);
 
-
 	//==========Material==========
 	auto defaultMat = make_shared<Material>("Default");
 	Add<Material>(L"Mat_Default", defaultMat);

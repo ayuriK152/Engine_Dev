@@ -41,6 +41,7 @@ using namespace std;
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
+#include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/ResourceUploadBatch.h"
 #include "DirectXTK/PrimitiveBatch.h"

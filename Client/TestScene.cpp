@@ -12,13 +12,6 @@ void TestScene::Init()
 
 		shared_ptr<Texture> proto1 = make_shared<Texture>(L"prototype_dark1.dds");
 		RESOURCE->Add<Texture>(L"proto_dark1", proto1);
-
-		//test = make_shared<GameObject>();
-		//test->SetName("test");
-		//test->AddComponent(make_shared<MeshRenderer>());
-		//RESOURCE->Add(L"test", RESOURCE->LoadMesh("Paladin WProp J Nordstrom\\Paladin_J_Nordstrom_Sword"));
-		//test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"test"));
-		//gameObjects.push_back(test);
 	}
 
 	skybox = make_shared<GameObject>();
@@ -46,9 +39,10 @@ void TestScene::Init()
 
 	{
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
-		model = loadedObjects[0];
+		player = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		model->AddComponent(make_shared<PlayerScript>());
+		player->AddComponent(make_shared<PlayerScript>());
+
 	}
 
 	{
@@ -119,7 +113,6 @@ void TestScene::Init()
 	}
 
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
-	camera->GetTransform()->LookAt(Vector3(0.0f, 1.5f, 10.0f));
 
 	while (gameObjects.size() > 0)
 	{
@@ -134,6 +127,7 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
+	camera->GetTransform()->LookAtWithNoRoll(player->GetTransform()->GetPosition());
 	//box->GetTransform()->Rotate(Vector3(0.0f, 1.0f * TIME->DeltaTime(), 1.0f * TIME->DeltaTime()));
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();

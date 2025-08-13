@@ -116,6 +116,7 @@ public:
 	void Rotate(const XMVECTOR& angle);
 
 	void LookAt(const Vector3& targetPos);
+	void LookAtWithNoRoll(const Vector3& targetPos);
 
 	void SetLocalMatrix(XMFLOAT4X4 mat);
 	void SetWorldMatrix(XMFLOAT4X4 mat);

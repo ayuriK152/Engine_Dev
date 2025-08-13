@@ -223,22 +223,44 @@ void Transform::Rotate(const XMVECTOR& angle)
 
 void Transform::LookAt(const Vector3& targetPos)
 {
-	XMVECTOR targetVec = XMLoadFloat3(&(targetPos - GetPosition()));
-	
-	XMVECTOR sideVec = XMVector3Normalize(XMVector3Cross(targetVec, XMVECTOR({ 0.0f, 1.0f, 0.0f })));
+	XMVECTOR targetVec = XMVector3Normalize(XMLoadFloat3(&(targetPos - GetPosition())));
+
+	XMVECTOR worldUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR sideVec = XMVector3Normalize(XMVector3Cross(worldUp, targetVec));
 	XMVECTOR upVec = XMVector3Normalize(XMVector3Cross(targetVec, sideVec));
 
 	if (upVec.m128_f32[1] < 0.0f)
 		upVec = -upVec;
 
-	upVec = { 0.0f, 1.0f, 0.0f };
-	XMMATRIX viewMat = XMMatrixLookAtLH(XMLoadFloat3(&GetPosition()), XMLoadFloat3(&targetPos), upVec);
-	
-	viewMat = XMMatrixTranspose(viewMat);
-	XMVECTOR quat = XMQuaternionRotationMatrix(viewMat);
+	XMMATRIX rotMat = XMMatrixLookToLH(XMLoadFloat3(&GetPosition()), targetVec, upVec);
+
+	rotMat = XMMatrixTranspose(rotMat);
+	XMVECTOR quat = XMQuaternionNormalize(XMQuaternionRotationMatrix(rotMat));
 
 	Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
-	SetRotationRadian(euler);
+	Vector4 quatVec;
+	XMStoreFloat4(&quatVec, quat);
+	SetLocalQuaternion(quatVec);
+
+	SetDirtyFlag();
+}
+
+void Transform::LookAtWithNoRoll(const Vector3& targetPos)
+{
+	Vector3 dir = targetPos - GetPosition();
+	dir = dir.Normalize();
+
+	float pitch = -asin(dir.y);
+	float yaw = atan2(dir.x, dir.z);
+	float roll = 0.0f;
+
+	XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), pitch);
+	XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw);
+	XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
+
+	Vector4 quatVec;
+	XMStoreFloat4(&quatVec, quatFinal);
+	SetLocalQuaternion(quatVec);
 
 	SetDirtyFlag();
 }

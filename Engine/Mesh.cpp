@@ -20,7 +20,10 @@ void Mesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
 
 	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);
 
-	DXUtil::UpdateBuffer(vertexBufferGPU, vertexBufferUploader, _geometry->GetVertexData(), vbByteSize);
+	if (vertexBufferGPU != nullptr && vertexBufferUploader != nullptr)
+	{
+		DXUtil::UpdateBuffer(vertexBufferGPU, vertexBufferUploader, _geometry->GetVertexData(), vbByteSize);
+	}
 }
 
 void Mesh::CreateBuffer()

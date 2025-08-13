@@ -50,6 +50,19 @@ Material::~Material()
 
 void Material::SetTexture(shared_ptr<Texture> texture)
 {
+	if (texture == nullptr)
+	{
+		SetTexture(L"Tex_Default");
+		return;
+	}
+
 	diffuseSrvHeapIndex = texture->GetSRVHeapIndex();
 	textureName = UniversalUtils::ToString(texture->GetNameW());
+}
+
+void Material::SetTexture(wstring textureName)
+{
+	// 텍스쳐 이름만 설정하고, 실제 텍스쳐는 기본 텍스쳐로
+	diffuseSrvHeapIndex = 0;
+	this->textureName = UniversalUtils::ToString(textureName);
 }

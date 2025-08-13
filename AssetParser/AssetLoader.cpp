@@ -32,7 +32,11 @@ void AssetLoader::ImportAssetFile(wstring file)
 	_importer = make_shared<Assimp::Importer>();
 	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
 
-	wstring fileStr = _assetPath + file;
+	wstring fileStr;
+	if (file.find(_assetPath) != wstring::npos)
+		fileStr = file;
+	else
+		fileStr = _assetPath + file;
 
 	auto p = filesystem::path(fileStr);
 	assert(filesystem::exists(p));
@@ -77,9 +81,15 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 		for (auto& animation : _animations)
 			RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
+		
+		if (_bones.size() > 0)
+			RESOURCE->SaveBone(_bones, assetNameStr);
 
-		RESOURCE->SaveBone(_bones, assetNameStr);
-		RESOURCE->SavePrefab(_loadedObject[0]);
+		if (_loadedObject.size() > 1)
+		{
+			_loadedObject[0]->SetName(UniversalUtils::ToString(_assetName));
+			RESOURCE->SavePrefab(_loadedObject[0]);
+		}
 	}
 
 	InitializeFields();

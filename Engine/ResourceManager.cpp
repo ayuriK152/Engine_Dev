@@ -120,7 +120,7 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 void ResourceManager::SaveBone(map<string, Bone> bones, const string& boneName, const string& filePath)
 {
 	string finalPath = filePath == "" ? boneName : filePath;
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(filePath);
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(finalPath);
 
 	UINT32 boneCount = bones.size();
 	FILEIO->WriteToFile(fileHandle, boneCount);

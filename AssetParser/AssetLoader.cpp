@@ -81,10 +81,15 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 		for (auto& animation : _animations)
 			RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
+		
+		if (_bones.size() > 0)
+			RESOURCE->SaveBone(_bones, assetNameStr);
 
-		RESOURCE->SaveBone(_bones, assetNameStr);
-		_loadedObject[0]->SetName(UniversalUtils::ToString(_assetName));
-		RESOURCE->SavePrefab(_loadedObject[0]);
+		if (_loadedObject.size() > 1)
+		{
+			_loadedObject[0]->SetName(UniversalUtils::ToString(_assetName));
+			RESOURCE->SavePrefab(_loadedObject[0]);
+		}
 	}
 
 	InitializeFields();

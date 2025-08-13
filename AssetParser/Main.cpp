@@ -20,6 +20,8 @@ int main()
 	// 여기서부터 파싱 부분
 	string parsedAssetPathStr = RESOURCE_PATH_ASSET;
 	parsedAssetPathStr += "Parsed\\";
+	if (!filesystem::exists(parsedAssetPathStr))
+		filesystem::create_directory(parsedAssetPathStr);
 	for (int i = 0; i < parsableAssetPaths.size(); i++)
 	{
 		shared_ptr<AssetLoader> loader = make_shared<AssetLoader>();

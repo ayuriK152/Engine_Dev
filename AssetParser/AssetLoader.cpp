@@ -79,6 +79,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 			RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
 
 		RESOURCE->SaveBone(_bones, assetNameStr);
+		_loadedObject[0]->SetName(UniversalUtils::ToString(_assetName));
 		RESOURCE->SavePrefab(_loadedObject[0]);
 	}
 

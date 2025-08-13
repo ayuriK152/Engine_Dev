@@ -65,5 +65,9 @@ void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 {
 	_mesh = mesh;
 	_material = _mesh->GetMaterial();
+
+	// asset parser 임시조치
+	if (GRAPHIC->GetDevice() == nullptr)
+		return;
 	_mesh->CreateBuffer();
 }

@@ -2,6 +2,7 @@
 
 #define CURRENT_VERSION "v0.1.0"
 
+
 int assetCount = 0;
 vector<wstring> parsableAssetPaths;
 vector<string> parsableAssetNames;
@@ -12,8 +13,8 @@ int main()
 {
 	cout << "Bulb Engine Asset Parser " << CURRENT_VERSION << endl << endl;
 	cout << "Asset list" << endl << endl;
-	filesystem::path assetPath(RESOURCE_PATH_ASSET);
-	DirectoryIterator(assetPath, 0);
+	filesystem::path resourcePath(RESOURCE_PATH_ASSET);
+	DirectoryIterator(resourcePath, 0);
 	cout << endl << "Found Parsable Assets: " << assetCount << endl << endl;
 
 	// 여기서부터 파싱 부분
@@ -24,7 +25,7 @@ int main()
 		shared_ptr<AssetLoader> loader = make_shared<AssetLoader>();
 		wstring assetPathStr = parsableAssetPaths[i];
 		cout << "Parsing: " << UniversalUtils::ToString(assetPathStr.c_str()) << endl;
-		loader->ImportAssetFile(assetPath);
+		loader->ImportAssetFile(assetPathStr);
 		filesystem::path assetPath(assetPathStr);
 		filesystem::path parsedAssetPath(parsedAssetPathStr + parsableAssetNames[i]);
 		filesystem::copy(assetPath, parsedAssetPath);

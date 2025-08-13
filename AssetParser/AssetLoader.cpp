@@ -32,7 +32,11 @@ void AssetLoader::ImportAssetFile(wstring file)
 	_importer = make_shared<Assimp::Importer>();
 	_importer->SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);	// 자꾸 이상하고 쓸데 없는 노드 가져와서 설정함
 
-	wstring fileStr = _assetPath + file;
+	wstring fileStr;
+	if (file.find(_assetPath) != wstring::npos)
+		fileStr = file;
+	else
+		fileStr = _assetPath + file;
 
 	auto p = filesystem::path(fileStr);
 	assert(filesystem::exists(p));

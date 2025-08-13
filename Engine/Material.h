@@ -14,6 +14,7 @@ public:
 
 public:
 	void SetTexture(shared_ptr<Texture> texture);
+	void SetTexture(wstring textureName);
 
 	static int GetCount() { return _count; }
 

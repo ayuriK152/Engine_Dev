@@ -4,7 +4,60 @@
 using namespace DirectX;
 
 using Vector4		= XMFLOAT4;
-using Vector2		= XMFLOAT2;
+
+struct Vector2 : public XMFLOAT2
+{
+	Vector2() : XMFLOAT2(0.0f, 0.0f) {}
+	Vector2(float x, float y) : XMFLOAT2(x, y) {}
+	Vector2(const XMFLOAT2& v) : XMFLOAT2(v.x, v.y) {}
+	Vector2(const XMVECTOR& v) { XMStoreFloat2(this, v); }
+
+	Vector2 Normalize() const {
+		return Vector2(XMVector3Normalize(XMLoadFloat2(this)));
+	}
+
+	Vector2 Reflect(const Vector2& normal) const {
+		return Vector2(XMVector3Reflect(XMLoadFloat2(this), XMLoadFloat2(&normal)));
+	}
+
+	float Length() const {
+		return XMVectorGetX(XMVector3Length(XMLoadFloat2(this)));
+	}
+
+	Vector2 Cross(const Vector2& v) const {
+		return Vector2(XMVector3Cross(XMLoadFloat2(this), XMLoadFloat2(&v)));
+	}
+
+	Vector2 operator+(const Vector2& v) const {
+		return Vector2(XMLoadFloat2(this) + XMLoadFloat2(&v));
+	}
+
+	Vector2 operator-() const {
+		return Vector2(XMVectorNegate(XMLoadFloat2(this)));
+	}
+
+	Vector2 operator-(const Vector2& v) const {
+		return Vector2(XMLoadFloat2(this) - XMLoadFloat2(&v));
+	}
+
+	Vector2 operator*(const Vector2& v) const {
+		return Vector2(XMLoadFloat2(this) * XMLoadFloat2(&v));
+	}
+
+	Vector2 operator*(float scalar) const {
+		return Vector2(XMLoadFloat2(this) * scalar);
+	}
+
+	Vector2 operator/(float scalar) const {
+		assert(scalar != 0.0f);
+		return Vector2(XMLoadFloat2(this) / scalar);
+	}
+
+	void operator=(const XMFLOAT2& v) {
+		x = v.x;
+		y = v.y;
+	}
+};
 
 struct Vector3 : public XMFLOAT3
 {

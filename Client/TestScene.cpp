@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TestScene.h"
 #include "PlayerScript.h"
-#include "SphereScript.h"
+#include "TPVCamera.h"
 
 void TestScene::Init()
 {
@@ -45,6 +45,15 @@ void TestScene::Init()
 
 	}
 
+	tpvCameraArm = make_shared<GameObject>();
+	tpvCameraArm->SetName("TPVCameraArm");
+	tpvCameraArm->AddComponent(make_shared<TPVCamera>());
+	auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+	tpvCameraScript->cameraTransform = camera->GetTransform();
+	tpvCameraScript->targetTransform = player->GetTransform();
+	tpvCameraScript->offset = Vector3(0.0f, 1.0f, 0.0f);
+	gameObjects.push_back(tpvCameraArm);
+
 	{
 		box = make_shared<GameObject>();
 		box->SetName("box");
@@ -76,25 +85,12 @@ void TestScene::Init()
 	}
 
 	{
-		//box2 = make_shared<GameObject>();
-		//box2->SetName("box");
-		//box2->AddComponent(make_shared<MeshRenderer>());
-		//box2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		//box2->AddComponent(make_shared<BoxCollider>());
-		////box2->AddComponent(make_shared<Rigidbody>());
-		//box2->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, 0.0f));
-		//box2->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, -45.0f));
-		//gameObjects.push_back(box2);
-	}
-
-	{
 		sphere = make_shared<GameObject>();
 		sphere->SetName("sphere");
 		sphere->AddComponent(make_shared<MeshRenderer>());
 		sphere->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 		sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
 		sphere->AddComponent(make_shared<SphereCollider>());
-		sphere->AddComponent(make_shared<SphereScript>());
 		sphere->GetTransform()->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
 		gameObjects.push_back(sphere);
 	}
@@ -106,7 +102,6 @@ void TestScene::Init()
 		sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
 		sphere2->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));	// 텍스쳐 테스트용 나중에 삭제
 		sphere2->AddComponent(make_shared<SphereCollider>());
-		sphere2->AddComponent(make_shared<SphereScript>());
 		sphere2->AddComponent(make_shared<Rigidbody>());
 		sphere2->GetTransform()->SetPosition(Vector3(2.0f, 4.0f, 0.0f));
 		gameObjects.push_back(sphere2);
@@ -127,8 +122,6 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
-	camera->GetTransform()->LookAtWithNoRoll(player->GetTransform()->GetPosition());
-	//box->GetTransform()->Rotate(Vector3(0.0f, 1.0f * TIME->DeltaTime(), 1.0f * TIME->DeltaTime()));
 	if (INPUTM->IsKeyPress(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 

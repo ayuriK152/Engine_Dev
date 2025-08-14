@@ -5,13 +5,13 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="PlayerScript.h" />
-    <ClInclude Include="SphereScript.h" />
+    <ClInclude Include="TPVCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
-    <ClCompile Include="SphereScript.cpp" />
+    <ClCompile Include="TPVCamera.cpp" />
   </ItemGroup>
 </Project>

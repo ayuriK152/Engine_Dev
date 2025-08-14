@@ -9,10 +9,17 @@ void InputManager::Initialize()
 		auto keyEnum = magic_enum::enum_cast<KeyValue>(keyValue);
 		_keyStates[keyEnum.value()] = KeyState::Idle;
 	}
+
+	_isMouseCenterRestricted = true;
 }
 
 void InputManager::Update()
 {
+	if (!_isMouseMoving)
+	{
+		_mouseDelta = Vector2(0.0f, 0.0f);
+	}
+
 	auto _keyValues = magic_enum::enum_values<KeyValue>();
 	for (auto& keyValue : _keyValues)
 	{
@@ -33,6 +40,8 @@ void InputManager::Update()
 				_keyStates[keyEnum.value()] = KeyState::Idle;
 		}
 	}
+
+	_isMouseMoving = false;
 }
 
 bool InputManager::IsKeyDown(KeyValue key)
@@ -43,4 +52,21 @@ bool InputManager::IsKeyDown(KeyValue key)
 bool InputManager::IsKeyPress(KeyValue key)
 {
 	return _keyStates[key] == KeyState::Press;
+}
+
+void InputManager::OnMouseMove(int x, int y)
+{
+	_isMouseMoving = true;
+	_mouseDelta = Vector2((float)x, (float)y);
+
+	if (_isMouseCenterRestricted)
+	{
+		RECT rectClient, rectWindow;
+		GetClientRect(GRAPHIC->GetMainWnd(), &rectClient);
+		GetWindowRect(GRAPHIC->GetMainWnd(), &rectWindow);
+		int centerX = (rectClient.left + rectClient.right) / 2;
+		int centerY = (rectClient.top + rectClient.bottom) / 2;
+		SetCursorPos(centerX + rectWindow.left, centerY + rectWindow.top);
+		_mousePosition = Vector2((float)centerX, (float)centerY);
+	}
 }

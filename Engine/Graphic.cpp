@@ -287,6 +287,26 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 			return 0;
 
+		case WM_INPUT:
+		{
+			UINT dwSize = 0;
+			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, nullptr, &dwSize, sizeof(RAWINPUTHEADER));
+			if (dwSize == 0) break;
+
+			std::vector<BYTE> lpb(dwSize);
+			if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb.data(), &dwSize, sizeof(RAWINPUTHEADER)) != dwSize)
+				break;
+
+			RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(lpb.data());
+
+			if (raw->header.dwType == RIM_TYPEMOUSE)
+			{
+				INPUTM->OnMouseMove(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
+			}
+
+			return 0;
+		}
+
 		case WM_LBUTTONDOWN:
 		case WM_MBUTTONDOWN:
 		case WM_RBUTTONDOWN:
@@ -296,11 +316,9 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_RBUTTONUP:
 			return 0;
 		case WM_MOUSEMOVE:
+			//INPUTM->OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			return 0;
 		case WM_KEYUP:
-			//else if ((int)wParam == VK_F2)
-			//	Set4xMsaaState(!_appDesc._4xMsaaState);
-
 			return 0;
 		}
 
@@ -344,6 +362,14 @@ bool Graphic::InitMainWindow()
 
 	ShowWindow(_hMainWnd, SW_SHOW);
 	UpdateWindow(_hMainWnd);
+
+	RAWINPUTDEVICE rid;
+	rid.usUsagePage = 0x01;
+	rid.usUsage = 0x02;
+	rid.dwFlags = RIDEV_INPUTSINK;
+	rid.hwndTarget = _hMainWnd;
+
+	RegisterRawInputDevices(&rid, 1, sizeof(rid));
 
 	return true;
 }

@@ -64,7 +64,16 @@ public:
 	bool IsKeyDown(KeyValue key);
 	bool IsKeyPress(KeyValue key);
 
+	Vector2 GetMousePosition() { return _mousePosition; }
+	Vector2 GetMouseDelta() { return _mouseDelta; }
+
+	void OnMouseMove(int x, int y);
+
 private:
+	bool _isMouseMoving = false;
+	bool _isMouseCenterRestricted = true;
+	Vector2 _mousePosition;
+	Vector2 _mouseDelta;
 	unordered_map<KeyValue, KeyState> _keyStates;
 };
 

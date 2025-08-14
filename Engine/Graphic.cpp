@@ -301,7 +301,8 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			if (raw->header.dwType == RIM_TYPEMOUSE)
 			{
-				INPUTM->OnMouseMove(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
+				if (raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0)
+					INPUTM->OnMouseMove(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
 			}
 
 			return 0;

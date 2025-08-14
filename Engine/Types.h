@@ -3,8 +3,6 @@
 
 using namespace DirectX;
 
-using Vector4		= XMFLOAT4;
-
 struct Vector2 : public XMFLOAT2
 {
 	Vector2() : XMFLOAT2(0.0f, 0.0f) {}
@@ -13,19 +11,19 @@ struct Vector2 : public XMFLOAT2
 	Vector2(const XMVECTOR& v) { XMStoreFloat2(this, v); }
 
 	Vector2 Normalize() const {
-		return Vector2(XMVector3Normalize(XMLoadFloat2(this)));
+		return Vector2(XMVector2Normalize(XMLoadFloat2(this)));
 	}
 
 	Vector2 Reflect(const Vector2& normal) const {
-		return Vector2(XMVector3Reflect(XMLoadFloat2(this), XMLoadFloat2(&normal)));
+		return Vector2(XMVector2Reflect(XMLoadFloat2(this), XMLoadFloat2(&normal)));
 	}
 
 	float Length() const {
-		return XMVectorGetX(XMVector3Length(XMLoadFloat2(this)));
+		return XMVectorGetX(XMVector2Length(XMLoadFloat2(this)));
 	}
 
 	Vector2 Cross(const Vector2& v) const {
-		return Vector2(XMVector3Cross(XMLoadFloat2(this), XMLoadFloat2(&v)));
+		return Vector2(XMVector2Cross(XMLoadFloat2(this), XMLoadFloat2(&v)));
 	}
 
 	Vector2 operator+(const Vector2& v) const {
@@ -111,6 +109,46 @@ struct Vector3 : public XMFLOAT3
 		x = v.x;
 		y = v.y;
 		z = v.z;
+	}
+};
+
+struct Vector4 : public XMFLOAT4
+{
+	Vector4() : XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) {}
+	Vector4(float x, float y, float z, float w) : XMFLOAT4(x, y, z, w) {}
+	Vector4(const XMFLOAT4& v) : XMFLOAT4(v.x, v.y, v.z, v.w) {}
+	Vector4(const XMVECTOR& v) { XMStoreFloat4(this, v); }
+
+	Vector4 operator+(const Vector4& v) const {
+		return Vector4(XMLoadFloat4(this) + XMLoadFloat4(&v));
+	}
+
+	Vector4 operator-() const {
+		return Vector4(XMVectorNegate(XMLoadFloat4(this)));
+	}
+
+	Vector4 operator-(const Vector4& v) const {
+		return Vector4(XMLoadFloat4(this) - XMLoadFloat4(&v));
+	}
+
+	Vector4 operator*(const Vector4& v) const {
+		return Vector4(XMLoadFloat4(this) * XMLoadFloat4(&v));
+	}
+
+	Vector4 operator*(float scalar) const {
+		return Vector4(XMLoadFloat4(this) * scalar);
+	}
+
+	Vector4 operator/(float scalar) const {
+		assert(scalar != 0.0f);
+		return Vector4(XMLoadFloat4(this) / scalar);
+	}
+
+	void operator=(const XMFLOAT4& v) {
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		w = v.w;
 	}
 };
 

@@ -208,7 +208,7 @@ void Transform::Rotate(const Vector3& angle)
 	XMVECTOR deltaQuat = XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
 	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
 
-	_quaternion = { newQuat.m128_f32[0], newQuat.m128_f32[1], newQuat.m128_f32[2], newQuat.m128_f32[3] };
+	_quaternion = newQuat;
 	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
 
 	SetDirtyFlag();
@@ -258,9 +258,7 @@ void Transform::LookAtWithNoRoll(const Vector3& targetPos)
 	XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw);
 	XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
 
-	Vector4 quatVec;
-	XMStoreFloat4(&quatVec, quatFinal);
-	SetLocalQuaternion(quatVec);
+	SetLocalQuaternion(quatFinal);
 
 	SetDirtyFlag();
 }

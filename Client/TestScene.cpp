@@ -44,7 +44,7 @@ void TestScene::Init()
 	}
 
 	{
-		auto loadedObjects = RESOURCE->LoadPrefabObject("X Bot");
+		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 		knight = loadedObjects[0];
 		knight->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());

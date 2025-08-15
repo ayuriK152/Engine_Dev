@@ -44,6 +44,15 @@ public:
 	}
 	void SetLocalRotationRadian(const Vector3& rotation);
 
+	Vector4 GetQuaternion() {
+		if (_isDirty)
+			UpdateTransform();
+
+		return _localQuaternion;
+	}
+	void SetQuaternion(const Vector4& quaternion);
+	void SetQuaternion(const XMVECTOR& quaternion);
+
 	Vector4 GetLocalQuaternion() {
 		if (_isDirty)
 			UpdateTransform();
@@ -96,13 +105,6 @@ public:
 		return _scale;
 	}
 	void SetScale(const Vector3& worldScale);
-
-	XMVECTOR GetQuaternion() {
-		if (_isDirty)
-			UpdateTransform();
-
-		return XMLoadFloat4(&_quaternion);
-	}
 	XMMATRIX GetRotationMatrix();
 
 	Vector3 GetRight();

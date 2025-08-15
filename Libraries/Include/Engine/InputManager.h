@@ -40,7 +40,8 @@ enum KeyValue
 	F9 =	VK_F9,
 	F10 =	VK_F10,
 	F11 =	VK_F11,
-	F12 =	VK_F12
+	F12 =	VK_F12,
+	CTRL =	VK_CONTROL
 };
 
 enum KeyState
@@ -64,6 +65,9 @@ public:
 	bool IsKeyDown(KeyValue key);
 	bool IsKeyPress(KeyValue key);
 
+	bool IsMouseCenterFixed() { return _isMouseCenterFixed; }
+	void SetMouseCenterFixMode(bool value) { _isMouseCenterFixed = value; }
+
 	Vector2 GetMousePosition() { return _mousePosition; }
 	Vector2 GetMouseDelta() { return _mouseDelta; }
 
@@ -71,7 +75,7 @@ public:
 
 private:
 	bool _isMouseMoving = false;
-	bool _isMouseCenterRestricted = true;
+	bool _isMouseCenterFixed = false;
 	Vector2 _mousePosition;
 	Vector2 _mouseDelta;
 	unordered_map<KeyValue, KeyState> _keyStates;

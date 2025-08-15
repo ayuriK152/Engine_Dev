@@ -89,6 +89,12 @@ void Transform::SetLocalQuaternion(const Vector4& quaternion)
 	SetDirtyFlag();
 }
 
+void Transform::SetLocalQuaternion(const XMVECTOR& quaternion)
+{
+	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(quaternion));
+	SetDirtyFlag();
+}
+
 void Transform::SetPosition(const Vector3& worldPosition)
 {
 	if (HasParent())
@@ -219,6 +225,18 @@ void Transform::Rotate(const XMVECTOR& angle)
 	Vector3 f3_angle;
 	XMStoreFloat3(&f3_angle, angle);
 	Rotate(f3_angle);
+}
+
+void Transform::Rotate(const Vector4& quat)
+{
+	XMVECTOR currentQuat = XMLoadFloat4(&_quaternion);
+	XMVECTOR deltaQuat = XMLoadFloat4(&quat);
+	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
+
+	_quaternion = newQuat;
+	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
+
+	SetDirtyFlag();
 }
 
 void Transform::LookAt(const Vector3& targetPos)

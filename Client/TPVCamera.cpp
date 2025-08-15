@@ -11,21 +11,22 @@ void TPVCamera::Init()
 	if (cameraTransform->GetParent() != GetTransform())
 	{
 		cameraTransform->SetParent(GetTransform());
+		cameraTransform->SetLocalPosition(Vector3(0.0f, 0.0f, -distance));
 	}
 }
 
 void TPVCamera::Update()
 {
-	if (cameraTransform == nullptr || targetTransform == nullptr)
+	if (targetTransform == nullptr)
 		return;
 
 	GetTransform()->SetPosition(targetTransform->GetPosition() + offset);
 
-	if ((cameraTransform->GetLocalPosition() - GetTransform()->GetLocalPosition()).Length() != distance)
-		cameraTransform->SetLocalPosition(Vector3(0.0f, 0.0f, -distance));
+	if (!isCameraControllOn || cameraTransform == nullptr)
+		return;
 
 	Vector3 rotation(INPUTM->GetMouseDelta().y, INPUTM->GetMouseDelta().x, 0.0f);
-	rotation = rotation * rotationSpeed * TIME->DeltaTime();
+	rotation = rotation * sensitivity * TIME->DeltaTime();
 	GetTransform()->Rotate(rotation);
 
 	cameraTransform->LookAtWithNoRoll(targetTransform->GetPosition());

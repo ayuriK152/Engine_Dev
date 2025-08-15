@@ -30,6 +30,48 @@ void Transform::Render()
 
 }
 
+void Transform::ForceUpdateTransform()
+{
+	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
+	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_localQuaternion));
+	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
+
+	XMMATRIX matTransform = matScale * matRotation * matTranslation;
+
+	XMStoreFloat4x4(&_matLocal, matTransform);
+
+	if (HasParent())
+	{
+		XMMATRIX parentWorld = XMLoadFloat4x4(&_parent->GetWorldMatrix());
+		XMStoreFloat4x4(&_matWorld, matTransform * parentWorld);
+	}
+	else
+	{
+		_matWorld = _matLocal;
+	}
+
+	_isDirty = false;
+
+	XMVECTOR scale;
+	XMVECTOR quaternion;
+	XMVECTOR position;
+	XMMatrixDecompose(
+		&scale,
+		&quaternion,
+		&position,
+		XMLoadFloat4x4(&_matWorld));
+
+	XMStoreFloat3(&_scale, scale);
+	_quaternion = quaternion;
+	_rotation = MathHelper::ConvertQuaternionToEuler(quaternion);
+	XMStoreFloat3(&_position, position);
+
+	for (auto& child : _childs)
+	{
+		child->ForceUpdateTransform();
+	}
+}
+
 void Transform::UpdateTransform()
 {
 	// 앞에서 조건 다 걸러내긴 하는데 혹시 몰라서 한번 더 확인
@@ -37,7 +79,7 @@ void Transform::UpdateTransform()
 		return;
 
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
-	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
+	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_localQuaternion));
 	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
 
 	XMMATRIX matTransform = matScale * matRotation * matTranslation;
@@ -66,6 +108,7 @@ void Transform::UpdateTransform()
 		XMLoadFloat4x4(&_matWorld));
 
 	XMStoreFloat3(&_scale, scale);
+	_quaternion = quaternion;
 	_rotation = MathHelper::ConvertQuaternionToEuler(quaternion);
 	XMStoreFloat3(&_position, position);
 
@@ -79,19 +122,47 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 {
 	_localRotation = rotation;
 
-	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
+	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
 	SetDirtyFlag();
+}
+
+void Transform::SetQuaternion(const Vector4& quaternion)
+{
+	_quaternion = XMQuaternionNormalize(XMLoadFloat4(&quaternion));
+	XMVECTOR qLocal;
+	if (HasParent())
+	{
+		XMMATRIX parentRotMat = _parent->GetRotationMatrix();
+		XMVECTOR qParent = XMQuaternionRotationMatrix(parentRotMat);
+		qLocal = XMQuaternionMultiply(XMLoadFloat4(&quaternion), XMQuaternionInverse(qParent));
+	}
+
+	SetLocalQuaternion(qLocal);
+}
+
+void Transform::SetQuaternion(const XMVECTOR& quaternion)
+{
+	_quaternion = XMQuaternionNormalize(quaternion);
+	XMVECTOR qLocal;
+	if (HasParent())
+	{
+		XMMATRIX parentRotMat = _parent->GetRotationMatrix();
+		XMVECTOR qParent = XMQuaternionRotationMatrix(parentRotMat);
+		qLocal = XMQuaternionMultiply(quaternion, XMQuaternionInverse(qParent));
+	}
+
+	SetLocalQuaternion(qLocal);
 }
 
 void Transform::SetLocalQuaternion(const Vector4& quaternion)
 {
-	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
+	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
 	SetDirtyFlag();
 }
 
 void Transform::SetLocalQuaternion(const XMVECTOR& quaternion)
 {
-	XMStoreFloat4(&_quaternion, XMQuaternionNormalize(quaternion));
+	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(quaternion));
 	SetDirtyFlag();
 }
 
@@ -150,6 +221,9 @@ void Transform::SetScale(const Vector3& worldScale)
 
 XMMATRIX Transform::GetRotationMatrix()
 {
+	if (_isDirty)
+		UpdateTransform();
+
 	return XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
 }
 
@@ -210,11 +284,11 @@ void Transform::Translate(const Vector3& moveVec)
 
 void Transform::Rotate(const Vector3& angle)
 {
-	XMVECTOR currentQuat = XMLoadFloat4(&_quaternion);
+	XMVECTOR currentQuat = XMLoadFloat4(&_localQuaternion);
 	XMVECTOR deltaQuat = XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
 	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
 
-	_quaternion = newQuat;
+	_localQuaternion = newQuat;
 	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
 
 	SetDirtyFlag();
@@ -229,11 +303,11 @@ void Transform::Rotate(const XMVECTOR& angle)
 
 void Transform::Rotate(const Vector4& quat)
 {
-	XMVECTOR currentQuat = XMLoadFloat4(&_quaternion);
+	XMVECTOR currentQuat = XMLoadFloat4(&_localQuaternion);
 	XMVECTOR deltaQuat = XMLoadFloat4(&quat);
 	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
 
-	_quaternion = newQuat;
+	_localQuaternion = newQuat;
 	_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
 
 	SetDirtyFlag();
@@ -295,6 +369,7 @@ void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 		XMLoadFloat4x4(&_matLocal));
 
 	XMStoreFloat3(&_localScale, scale);
+	_localQuaternion = quaternion;
 	_localRotation = MathHelper::ConvertQuaternionToEuler(quaternion);
 	XMStoreFloat3(&_localPosition, position);
 

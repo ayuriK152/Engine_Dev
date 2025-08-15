@@ -1,0 +1,8 @@
+<Material>
+    <Name>Beta_Joints_MAT1</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.26666668" g="0.099623106" b="0.080811791" a="1"/>
+    <Specular r="0.29913786" g="0.29913786" b="0.29913786" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName>Tex_Default</TextureName>
+</Material>

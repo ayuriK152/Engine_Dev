@@ -9,10 +9,9 @@ void TestScene::Init()
 	{
 		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");
 		RESOURCE->Add<Texture>(L"0dot001mm_1", koyuki);
-
-		shared_ptr<Texture> proto1 = make_shared<Texture>(L"prototype_dark1.dds");
-		RESOURCE->Add<Texture>(L"proto_dark1", proto1);
 	}
+	shared_ptr<Texture> proto1 = make_shared<Texture>(L"prototype_dark1.dds");
+	RESOURCE->Add<Texture>(L"proto_dark1", proto1);
 
 	skybox = make_shared<GameObject>();
 	skybox->SetName("skybox");
@@ -38,21 +37,27 @@ void TestScene::Init()
 	gameObjects.push_back(globalLight);
 
 	{
-		auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
-		player = loadedObjects[0];
-		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		player->AddComponent(make_shared<PlayerScript>());
-
+		//auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
+		//player = loadedObjects[0];
+		//gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		//player->AddComponent(make_shared<PlayerScript>());
 	}
 
-	tpvCameraArm = make_shared<GameObject>();
-	tpvCameraArm->SetName("TPVCameraArm");
-	tpvCameraArm->AddComponent(make_shared<TPVCamera>());
-	auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
-	tpvCameraScript->cameraTransform = camera->GetTransform();
-	tpvCameraScript->targetTransform = player->GetTransform();
-	tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
-	gameObjects.push_back(tpvCameraArm);
+	{
+		auto loadedObjects = RESOURCE->LoadPrefabObject("X Bot");
+		knight = loadedObjects[0];
+		knight->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
+		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+	}
+
+	//tpvCameraArm = make_shared<GameObject>();
+	//tpvCameraArm->SetName("TPVCameraArm");
+	//tpvCameraArm->AddComponent(make_shared<TPVCamera>());
+	//auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+	//tpvCameraScript->cameraTransform = camera->GetTransform();
+	//tpvCameraScript->targetTransform = player->GetTransform();
+	//tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
+	//gameObjects.push_back(tpvCameraArm);
 
 	{
 		box = make_shared<GameObject>();

@@ -82,6 +82,8 @@ void AssetLoader::ImportAssetFile(wstring file)
 		for (auto& animation : _animations)
 			RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
 		
+		_loadedObject[0]->GetTransform()->ForceUpdateTransform();
+
 		if (_bones.size() > 0)
 			RESOURCE->SaveBone(_bones, assetNameStr);
 
@@ -188,11 +190,11 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 
 	// 부모 노드 존재시 행렬 계산
-	if (currNode->parent != nullptr)
-	{
-		XMMATRIX multipliedMat = XMLoadFloat4x4(&currNode->transform) * XMLoadFloat4x4(&parentNode->transform);
-		XMStoreFloat4x4(&currNode->transform, multipliedMat);
-	}
+	//if (currNode->parent != nullptr)
+	//{
+	//	XMMATRIX multipliedMat = XMLoadFloat4x4(&currNode->transform) * XMLoadFloat4x4(&parentNode->transform);
+	//	XMStoreFloat4x4(&currNode->transform, multipliedMat);
+	//}
 
 	_nodes.insert({ currNode->name, currNode });
 
@@ -210,7 +212,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 
 		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
-		meshObj->GetName() = UniversalUtils::ToString(m->GetNameW());
+		meshObj->SetName(UniversalUtils::ToString(m->GetNameW()));
 		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
 		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
 		meshObj->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
@@ -293,11 +295,11 @@ void AssetLoader::BuildBones()
 		}
 
 		shared_ptr<GameObject> boneObj = make_shared<GameObject>();
-		boneObj->GetName() = b.name;
+		boneObj->SetName(b.name);
 
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
-		boneObj->GetTransform()->SetWorldMatrix(b.node->transform);
+		boneObj->GetTransform()->SetLocalMatrix(b.node->transform);
 
 		_boneObjs.push_back(boneObj);
 		_loadedObject.push_back(boneObj);

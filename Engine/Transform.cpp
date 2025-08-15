@@ -30,6 +30,47 @@ void Transform::Render()
 
 }
 
+void Transform::ForceUpdateTransform()
+{
+	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
+	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
+	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
+
+	XMMATRIX matTransform = matScale * matRotation * matTranslation;
+
+	XMStoreFloat4x4(&_matLocal, matTransform);
+
+	if (HasParent())
+	{
+		XMMATRIX parentWorld = XMLoadFloat4x4(&_parent->GetWorldMatrix());
+		XMStoreFloat4x4(&_matWorld, matTransform * parentWorld);
+	}
+	else
+	{
+		_matWorld = _matLocal;
+	}
+
+	_isDirty = false;
+
+	XMVECTOR scale;
+	XMVECTOR quaternion;
+	XMVECTOR position;
+	XMMatrixDecompose(
+		&scale,
+		&quaternion,
+		&position,
+		XMLoadFloat4x4(&_matWorld));
+
+	XMStoreFloat3(&_scale, scale);
+	_rotation = MathHelper::ConvertQuaternionToEuler(quaternion);
+	XMStoreFloat3(&_position, position);
+
+	for (auto& child : _childs)
+	{
+		child->ForceUpdateTransform();
+	}
+}
+
 void Transform::UpdateTransform()
 {
 	// 앞에서 조건 다 걸러내긴 하는데 혹시 몰라서 한번 더 확인

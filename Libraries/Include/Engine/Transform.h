@@ -12,6 +12,7 @@ public:
 	void Render() override;
 
 public:
+	void ForceUpdateTransform();
 
 	Vector3 GetLocalPosition() { 
 		if (_isDirty)
@@ -150,6 +151,7 @@ private:
 	Vector3 _rotation;
 	Vector3 _scale;
 
+	Vector4 _localQuaternion;
 	Vector4 _quaternion;
 
 	XMFLOAT4X4 _matLocal;

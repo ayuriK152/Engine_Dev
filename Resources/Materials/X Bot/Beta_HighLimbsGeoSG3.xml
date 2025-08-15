@@ -1,0 +1,8 @@
+<Material>
+    <Name>Beta_HighLimbsGeoSG3</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.66960001" g="0.24184643" b="0.21092401" a="1"/>
+    <Specular r="0.48717478" g="0.48717478" b="0.48717478" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName>Tex_Default</TextureName>
+</Material>

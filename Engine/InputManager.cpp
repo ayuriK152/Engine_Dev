@@ -9,8 +9,6 @@ void InputManager::Initialize()
 		auto keyEnum = magic_enum::enum_cast<KeyValue>(keyValue);
 		_keyStates[keyEnum.value()] = KeyState::Idle;
 	}
-
-	_isMouseCenterRestricted = true;
 }
 
 void InputManager::Update()
@@ -59,7 +57,7 @@ void InputManager::OnMouseMove(int x, int y)
 	_isMouseMoving = true;
 	_mouseDelta = Vector2((float)x, (float)y);
 
-	if (_isMouseCenterRestricted)
+	if (_isMouseCenterFixed)
 	{
 		RECT rectClient, rectWindow;
 		GetClientRect(GRAPHIC->GetMainWnd(), &rectClient);

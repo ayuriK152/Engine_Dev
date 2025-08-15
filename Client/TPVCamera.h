@@ -13,6 +13,8 @@ public:
 	shared_ptr<Transform> targetTransform;
 	float distance = 8.0f;
 	Vector3 offset;
-	float rotationSpeed = 1.0f;
+	float sensitivity = 1.0f;
+
+	bool isCameraControllOn = false;
 };
 

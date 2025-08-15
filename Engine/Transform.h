@@ -50,6 +50,7 @@ public:
 		return _quaternion;
 	}
 	void SetLocalQuaternion(const Vector4& quaternion);
+	void SetLocalQuaternion(const XMVECTOR& quaternion);
 
 	Vector3 GetLocalScale() {
 		if (_isDirty)
@@ -113,6 +114,7 @@ public:
 	void Translate(const Vector3& moveVec);
 
 	void Rotate(const Vector3& angle);
+	void Rotate(const Vector4& quat);
 	void Rotate(const XMVECTOR& angle);
 
 	void LookAt(const Vector3& targetPos);

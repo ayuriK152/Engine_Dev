@@ -19,7 +19,6 @@ private:
 	shared_ptr<GameObject> ground;
 	shared_ptr<GameObject> box;
 	shared_ptr<GameObject> player;
-	shared_ptr<GameObject> knight;
 
 	vector<shared_ptr<GameObject>> gameObjects;
 };

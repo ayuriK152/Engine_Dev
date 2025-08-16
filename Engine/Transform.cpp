@@ -7,7 +7,8 @@ Transform::Transform() : Super(ComponentType::Transform)
 	_localRotation = { 0.0f, 0.0f, 0.0f };
 	_localScale = { 1.0f, 1.0f, 1.0f };
 
-	_quaternion = { 0.0f, 0.0f, 0.0f ,1.0f };
+	_localQuaternion = { 0.0f, 0.0f, 0.0f, 1.0f };
+	_quaternion = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	_parent = nullptr;
 

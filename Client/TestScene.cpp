@@ -37,27 +37,21 @@ void TestScene::Init()
 	gameObjects.push_back(globalLight);
 
 	{
-		//auto loadedObjects = RESOURCE->LoadPrefabObject("Y Bot");
-		//player = loadedObjects[0];
-		//gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		//player->AddComponent(make_shared<PlayerScript>());
-	}
-
-	{
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
-		knight = loadedObjects[0];
-		knight->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
+		player = loadedObjects[0];
+		player->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		player->AddComponent(make_shared<PlayerScript>());
 	}
 
-	//tpvCameraArm = make_shared<GameObject>();
-	//tpvCameraArm->SetName("TPVCameraArm");
-	//tpvCameraArm->AddComponent(make_shared<TPVCamera>());
-	//auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
-	//tpvCameraScript->cameraTransform = camera->GetTransform();
-	//tpvCameraScript->targetTransform = player->GetTransform();
-	//tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
-	//gameObjects.push_back(tpvCameraArm);
+	tpvCameraArm = make_shared<GameObject>();
+	tpvCameraArm->SetName("TPVCameraArm");
+	tpvCameraArm->AddComponent(make_shared<TPVCamera>());
+	auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+	tpvCameraScript->cameraTransform = camera->GetTransform();
+	tpvCameraScript->targetTransform = player->GetTransform();
+	tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
+	gameObjects.push_back(tpvCameraArm);
 
 	{
 		box = make_shared<GameObject>();

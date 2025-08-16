@@ -12,7 +12,7 @@ void PlayerScript::Update()
 {
 	if (!Move())
 	{
-		animator->SetCurrentAnimation("idle");
+		//animator->SetCurrentAnimation("idle");
 	}
 }
 
@@ -27,7 +27,7 @@ bool PlayerScript::Move()
 	if (INPUTM->IsKeyPress(KeyValue::W))
 	{
 		transform->Translate(Vector3(0.0f, 0.0f, 1.0f) * TIME->DeltaTime() * speed);
-		animator->SetCurrentAnimation("walk");
+		//animator->SetCurrentAnimation("walk");
 		targetPos = targetPos + Vector3(0.0f, 0.0f, -1.0f);
 
 		flag = true;
@@ -35,7 +35,7 @@ bool PlayerScript::Move()
 	if (INPUTM->IsKeyPress(KeyValue::S))
 	{
 		transform->Translate(Vector3(0.0f, 0.0f, -1.0f) * TIME->DeltaTime() * speed);
-		animator->SetCurrentAnimation("walk");
+		//animator->SetCurrentAnimation("walk");
 		targetPos = targetPos + Vector3(0.0f, 0.0f, 1.0f);
 
 		flag = true;
@@ -43,7 +43,7 @@ bool PlayerScript::Move()
 	if (INPUTM->IsKeyPress(KeyValue::A))
 	{
 		transform->Translate(Vector3(-1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
-		animator->SetCurrentAnimation("walk");
+		//animator->SetCurrentAnimation("walk");
 		targetPos = targetPos + Vector3(1.0f, 0.0f, 0.0f);
 
 		flag = true;
@@ -51,7 +51,7 @@ bool PlayerScript::Move()
 	if (INPUTM->IsKeyPress(KeyValue::D))
 	{
 		transform->Translate(Vector3(1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
-		animator->SetCurrentAnimation("walk");
+		//animator->SetCurrentAnimation("walk");
 		targetPos = targetPos + Vector3(-1.0f, 0.0f, 0.0f);
 
 		flag = true;

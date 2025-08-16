@@ -76,21 +76,39 @@ void AssetLoader::ImportAssetFile(wstring file)
 	{
 		string assetNameStr = UniversalUtils::ToString(_assetName);
 
-		for (auto& mesh : _meshes)
-			RESOURCE->SaveMesh(mesh, assetNameStr + "\\" + mesh->GetName());
+		if (_meshes.size() > 0)
+		{
+			for (auto& mesh : _meshes)
+			{
+				RESOURCE->SaveMesh(mesh, assetNameStr + "\\" + mesh->GetName());
+				cout << "Mesh parsed at " << assetNameStr + "\\" + mesh->GetName() << endl;
+			}
+			cout << _meshes.size() << " meshes parsed" << endl << endl;
+		}
 
-		for (auto& animation : _animations)
-			RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
+		if (_animations.size() > 0)
+		{
+			for (auto& animation : _animations)
+			{
+				RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
+				cout << "Animation parsed at " << assetNameStr + "\\" + animation->GetName() << endl;
+			}
+			cout << _animations.size() << " animations parsed" << endl << endl;
+		}
 		
 		_loadedObject[0]->GetTransform()->ForceUpdateTransform();
 
 		if (_bones.size() > 0)
+		{
 			RESOURCE->SaveBone(_bones, assetNameStr);
+			cout << "Bone parsed at " << assetNameStr << endl << endl;
+		}
 
 		if (_loadedObject.size() > 1)
 		{
 			_loadedObject[0]->SetName(UniversalUtils::ToString(_assetName));
 			RESOURCE->SavePrefab(_loadedObject[0]);
+			cout << "Prefab parsed" << endl << endl;
 		}
 	}
 

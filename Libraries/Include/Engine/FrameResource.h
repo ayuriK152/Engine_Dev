@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_COUNT_OBJECT	100
+#define DEFAULT_COUNT_OBJECT	200
 #define DEFAULT_COUNT_LIGHT		20
 
 struct FrameResource

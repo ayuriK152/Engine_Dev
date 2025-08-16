@@ -15,6 +15,7 @@ public:
 	Vector3 offset;
 	float sensitivity = 1.0f;
 
-	bool isCameraControllOn = false;
+	// 카메라 움직임 제어 여부
+	bool isCameraControllOn = true;
 };
 

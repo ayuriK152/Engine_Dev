@@ -239,7 +239,8 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 
 			case ComponentType::Script:
 			{
-				// 추후에 추가해야함.
+				// 일단 씬에서 수동적으로 넣어주는 방식으로 작동중.
+				// 세이브를 한다면 어떻게?
 			}
 		}
 	}

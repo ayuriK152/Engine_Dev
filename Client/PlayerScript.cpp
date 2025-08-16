@@ -6,59 +6,66 @@ void PlayerScript::Init()
 	gameObject = GetGameObject();
 	transform = gameObject->GetTransform();
 	animator = gameObject->GetComponent<Animator>();
+
+	_playerMovementState = IDLE;
+	_lastMovementState = IDLE;
+	_movingDirection = { 0.0f, 0.0f, 0.0f };
 }
 
 void PlayerScript::Update()
 {
-	if (!Move())
+	Move();
+
+	if (_playerMovementState != _lastMovementState)
 	{
-		//animator->SetCurrentAnimation("idle");
+		_lastMovementState = _playerMovementState;
+
+		switch (_playerMovementState)
+		{
+		case IDLE:
+			animator->SetCurrentAnimation("idle_sword_4");
+			break;
+
+		case WALK:
+			animator->SetCurrentAnimation("walk_sword_1");
+			break;
+		}
+	}
+
+	if (_playerMovementState == WALK)
+	{
+		transform->Translate(_movingDirection * TIME->DeltaTime() * speed);
+		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 	}
 }
 
-bool PlayerScript::Move()
+void PlayerScript::Move()
 {
-	// 단순히 이동 키를 눌렀는가 여부로 움직임을 판단.
-	// 운동량 감지로 해야 더 정확함. 수정 요함.
+	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
-	bool flag = false;
-
-	Vector3 targetPos = transform->GetPosition();
 	if (INPUTM->IsKeyPress(KeyValue::W))
 	{
-		transform->Translate(Vector3(0.0f, 0.0f, 1.0f) * TIME->DeltaTime() * speed);
-		//animator->SetCurrentAnimation("walk");
-		targetPos = targetPos + Vector3(0.0f, 0.0f, -1.0f);
-
-		flag = true;
+		_movingDirection.z += 1;
 	}
 	if (INPUTM->IsKeyPress(KeyValue::S))
 	{
-		transform->Translate(Vector3(0.0f, 0.0f, -1.0f) * TIME->DeltaTime() * speed);
-		//animator->SetCurrentAnimation("walk");
-		targetPos = targetPos + Vector3(0.0f, 0.0f, 1.0f);
-
-		flag = true;
+		_movingDirection.z -= 1;
 	}
 	if (INPUTM->IsKeyPress(KeyValue::A))
 	{
-		transform->Translate(Vector3(-1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
-		//animator->SetCurrentAnimation("walk");
-		targetPos = targetPos + Vector3(1.0f, 0.0f, 0.0f);
-
-		flag = true;
+		_movingDirection.x -= 1;;
 	}
 	if (INPUTM->IsKeyPress(KeyValue::D))
 	{
-		transform->Translate(Vector3(1.0f, 0.0f, 0.0f) * TIME->DeltaTime() * speed);
-		//animator->SetCurrentAnimation("walk");
-		targetPos = targetPos + Vector3(-1.0f, 0.0f, 0.0f);
-
-		flag = true;
+		_movingDirection.x += 1;
 	}
 
-	if (flag)
-		transform->LookAt(targetPos);
+	if (abs(_movingDirection.x) < 1.0f && abs(_movingDirection.z) < 1.0f)
+	{
+		_playerMovementState = IDLE;
+		return;
+	}
 
-	return flag;
+	_movingDirection = _movingDirection.Normalize();
+	_playerMovementState = WALK;
 }

@@ -26,5 +26,7 @@ private:
 	PlayerMovementState _playerMovementState;
 	PlayerMovementState _lastMovementState;
 	Vector3 _movingDirection;
+	Vector3 _cameraForward;
+	Vector3 _cameraRight;
 };
 

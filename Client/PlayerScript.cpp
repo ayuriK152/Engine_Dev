@@ -51,31 +51,61 @@ void PlayerScript::Update()
 
 void PlayerScript::Move()
 {
-	_movingDirection = { 0.0f, 0.0f, 0.0f };
+	bool flags[4] = { false, false, false, false };
 
 	if (INPUTM->IsKeyPress(KeyValue::W))
 	{
-		_movingDirection.z += 1;
+		flags[0] = true;
+		_movingDirection = Camera::GetCurrentCamera()->GetTransform()->GetLook();
 	}
 	if (INPUTM->IsKeyPress(KeyValue::S))
 	{
-		_movingDirection.z -= 1;
+		if (flags[0])
+			flags[0] = false;
+		else
+			flags[1] = true;
+
+		_movingDirection = -Camera::GetCurrentCamera()->GetTransform()->GetLook();
 	}
 	if (INPUTM->IsKeyPress(KeyValue::A))
 	{
-		_movingDirection.x -= 1;;
+		flags[2] = true;
+		_movingDirection = -Camera::GetCurrentCamera()->GetTransform()->GetRight();
 	}
 	if (INPUTM->IsKeyPress(KeyValue::D))
 	{
-		_movingDirection.x += 1;
+		if (flags[2])
+			flags[2] = false;
+		else
+			flags[3] = true;
+
+		_movingDirection = Camera::GetCurrentCamera()->GetTransform()->GetRight();
 	}
 
-	if (abs(_movingDirection.x) < 1.0f && abs(_movingDirection.z) < 1.0f)
+	if (!flags[0] && !flags[1] && !flags[2] && !flags[3])
 	{
 		_playerMovementState = IDLE;
 		return;
 	}
 
+	if (flags[0])
+	{
+		_movingDirection = _movingDirection + Camera::GetCurrentCamera()->GetTransform()->GetLook();
+	}
+	if (flags[1])
+	{
+		_movingDirection = _movingDirection - Camera::GetCurrentCamera()->GetTransform()->GetLook();
+	}
+	if (flags[2])
+	{
+		_movingDirection = _movingDirection - Camera::GetCurrentCamera()->GetTransform()->GetRight();
+	}
+	if (flags[3])
+	{
+		_movingDirection = _movingDirection + Camera::GetCurrentCamera()->GetTransform()->GetRight();
+	}
+
+	_movingDirection.y = 0.0f;
 	_movingDirection = _movingDirection.Normalize();
 	_playerMovementState = INPUTM->IsKeyPress(KeyValue::SHIFT) ? RUN : WALK;
 }

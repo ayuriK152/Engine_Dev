@@ -12,6 +12,7 @@ public:
 	void Update() override;
 
 public:
+	static Camera* GetCurrentCamera() { return _currentCamera; }
 	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }
 	static XMFLOAT4X4& GetViewMatrix() { return _currentCamera->_matView; }
 	static XMFLOAT4X4& GetProjMatrix() { return _currentCamera->_matProj; }

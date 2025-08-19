@@ -158,12 +158,14 @@ void Transform::SetQuaternion(const XMVECTOR& quaternion)
 void Transform::SetLocalQuaternion(const Vector4& quaternion)
 {
 	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
+	_localRotation = MathHelper::ConvertQuaternionToEuler(_localQuaternion);
 	SetDirtyFlag();
 }
 
 void Transform::SetLocalQuaternion(const XMVECTOR& quaternion)
 {
 	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(quaternion));
+	_localRotation = MathHelper::ConvertQuaternionToEuler(_localQuaternion);
 	SetDirtyFlag();
 }
 
@@ -285,6 +287,28 @@ void Transform::Translate(const Vector3& moveVec)
 
 void Transform::Rotate(const Vector3& angle)
 {
+	//XMVECTOR currentQuat = XMLoadFloat4(&_localQuaternion);
+
+	//// 현재 로컬 축 벡터
+	//Vector3 right = GetRight();
+	//Vector3 up = GetUp();
+	//Vector3 look = GetLook();
+
+	//// 각 축에 대한 회전 쿼터니언 생성
+	//XMVECTOR qx = XMQuaternionRotationAxis(XMLoadFloat3(&right), angle.x);
+	//XMVECTOR qy = XMQuaternionRotationAxis(XMLoadFloat3(&up), angle.y);
+	//XMVECTOR qz = XMQuaternionRotationAxis(XMLoadFloat3(&look), angle.z);
+
+	//// 회전 순서(Yaw → Pitch → Roll 등 원하는 대로) 
+	//XMVECTOR deltaQuat = XMQuaternionMultiply(qy, qx);   // 예: Y 다음 X
+	//deltaQuat = XMQuaternionMultiply(qz, deltaQuat);     // 마지막 Z
+
+	//// 로컬 기준이므로 현재 쿼터니언 뒤에 곱하기
+	//XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));
+
+	//XMStoreFloat4(&_localQuaternion, newQuat);
+	//_localRotation = MathHelper::ConvertQuaternionToEuler(newQuat);
+
 	XMVECTOR currentQuat = XMLoadFloat4(&_localQuaternion);
 	XMVECTOR deltaQuat = XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
 	XMVECTOR newQuat = XMQuaternionNormalize(XMQuaternionMultiply(currentQuat, deltaQuat));

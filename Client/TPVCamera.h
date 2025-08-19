@@ -17,5 +17,8 @@ public:
 
 	// 카메라 움직임 제어 여부
 	bool isCameraControllOn = true;
+
+private:
+	float _pitch = 0.0f;
 };
 

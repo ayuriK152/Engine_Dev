@@ -52,7 +52,7 @@ void TestScene::Init()
 		tpvCameraScript->cameraTransform = camera->GetTransform();
 		tpvCameraScript->targetTransform = player->GetTransform();
 		tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
-		tpvCameraScript->isCameraControllOn = false;
+		//tpvCameraScript->isCameraControllOn = false;
 		gameObjects.push_back(tpvCameraArm);
 	}
 
@@ -101,6 +101,11 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
+	if (INPUTM->IsKeyPress(KeyValue::A))
+		box->GetTransform()->Rotate(Vector3(1.0f, 0.0f, 0.0f) * TIME->DeltaTime());
+	if (INPUTM->IsKeyPress(KeyValue::S))
+		box->GetTransform()->Rotate(Vector3(0.0f, 1.0f, 0.0f) * TIME->DeltaTime());
+	
 	if (INPUTM->IsKeyDown(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 

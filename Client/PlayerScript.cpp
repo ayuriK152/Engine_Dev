@@ -29,13 +29,23 @@ void PlayerScript::Update()
 		case WALK:
 			animator->SetCurrentAnimation("walk_sword_1");
 			break;
+		case RUN:
+			animator->SetCurrentAnimation("run_sword_1");
+			break;
 		}
 	}
 
-	if (_playerMovementState == WALK)
+	switch (_playerMovementState)
 	{
+	case WALK:
 		transform->Translate(_movingDirection * TIME->DeltaTime() * speed);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
+		break;
+
+	case RUN:
+		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
+		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
+		break;
 	}
 }
 
@@ -67,5 +77,5 @@ void PlayerScript::Move()
 	}
 
 	_movingDirection = _movingDirection.Normalize();
-	_playerMovementState = WALK;
+	_playerMovementState = INPUTM->IsKeyPress(KeyValue::SHIFT) ? RUN : WALK;
 }

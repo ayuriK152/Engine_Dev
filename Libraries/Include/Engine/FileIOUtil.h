@@ -15,7 +15,7 @@ public:
 	void LoadMaterials();
 	
 	template<typename T>
-	HANDLE CreateFileHandle(string fileName);
+	HANDLE CreateFileHandle(string fileName, bool createNotExists = true);
 
 	HANDLE CreateFileHandle(string fileName, string ext = "");
 
@@ -30,7 +30,7 @@ public:
 };
 
 template<typename T>
-HANDLE FileIOUtil::CreateFileHandle(string fileName) {
+HANDLE FileIOUtil::CreateFileHandle(string fileName, bool createNotExists) {
 	string fullPath;
 
 	if (PathFileExistsA(fileName.c_str()))
@@ -64,7 +64,7 @@ HANDLE FileIOUtil::CreateFileHandle(string fileName) {
 			NULL
 		);
 	}
-	else {
+	else if (createNotExists){
 		return CreateFileA(
 			fullPath.c_str(),
 			GENERIC_READ | GENERIC_WRITE,
@@ -75,11 +75,13 @@ HANDLE FileIOUtil::CreateFileHandle(string fileName) {
 			NULL
 		);
 	}
+	else {
+		return INVALID_HANDLE_VALUE;
+	}
 }
 
 template<typename T>
-void FileIOUtil::WriteToFile(HANDLE fileHandle, const T& data)
-{
+void FileIOUtil::WriteToFile(HANDLE fileHandle, const T& data) {
 	WriteFile(
 		fileHandle,
 		&data,

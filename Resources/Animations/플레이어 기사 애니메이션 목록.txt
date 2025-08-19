@@ -10,5 +10,4 @@ Paladin WProp J Nordstrom\\walk_sword_2     // 뒷걸음(목표 고정시 사용
 Paladin WProp J Nordstrom\\strafe_sword     // 좌우이동(목표 고정시 사용)
 
 RUN
-Paladin WProp J Nordstrom\\run_sword_1
-Paladin WProp J Nordstrom\\run_sword_2
+Paladin WProp J Nordstrom\\run_sword_1      // 전진

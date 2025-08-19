@@ -296,7 +296,12 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 
 shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 {
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath);
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath, false);
+	if (fileHandle == INVALID_HANDLE_VALUE)
+	{
+		// 로그 or 콘솔 시스템 구현 후 에러 로그 출력 필요
+		return nullptr;
+	}
 
 	string animName;
 	animName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());

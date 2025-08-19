@@ -472,7 +472,13 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 		ImGui::InputText("##AddAnimationName", &addAnimPath);
 		if (ImGui::Button("Add Animation"))
 		{
-			animator->AddAnimation(RESOURCE->LoadAnimation(addAnimPath));
+			auto animation = RESOURCE->LoadAnimation(addAnimPath);
+			if (animation == nullptr)
+			{
+				// 로그 or 콘솔 시스템 구현 후 에러 로그 출력 필요
+				return;
+			}
+			animator->AddAnimation(animation);
 			addAnimPath = "";
 		}
 

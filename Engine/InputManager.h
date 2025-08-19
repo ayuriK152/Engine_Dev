@@ -42,6 +42,7 @@ enum KeyValue
 	F11		=	VK_F11,
 	F12		=	VK_F12,
 	CTRL	=	VK_CONTROL,
+	SHIFT	=	VK_SHIFT,
 	ALT		=	VK_MENU
 };
 

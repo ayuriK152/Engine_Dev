@@ -4,7 +4,8 @@
 enum PlayerMovementState
 {
 	IDLE,
-	WALK
+	WALK,
+	RUN
 };
 
 class PlayerScript : public Script
@@ -20,7 +21,7 @@ private:
 	shared_ptr<GameObject> gameObject;
 	shared_ptr<Transform> transform;
 	shared_ptr<Animator> animator;
-	float speed = 1.75f;
+	float speed = 1.5f;
 
 	PlayerMovementState _playerMovementState;
 	PlayerMovementState _lastMovementState;

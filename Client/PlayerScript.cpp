@@ -52,11 +52,11 @@ void PlayerScript::Update()
 void PlayerScript::Move()
 {
 	bool flags[4] = { false, false, false, false };
+	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
 	if (INPUTM->IsKeyPress(KeyValue::W))
 	{
 		flags[0] = true;
-		_movingDirection = Camera::GetCurrentCamera()->GetTransform()->GetLook();
 	}
 	if (INPUTM->IsKeyPress(KeyValue::S))
 	{
@@ -64,22 +64,17 @@ void PlayerScript::Move()
 			flags[0] = false;
 		else
 			flags[1] = true;
-
-		_movingDirection = -Camera::GetCurrentCamera()->GetTransform()->GetLook();
 	}
 	if (INPUTM->IsKeyPress(KeyValue::A))
 	{
 		flags[2] = true;
-		_movingDirection = -Camera::GetCurrentCamera()->GetTransform()->GetRight();
 	}
-	if (INPUTM->IsKeyPress(KeyValue::D))
+	if (INPUTM->IsKeyPress(KeyValue::D)) 
 	{
 		if (flags[2])
 			flags[2] = false;
 		else
 			flags[3] = true;
-
-		_movingDirection = Camera::GetCurrentCamera()->GetTransform()->GetRight();
 	}
 
 	if (!flags[0] && !flags[1] && !flags[2] && !flags[3])

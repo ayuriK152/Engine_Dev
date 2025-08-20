@@ -11,3 +11,9 @@ Paladin WProp J Nordstrom\\strafe_sword     // 좌우이동(목표 고정시 사
 
 RUN
 Paladin WProp J Nordstrom\\run_sword_1      // 전진
+
+ATTACK
+Paladin WProp J Nordstrom\\slash_1
+Paladin WProp J Nordstrom\\slash_2
+Paladin WProp J Nordstrom\\slash_3
+Paladin WProp J Nordstrom\\slash_4

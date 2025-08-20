@@ -52,7 +52,7 @@ void TestScene::Init()
 		tpvCameraScript->cameraTransform = camera->GetTransform();
 		tpvCameraScript->targetTransform = player->GetTransform();
 		tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
-		//tpvCameraScript->isCameraControllOn = false;
+		tpvCameraScript->isCameraControllOn = false;
 		gameObjects.push_back(tpvCameraArm);
 	}
 
@@ -113,7 +113,11 @@ void TestScene::Update()
 		RENDER->SetCurrPSO(PSO_WIREFRAME);
 
 	if (INPUTM->IsKeyDown(KeyValue::ALT))
+	{
 		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
+		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+		tpvCameraScript->isCameraControllOn = !tpvCameraScript->isCameraControllOn;
+	}
 	else
 		RENDER->SetDefaultPSO();
 }

@@ -30,7 +30,8 @@ public:
 	string GetAverageFrameCountString();
 
 private:
-	float _frameCount = 0.0f;
+	int _frameCount = 0;
+	int _currentFrameCount = 0;
 	float _maxFrameCount = 0.0f;
 	float _minFrameCount = -1.0f;
 	float _averageFrameCount = 0.0f;

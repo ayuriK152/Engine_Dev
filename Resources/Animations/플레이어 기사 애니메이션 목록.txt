@@ -1,0 +1,19 @@
+IDLE
+Paladin WProp J Nordstrom\\idle_sword_1
+Paladin WProp J Nordstrom\\idle_sword_2
+Paladin WProp J Nordstrom\\idle_sword_3
+Paladin WProp J Nordstrom\\idle_sword_4     // 기본 베이스
+
+WALK
+Paladin WProp J Nordstrom\\walk_sword_1     // 전진
+Paladin WProp J Nordstrom\\walk_sword_2     // 뒷걸음(목표 고정시 사용)
+Paladin WProp J Nordstrom\\strafe_sword     // 좌우이동(목표 고정시 사용)
+
+RUN
+Paladin WProp J Nordstrom\\run_sword_1      // 전진
+
+ATTACK
+Paladin WProp J Nordstrom\\slash_1
+Paladin WProp J Nordstrom\\slash_2
+Paladin WProp J Nordstrom\\slash_3
+Paladin WProp J Nordstrom\\slash_4

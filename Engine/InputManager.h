@@ -46,6 +46,11 @@ enum KeyValue
 	ALT		=	VK_MENU
 };
 
+enum MouseButton
+{
+
+};
+
 enum KeyState
 {
 	Idle,
@@ -72,12 +77,17 @@ public:
 
 	Vector2 GetMousePosition() { return _mousePosition; }
 	Vector2 GetMouseDelta() { return _mouseDelta; }
+	bool IsMouseLeftButtonDown() { return _isMouseLeftButtonDown; }
+	bool IsMouseRightButtonDown() { return _isMouseRightButtonDown; }
 
+	void OnMouseClick(USHORT buttonFlags);
 	void OnMouseMove(int x, int y);
 
 private:
 	bool _isMouseMoving = false;
 	bool _isMouseCenterFixed = false;
+	bool _isMouseRightButtonDown = false;
+	bool _isMouseLeftButtonDown = false;
 	Vector2 _mousePosition;
 	Vector2 _mouseDelta;
 	unordered_map<KeyValue, KeyState> _keyStates;

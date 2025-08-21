@@ -303,6 +303,12 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				if (raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0)
 					INPUTM->OnMouseMove(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
+				//if (raw->data.mouse.usButtonFlags &
+				//	RI_MOUSE_LEFT_BUTTON_DOWN &
+				//	RI_MOUSE_LEFT_BUTTON_UP &
+				//	RI_MOUSE_RIGHT_BUTTON_DOWN &
+				//	RI_MOUSE_RIGHT_BUTTON_UP)
+				INPUTM->OnMouseClick(raw->data.mouse.usButtonFlags);
 			}
 
 			return 0;

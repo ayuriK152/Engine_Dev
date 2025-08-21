@@ -5,7 +5,8 @@ enum PlayerMovementState
 {
 	IDLE,
 	WALK,
-	RUN
+	RUN,
+	SLASH
 };
 
 class PlayerScript : public Script

@@ -14,7 +14,23 @@ void PlayerScript::Init()
 
 void PlayerScript::Update()
 {
-	Move();
+	if (INPUTM->IsMouseLeftButtonDown())
+	{
+		animator->SetLoop(false);
+		_playerMovementState = SLASH;
+	}
+	if (_playerMovementState == SLASH)
+	{
+		if (animator->IsCurrentAnimationEnd())
+		{
+			animator->SetLoop(true);
+			_playerMovementState = IDLE;
+		}
+	}
+	else
+	{
+		Move();
+	}
 
 	if (_playerMovementState != _lastMovementState)
 	{
@@ -31,6 +47,9 @@ void PlayerScript::Update()
 			break;
 		case RUN:
 			animator->SetCurrentAnimation("run_sword_1");
+			break;
+		case SLASH:
+			animator->SetCurrentAnimation("slash_1");
 			break;
 		}
 	}

@@ -6,6 +6,7 @@ Animator::Animator() : Component(ComponentType::Animator)
 	_isPlayOnInit = true;
 	_isPlaying = true;
 	_isLoop = true;
+	_isCurrentAnimationEnd = false;
 
 	_currentAnimation = EMPTY_CURRENT_ANIMATION;
 }
@@ -35,7 +36,14 @@ void Animator::Update()
 		if (_isLoop)
 			_currentTick = 0.0f;
 		else
+		{
+			_isCurrentAnimationEnd = true;
 			_currentTick = GetCurrentAnimation()->GetDuration();
+		}
+	}
+	else
+	{
+		_isCurrentAnimationEnd = false;
 	}
 }
 
@@ -48,6 +56,7 @@ void Animator::PlayAnimation()
 	}
 
 	_isPlaying = true;
+	_isCurrentAnimationEnd = false;
 }
 
 void Animator::PauseAnimation()
@@ -91,4 +100,5 @@ void Animator::UpdateBoneTransform()
 void Animator::SetCurrentAnimation(const string& animationName)
 {
 	_currentAnimation = animationName;
+	_currentTick = 0.0f;
 }

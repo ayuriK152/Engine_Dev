@@ -27,6 +27,7 @@ public:
 	bool IsPlaying() { return _isPlaying; }
 	void PlayAnimation();
 	void PauseAnimation();
+	bool IsCurrentAnimationEnd() { return _isCurrentAnimationEnd; }
 
 	bool IsLoop() { return _isLoop; }
 	void SetLoop(bool loop) { _isLoop = loop; }
@@ -61,6 +62,7 @@ private:
 	float _currentTick = 0.0f;
 	bool _isPlayOnInit;
 	bool _isPlaying;
+	bool _isCurrentAnimationEnd;
 	bool _isLoop;
 
 	map<string, shared_ptr<Animation>> _animations;

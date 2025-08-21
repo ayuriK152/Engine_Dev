@@ -52,6 +52,26 @@ bool InputManager::IsKeyPress(KeyValue key)
 	return _keyStates[key] == KeyState::Press;
 }
 
+void InputManager::OnMouseClick(USHORT buttonFlags)
+{
+	if (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
+	{
+		_isMouseLeftButtonDown = true;
+	}
+	else if (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP)
+	{
+		_isMouseLeftButtonDown = false;
+	}
+	if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
+	{
+		_isMouseRightButtonDown = true;
+	}
+	else if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
+	{
+		_isMouseRightButtonDown = false;
+	}
+}
+
 void InputManager::OnMouseMove(int x, int y)
 {
 	_isMouseMoving = true;

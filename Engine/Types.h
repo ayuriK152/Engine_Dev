@@ -80,6 +80,10 @@ struct Vector3 : public XMFLOAT3
 		return Vector3(XMVector3Cross(XMLoadFloat3(this), XMLoadFloat3(&v)));
 	}
 
+	Vector3 Lerp(const Vector3& v, float alpha) const {
+		return Vector3(XMVectorLerp(XMLoadFloat3(this), XMLoadFloat3(&v), alpha));
+	}
+
 	Vector3 operator+(const Vector3& v) const {
 		return Vector3(XMLoadFloat3(this) + XMLoadFloat3(&v));
 	}

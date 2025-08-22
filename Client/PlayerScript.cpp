@@ -34,12 +34,17 @@ void PlayerScript::Update()
 
 	if (_playerMovementState != _lastMovementState)
 	{
-		_lastMovementState = _playerMovementState;
-
 		switch (_playerMovementState)
 		{
 		case IDLE:
-			animator->SetCurrentAnimation("idle_sword_4");
+			if (_lastMovementState == SLASH)
+			{
+				animator->SetCurrentAnimation("idle_sword_4", 0.0f);
+			}
+			else
+			{
+				animator->SetCurrentAnimation("idle_sword_4");
+			}
 			break;
 
 		case WALK:
@@ -52,6 +57,8 @@ void PlayerScript::Update()
 			animator->SetCurrentAnimation("slash_1");
 			break;
 		}
+
+		_lastMovementState = _playerMovementState;
 	}
 
 	switch (_playerMovementState)

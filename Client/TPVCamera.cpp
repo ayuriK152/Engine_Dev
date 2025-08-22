@@ -13,6 +13,11 @@ void TPVCamera::Init()
 		cameraTransform->SetParent(GetTransform());
 		cameraTransform->SetLocalPosition(Vector3(0.0f, 0.0f, -distance));
 	}
+	if (targetTransform != nullptr)
+	{
+		GetTransform()->SetPosition(targetTransform->GetPosition() + offset);
+		cameraTransform->LookAtWithNoRoll(targetTransform->GetPosition());
+	}
 }
 
 void TPVCamera::Update()

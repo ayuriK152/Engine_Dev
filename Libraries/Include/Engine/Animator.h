@@ -1,5 +1,5 @@
 #pragma once
-#define EMPTY_CURRENT_ANIMATION		"empty"
+#define EMPTY_ANIMATION		"empty"
 
 class Animation;
 
@@ -35,13 +35,13 @@ public:
 	void UpdateChildList();
 	void UpdateBoneTransform();
 
-	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_CURRENT_ANIMATION ? _animations[_currentAnimation] : nullptr; }
-	void SetCurrentAnimation(const string& animationName);
+	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_ANIMATION ? _animations[_currentAnimation] : nullptr; }
+	void SetCurrentAnimation(const string& animationName, float transitionTime = 0.1f);
 	
 	const map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
 	void AddAnimation(shared_ptr<Animation> animation) { 
 		_animations[animation->GetName()] = animation;
-		if (_currentAnimation == EMPTY_CURRENT_ANIMATION) {
+		if (_currentAnimation == EMPTY_ANIMATION) {
 			_currentAnimation = animation->GetName();
 		}
 	}
@@ -52,7 +52,7 @@ public:
 		if (_animations.find(animationName) != _animations.end()) {
 			_animations.erase(animationName);
 			if (_currentAnimation == animationName) {
-				_currentAnimation = EMPTY_CURRENT_ANIMATION;
+				_currentAnimation = EMPTY_ANIMATION;
 				_currentTick = 0.0f;
 			}
 		}
@@ -62,11 +62,18 @@ private:
 	float _currentTick = 0.0f;
 	bool _isPlayOnInit;
 	bool _isPlaying;
-	bool _isCurrentAnimationEnd;
+	bool _isCurrentAnimationEnd;		// 콜백 방식으로 바꾸는거 고려.
 	bool _isLoop;
+
+	float _animationSpeed = 1.0f;
 
 	map<string, shared_ptr<Animation>> _animations;
 	string _currentAnimation;
+	string _nextAnimation;
+	float _transitionTick = 0.0f;
+	float _transitionTime = 0.1f;
+	float _transitionElapsedTime = 0.0f;
+	bool _isInTransition = false;
 
 	vector<shared_ptr<Transform>> _childs;
 	vector<int> _lastKeyframeIndex;

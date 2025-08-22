@@ -1,6 +1,7 @@
 #pragma once
 
 #define TOGGLEVALUE_GUI_DEMOWINDOW		"GUI_DemoWindow"
+#define TOGGLEVALUE_GUI_CONSOLE			"GUI_Console"
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
 #define TOGGLEVALUE_GUI_ENGINESETTINGS	"GUI_EngineSettings"
 #define TOGGLEVALUE_GUI_HIERARCHY		"GUI_Hierarchy"
@@ -77,6 +78,7 @@ public:
 private:
 	void ToggleWindows();
 
+	void ShowConsole();
 	void ShowEngineStatus();
 	void ShowEngineSettings();
 	void ShowHierarchyView();

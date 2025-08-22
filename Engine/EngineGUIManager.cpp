@@ -49,11 +49,12 @@ void EngineGUIManager::Init()
 	ImGui_ImplDX12_Init(&init_info);
 
 	_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW] = false;
+	_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE] = false;
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = false;
-	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = false;
+	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = false; 
 }
 
 void EngineGUIManager::FixedUpdate()
@@ -76,6 +77,8 @@ void EngineGUIManager::Render()
 		if (_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW])
 			ImGui::ShowDemoWindow();
 
+		if (_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE])
+			ShowConsole();
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS])
 			ShowEngineStatus();
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS])
@@ -549,6 +552,11 @@ void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 
 void EngineGUIManager::ToggleWindows()
 {
+	if (INPUTM->IsKeyDown(KeyValue::F1))
+	{
+		_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE] = !_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE];
+	}
+
 	// FPS status view
 	if (INPUTM->IsKeyDown(KeyValue::F2))
 	{
@@ -574,5 +582,32 @@ void EngineGUIManager::ToggleWindows()
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = !_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR];
 	}
+}
+
+void EngineGUIManager::ShowConsole()
+{
+	ImGuiWindowFlags windowFlags =
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoSavedSettings;
+
+	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+	ImVec2 windowPos = ImVec2(0, 0);
+	ImVec2 windowPivot = ImVec2(0, 0);
+	ImVec2 windowSize = ImVec2(480, 300);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+	ImGui::SetNextWindowBgAlpha(0.60f);
+	ImGui::SetNextWindowSize(windowSize);
+
+	if (ImGui::Begin("Engine Console", &_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE], windowFlags))
+	{
+		auto logs = DEBUG->GetLogs();
+		for (const auto& log : logs)
+		{
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "%.2f: %s", log.time, log.message.c_str());
+		}
+	}
+	ImGui::End();
 }
 

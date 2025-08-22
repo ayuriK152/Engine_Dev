@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="EnemyScript.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="TPVCamera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EnemyScript.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">

@@ -6,6 +6,7 @@
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="TPVCamera.h" />
+    <ClInclude Include="EnemyScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -13,5 +14,6 @@
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="TPVCamera.cpp" />
+    <ClCompile Include="EnemyScript.cpp" />
   </ItemGroup>
 </Project>

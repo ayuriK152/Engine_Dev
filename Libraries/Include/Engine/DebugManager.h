@@ -1,5 +1,11 @@
 #pragma once
 
+struct DebugLog
+{
+	float time;
+	string message;
+};
+
 class DebugManager
 {
 	DECLARE_SINGLE(DebugManager);
@@ -7,13 +13,18 @@ public:
 	~DebugManager();
 
 	void Init();
+	void Update();
 	void Render();
 
 public:
+	void Log(const string& message);
+	void ClearLogs() { _debugLogs.clear(); }
+	vector<DebugLog>& GetLogs() { return _debugLogs; }
 	void AddDebugRender(shared_ptr<Collider> collider);
-	void Update();
 
 private:
+	vector<DebugLog> _debugLogs;
+
 	vector<shared_ptr<Collider>> _drawQueue;
 
 	vector<VertexPC> _vertices;

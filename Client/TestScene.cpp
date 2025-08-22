@@ -63,10 +63,9 @@ void TestScene::Init()
 		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
 		box->AddComponent(make_shared<BoxCollider>());
-		box->AddComponent(make_shared<Rigidbody>());
-		box->GetComponent<Rigidbody>()->isGravity = false;
-		box->GetTransform()->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
-		box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
+		//box->AddComponent(make_shared<Rigidbody>());
+		//box->GetComponent<Rigidbody>()->isGravity = false;
+		box->GetTransform()->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
 		gameObjects.push_back(box);
 	}
 
@@ -101,11 +100,6 @@ void TestScene::Init()
 
 void TestScene::Update()
 {
-	if (INPUTM->IsKeyPress(KeyValue::A))
-		box->GetTransform()->Rotate(Vector3(1.0f, 0.0f, 0.0f) * TIME->DeltaTime());
-	if (INPUTM->IsKeyPress(KeyValue::S))
-		box->GetTransform()->Rotate(Vector3(0.0f, 1.0f, 0.0f) * TIME->DeltaTime());
-	
 	if (INPUTM->IsKeyDown(KeyValue::ESC))
 		GAMEAPP->ExitApplication();
 

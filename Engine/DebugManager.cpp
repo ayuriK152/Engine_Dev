@@ -83,6 +83,11 @@ void DebugManager::Render()
 	cmdList->DrawIndexedInstanced(_indices.size(), 1, 0, 0, 0);
 }
 
+void DebugManager::Log(const string& message)
+{
+	_debugLogs.push_back({ TIME->TotalTime(), message });
+}
+
 void DebugManager::AddDebugRender(shared_ptr<Collider> collider)
 {
 	_drawQueue.push_back(collider);

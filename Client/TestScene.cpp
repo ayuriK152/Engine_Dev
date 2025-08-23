@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TestScene.h"
 #include "PlayerScript.h"
+#include "EnemyScript.h"
 #include "TPVCamera.h"
 
 void TestScene::Init()
@@ -63,6 +64,7 @@ void TestScene::Init()
 		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
 		box->AddComponent(make_shared<BoxCollider>());
+		box->AddComponent(make_shared<EnemyScript>());
 		//box->AddComponent(make_shared<Rigidbody>());
 		//box->GetComponent<Rigidbody>()->isGravity = false;
 		box->GetTransform()->SetPosition(Vector3(0.0f, 1.0f, 0.0f));

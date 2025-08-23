@@ -15,6 +15,8 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void OnCollision(shared_ptr<Collider> other) override;
+
 public:
 	void Move();
 

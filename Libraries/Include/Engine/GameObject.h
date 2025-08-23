@@ -25,6 +25,8 @@ public:
 	void Update();
 	void Render();
 
+	void OnCollision(shared_ptr<Collider> other);
+
 public:
 	void AddComponent(shared_ptr<Component> component);
 	shared_ptr<Transform> GetTransform();
@@ -49,6 +51,9 @@ public:
 	void SetPSOName(const string& name) { _psoName = name; }
 	void SetPSONameIncludeChilds(const string& name);
 
+	string GetTag() { return _tag; }
+	void SetTag(const string& tag) { _tag = tag; }
+
 	void SetFramesDirty();
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
@@ -65,6 +70,7 @@ private:
 	int _id;
 	string _name;
 	string _psoName;
+	string _tag;
 
 	bool _isInitialized;
 	int _numFramesDirty;

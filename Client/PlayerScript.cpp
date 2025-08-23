@@ -19,10 +19,6 @@ void PlayerScript::Init()
 
 void PlayerScript::Update()
 {
-	if (_attackCollider->IsOnColliding())
-	{
-		DEBUG->Log("Hit!");
-	}
 	if (_attackCollider->IsActive())
 		_attackCollider->SetActive(false);
 	if (INPUTM->IsMouseLeftButtonDown())
@@ -85,6 +81,14 @@ void PlayerScript::Update()
 		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
+	}
+}
+
+void PlayerScript::OnCollision(shared_ptr<Collider> other)
+{
+	if (other->GetGameObject()->GetTag() == "Enemy")
+	{
+		DEBUG->Log("Attack Complete");
 	}
 }
 

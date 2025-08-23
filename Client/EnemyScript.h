@@ -13,5 +13,6 @@ public:
 
 private:
     int _health = 100;
+    shared_ptr<GameObject> gameObject;
 };
 

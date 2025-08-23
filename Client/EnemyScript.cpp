@@ -3,7 +3,8 @@
 
 void EnemyScript::Init()
 {
-
+	gameObject = GetGameObject();
+	gameObject->SetTag("Enemy");
 }
 
 void EnemyScript::Update()

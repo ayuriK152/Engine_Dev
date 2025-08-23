@@ -11,6 +11,7 @@ GameObject::GameObject()
 
 	_name = "GameObject";
 	_psoName = PSO_OPAQUE_SOLID;
+	_tag = "Default";
 
 	objCBIndex = -1;
 
@@ -64,6 +65,14 @@ void GameObject::Render()
 	for (auto& c : components)
 	{
 		c.second->Render();
+	}
+}
+
+void GameObject::OnCollision(shared_ptr<Collider> other)
+{
+	for (auto& c : components)
+	{
+		c.second->OnCollision(other);
 	}
 }
 

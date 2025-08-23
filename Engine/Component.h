@@ -4,6 +4,7 @@
 class GameObject;
 class Transform;
 class Camera;
+class Collider;
 #pragma endregion
 
 enum class ComponentType
@@ -30,6 +31,8 @@ public:
 	virtual void FixedUpdate() { }
 	virtual void Update() { }
 	virtual void Render() { }
+
+	virtual void OnCollision(shared_ptr<Collider> other) { }
 
 public:
 	shared_ptr<GameObject> GetGameObject();

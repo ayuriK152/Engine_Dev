@@ -35,10 +35,12 @@ void PhysicsManager::Update()
 	{
 		if (!_colliders[i]->IsActive())
 			continue;
+
 		for (int j = i + 1; j < _colliders.size(); j++)
 		{
 			if (!_colliders[j]->IsActive())
 				continue;
+
 			Vector3 normal;
 			float depth;
 			CollisionInfo collInfo = _colliders[i]->CheckCollide(_colliders[j]);
@@ -47,6 +49,9 @@ void PhysicsManager::Update()
 			{
 				_colliders[i]->_isOnColliding = true;
 				_colliders[j]->_isOnColliding = true;
+
+				_colliders[i]->GetGameObject()->OnCollision(_colliders[j]);
+				_colliders[j]->GetGameObject()->OnCollision(_colliders[i]);
 
 				shared_ptr<Rigidbody> rba = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
 				shared_ptr<Rigidbody> rbb = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();

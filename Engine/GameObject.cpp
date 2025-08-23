@@ -28,6 +28,7 @@ void GameObject::Init()
 	for (auto& c : components)
 	{
 		c.second->Init();
+		c.second->isInitialized = true;
 	}
 }
 
@@ -41,13 +42,17 @@ void GameObject::FixedUpdate()
 
 void GameObject::Update()
 {
-	
 	if (!_isInitialized) {
 		Init();
 		_isInitialized = true;
 	}
 	for (auto& c : components)
 	{
+		if (!c.second->isInitialized)
+		{
+			c.second->Init();
+			c.second->isInitialized = true;
+		}
 		if (c.second->type == ComponentType::Collider)
 			continue;
 		c.second->Update();

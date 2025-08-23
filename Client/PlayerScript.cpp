@@ -14,10 +14,20 @@ void PlayerScript::Init()
 
 void PlayerScript::Update()
 {
+	if (_attackCollider != nullptr)
+	{
+		if (_attackCollider->IsOnColliding())
+		{
+
+		}
+	}
 	if (INPUTM->IsMouseLeftButtonDown())
 	{
 		animator->SetLoop(false);
 		_playerMovementState = SLASH;
+		_attackCollider = make_shared<BoxCollider>();
+		_attackCollider->SetOffset(Vector3(0.0f, 0.0f, 1.0f));
+		gameObject->AddComponent(_attackCollider);
 	}
 	if (_playerMovementState == SLASH)
 	{

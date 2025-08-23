@@ -13,6 +13,8 @@ void InputManager::Initialize()
 
 void InputManager::Update()
 {
+	MouseButtonUpdate();
+
 	if (!_isMouseMoving)
 	{
 		_mouseDelta = Vector2(0.0f, 0.0f);
@@ -56,19 +58,20 @@ void InputManager::OnMouseClick(USHORT buttonFlags)
 {
 	if (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
 	{
-		_isMouseLeftButtonDown = true;
+		_mouseStates.LeftButton = KeyState::Down;
 	}
 	else if (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP)
 	{
-		_isMouseLeftButtonDown = false;
+		_mouseStates.LeftButton = KeyState::Up;
 	}
+
 	if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
 	{
-		_isMouseRightButtonDown = true;
+		_mouseStates.RightButton = KeyState::Down;
 	}
 	else if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
 	{
-		_isMouseRightButtonDown = false;
+		_mouseStates.RightButton = KeyState::Up;
 	}
 }
 
@@ -86,5 +89,60 @@ void InputManager::OnMouseMove(int x, int y)
 		int centerY = (rectClient.top + rectClient.bottom) / 2;
 		SetCursorPos(centerX + rectWindow.left, centerY + rectWindow.top);
 		_mousePosition = Vector2((float)centerX, (float)centerY);
+	}
+}
+
+void InputManager::MouseButtonUpdate()
+{
+	if (_mouseStates.LeftButton == KeyState::Down)
+	{
+		if (_mouseStates.IsLeftButtonLazyUpdate)
+		{
+			_mouseStates.IsLeftButtonLazyUpdate = false;
+			_mouseStates.LeftButton = KeyState::Press;
+		}
+		else
+		{
+			_mouseStates.IsLeftButtonLazyUpdate = true;
+		}
+	}
+
+	if (_mouseStates.LeftButton == KeyState::Up)
+	{
+		if (_mouseStates.IsLeftButtonLazyUpdate)
+		{
+			_mouseStates.IsLeftButtonLazyUpdate = false;
+			_mouseStates.LeftButton = KeyState::Idle;
+		}
+		else
+		{
+			_mouseStates.IsLeftButtonLazyUpdate = true;
+		}
+	}
+
+	if (_mouseStates.RightButton == KeyState::Down)
+	{
+		if (_mouseStates.IsRightButtonLazyUpdate)
+		{
+			_mouseStates.IsRightButtonLazyUpdate = false;
+			_mouseStates.RightButton = KeyState::Press;
+		}
+		else
+		{
+			_mouseStates.IsRightButtonLazyUpdate = true;
+		}
+	}
+
+	if (_mouseStates.RightButton == KeyState::Up)
+	{
+		if (_mouseStates.IsRightButtonLazyUpdate)
+		{
+			_mouseStates.IsRightButtonLazyUpdate = false;
+			_mouseStates.RightButton = KeyState::Idle;
+		}
+		else
+		{
+			_mouseStates.IsRightButtonLazyUpdate = true;
+		}
 	}
 }

@@ -29,5 +29,7 @@ private:
 	Vector3 _movingDirection;
 	Vector3 _cameraForward;
 	Vector3 _cameraRight;
+
+	shared_ptr<BoxCollider> _attackCollider;
 };
 

@@ -23,6 +23,10 @@ void PhysicsManager::Update()
 
 	for (auto& collider : _colliders)
 	{
+		if (!collider->isInitialized)
+		{
+			DEBUG->Log("asfd");
+		}
 		collider->_isOnColliding = false;
 		collider->Update();
 	}

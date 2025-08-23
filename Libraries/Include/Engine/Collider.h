@@ -35,9 +35,11 @@ public:
 	Vector3 GetCollidingDirection() { return _collidingDir; }
 	bool IsOnColliding() { return _isOnColliding; }
 
+	void SetOffset(const Vector3& offset) { _offset = offset; }
+
 protected:
 	ColliderType _colliderType;
-
+	Vector3 _offset;
 	Vector3 _collidingDir;
 	bool _isOnColliding = false;
 

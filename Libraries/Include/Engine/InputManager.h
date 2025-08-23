@@ -46,17 +46,20 @@ enum KeyValue
 	ALT		=	VK_MENU
 };
 
-enum MouseButton
-{
-
-};
-
 enum KeyState
 {
 	Idle,
 	Down,
 	Press,
 	Up
+};
+
+struct MouseStates
+{
+	KeyState LeftButton = KeyState::Idle;
+	bool IsLeftButtonLazyUpdate = false;
+	KeyState RightButton = KeyState::Idle;
+	bool IsRightButtonLazyUpdate = false;
 };
 
 class InputManager
@@ -77,17 +80,19 @@ public:
 
 	Vector2 GetMousePosition() { return _mousePosition; }
 	Vector2 GetMouseDelta() { return _mouseDelta; }
-	bool IsMouseLeftButtonDown() { return _isMouseLeftButtonDown; }
-	bool IsMouseRightButtonDown() { return _isMouseRightButtonDown; }
+	bool IsMouseLeftButtonDown() { return _mouseStates.LeftButton == KeyState::Down; }
+	bool IsMouseRightButtonDown() { return  _mouseStates.RightButton == KeyState::Down; }
 
 	void OnMouseClick(USHORT buttonFlags);
 	void OnMouseMove(int x, int y);
 
 private:
+	void MouseButtonUpdate();
+
+private:
 	bool _isMouseMoving = false;
 	bool _isMouseCenterFixed = false;
-	bool _isMouseRightButtonDown = false;
-	bool _isMouseLeftButtonDown = false;
+	MouseStates _mouseStates;
 	Vector2 _mousePosition;
 	Vector2 _mouseDelta;
 	unordered_map<KeyValue, KeyState> _keyStates;

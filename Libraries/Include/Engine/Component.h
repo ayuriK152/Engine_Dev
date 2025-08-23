@@ -36,6 +36,7 @@ public:
 
 public:
 	ComponentType type;
+	bool isInitialized = false;
 
 private:
 	friend class GameObject;

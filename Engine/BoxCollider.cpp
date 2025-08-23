@@ -17,7 +17,6 @@ void BoxCollider::Init()
 {
 	_boundingBox.Center = GetTransform()->GetPosition();
 	_boundingBox.Extents = GetTransform()->GetScale() * 0.5f;
-	//_boundingBox.Extents = MathHelper::VectorMultiply(GetTransform()->GetScale(), 0.5f);
 	DEBUG->AddDebugRender(static_pointer_cast<Collider>(shared_from_this()));
 	PHYSICS->AddCollider(static_pointer_cast<Collider>(shared_from_this()));
 }

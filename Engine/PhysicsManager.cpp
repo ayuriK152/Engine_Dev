@@ -33,8 +33,12 @@ void PhysicsManager::Update()
 
 	for (int i = 0; i < _colliders.size() - 1; i++)
 	{
+		if (!_colliders[i]->IsActive())
+			continue;
 		for (int j = i + 1; j < _colliders.size(); j++)
 		{
+			if (!_colliders[j]->IsActive())
+				continue;
 			Vector3 normal;
 			float depth;
 			CollisionInfo collInfo = _colliders[i]->CheckCollide(_colliders[j]);

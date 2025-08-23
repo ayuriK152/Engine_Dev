@@ -31,8 +31,12 @@ public:
 	virtual void Update() { }
 	virtual void Render() { }
 
+public:
 	shared_ptr<GameObject> GetGameObject();
 	shared_ptr<Transform> GetTransform();
+
+	bool IsActive() { return _isActive; }
+	void SetActive(bool value) { if (type != ComponentType::Transform) _isActive = value; }
 
 public:
 	ComponentType type;
@@ -44,5 +48,6 @@ private:
 
 private:
 	weak_ptr<GameObject> _gameObject;
+	bool _isActive = true;
 };
 

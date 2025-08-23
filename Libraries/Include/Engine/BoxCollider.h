@@ -14,6 +14,7 @@ public:
 
 public:
 	virtual CollisionInfo CheckCollide(shared_ptr<Collider>& other)override;
+	virtual void FitOnMesh()override;
 
 	float CheckOBB(XMVECTOR& axis, XMMATRIX& rotA, XMMATRIX& rotB, BoundingOrientedBox& target);
 	XMVECTOR CheckSphere(XMVECTOR& axis, XMVECTOR& dist, float extent);

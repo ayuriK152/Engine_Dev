@@ -30,6 +30,7 @@ public:
 
 public:
 	virtual CollisionInfo CheckCollide(shared_ptr<Collider>& other) = 0;
+	virtual void FitOnMesh() = 0;
 
 	ColliderType GetColliderType() { return _colliderType; }
 	Vector3 GetCollidingDirection() { return _collidingDir; }

@@ -16,9 +16,10 @@ BoxCollider::~BoxCollider()
 void BoxCollider::Init()
 {
 	_boundingBox.Center = GetTransform()->GetPosition();
-	_boundingBox.Extents = GetTransform()->GetScale() * 0.5f;
+	_boundingBox.Extents = { 0.5f, 0.5f, 0.5f };
 	DEBUG->AddDebugRender(static_pointer_cast<Collider>(shared_from_this()));
 	PHYSICS->AddCollider(static_pointer_cast<Collider>(shared_from_this()));
+	FitOnMesh();
 }
 
 void BoxCollider::FixedUpdate()
@@ -30,9 +31,9 @@ void BoxCollider::Update()
 {
 	if (GetGameObject()->GetFramesDirty() > 0)
 	{
-		_boundingBox.Center = GetTransform()->GetPosition();
-		//XMStoreFloat4(&_boundingBox.Orientation, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&GetTransform()->GetRotationRadian())));
-		XMStoreFloat4(&_boundingBox.Orientation, XMLoadFloat4(&GetTransform()->GetQuaternion()));
+		XMVECTOR rotation = XMLoadFloat4(&GetTransform()->GetQuaternion());
+		_boundingBox.Center = GetTransform()->GetPosition() + XMVector3Rotate(XMLoadFloat3(&_offset), rotation);
+		XMStoreFloat4(&_boundingBox.Orientation, rotation);
 	}
 }
 
@@ -148,6 +149,42 @@ CollisionInfo BoxCollider::CheckCollide(shared_ptr<Collider>& other)
 		}
 	}
 	return collInfo;
+}
+
+void BoxCollider::FitOnMesh()
+{
+	auto meshRenderer = GetGameObject()->GetComponent<MeshRenderer>();
+	if (meshRenderer == nullptr)
+	{
+		DEBUG->Log("BoxCollider::FitOnMesh() - MeshRenderer not found.");
+		return;
+	}
+
+	auto mesh = meshRenderer->GetMesh();
+	if (mesh == nullptr)
+	{
+		DEBUG->Log("BoxCollider::FitOnMesh() - Mesh not found.");
+		return;
+	}
+
+	Vector3 scale = GetTransform()->GetScale();
+	float minX = FLT_MAX, minY = FLT_MAX, minZ = FLT_MAX;
+	float maxX = -FLT_MAX, maxY = -FLT_MAX, maxZ = -FLT_MAX;
+	for (auto& v : mesh->GetVertices())
+	{
+		Vector3 vertex = v.Position * scale;
+
+		if (minX > vertex.x) minX = vertex.x;
+		if (minY > vertex.y) minY = vertex.y;
+		if (minZ > vertex.z) minZ = vertex.z;
+
+		if (maxX < vertex.x) maxX = vertex.x;
+		if (maxY < vertex.y) maxY = vertex.y;
+		if (maxZ < vertex.z) maxZ = vertex.z;
+	}
+
+	_boundingBox.Extents = { (maxX - minX) * 0.5f, (maxY - minY) * 0.5f, (maxZ - minZ) * 0.5f };
+	_offset = { (maxX + minX) * 0.5f, (maxY + minY) * 0.5f, (maxZ + minZ) * 0.5f };
 }
 
 float BoxCollider::CheckOBB(XMVECTOR& axis, XMMATRIX& rotA, XMMATRIX& rotB, BoundingOrientedBox& target)

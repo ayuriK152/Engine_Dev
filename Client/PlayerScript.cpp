@@ -7,6 +7,7 @@ void PlayerScript::Init()
 	gameObject = GetGameObject();
 	transform = gameObject->GetTransform();
 	animator = gameObject->GetComponent<Animator>();
+	//animator->LoadAnimationEvents("..\\Resources\\Animations\\Paladin WProp J Nordstrom\\AnimationEvents.xml");
 
 	_playerMovementState = IDLE;
 	_lastMovementState = IDLE;

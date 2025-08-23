@@ -1,0 +1,7 @@
+<AnimationEvents>
+    <Animation Name="slash_1">
+        <Event Tick="0.0" Speed="1.0"/>
+        <Event Tick="5.0" Speed="0.5"/>
+        <Event Tick="10.0" Speed="1.0"/>
+    </Animation>
+</AnimationEvents>

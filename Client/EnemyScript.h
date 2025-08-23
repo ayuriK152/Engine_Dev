@@ -9,7 +9,7 @@ public:
 	void Update() override;
 
 public:
-    void TakeDamage(int damage) { _health -= damage; }
+    void TakeDamage(int damage);
 
 private:
     int _health = 100;

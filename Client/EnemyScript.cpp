@@ -11,3 +11,9 @@ void EnemyScript::Update()
 {
 
 }
+
+void EnemyScript::TakeDamage(int damage)
+{
+	_health -= damage;
+	DEBUG->Log("Take" + to_string(damage) + "damage. Remain Health - " + to_string(_health));
+}

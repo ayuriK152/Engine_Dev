@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PlayerScript.h"
+#include "EnemyScript.h"
 
 void PlayerScript::Init()
 {
@@ -21,7 +22,7 @@ void PlayerScript::Update()
 {
 	if (_attackCollider->IsActive())
 		_attackCollider->SetActive(false);
-	if (INPUTM->IsMouseLeftButtonDown())
+	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH)
 	{
 		animator->SetLoop(false);
 		_playerMovementState = SLASH;
@@ -89,6 +90,8 @@ void PlayerScript::OnCollision(shared_ptr<Collider> other)
 	if (other->GetGameObject()->GetTag() == "Enemy")
 	{
 		DEBUG->Log("Attack Complete");
+		auto enemy = static_pointer_cast<EnemyScript>(other->GetGameObject()->GetComponent<Script>());
+		enemy->TakeDamage(10);
 	}
 }
 

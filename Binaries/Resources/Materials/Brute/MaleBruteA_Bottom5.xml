@@ -1,0 +1,8 @@
+<Material>
+    <Name>MaleBruteA_Bottom5</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Specular r="0.5" g="0.5" b="0.5" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName>MaleBruteA_Bottom_diffuse1.png</TextureName>
+</Material>

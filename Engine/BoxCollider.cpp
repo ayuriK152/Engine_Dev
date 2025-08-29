@@ -5,7 +5,7 @@
 
 BoxCollider::BoxCollider() : Super(ColliderType::Box)
 {
-
+	_boundingBox.Extents = { 0.5f, 0.5f, 0.5f };
 }
 
 BoxCollider::~BoxCollider()
@@ -16,7 +16,6 @@ BoxCollider::~BoxCollider()
 void BoxCollider::Init()
 {
 	_boundingBox.Center = GetTransform()->GetPosition();
-	_boundingBox.Extents = { 0.5f, 0.5f, 0.5f };
 	DEBUG->AddDebugRender(static_pointer_cast<Collider>(shared_from_this()));
 	PHYSICS->AddCollider(static_pointer_cast<Collider>(shared_from_this()));
 	FitOnMesh();
@@ -220,6 +219,11 @@ XMVECTOR BoxCollider::GetContactPoint(const BoundingOrientedBox& box, XMMATRIX& 
 
 	XMVECTOR contact = 0.5f * (pointOnA + pointOnB);
 	return contact;
+}
+
+void BoxCollider::SetExtent(const Vector3& extent)
+{
+	_boundingBox.Extents = { extent.x, extent.y, extent.z };
 }
 
 XMVECTOR BoxCollider::GetClosestPoint(const XMVECTOR& point, const XMMATRIX& rotation, const BoundingOrientedBox& box)

@@ -77,7 +77,7 @@ void FileIOUtil::LoadTextures()
 		ss = istringstream(fileName);
 		string format;
 		while (getline(ss, format, '.'));
-		if (format != "dds" && format != "png")
+		if (format != "dds" && format != "png" && format != "jpg")
 			continue;
 
 		auto defaultTex = make_shared<Texture>(UniversalUtils::ToWString(fileName));

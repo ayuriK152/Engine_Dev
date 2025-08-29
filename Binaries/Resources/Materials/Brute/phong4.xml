@@ -1,0 +1,8 @@
+<Material>
+    <Name>phong4</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.18044709" g="0.18044709" b="0.18044709" a="1"/>
+    <Specular r="0.20300603" g="0.20300603" b="0.20300603" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <TextureName>Tex_Default</TextureName>
+</Material>

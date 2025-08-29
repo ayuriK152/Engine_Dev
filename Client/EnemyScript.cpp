@@ -9,7 +9,14 @@ void EnemyScript::Init()
 
 void EnemyScript::Update()
 {
-
+	if (_health <= 0)
+	{
+		if (gameObject->GetComponent<Animator>()->GetCurrentAnimation()->GetName() != "death")
+		{
+			gameObject->GetComponent<Animator>()->SetCurrentAnimation("death");
+			gameObject->GetComponent<Animator>()->SetLoop(false);
+		}
+	}
 }
 
 void EnemyScript::TakeDamage(int damage)

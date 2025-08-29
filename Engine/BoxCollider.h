@@ -24,6 +24,9 @@ public:
 	BoundingOrientedBox& GetBoundingBox() { return _boundingBox; }
 	XMMATRIX& GetBoundingBoxRotationMatrix() { return XMMatrixRotationQuaternion(XMLoadFloat4(&_boundingBox.Orientation)); }
 
+	Vector3 GetExtent() { return Vector3(_boundingBox.Extents.x, _boundingBox.Extents.y, _boundingBox.Extents.z); }
+	void SetExtent(const Vector3& extent);
+
 private:
 
 	XMVECTOR GetClosestPoint(const XMVECTOR& point, const XMMATRIX& rotation, const BoundingOrientedBox& box);

@@ -57,7 +57,7 @@ void RenderManager::Init()
 		SetDefaultPSO();
 	}
 
-	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(20, true);
+	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(CB_COUNT_MATERIAL, true);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);

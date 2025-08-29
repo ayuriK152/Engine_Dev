@@ -160,6 +160,9 @@ void ResourceManager::SavePrefab(shared_ptr<GameObject> prefabObject, const stri
 void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> object, int parentIdx, const string& prefabName)
 {
 	static int objectIdx = 0;
+	if (parentIdx == -1)
+		objectIdx = 0;
+
 	int currentIdx = objectIdx++;
 
 	FILEIO->WriteToFile(fileHandle, object->GetName());

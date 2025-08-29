@@ -21,6 +21,8 @@
 
 #define		STATIC_SAMPLER_COUNT			6
 
+#define		CB_COUNT_MATERIAL				50
+
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)

@@ -231,8 +231,16 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
 		meshObj->SetName(UniversalUtils::ToString(m->GetNameW()));
-		meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
-		meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
+		if (mesh->HasBones())
+		{
+			meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
+			meshObj->GetComponent<SkinnedMeshRenderer>()->SetMesh(m);
+		}
+		else
+		{
+			meshObj->AddComponent(make_shared<MeshRenderer>());
+			meshObj->GetComponent<MeshRenderer>()->SetMesh(m);
+		}
 		meshObj->GetTransform()->SetParent(_loadedObject[0]->GetTransform());
 		_meshObjs.push_back(meshObj);
 		_loadedObject.push_back(meshObj);

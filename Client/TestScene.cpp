@@ -42,8 +42,8 @@ void TestScene::Init()
 		player = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 		player->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
-		player->GetComponent<Animator>()->SetPreviewMode(true);
-		player->GetComponent<Animator>()->SetPreviewAnimation("slash_1");
+		//player->GetComponent<Animator>()->SetPreviewMode(true);
+		//player->GetComponent<Animator>()->SetPreviewAnimation("slash_1");
 		player->AddComponent(make_shared<PlayerScript>());
 	}
 

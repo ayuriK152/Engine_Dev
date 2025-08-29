@@ -27,7 +27,7 @@ void Animator::Update()
 {
 	if (_isPreviewMode)
 	{
-		if (_previewAnimation == EMPTY_ANIMATION || !_isPreviewPlaying)
+		if (_previewAnimation == nullptr || !_isPreviewPlaying)
 			return;
 
 		UpdateBoneTransform();
@@ -290,7 +290,7 @@ void Animator::SetPreviewMode(bool value)
 	{
 		_isPreviewMode = false;
 		_isPreviewPlaying = false;
-		_previewAnimation = EMPTY_ANIMATION;
+		_previewAnimation = nullptr;
 		_previewTick = 0.0f;
 	}
 }

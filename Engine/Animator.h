@@ -68,13 +68,20 @@ public:
 	void UpdateAnimationEvent();
 	void LoadAnimationEvents(const string& path);
 
-
-	shared_ptr<Animation> GetPreviewAnimation() { return _previewAnimation != EMPTY_ANIMATION ? _animations[_previewAnimation] : nullptr; }
-	void SetPreviewAnimation(const string& animationName) {
-		_previewAnimation = animationName;
+	shared_ptr<Animation> GetPreviewAnimation() { return _previewAnimation; }
+	void SetPreviewAnimation(shared_ptr<Animation> previewAnimation) {
+		_previewAnimation = previewAnimation;
 		_previewTick = 0.0f;
 	}
+	bool IsPreviewMode() { return _isPreviewMode; }
 	void SetPreviewMode(bool value);
+	bool IsPreviewPlaying() { return _isPreviewPlaying; }
+	void SetPreviewPlaying(bool value) { _isPreviewPlaying = value; }
+	float GetPreviewTick() { return _previewTick; }
+	void SetPreviewTick(float value) { 
+		_previewTick = value; 
+		UpdateBoneTransform();
+	}
 
 private:
 	bool _isPlayOnInit;
@@ -101,9 +108,9 @@ private:
 	int _nextAnimationEventIndex = 0;
 
 	// Preview Mode Stuffs
-	string _previewAnimation;
-	float _previewTick = 0.0f;
+	shared_ptr<Animation> _previewAnimation;
 	bool _isPreviewPlaying = false;
+	float _previewTick = 0.0f;
 
 	vector<shared_ptr<Transform>> _childs;
 	vector<int> _lastKeyframeIndex;

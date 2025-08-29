@@ -1,8 +1,16 @@
 #pragma once
 
+enum LogLevel
+{
+	LOG_INFO,
+	LOG_WARN,
+	LOG_ERROR
+};
+
 struct DebugLog
 {
 	float time;
+	LogLevel logLevel;
 	string message;
 };
 
@@ -18,6 +26,8 @@ public:
 
 public:
 	void Log(const string& message);
+	void WarnLog(const string& message);
+	void ErrorLog(const string& message);
 	void ClearLogs() { _debugLogs.clear(); }
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
 	void AddDebugRender(shared_ptr<Collider> collider);

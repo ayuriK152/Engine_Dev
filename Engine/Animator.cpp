@@ -25,49 +25,67 @@ void Animator::Init()
 
 void Animator::Update()
 {
-	if (_currentAnimation == EMPTY_ANIMATION || !_isPlaying)
-		return;
+	if (_isPreviewMode)
+	{
+		if (_previewAnimation == nullptr || !_isPreviewPlaying)
+			return;
 
-	UpdateBoneTransform();
-	UpdateAnimationEvent();
+		UpdateBoneTransform();
 
-	if (_isInTransition) {
-		_transitionElapsedTime += TIME->DeltaTime();
-		if (_transitionElapsedTime >= _transitionTime) {
-			_isInTransition = false;
-			_currentAnimation = _nextAnimation;
-			_nextAnimation = EMPTY_ANIMATION;
-			_currentTick = _transitionTick;
-			_transitionTick = 0.0f;
-			_transitionElapsedTime = 0.0f;
-			_currentAnimationSpeed = _nextAnimationSpeed;
+		float ticksPerSecond = (GetPreviewAnimation()->GetTicksPerSecond() != 0.0f) ? GetPreviewAnimation()->GetTicksPerSecond() : 25.0f;
+		_previewTick += TIME->DeltaTime() * ticksPerSecond;
 
-			_nextAnimationEventIndex = 0;
-		}
-		else {
-			float ticksPerSecond = _animations[_nextAnimation]->GetTicksPerSecond();
-			_transitionTick += TIME->DeltaTime() * ticksPerSecond * _nextAnimationSpeed;
+		if (_previewTick > GetPreviewAnimation()->GetDuration()) {
+			_previewTick = 0.0f;
 		}
 	}
 
-	float ticksPerSecond = (GetCurrentAnimation()->GetTicksPerSecond() != 0.0f) ? GetCurrentAnimation()->GetTicksPerSecond() : 25.0f;
-	_currentTick += TIME->DeltaTime() * ticksPerSecond * _currentAnimationSpeed;
+	else
+	{
+		if (_currentAnimation == EMPTY_ANIMATION || !_isPlaying)
+			return;
 
-	if (_currentTick > GetCurrentAnimation()->GetDuration()) {
-		if (_isLoop)
-		{
-			_currentTick = 0.0f;
-			_currentAnimationEventIndex = 0;
+		UpdateBoneTransform();
+		UpdateAnimationEvent();
+
+		if (_isInTransition) {
+			_transitionElapsedTime += TIME->DeltaTime();
+			if (_transitionElapsedTime >= _transitionTime) {
+				_isInTransition = false;
+				_currentAnimation = _nextAnimation;
+				_nextAnimation = EMPTY_ANIMATION;
+				_currentTick = _transitionTick;
+				_transitionTick = 0.0f;
+				_transitionElapsedTime = 0.0f;
+				_currentAnimationSpeed = _nextAnimationSpeed;
+
+				_nextAnimationEventIndex = 0;
+			}
+			else {
+				float ticksPerSecond = _animations[_nextAnimation]->GetTicksPerSecond();
+				_transitionTick += TIME->DeltaTime() * ticksPerSecond * _nextAnimationSpeed;
+			}
+		}
+
+		float ticksPerSecond = (GetCurrentAnimation()->GetTicksPerSecond() != 0.0f) ? GetCurrentAnimation()->GetTicksPerSecond() : 25.0f;
+		_currentTick += TIME->DeltaTime() * ticksPerSecond * _currentAnimationSpeed;
+
+		if (_currentTick > GetCurrentAnimation()->GetDuration()) {
+			if (_isLoop)
+			{
+				_currentTick = 0.0f;
+				_currentAnimationEventIndex = 0;
+			}
+			else
+			{
+				_isCurrentAnimationEnd = true;
+				_currentTick = GetCurrentAnimation()->GetDuration();
+			}
 		}
 		else
 		{
-			_isCurrentAnimationEnd = true;
-			_currentTick = GetCurrentAnimation()->GetDuration();
+			_isCurrentAnimationEnd = false;
 		}
-	}
-	else
-	{
-		_isCurrentAnimationEnd = false;
 	}
 }
 
@@ -107,39 +125,58 @@ void Animator::UpdateChildList()
 
 void Animator::UpdateBoneTransform()
 {
-	for (int i = 0; i < _childs.size(); i++)
+	if (_isPreviewMode)
 	{
-		string objName = _childs[i]->GetGameObject()->GetName();
-		Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick, _lastKeyframeIndex[i]);
-
-		if (currKeyFrame.tick < 0.0)
-			continue;
-
-		if (_isInTransition && _animations.contains(_nextAnimation))
+		for (int i = 0; i < _childs.size(); i++)
 		{
-			// 다음 애니메이션 키프레임
-			int dummyIdx = 0;
-			Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(objName, _transitionTick, dummyIdx);
+			string objName = _childs[i]->GetGameObject()->GetName();
+			Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(objName, _previewTick, _lastKeyframeIndex[i]);
 
-			// 가중치 계산
-			float alpha = _transitionElapsedTime / _transitionTime;
-			alpha = std::clamp(alpha, 0.0f, 1.0f);
+			if (currKeyFrame.tick < 0.0)
+				continue;
 
-			// Lerp / Slerp
-			Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
-			Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
-			Vector4 rot;
-			XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
-
-			_childs[i]->SetLocalPosition(pos);
-			_childs[i]->SetLocalScale(scale);
-			_childs[i]->SetLocalQuaternion(rot);
-		}
-		else
-		{
 			_childs[i]->SetLocalScale(currKeyFrame.scale);
 			_childs[i]->SetLocalQuaternion(currKeyFrame.rotation);
 			_childs[i]->SetLocalPosition(currKeyFrame.position);
+		}
+	}
+
+	else
+	{
+		for (int i = 0; i < _childs.size(); i++)
+		{
+			string objName = _childs[i]->GetGameObject()->GetName();
+			Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick, _lastKeyframeIndex[i]);
+
+			if (currKeyFrame.tick < 0.0)
+				continue;
+
+			if (_isInTransition && _animations.contains(_nextAnimation))
+			{
+				// 다음 애니메이션 키프레임
+				int dummyIdx = 0;
+				Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(objName, _transitionTick, dummyIdx);
+
+				// 가중치 계산
+				float alpha = _transitionElapsedTime / _transitionTime;
+				alpha = std::clamp(alpha, 0.0f, 1.0f);
+
+				// Lerp / Slerp
+				Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
+				Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
+				Vector4 rot;
+				XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
+
+				_childs[i]->SetLocalPosition(pos);
+				_childs[i]->SetLocalScale(scale);
+				_childs[i]->SetLocalQuaternion(rot);
+			}
+			else
+			{
+				_childs[i]->SetLocalScale(currKeyFrame.scale);
+				_childs[i]->SetLocalQuaternion(currKeyFrame.rotation);
+				_childs[i]->SetLocalPosition(currKeyFrame.position);
+			}
 		}
 	}
 }
@@ -239,5 +276,21 @@ void Animator::LoadAnimationEvents(const string& path)
 		}
 
 		animation = node->NextSiblingElement();
+	}
+}
+
+void Animator::SetPreviewMode(bool value)
+{
+	if (value)
+	{
+		_isPreviewMode = true;
+		_isPreviewPlaying = true;
+	}
+	else
+	{
+		_isPreviewMode = false;
+		_isPreviewPlaying = false;
+		_previewAnimation = nullptr;
+		_previewTick = 0.0f;
 	}
 }

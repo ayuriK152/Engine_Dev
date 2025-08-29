@@ -462,44 +462,87 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 {
 	if (ImGui::CollapsingHeader("Animator", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::SeparatorText("Current Animation");
-		ImGui::Text(animator->GetCurrentAnimation() != nullptr ? animator->GetCurrentAnimation()->GetName().c_str() : "None");
-		ImGui::SeparatorText("Animation Tick");
-		if (animator->GetCurrentAnimation() != nullptr)
-			ImGui::Text("%.1f / %.1f", animator->GetCurrentTick(), animator->GetCurrentAnimation()->GetDuration());
-		else
-			ImGui::Text("-- / --");
-		ImGui::SeparatorText("Animation List");
-
 		static string addAnimPath;
-		ImGui::InputText("##AddAnimationName", &addAnimPath);
-		if (ImGui::Button("Add Animation"))
+
+		if (ImGui::Button("PreviewMode Toggle"))
 		{
-			auto animation = RESOURCE->LoadAnimation(addAnimPath);
-			if (animation == nullptr)
-			{
-				// 로그 or 콘솔 시스템 구현 후 에러 로그 출력 필요
-				return;
-			}
-			animator->AddAnimation(animation);
-			addAnimPath = "";
+			animator->SetPreviewMode(!animator->IsPreviewMode());
 		}
 
-		vector<string> removeQueue;
-		for (auto& a : animator->GetAnimations())
+		if (animator->IsPreviewMode())
 		{
-			ImGui::Text(a.first.c_str());
+			auto previewAnim = animator->GetPreviewAnimation();
+			ImGui::SeparatorText("Preview Mode");
+			ImGui::Text("Name:");
 			ImGui::SameLine();
-			string buttonLabel = "-##" + a.second->GetPath();
-			if (ImGui::Button(buttonLabel.c_str()))
+			ImGui::Text(previewAnim != nullptr ? previewAnim->GetName().c_str() : "None");
+
+			ImGui::SeparatorText("AnimationTick");
+			float tick = animator->GetPreviewTick();
+			float duration = previewAnim != nullptr ? previewAnim->GetDuration() : 0.0f;
+			if (ImGui::SliderFloat("##TickSlider", &tick, 0.0f, duration, "%.1f"))
 			{
-				removeQueue.push_back(a.first);
+				animator->SetPreviewPlaying(false);
+				animator->SetPreviewTick(tick);
+			}
+			if (ImGui::Button(animator->IsPreviewPlaying() ? "Pause" : "Play"))
+			{
+				animator->SetPreviewPlaying(!animator->IsPreviewPlaying());
+			}
+
+			ImGui::InputText("##PreviewAnimationName", &addAnimPath);
+			if (ImGui::Button("Set Animation"))
+			{
+				auto animation = RESOURCE->LoadAnimation(addAnimPath);
+				if (animation == nullptr)
+				{
+					DEBUG->ErrorLog("Failed to load animation");
+					return;
+				}
+				animator->SetPreviewAnimation(animation);
+				addAnimPath = "";
 			}
 		}
-		if (removeQueue.size() > 0)
+		else
 		{
-			for (const string& name : removeQueue)
-				animator->RemoveAnimation(name);
+			ImGui::SeparatorText("Current Animation");
+			ImGui::Text(animator->GetCurrentAnimation() != nullptr ? animator->GetCurrentAnimation()->GetName().c_str() : "None");
+			ImGui::SeparatorText("Animation Tick");
+			if (animator->GetCurrentAnimation() != nullptr)
+				ImGui::Text("%.1f / %.1f", animator->GetCurrentTick(), animator->GetCurrentAnimation()->GetDuration());
+			else
+				ImGui::Text("-- / --");
+
+			ImGui::SeparatorText("Animation List");
+			ImGui::InputText("##AddAnimationName", &addAnimPath);
+			if (ImGui::Button("Add Animation"))
+			{
+				auto animation = RESOURCE->LoadAnimation(addAnimPath);
+				if (animation == nullptr)
+				{
+					DEBUG->ErrorLog("Failed to load animation");
+					return;
+				}
+				animator->AddAnimation(animation);
+				addAnimPath = "";
+			}
+
+			vector<string> removeQueue;
+			for (auto& a : animator->GetAnimations())
+			{
+				ImGui::Text(a.first.c_str());
+				ImGui::SameLine();
+				string buttonLabel = "-##" + a.second->GetPath();
+				if (ImGui::Button(buttonLabel.c_str()))
+				{
+					removeQueue.push_back(a.first);
+				}
+			}
+			if (removeQueue.size() > 0)
+			{
+				for (const string& name : removeQueue)
+					animator->RemoveAnimation(name);
+			}
 		}
 	}
 }
@@ -605,7 +648,20 @@ void EngineGUIManager::ShowConsole()
 		auto logs = DEBUG->GetLogs();
 		for (const auto& log : logs)
 		{
-			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "%.2f: %s", log.time, log.message.c_str());
+			ImVec4 textColor;
+			switch(log.logLevel)
+			{
+				case LogLevel::LOG_INFO:
+					textColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+					break;
+				case LogLevel::LOG_WARN:
+					textColor = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+					break;
+				case LogLevel::LOG_ERROR:
+					textColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+					break;
+			}
+			ImGui::TextColored(textColor, "%.2f: %s", log.time, log.message.c_str());
 		}
 	}
 	ImGui::End();

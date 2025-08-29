@@ -40,8 +40,10 @@ void TestScene::Init()
 	{
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 		player = loadedObjects[0];
-		player->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		player->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
+		//player->GetComponent<Animator>()->SetPreviewMode(true);
+		//player->GetComponent<Animator>()->SetPreviewAnimation("slash_1");
 		player->AddComponent(make_shared<PlayerScript>());
 	}
 

@@ -85,7 +85,17 @@ void DebugManager::Render()
 
 void DebugManager::Log(const string& message)
 {
-	_debugLogs.push_back({ TIME->TotalTime(), message });
+	_debugLogs.push_back({ TIME->TotalTime(), LOG_INFO, message });
+}
+
+void DebugManager::WarnLog(const string& message)
+{
+	_debugLogs.push_back({ TIME->TotalTime(), LOG_WARN, message });
+}
+
+void DebugManager::ErrorLog(const string& message)
+{
+	_debugLogs.push_back({ TIME->TotalTime(), LOG_ERROR, message });
 }
 
 void DebugManager::AddDebugRender(shared_ptr<Collider> collider)

@@ -68,26 +68,49 @@ public:
 	void UpdateAnimationEvent();
 	void LoadAnimationEvents(const string& path);
 
+	shared_ptr<Animation> GetPreviewAnimation() { return _previewAnimation; }
+	void SetPreviewAnimation(shared_ptr<Animation> previewAnimation) {
+		_previewAnimation = previewAnimation;
+		_previewTick = 0.0f;
+	}
+	bool IsPreviewMode() { return _isPreviewMode; }
+	void SetPreviewMode(bool value);
+	bool IsPreviewPlaying() { return _isPreviewPlaying; }
+	void SetPreviewPlaying(bool value) { _isPreviewPlaying = value; }
+	float GetPreviewTick() { return _previewTick; }
+	void SetPreviewTick(float value) { 
+		_previewTick = value; 
+		UpdateBoneTransform();
+	}
+
 private:
-	float _currentTick = 0.0f;
 	bool _isPlayOnInit;
 	bool _isPlaying;
 	bool _isCurrentAnimationEnd;		// 콜백 방식으로 바꾸는거 고려.
 	bool _isLoop;
+	bool _isPreviewMode = false;
 
-	map<string, shared_ptr<Animation>> _animations;
-	string _currentAnimation;
-	string _nextAnimation;
+	float _currentTick = 0.0f;
 	float _transitionTick = 0.0f;
 	float _transitionTime = 0.1f;
 	float _transitionElapsedTime = 0.0f;
 	bool _isInTransition = false;
+
+	map<string, shared_ptr<Animation>> _animations;
+
+	string _currentAnimation;
+	string _nextAnimation;
 
 	map<string, vector<AnimationEvent>> _animationEvents;
 	float _currentAnimationSpeed = 1.0f;
 	float _nextAnimationSpeed = 1.0f;
 	int _currentAnimationEventIndex = 0;
 	int _nextAnimationEventIndex = 0;
+
+	// Preview Mode Stuffs
+	shared_ptr<Animation> _previewAnimation;
+	bool _isPreviewPlaying = false;
+	float _previewTick = 0.0f;
 
 	vector<shared_ptr<Transform>> _childs;
 	vector<int> _lastKeyframeIndex;

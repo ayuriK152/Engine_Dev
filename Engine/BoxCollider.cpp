@@ -156,14 +156,14 @@ void BoxCollider::FitOnMesh()
 	auto meshRenderer = GetGameObject()->GetComponent<MeshRenderer>();
 	if (meshRenderer == nullptr)
 	{
-		DEBUG->Log("BoxCollider::FitOnMesh() - MeshRenderer not found.");
+		DEBUG->WarnLog("BoxCollider::FitOnMesh() - MeshRenderer not found.");
 		return;
 	}
 
 	auto mesh = meshRenderer->GetMesh();
 	if (mesh == nullptr)
 	{
-		DEBUG->Log("BoxCollider::FitOnMesh() - Mesh not found.");
+		DEBUG->WarnLog("BoxCollider::FitOnMesh() - Mesh not found.");
 		return;
 	}
 

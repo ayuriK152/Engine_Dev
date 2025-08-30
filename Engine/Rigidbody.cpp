@@ -4,7 +4,16 @@
 Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 {
 	isGravity = true;
+	elasticModulus = 0.3f;
+	friction = 0.2f;
+	mass = 1.0f;
+	drag = 0.0f;
+
 	isAngular = false;	// 회전 운동 개선중. 기본값 false, 개선시까지 사용하지 않기.
+	angularDrag = 0.3f;
+	angularVelocityPower = 100.0f;
+
+	isPenetrationNormalFixed = false;
 
 	_velocity = { 0.0f, 0.0f, 0.0f };
 	_netForce = { 0.0f, 0.0f, 0.0f };
@@ -12,13 +21,6 @@ Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 	_angularVelocity = { 0.0f, 0.0f, 0.0f };
 	_netTorque = { 0.0f, 0.0f, 0.0f };
 	_inertiaTensor = { 1.0f, 1.0f, 1.0f };
-
-	elasticModulus = 0.3f;
-	friction = 0.2f;
-	mass = 1.0f;
-	drag = 0.0f;
-	angularDrag = 0.3f;
-	angularVelocityPower = 100.0f;
 }
 
 Rigidbody::~Rigidbody()
@@ -38,6 +40,7 @@ void Rigidbody::Update()
 {
 	// 선형 운동
 	_velocity = _velocity + _netForce * TIME->DeltaTime();
+	//_velocity = _velocity * (1.0f - drag * TIME->DeltaTime()); // 저항 적용
 	GetTransform()->Translate(_velocity * TIME->DeltaTime());
 
 	// 회전 운동

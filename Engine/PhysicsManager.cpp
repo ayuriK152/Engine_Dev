@@ -89,8 +89,36 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 
 	float resolveValue = massA == 0.0f || massB == 0.0f ? 1.0f : 0.5f;
 
-	Vector3 correctionA = collInfo.Normal * collInfo.Depth * resolveValue;
-	Vector3 correctionB = collInfo.Normal * collInfo.Depth * resolveValue;
+	Vector3 correctionA, correctionB;
+
+	if (rba == nullptr && rbb != nullptr)
+	{
+		if (rbb->isPenetrationNormalFixed && fabs(collInfo.Normal.y) > 1e-4)
+		{
+			//collInfo.Depth = collInfo.Depth * collInfo.Depth / collInfo.Normal.y;
+			collInfo.Depth = collInfo.Depth / sqrt(fabs(collInfo.Normal.y));
+			collInfo.Normal = Vector3(0.0f, collInfo.Normal.y, 0.0f).Normalize();
+			correctionB = { 0.0f, collInfo.Depth * collInfo.Depth / collInfo.Normal.y, 0.0f };
+		}
+		correctionB = collInfo.Normal * collInfo.Depth;
+	}
+	else if (rba != nullptr && rbb == nullptr)
+	{
+		if (rba->isPenetrationNormalFixed && fabs(collInfo.Normal.y) > 1e-4)
+		{
+			//collInfo.Depth = collInfo.Depth * collInfo.Depth / collInfo.Normal.y;
+			collInfo.Depth = collInfo.Depth / sqrt(fabs(collInfo.Normal.y));
+			collInfo.Normal = Vector3(0.0f, collInfo.Normal.y, 0.0f).Normalize();
+			correctionA = { 0.0f, collInfo.Depth * collInfo.Depth / collInfo.Normal.y, 0.0f };
+
+		}
+		correctionA = collInfo.Normal * collInfo.Depth;
+	}
+	else
+	{
+		correctionA = collInfo.Normal * collInfo.Depth * resolveValue;
+		correctionB = collInfo.Normal * collInfo.Depth * resolveValue;
+	}
 
 	// 회전 운동 임펄스
 	Vector3 impulse = collInfo.Normal * collInfo.Depth;
@@ -101,7 +129,6 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 		Vector3 vel = (rba->GetVelocity() * rba->elasticModulus).Reflect(collInfo.Normal);
 		rba->SetVelocity(vel);
 		Vector3 finalPos = pos - correctionA + vel * collInfo.Depth * resolveValue;
-		//Vector3 finalPos = MathHelper::VectorAddition(MathHelper::VectorSubtract(pos, correctionA), MathHelper::VectorMultiply(vel, collInfo.Depth * resolveValue));
 
 		rba->GetTransform()->SetPosition(finalPos);
 

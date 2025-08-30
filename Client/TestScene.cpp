@@ -45,15 +45,15 @@ void TestScene::Init()
 	}
 
 	{
-		auto loadedObjects = RESOURCE->LoadPrefabObject("Brute");
-		test = loadedObjects[0];
-		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		test->SetTag("Enemy");
-		auto collider = make_shared<BoxCollider>();
-		test->AddComponent(collider);
-		test->AddComponent(make_shared<EnemyScript>());
-		collider->SetOffset(Vector3(0.0f, 1.2f, 0.0f));
-		collider->SetExtent(Vector3(0.6f, 1.2f, 0.6f));
+		//auto loadedObjects = RESOURCE->LoadPrefabObject("Brute");
+		//test = loadedObjects[0];
+		//gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		//test->SetTag("Enemy");
+		//auto collider = make_shared<BoxCollider>();
+		//test->AddComponent(collider);
+		//test->AddComponent(make_shared<EnemyScript>());
+		//collider->SetOffset(Vector3(0.0f, 1.2f, 0.0f));
+		//collider->SetExtent(Vector3(0.6f, 1.2f, 0.6f));
 	}
 
 	{
@@ -69,14 +69,16 @@ void TestScene::Init()
 	}
 
 	{
-		//box = make_shared<GameObject>();
-		//box->SetName("box");
-		//box->AddComponent(make_shared<MeshRenderer>());
-		//box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		//box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
-		//box->AddComponent(make_shared<BoxCollider>());
-		//box->GetTransform()->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
-		//gameObjects.push_back(box);
+		box = make_shared<GameObject>();
+		box->SetName("box");
+		box->AddComponent(make_shared<MeshRenderer>());
+		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
+		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
+		box->AddComponent(make_shared<BoxCollider>());
+		box->GetTransform()->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
+		box->GetTransform()->SetScale(Vector3(5.0f, 1.0f, 5.0f));
+		box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 20.0f));
+		gameObjects.push_back(box);
 	}
 
 	{

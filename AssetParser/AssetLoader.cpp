@@ -95,16 +95,19 @@ void AssetLoader::ImportAssetFile(wstring file)
 				cout << "bbone file name: ";
 				string bboneName;
 				getline(cin, bboneName);
-				auto bbone = RESOURCE->LoadBone(bboneName);
-
-				for (auto& animation : _animations)
+				if (bboneName != "")
 				{
-					for (auto& animData : *animation->GetAnimationDatasPtr())
+					auto bbone = RESOURCE->LoadBone(bboneName);
+
+					for (auto& animation : _animations)
 					{
-						if (bbone.contains(animData.first))
-							animData.second.boneId = bbone[animData.first].id;
-						else
-							animData.second.boneId = -1;
+						for (auto& animData : *animation->GetAnimationDatasPtr())
+						{
+							if (bbone.contains(animData.first))
+								animData.second.boneId = bbone[animData.first].id;
+							else
+								animData.second.boneId = -1;
+						}
 					}
 				}
 			}

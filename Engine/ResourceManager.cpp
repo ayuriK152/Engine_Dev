@@ -360,8 +360,13 @@ map<string, Bone> ResourceManager::LoadBone(const string& filePath)
 	map<string, Bone> boneData;
 
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(filePath);
-	UINT32 boneCount;
+	if (fileHandle == INVALID_HANDLE_VALUE)
+	{
+		DEBUG->ErrorLog("Failed to load bone file: " + filePath);
+		return boneData;
+	}
 
+	UINT32 boneCount;
 	FILEIO->ReadFileData(fileHandle, &boneCount, sizeof(UINT32));
 	for (int i = 0; i < boneCount; i++)
 	{

@@ -1,13 +1,8 @@
-/***********/
-/* Buffers */
-/***********/
+#include "Structs.hlsl"
 
-TextureCube CubeMap : register(t0);
-Texture2D   DiffuseMap : register(t1);
-Texture2D   ShadowMap : register(t2);
-
-StructuredBuffer<float4x4> BoneTransforms: register(t0, space1);
-//RWStructuredBuffer<float4x4> AnimationMatrtices: register(t1, space1);
+/************/
+/* Samplers */
+/************/
 
 SamplerState samPointWrap        : register(s0);
 SamplerState samPointClamp       : register(s1);
@@ -15,6 +10,21 @@ SamplerState samLinearWrap       : register(s2);
 SamplerState samLinearClamp      : register(s3);
 SamplerState samAnisotropicWrap  : register(s4);
 SamplerState samAnisotropicClamp : register(s5);
+
+/***********/
+/* Buffers */
+/***********/
+
+// Common
+StructuredBuffer<Light> Lights  : register(t0);
+TextureCube CubeMap             : register(t1);
+Texture2D   ShadowMap           : register(t2);
+Texture2D   DiffuseMap          : register(t3);
+
+cbuffer LightInfo : register(b0)
+{
+    uint gNumLights;
+}
 
 cbuffer cbPerObject : register(b1)
 {
@@ -43,6 +53,18 @@ cbuffer cbCamera : register(b3)
     float4x4 ViewProjInv;
     float2 RenderTargetSize;
     float2 InvRenderTargetSize;
+};
+
+// Skinned Mesh
+StructuredBuffer<float4x4> BoneTransforms   : register(t0, space1);
+StructuredBuffer<Animation> Animations      : register(t1, space1);
+cbuffer cbAnimState                         : register(b0, space1)
+{
+    float currentTick;
+    uint currentAnimIdx;
+    float transitionTick;
+    uint nextAnimIdx;
+    bool isOnTransition;
 };
 
 /*************/

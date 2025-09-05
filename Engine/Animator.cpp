@@ -302,3 +302,20 @@ void Animator::SetPreviewMode(bool value)
 		_previewTick = 0.0f;
 	}
 }
+
+void Animator::UploadAnimationDatas()
+{
+	// 애니메이션 데이터를 텍스쳐로 압축
+
+	for (auto& animation : _animations)
+	{
+		XMFLOAT4 animationTexture[MAX_BONE_COUNT][MAX_KEYFRAME_COUNT];
+		for (auto& animData : animation.second->GetAnimationDatas())
+		{
+			for (int i = 0; i < animData.second.keyFrames.size(); i++)
+			{
+				animationTexture[animData.second.boneId][i];
+			}
+		}
+	}
+}

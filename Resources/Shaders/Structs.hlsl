@@ -1,13 +1,65 @@
-#include "Common.hlsl"
+#define MAX_KEYFRAME_COUNT 512
+#define MAX_BONE_COUNT 128
 
-/************/
-/* Textures */
-/************/
+/****************/
+/* Skinned Mesh */
+/****************/
 
 struct BoneTransform
 {
     float4x4 transform;
 };
+
+struct KeyFrame
+{
+    float tick;
+    float3 pos;
+    float4 rot;
+    float3 scl;
+};
+
+struct AnimationData
+{
+    KeyFrame keyFrames[MAX_KEYFRAME_COUNT];
+    uint keyFrameCount;
+};
+
+struct Animation
+{
+    AnimationData animationDatas[MAX_BONE_COUNT];
+    uint boneCount;
+};
+
+/*********/
+/* Light */
+/*********/
+
+struct Light
+{
+    float4x4 View;
+    float4x4 Proj;
+    float4  Ambient;
+    float4  Diffuse;
+    float4  Specular;
+    float3  Direction;
+    int     LightType;
+    float2  FalloffInfo;
+    float   SpotPower;
+    int     padding1;
+};
+
+struct Material
+{
+    float4  Ambient;
+    float4  Diffuse;
+    float4  Specular;
+    float4  Emissive;
+    float   Shiness;
+};
+
+/**********/
+/* Vertex */
+/**********/
 
 struct VertexIn
 {

@@ -1,4 +1,3 @@
-#include "Structs.hlsl"
 #include "LightingUtil.hlsl"
 
 VertexOut VS(VertexIn vin)

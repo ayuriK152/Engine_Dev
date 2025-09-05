@@ -13,7 +13,4 @@ RUN
 Paladin WProp J Nordstrom\\run_sword_1      // 전진
 
 ATTACK
-Paladin WProp J Nordstrom\\slash_1  // 교체 요망
-Paladin WProp J Nordstrom\\slash_2  // 교체 요망
-Paladin WProp J Nordstrom\\slash_3  // 교체 요망
-Paladin WProp J Nordstrom\\slash_4  // 교체 요망
+Paladin WProp J Nordstrom\\slash_1

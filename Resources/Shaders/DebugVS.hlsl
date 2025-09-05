@@ -1,4 +1,4 @@
-#include "Structs.hlsl"
+#include "Common.hlsl"
 
 VertexColorOut VS(VertexColorIn vin)
 {

@@ -1,8 +1,8 @@
 #include "Skybox.hlsl"
  
-VertexOut VS(VertexIn vin)
+VertexSkyboxOut VS(VertexSkyboxIn vin)
 {
-	VertexOut vout;
+	VertexSkyboxOut vout;
 
 	// Use local vertex position as cubemap lookup vector.
 	vout.LocalPosition = vin.Position;

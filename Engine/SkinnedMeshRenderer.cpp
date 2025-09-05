@@ -53,7 +53,7 @@ void SkinnedMeshRenderer::Render()
 		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 		bone.Offset(_boneSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 
-		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_BONE_SB, bone);
+		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_BONE_SB, bone);
 	}
 
 	Super::Render();

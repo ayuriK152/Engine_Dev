@@ -1,4 +1,6 @@
 #pragma once
+#define MAX_BONE_COUNT		256
+#define MAX_KEYFRAME_COUNT	    512
 #define EMPTY_ANIMATION		"empty"
 
 class Animation;
@@ -77,6 +79,8 @@ public:
 		_previewTick = value; 
 		UpdateBoneTransform();
 	}
+
+	void UploadAnimationDatas();
 
 private:
 	bool _isPlayOnInit;

@@ -91,10 +91,10 @@ void RenderManager::Render()
 	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_SHADOWTEX_SR, _shadowMap->GetSrv());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_LIGHT_CB, lightDesc);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAMETER_LIGHTINFO_CB, _lights.size(), 0);
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_CB, lightDesc);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_CB, _lights.size(), 0);
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// ShadowMap Pass
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
@@ -171,6 +171,7 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 	psoDesc.pRootSignature = _rootSignature.Get();
 
 	// VS, PS is necessary!!!!!!!!
+	// 필수가 아닌 경우가 있음. 수정해야함.
 	auto vertexShader = RESOURCE->Get<Shader>(vsName)->GetBlob();
 	psoDesc.VS =
 	{
@@ -286,34 +287,44 @@ void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC pso
 
 void RenderManager::BuildRootSignature()
 {
+	// space0 (common)
+	CD3DX12_DESCRIPTOR_RANGE lightTable;
+	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	CD3DX12_DESCRIPTOR_RANGE cubemapTable;
-	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 	CD3DX12_DESCRIPTOR_RANGE shadowTexTable;
 	shadowTexTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
-	CD3DX12_DESCRIPTOR_RANGE lightTable;
-	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3);
+	CD3DX12_DESCRIPTOR_RANGE texTable;
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3);
+
+	// space1 (skinned mesh)
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
+	CD3DX12_DESCRIPTOR_RANGE animTable;
+	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 1);
+	CD3DX12_DESCRIPTOR_RANGE animStateTable;
+	animStateTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 2, 1);
 
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[9];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
-	slotRootParameter[ROOT_PARAMETER_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);		// CubemapSR
-	slotRootParameter[ROOT_PARAMETER_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);		// TextureSR
-	slotRootParameter[ROOT_PARAMETER_SHADOWTEX_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[ROOT_PARAMETER_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);			// BoneSB
-	slotRootParameter[ROOT_PARAMETER_LIGHT_CB].InitAsDescriptorTable(1, &lightTable);		// LightSB
+	slotRootParameter[ROOT_PARAM_LIGHT_CB].InitAsDescriptorTable(1, &lightTable);
+	slotRootParameter[ROOT_PARAM_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[ROOT_PARAM_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	slotRootParameter[ROOT_PARAMETER_LIGHTINFO_CB].InitAsConstantBufferView(0);	// LightInfoCB
-	slotRootParameter[ROOT_PARAMETER_OBJECT_CB].InitAsConstantBufferView(1);	// ObjectCB
-	slotRootParameter[ROOT_PARAMETER_MATERIAL_CB].InitAsConstantBufferView(2);	// MaterialCB
-	slotRootParameter[ROOT_PARAMETER_CAMERA_CB].InitAsConstantBufferView(3);	// CameraCB
+	slotRootParameter[ROOT_PARAM_LIGHTINFO_CB].InitAsConstantBufferView(0);
+	slotRootParameter[ROOT_PARAM_OBJECT_CB].InitAsConstantBufferView(1);
+	slotRootParameter[ROOT_PARAM_MATERIAL_CB].InitAsConstantBufferView(2);
+	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(3);
+
+	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);
+	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable, D3D12_SHADER_VISIBILITY_VERTEX);
+	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsDescriptorTable(1, &animStateTable, D3D12_SHADER_VISIBILITY_VERTEX);
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(9, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -369,7 +380,7 @@ void RenderManager::BuildInputLayout()
 
 void RenderManager::BuildSRVDescriptorHeap()
 {
-	// Descriptor의 갯수를 50으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
+	// Descriptor의 갯수를 150으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.NumDescriptors = 150;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;

@@ -51,11 +51,11 @@ void MeshRenderer::Render()
 	{
 		CD3DX12_GPU_DESCRIPTOR_HANDLE skyboxTex(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
 		skyboxTex.Offset(RENDER->GetSkyboxTexSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_SKYBOX_SR, skyboxTex);
+		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SKYBOX_SR, skyboxTex);
 	}
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAMETER_TEXTURE_SR, tex);
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_OBJECT_CB, objCBAddress);
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MATERIAL_CB, matCBAddress);
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_SR, tex);
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_OBJECT_CB, objCBAddress);
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_MATERIAL_CB, matCBAddress);
 
 
 	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);

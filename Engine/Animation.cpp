@@ -85,18 +85,9 @@ Animation::KeyFrame Animation::Interpolate(const string& boneName, float tick, i
 
 	float blendValue = foundFlag ? (tick - prevFrame.tick) / (nextFrame.tick - prevFrame.tick) : 0.0f;
 	resultFrame.tick = tick;
-
-	resultFrame.position = Vector3(
-		prevFrame.position.x + blendValue * (nextFrame.position.x - prevFrame.position.x),
-		prevFrame.position.y + blendValue * (nextFrame.position.y - prevFrame.position.y),
-		prevFrame.position.z + blendValue * (nextFrame.position.z - prevFrame.position.z)
-	);
+	resultFrame.position = prevFrame.position + (nextFrame.position - prevFrame.position) * blendValue;
 	XMStoreFloat4(&resultFrame.rotation, XMQuaternionSlerp(XMLoadFloat4(&prevFrame.rotation), XMLoadFloat4(&nextFrame.rotation), blendValue));
-	resultFrame.scale = Vector3(
-		prevFrame.scale.x + blendValue * (nextFrame.scale.x - prevFrame.scale.x),
-		prevFrame.scale.y + blendValue * (nextFrame.scale.y - prevFrame.scale.y),
-		prevFrame.scale.z + blendValue * (nextFrame.scale.z - prevFrame.scale.z)
-	);
+	resultFrame.scale = prevFrame.scale + (nextFrame.scale - prevFrame.scale) * blendValue;
 
 	return resultFrame;
 }

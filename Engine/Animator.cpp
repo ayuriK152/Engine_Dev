@@ -194,6 +194,14 @@ void Animator::SetCurrentAnimation(const string& animationName, float _transitio
 	_isInTransition = true;
 }
 
+void Animator::AddAnimation(shared_ptr<Animation> animation)
+{
+	_animations[animation->GetName()] = animation;
+	if (_currentAnimation == EMPTY_ANIMATION) {
+		_currentAnimation = animation->GetName();
+	}
+}
+
 void Animator::UpdateAnimationEvent()
 {
 	if (_animationEvents.contains(_currentAnimation))

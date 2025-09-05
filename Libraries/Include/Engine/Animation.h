@@ -18,6 +18,7 @@ public:
 	struct AnimationData
 	{
 		string boneName;
+		UINT boneId;
 		vector<KeyFrame> keyFrames;
 	};
 
@@ -33,6 +34,7 @@ public:
 
 	void AddAnimationData(const AnimationData animation);
 	unordered_map<string, AnimationData>& GetAnimationDatas() { return _animationDatas; }
+	unordered_map<string, AnimationData>* GetAnimationDatasPtr() { return &_animationDatas; }
 
 	KeyFrame Interpolate(const string& boneName, float tick, int& lastIdx);
 

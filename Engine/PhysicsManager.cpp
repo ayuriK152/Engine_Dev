@@ -95,10 +95,9 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 	{
 		if (rbb->isPenetrationNormalFixed && fabs(collInfo.Normal.y) > 1e-4)
 		{
-			//collInfo.Depth = collInfo.Depth * collInfo.Depth / collInfo.Normal.y;
 			collInfo.Depth = collInfo.Depth / sqrt(fabs(collInfo.Normal.y));
-			collInfo.Normal = Vector3(0.0f, collInfo.Normal.y, 0.0f).Normalize();
-			correctionB = { 0.0f, collInfo.Depth * collInfo.Depth / collInfo.Normal.y, 0.0f };
+			collInfo.Normal = Vector3(0.0f, collInfo.Normal.y > 0 ? 1 : -1, 0.0f);
+			correctionB = { 0.0f, collInfo.Depth, 0.0f };
 		}
 		correctionB = collInfo.Normal * collInfo.Depth;
 	}
@@ -106,10 +105,9 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 	{
 		if (rba->isPenetrationNormalFixed && fabs(collInfo.Normal.y) > 1e-4)
 		{
-			//collInfo.Depth = collInfo.Depth * collInfo.Depth / collInfo.Normal.y;
 			collInfo.Depth = collInfo.Depth / sqrt(fabs(collInfo.Normal.y));
-			collInfo.Normal = Vector3(0.0f, collInfo.Normal.y, 0.0f).Normalize();
-			correctionA = { 0.0f, collInfo.Depth * collInfo.Depth / collInfo.Normal.y, 0.0f };
+			collInfo.Normal = Vector3(0.0f, collInfo.Normal.y > 0 ? 1 : -1, 0.0f);
+			correctionA = { 0.0f, collInfo.Depth, 0.0f };
 
 		}
 		correctionA = collInfo.Normal * collInfo.Depth;
@@ -122,7 +120,7 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 
 	// 회전 운동 임펄스
 	Vector3 impulse = collInfo.Normal * collInfo.Depth;
-	
+
 	if (rba != nullptr)
 	{
 		Vector3 pos = rba->GetTransform()->GetPosition();
@@ -133,7 +131,7 @@ void PhysicsManager::ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigi
 		rba->GetTransform()->SetPosition(finalPos);
 
 		float velocityPower = XMVector3Length(XMLoadFloat3(&vel)).m128_f32[0];
-		Vector3 r =collInfo.ContactPoint - rba->GetTransform()->GetPosition();
+		Vector3 r = collInfo.ContactPoint - rba->GetTransform()->GetPosition();
 		Vector3 torque;
 		XMStoreFloat3(&torque, XMVector3Cross(XMLoadFloat3(&impulse), XMLoadFloat3(&r)) * velocityPower);
 		rba->AddTorque(torque);

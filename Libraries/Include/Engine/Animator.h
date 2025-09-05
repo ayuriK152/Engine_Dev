@@ -46,12 +46,7 @@ public:
 	void SetCurrentAnimation(const string& animationName, float transitionTime = 0.1f);
 	
 	const map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
-	void AddAnimation(shared_ptr<Animation> animation) { 
-		_animations[animation->GetName()] = animation;
-		if (_currentAnimation == EMPTY_ANIMATION) {
-			_currentAnimation = animation->GetName();
-		}
-	}
+	void AddAnimation(shared_ptr<Animation> animation);
 	void RemoveAnimation(shared_ptr<Animation> animation) { 
 		RemoveAnimation(animation->GetName());
 	}

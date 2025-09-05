@@ -63,7 +63,6 @@ void AssetLoader::ImportAssetFile(wstring file)
 	_loadedObject.push_back(rootObj);
 
 	ProcessMaterials(_scene);
-	ProcessAnimation(_scene);
 	ProcessNodes(_scene->mRootNode, _scene, nullptr);
 	if (_bones.size() > 0)
 	{
@@ -71,6 +70,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 		MapBones();
 		BuildBones();
 	}
+	ProcessAnimation(_scene);
 
 	// 바이너리 파일 저장
 	{
@@ -88,6 +88,27 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 		if (_animations.size() > 0)
 		{
+			if (_bones.size() == 0)
+			{
+				cout << "No bones found. Type .bbone file or blank." << endl;
+				cout << "* Type blank will fill boneId to -1" << endl;
+				cout << "bbone file name: ";
+				string bboneName;
+				getline(cin, bboneName);
+				auto bbone = RESOURCE->LoadBone(bboneName);
+
+				for (auto& animation : _animations)
+				{
+					for (auto& animData : *animation->GetAnimationDatasPtr())
+					{
+						if (bbone.contains(animData.first))
+							animData.second.boneId = bbone[animData.first].id;
+						else
+							animData.second.boneId = -1;
+					}
+				}
+			}
+
 			for (auto& animation : _animations)
 			{
 				RESOURCE->SaveAnimation(animation, assetNameStr + "\\" + animation->GetName());
@@ -444,6 +465,10 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 
 			Animation::AnimationData animData;
 			animData.boneName = name;
+			if (_bones.contains(name))
+				animData.boneId = _bones[name].id;
+			else
+				animData.boneId = -1;
 
 			UINT maxKeyCount = max({ channel->mNumPositionKeys, channel->mNumRotationKeys, channel->mNumScalingKeys });
 

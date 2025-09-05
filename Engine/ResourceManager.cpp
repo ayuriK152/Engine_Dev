@@ -112,6 +112,8 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 	for (auto& animData : animationDatas)
 	{
 		FILEIO->WriteToFile(fileHandle, animData.first);
+		UINT32 boneId = animData.second.boneId;
+		FILEIO->WriteToFile(fileHandle, boneId);
 		UINT32 keyFrameCount = animData.second.keyFrames.size();
 		FILEIO->WriteToFile(fileHandle, keyFrameCount);
 		for (auto& keyFrame : animData.second.keyFrames)
@@ -302,7 +304,7 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath, false);
 	if (fileHandle == INVALID_HANDLE_VALUE)
 	{
-		// 로그 or 콘솔 시스템 구현 후 에러 로그 출력 필요
+		DEBUG->ErrorLog("Failed to load animation file: " + filePath);
 		return nullptr;
 	}
 
@@ -317,6 +319,7 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	// filePath는 Resources/리소스타입/ 이후의 디렉토리 경로 데이터로 생각중.
 	// 따라서 filePath에서 파일 이름만 추출해서 사용하도록 변경해야함.
 	// 애니메이션 뿐만 아니라 모든 리소스에대해 작업 필요.
+	// ㄴ해결 된건가? 기억이 안남. 검증 필요.
 	shared_ptr<Animation> loadedAnimation = make_shared<Animation>(animName, duration, ticks);
 	loadedAnimation->SetPath(filePath);
 
@@ -329,6 +332,10 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 		string objName;
 		FILEIO->ReadFileData(fileHandle, objName);
 		animationData.boneName = objName;
+
+		UINT32 boneId;
+		FILEIO->ReadFileData(fileHandle, &boneId, sizeof(UINT32));
+		animationData.boneId = boneId;
 
 		UINT32 keyFrameCount;
 		FILEIO->ReadFileData(fileHandle, &keyFrameCount, sizeof(UINT32));

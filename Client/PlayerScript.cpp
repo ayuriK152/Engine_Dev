@@ -20,9 +20,9 @@ void PlayerScript::Init()
 
 	auto rigidbody = make_shared<Rigidbody>();
 	rigidbody->elasticModulus = 0.0f;
-	//rigidbody->drag = 3.0f;
 	rigidbody->isPenetrationNormalFixed = true;
 	gameObject->AddComponent(rigidbody);
+
 	//_attackCollider = make_shared<BoxCollider>();
 	//_attackCollider->SetOffset(Vector3(0.0f, 0.0f, -1.0f));
 	//_attackCollider->SetActive(false);

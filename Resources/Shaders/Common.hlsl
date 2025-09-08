@@ -56,9 +56,9 @@ cbuffer cbCamera : register(b3)
 };
 
 // Skinned Mesh
-StructuredBuffer<float4x4> BoneTransforms   : register(t0, space1);
-StructuredBuffer<Animation> Animations      : register(t1, space1);
-cbuffer cbAnimState                         : register(b0, space1)
+StructuredBuffer<float4x4> BoneTransforms       : register(t0, space1);
+StructuredBuffer<float4x4> AnimationsTransforms : register(t1, space1);
+cbuffer cbAnimState                             : register(b0, space1)
 {
     float currentTick;
     uint currentAnimIdx;

@@ -56,8 +56,12 @@ ComPtr<ID3DBlob> DXUtil::CompileShader(const wstring& filename, const D3D_SHADER
 	hr = D3DCompileFromFile(filename.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
 		entrypoint.c_str(), target.c_str(), compileFlags, 0, &byteCode, &errors);
 
+	const char* error2;
 	if (errors != nullptr)
+	{
+		error2 = static_cast<const char*>(errors->GetBufferPointer());
 		OutputDebugStringA((char*)errors->GetBufferPointer());
+	}
 
 	ThrowIfFailed(hr);
 

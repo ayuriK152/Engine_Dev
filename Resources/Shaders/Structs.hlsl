@@ -1,5 +1,5 @@
-#define MAX_KEYFRAME_COUNT 512
-#define MAX_BONE_COUNT 128
+#define MAX_KEYFRAME_COUNT 300
+#define MAX_BONE_COUNT 250
 
 /****************/
 /* Skinned Mesh */
@@ -12,10 +12,7 @@ struct BoneTransform
 
 struct KeyFrame
 {
-    float tick;
-    float3 pos;
-    float4 rot;
-    float3 scl;
+    float4x4 transform;
 };
 
 struct AnimationData
@@ -27,7 +24,6 @@ struct AnimationData
 struct Animation
 {
     AnimationData animationDatas[MAX_BONE_COUNT];
-    uint boneCount;
 };
 
 /*********/

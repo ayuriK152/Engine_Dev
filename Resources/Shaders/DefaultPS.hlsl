@@ -25,6 +25,4 @@ float4 PS(VertexOut pin) : SV_TARGET
     else {
         return lighting * 0.7f;
     }
-
-    //return float4(shadow.xxx, 1);
 }

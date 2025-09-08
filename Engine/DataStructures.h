@@ -17,7 +17,9 @@ struct Bone
 {
 	string name;
 	UINT id;
+	UINT parentId = 0;
 	XMFLOAT4X4 offsetTransform;
+	XMFLOAT4X4 localBindTransform;
 	shared_ptr<Node> node;
 	shared_ptr<GameObject> instancedObj;
 };

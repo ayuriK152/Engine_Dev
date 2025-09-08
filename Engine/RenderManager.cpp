@@ -40,10 +40,7 @@ void RenderManager::Init()
 		skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
 		skinnedShadow.NumRenderTargets = 0;
 		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-		skinnedShadow.RasterizerState = shadow.RasterizerState;
-
-		auto shadowDebug = CreatePSODesc(_shadowDebugInputLayout, L"shadowDebugVS", L"shadowDebugPS");
-		shadowDebug.DepthStencilState.DepthEnable = FALSE;
+		skinnedShadow.RasterizerState = shadow.RasterizerState;;
 
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
@@ -51,17 +48,20 @@ void RenderManager::Init()
 		BuildPSO(PSO_SKYBOX, skybox);
 		BuildPSO(PSO_SHADOWMAP, shadow);
 		BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
-
 		BuildPSO(PSO_DEBUG_PHYSICS, debug);
-		BuildPSO(PSO_DEBUG_SHADOW, shadowDebug);
 		SetDefaultPSO();
 	}
 
-	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(CB_COUNT_MATERIAL, true);
+	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(DEFAULT_MATERIAL_COUNT, true);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
+
+	_animationSB = make_unique<UploadBuffer<XMFLOAT4X4>>(DEFAULT_ANIMATION_COUNT, false);
+	_animationStateCB = make_unique<UploadBuffer<AnimationStateConstants>>(1, true);
+
+	BuildAnimationBufferSRV();
 }
 
 void RenderManager::FixedUpdate()
@@ -82,19 +82,26 @@ void RenderManager::Update()
 void RenderManager::Render()
 {
 	auto cmdList = GRAPHIC->GetCommandList();
+
 	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
 
-	auto lightSB = GRAPHIC->GetCurrFrameResource()->lightSB->GetResource();
-	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
+
+	auto lightSB = GRAPHIC->GetCurrFrameResource()->lightSB->GetResource();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
+	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_CB, lightDesc);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_CB, _lights.size(), 0);
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
+
+	// Animation Buffer
+	CD3DX12_GPU_DESCRIPTOR_HANDLE hAnimDesc(GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
+	hAnimDesc.Offset(_animationSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_ANIM_SB, hAnimDesc);
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_ANIMSTATE_CB, _animationStateCB->GetResource()->GetGPUVirtualAddress());
 
 	// ShadowMap Pass
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
@@ -170,21 +177,25 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 	psoDesc.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
 	psoDesc.pRootSignature = _rootSignature.Get();
 
-	// VS, PS is necessary!!!!!!!!
-	// 필수가 아닌 경우가 있음. 수정해야함.
-	auto vertexShader = RESOURCE->Get<Shader>(vsName)->GetBlob();
-	psoDesc.VS =
+	if (!vsName.empty())
 	{
-		reinterpret_cast<BYTE*>(vertexShader->GetBufferPointer()),
-		vertexShader->GetBufferSize()
-	};
+		auto vertexShader = RESOURCE->Get<Shader>(vsName)->GetBlob();
+		psoDesc.VS =
+		{
+			reinterpret_cast<BYTE*>(vertexShader->GetBufferPointer()),
+			vertexShader->GetBufferSize()
+		};
+	}
 
-	auto pixelShader = RESOURCE->Get<Shader>(psName)->GetBlob();
-	psoDesc.PS = 
+	if (!psName.empty())
 	{
-		reinterpret_cast<BYTE*>(pixelShader->GetBufferPointer()),
-		pixelShader->GetBufferSize()
-	};
+		auto pixelShader = RESOURCE->Get<Shader>(psName)->GetBlob();
+		psoDesc.PS =
+		{
+			reinterpret_cast<BYTE*>(pixelShader->GetBufferPointer()),
+			pixelShader->GetBufferSize()
+		};
+	}
 
 	if (!dsName.empty())
 	{
@@ -233,6 +244,21 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 }
 
 
+D3D12_COMPUTE_PIPELINE_STATE_DESC RenderManager::CreateCSPSODesc(wstring csName)
+{
+	D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc = {};
+	psoDesc.pRootSignature = _rootSignature.Get();
+	auto computeShader = RESOURCE->Get<Shader>(csName)->GetBlob();
+	psoDesc.CS =
+	{
+		reinterpret_cast<BYTE*>(computeShader->GetBufferPointer()),
+		computeShader->GetBufferSize()
+	};
+	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	return psoDesc;
+}
+
 #pragma region Setters
 
 void RenderManager::SetCurrPSO(string name)
@@ -278,11 +304,37 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 }
 
 
+UINT RenderManager::UploadAnimationData(const map<int, map<int, XMMATRIX>>& animationMap)
+{
+	int currentOffset = _animationBufferOffset;
+	for (auto& dataByTick : animationMap)
+	{
+		for (auto& transform : dataByTick.second)
+		{
+			XMFLOAT4X4 transformData;
+			XMStoreFloat4x4(&transformData, XMMatrixTranspose(transform.second));
+			_animationSB->CopyData(_animationBufferOffset++, transformData);
+		}
+	}
+
+	return currentOffset;
+}
+
+void RenderManager::SetAnimationState(const AnimationStateConstants& state)
+{
+	_animationStateCB->CopyData(0, state);
+}
+
 #pragma region Build_Render_Components
 
 void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
 {
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
+}
+
+void RenderManager::BuildPSO(string name, D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc)
+{
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(_PSOs[name].GetAddressOf())));
 }
 
 void RenderManager::BuildRootSignature()
@@ -302,10 +354,8 @@ void RenderManager::BuildRootSignature()
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
 	CD3DX12_DESCRIPTOR_RANGE animTable;
 	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 1);
-	CD3DX12_DESCRIPTOR_RANGE animStateTable;
-	animStateTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 2, 1);
 
-
+	// Slot Root Parameter
 	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
 	slotRootParameter[ROOT_PARAM_LIGHT_CB].InitAsDescriptorTable(1, &lightTable);
@@ -318,9 +368,9 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_MATERIAL_CB].InitAsConstantBufferView(2);
 	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(3);
 
-	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable, D3D12_SHADER_VISIBILITY_VERTEX);
-	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable, D3D12_SHADER_VISIBILITY_VERTEX);
-	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsDescriptorTable(1, &animStateTable, D3D12_SHADER_VISIBILITY_VERTEX);
+	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
+	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);
+	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsConstantBufferView(0, 1);
 
 	auto staticSamplers = GetStaticSamplers();
 
@@ -380,12 +430,29 @@ void RenderManager::BuildInputLayout()
 
 void RenderManager::BuildSRVDescriptorHeap()
 {
-	// Descriptor의 갯수를 150으로 고정 제한중인데 유동적으로 가변으로 바꾸는 작업 고려
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-	srvHeapDesc.NumDescriptors = 150;
+	srvHeapDesc.NumDescriptors = DESCRIPTOR_HEAP_SIZE;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
+}
+
+void RenderManager::BuildAnimationBufferSRV()
+{
+	_animationSrvHeapIndex = GetAndIncreaseSRVHeapIndex();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(GetShaderResourceViewHeap()->GetCPUDescriptorHandleForHeapStart());
+	hDescriptor.Offset(_animationSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	srvDesc.Buffer.FirstElement = 0;
+	srvDesc.Buffer.NumElements = DEFAULT_ANIMATION_COUNT;
+	srvDesc.Buffer.StructureByteStride = sizeof(XMFLOAT4X4);
+	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+	GRAPHIC->GetDevice()->CreateShaderResourceView(_animationSB->GetResource(), &srvDesc, hDescriptor);
 }
 
 #pragma endregion

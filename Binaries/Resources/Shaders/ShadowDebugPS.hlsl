@@ -1,4 +1,4 @@
-#include "Structs.hlsl"
+#include "Common.hlsl"
 
 float4 PS(VertexTexOut pin) : SV_Target
 {

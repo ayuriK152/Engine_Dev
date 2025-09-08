@@ -9,6 +9,7 @@
 #define		PSO_DEBUG_PHYSICS		"debug_physics"
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
 
+#pragma region Root_Parameters
 #define		ROOT_PARAMETER_COUNT			11
 
 #define		ROOT_PARAM_LIGHT_CB			0
@@ -24,10 +25,12 @@
 #define		ROOT_PARAM_BONE_SB			8
 #define		ROOT_PARAM_ANIM_SB			9
 #define		ROOT_PARAM_ANIMSTATE_CB		10
+#pragma endregion
 
+#define		DESCRIPTOR_HEAP_SIZE			150
 #define		STATIC_SAMPLER_COUNT			6
-
-#define		CB_COUNT_MATERIAL				50
+#define		DEFAULT_ANIMATION_COUNT			500
+#define		DEFAULT_MATERIAL_COUNT			50
 
 class RenderManager
 {
@@ -48,7 +51,8 @@ public:
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
 	const unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
@@ -71,11 +75,17 @@ public:
 	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
 
+	// Return Animation SB index
+	UINT UploadAnimationData(const map<int, map<int, XMMATRIX>>& animationMap);
+	void SetAnimationState(const AnimationStateConstants& state);
+
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
+	void BuildPSO(string name, D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
+	void BuildAnimationBufferSRV();
 
 	void UpdateMaterialCB();
 	void UpdateCameraCB();
@@ -113,5 +123,13 @@ private:
 	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
 
 	unique_ptr<ShadowMap> _shadowMap = nullptr;
+
+	UINT _animationBufferOffset = 0;
+	UINT _animationSrvHeapIndex = 0;
+	unique_ptr<UploadBuffer<XMFLOAT4X4>> _animationSB = nullptr;
+
+	unique_ptr<UploadBuffer<AnimationStateConstants>> _animationStateCB = nullptr;
+
+	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
 };
 

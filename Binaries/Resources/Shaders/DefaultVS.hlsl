@@ -1,5 +1,4 @@
-#include "Structs.hlsl"
-#include "LightingUtil.hlsl"
+#include "Common.hlsl"
 
 VertexOut VS(VertexIn vin)
 {
@@ -23,6 +22,11 @@ VertexOut VS(VertexIn vin)
         posL += boneWeights[i] * weightNormalizeValue * mul(float4(vin.Pos, 1.0f), BoneTransforms[vin.BoneIndices[i]]).xyz;
         normalL += boneWeights[i] * weightNormalizeValue * mul(vin.Normal, (float3x3)BoneTransforms[vin.BoneIndices[i]]);
         tangentL +=  boneWeights[i] * weightNormalizeValue * mul(vin.Tangent.xyz, (float3x3)BoneTransforms[vin.BoneIndices[i]]);
+        
+        // float4x4 testTransform = AnimationsTransforms[vin.BoneIndices[i]];
+        // posL += boneWeights[i] * weightNormalizeValue * mul(float4(vin.Pos, 1.0f), testTransform).xyz;
+        // normalL += boneWeights[i] * weightNormalizeValue * mul(vin.Normal, (float3x3)testTransform);
+        // tangentL +=  boneWeights[i] * weightNormalizeValue * mul(vin.Tangent.xyz, (float3x3)testTransform);
     }
 
     vin.Pos = posL;

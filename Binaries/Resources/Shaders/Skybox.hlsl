@@ -1,6 +1,6 @@
 #include "Common.hlsl"
 
-struct VertexIn
+struct VertexSkyboxIn
 {
     float3 Position : POSITION;
     float3 Normal   : NORMAL;
@@ -8,7 +8,7 @@ struct VertexIn
     float2 TexC     : TEXCOORD;
 };
 
-struct VertexOut
+struct VertexSkyboxOut
 {
     float4 Position         : SV_POSITION;
     float3 LocalPosition    : POSITION;

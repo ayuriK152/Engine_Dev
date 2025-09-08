@@ -4,6 +4,7 @@ enum class ShaderType
 {
 	VS,		// Vertex Shader
 	PS,		// Pixel Shader
+	CS,		// Compute Shader
 	GS		// Geometry Shader
 };
 

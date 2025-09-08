@@ -37,13 +37,6 @@ void ResourceManager::CreateDefaultResources()
 	auto debugPS = make_shared<Shader>(L"DebugPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"debugPS", debugPS);
 
-	// shadow debug shaders
-	// 삭제 고려
-	auto shadowDebugVS = make_shared<Shader>(L"ShadowDebugVS.hlsl", nullptr, ShaderType::VS);
-	Add<Shader>(L"shadowDebugVS", shadowDebugVS);
-	auto shadowDebugPS = make_shared<Shader>(L"ShadowDebugPS.hlsl", nullptr, ShaderType::PS);
-	Add<Shader>(L"shadowDebugPS", shadowDebugPS);
-
 
 	//==========Texture==========
 	auto defaultTex = make_shared<Texture>(L"white1x1.dds");
@@ -112,8 +105,10 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 	for (auto& animData : animationDatas)
 	{
 		FILEIO->WriteToFile(fileHandle, animData.first);
+
 		UINT32 boneId = animData.second.boneId;
 		FILEIO->WriteToFile(fileHandle, boneId);
+
 		UINT32 keyFrameCount = animData.second.keyFrames.size();
 		FILEIO->WriteToFile(fileHandle, keyFrameCount);
 		for (auto& keyFrame : animData.second.keyFrames)
@@ -137,7 +132,9 @@ void ResourceManager::SaveBone(map<string, Bone> bones, const string& boneName, 
 	{
 		FILEIO->WriteToFile(fileHandle, bone.second.name);
 		FILEIO->WriteToFile(fileHandle, bone.second.id);
+		FILEIO->WriteToFile(fileHandle, bone.second.parentId);
 		FILEIO->WriteToFile(fileHandle, bone.second.offsetTransform);
+		FILEIO->WriteToFile(fileHandle, bone.second.localBindTransform);
 	}
 	CloseHandle(fileHandle);
 }
@@ -373,7 +370,9 @@ map<string, Bone> ResourceManager::LoadBone(const string& filePath)
 		Bone bone;
 		FILEIO->ReadFileData(fileHandle, bone.name);
 		FILEIO->ReadFileData(fileHandle, &bone.id, sizeof(UINT));
+		FILEIO->ReadFileData(fileHandle, &bone.parentId, sizeof(UINT));
 		FILEIO->ReadFileData(fileHandle, &bone.offsetTransform, sizeof(XMFLOAT4X4));
+		FILEIO->ReadFileData(fileHandle, &bone.localBindTransform, sizeof(XMFLOAT4X4));
 		boneData[bone.name] = bone;
 	}
 	CloseHandle(fileHandle);

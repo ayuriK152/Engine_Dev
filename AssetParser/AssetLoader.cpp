@@ -103,10 +103,12 @@ void AssetLoader::ImportAssetFile(wstring file)
 					{
 						for (auto& animData : *animation->GetAnimationDatasPtr())
 						{
-							if (bbone.contains(animData.first))
+							if (bbone.contains(animData.first)) {
 								animData.second.boneId = bbone[animData.first].id;
-							else
+							}
+							else {
 								animData.second.boneId = -1;
+							}
 						}
 					}
 				}
@@ -339,6 +341,7 @@ void AssetLoader::BuildBones()
 			if (_bones.contains(currentParent->name))
 			{
 				foundObj = _bones[currentParent->name].instancedObj;
+				_bones[b.name].parentId = _bones[currentParent->name].id;
 				break;
 			}
 			currentParent = currentParent->parent;
@@ -350,6 +353,7 @@ void AssetLoader::BuildBones()
 		if (foundObj != nullptr)
 			boneObj->GetTransform()->SetParent(foundObj->GetTransform());
 		boneObj->GetTransform()->SetLocalMatrix(b.node->transform);
+		_bones[b.name].localBindTransform = b.node->transform;
 
 		_boneObjs.push_back(boneObj);
 		_loadedObject.push_back(boneObj);

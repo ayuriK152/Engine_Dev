@@ -79,6 +79,7 @@ void Transform::UpdateTransform()
 	if (!_isDirty)
 		return;
 
+
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
 	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_localQuaternion));
 	XMMATRIX matTranslation = XMMatrixTranslation(_localPosition.x, _localPosition.y, _localPosition.z);
@@ -96,6 +97,10 @@ void Transform::UpdateTransform()
 	{
 		_matWorld = _matLocal;
 	}
+
+	if (GetGameObject() != nullptr)
+		if (GetGameObject()->GetName() == "mixamorig:Spine")
+			DEBUG->Log("Asdf");
 
 	_isDirty = false;
 

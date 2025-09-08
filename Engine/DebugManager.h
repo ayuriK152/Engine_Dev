@@ -32,6 +32,9 @@ public:
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
 	void AddDebugRender(shared_ptr<Collider> collider);
 
+	XMMATRIX gpuOffset;
+	XMMATRIX gpuOffset2;
+
 private:
 	vector<DebugLog> _debugLogs;
 

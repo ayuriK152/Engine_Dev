@@ -23,6 +23,8 @@ void Shader::Load(const wstring& path)
 		_blob = DXUtil::CompileShader(path, _macros, "VS", "vs_5_1");
 	if (_shaderType == ShaderType::PS)
 		_blob = DXUtil::CompileShader(path, _macros, "PS", "ps_5_1");
+	if (_shaderType == ShaderType::CS)
+		_blob = DXUtil::CompileShader(path, _macros, "CS", "cs_5_1");
 	if (_shaderType == ShaderType::GS)
 		_blob = DXUtil::CompileShader(path, _macros, "GS", "gs_5_1");
 }

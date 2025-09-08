@@ -3,6 +3,9 @@
 
 #define		CONSTANT_MAX_GENERAL_LIGHT		20
 
+#define		MAX_BONE_COUNT			128
+#define		MAX_KEYFRAME_COUNT	    300
+
 #define		DIRECT_LIGHT	 0
 #define		POINT_LIGHT		 1
 #define		SPOT_LIGHT		 2
@@ -54,4 +57,28 @@ struct LightGatherConstants
 {
 	LightConstants GlobalLight;
 	LightConstants Lights[CONSTANT_MAX_GENERAL_LIGHT];
+};
+
+struct KeyFrameConstants
+{
+	XMFLOAT4X4 Transform = MathHelper::Identity4x4();
+};
+
+struct AnimationDataConstants
+{
+	KeyFrameConstants KeyFrames[MAX_KEYFRAME_COUNT];
+};
+
+struct AnimationConstants
+{
+	AnimationDataConstants AnimationDatas[MAX_BONE_COUNT];
+};
+
+struct AnimationStateConstants
+{
+	float CurrentTick;
+	UINT CurrentAnimIdx;
+	float TransitionTick;
+	UINT NextAnimIdx;
+	bool IsOnTransition;
 };

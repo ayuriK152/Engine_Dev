@@ -3,7 +3,7 @@
 float4 PS(VertexOut pin) : SV_TARGET
 {
     float3 eyePos = GetCameraPosition();
-    float4 albedo = DiffuseMap.Sample(samAnisotropicWrap, pin.texUV * Tilling);
+    float4 albedo = DiffuseMap[DiffuseMapIndex].Sample(samAnisotropicWrap, pin.texUV * Tilling);
     float3 eyeDir = normalize(eyePos - pin.positionWorld);
     pin.normal = normalize(pin.normal);
 

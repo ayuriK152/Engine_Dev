@@ -49,7 +49,7 @@ void SkinnedMeshRenderer::Render()
 
 	if (_rootBone != nullptr)
 	{
-		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart());
+		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 		bone.Offset(_boneSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 
 		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_BONE_SB, bone);
@@ -76,7 +76,7 @@ void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
 void SkinnedMeshRenderer::CreateBoneSRV(vector<shared_ptr<Transform>>& boneTransforms)
 {
 	_boneSrvHeapIndex = RENDER->GetAndIncreaseSRVHeapIndex();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(RENDER->GetShaderResourceViewHeap()->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(RENDER->GetCommonSRVHeap()->GetCPUDescriptorHandleForHeapStart());
 	hDescriptor.Offset(_boneSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};

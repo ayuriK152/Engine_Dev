@@ -32,6 +32,7 @@ public:
 
 private:
 	string _textureFormat;
+	int _srvOffset;
 	int _srvHeapIndex;
 };
 

@@ -27,7 +27,7 @@ void ShadowMap::BuildDescriptors()
 
 	// SRV
 	_srvHeapIndex = RENDER->GetAndIncreaseSRVHeapIndex();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hCpuSrv(RENDER->GetShaderResourceViewHeap()->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hCpuSrv(RENDER->GetCommonSRVHeap()->GetCPUDescriptorHandleForHeapStart());
 	hCpuSrv.Offset(_srvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -38,7 +38,7 @@ void ShadowMap::BuildDescriptors()
 	GRAPHIC->GetDevice()->CreateShaderResourceView(_shadowMap.Get(), &srvDesc, hCpuSrv);
 
 	_srvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(
-		RENDER->GetShaderResourceViewHeap()->GetGPUDescriptorHandleForHeapStart(),
+		RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart(),
 		_srvHeapIndex,
 		GRAPHIC->GetCBVSRVDescriptorSize());
 }

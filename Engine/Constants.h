@@ -25,6 +25,7 @@ struct MaterialConstants
 	Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	Vector2 Tilling = { 1.0f, 1.0f };
 	float Shiness = 0.25f;
+	UINT DiffuseMapIndex;
 };
 
 struct CameraConstants

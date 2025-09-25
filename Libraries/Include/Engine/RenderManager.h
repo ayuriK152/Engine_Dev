@@ -28,6 +28,7 @@
 #pragma endregion
 
 #define		DESCRIPTOR_HEAP_SIZE			150
+#define		TEXTURE_DESCRIPTOR_HEAP_SIZE	50
 #define		STATIC_SAMPLER_COUNT			6
 #define		DEFAULT_ANIMATION_COUNT			500
 #define		DEFAULT_MATERIAL_COUNT			50
@@ -45,7 +46,8 @@ public:
 	void Render();
 
 public:
-	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const { return _srvHeap; }
+	ComPtr<ID3D12DescriptorHeap> GetCommonSRVHeap()const { return _srvHeap; }
+	//ComPtr<ID3D12DescriptorHeap> GetTextureSRVHeap()const { return _textureSrvHeap; }
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
@@ -59,6 +61,7 @@ public:
 	void UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO);
 
 	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
+	//UINT GetAndIncreaseTextureSRVHeapIndex() { return _textureSrvHeapIndex++; }
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 
@@ -85,6 +88,7 @@ private:
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
+	//void BuildTextureSRVDescriptorHeap();
 	void BuildAnimationBufferSRV();
 
 	void UpdateMaterialCB();
@@ -98,7 +102,9 @@ private:
 	ComPtr<ID3D12RootSignature> _rootSignature;
 
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
+	//ComPtr<ID3D12DescriptorHeap> _textureSrvHeap;
 	UINT _srvHeapIndex = 0;
+	//UINT _textureSrvHeapIndex = 0;
 
 	vector<D3D12_INPUT_ELEMENT_DESC> _solidInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;

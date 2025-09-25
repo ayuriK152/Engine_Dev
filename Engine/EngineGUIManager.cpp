@@ -16,7 +16,7 @@ EngineGUIManager::~EngineGUIManager()
 
 void EngineGUIManager::Init()
 {
-	_srvHeapDescAllocator.Create(GRAPHIC->GetDevice().Get(), RENDER->GetShaderResourceViewHeap().Get());
+	_srvHeapDescAllocator.Create(GRAPHIC->GetDevice().Get(), RENDER->GetCommonSRVHeap().Get());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -32,7 +32,7 @@ void EngineGUIManager::Init()
 	init_info.NumFramesInFlight = GRAPHIC->GetNumFrameResources();
 	init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-	init_info.SrvDescriptorHeap = RENDER->GetShaderResourceViewHeap().Get();
+	init_info.SrvDescriptorHeap = RENDER->GetCommonSRVHeap().Get();
 	init_info.SrvDescriptorAllocFn = [](
 		ImGui_ImplDX12_InitInfo*,
 		D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle,

@@ -28,6 +28,7 @@
 #pragma endregion
 
 #define		DESCRIPTOR_HEAP_SIZE			150
+#define		TEXTURE_DESCRIPTOR_HEAP_SIZE	50
 #define		STATIC_SAMPLER_COUNT			6
 #define		DEFAULT_ANIMATION_COUNT			500
 #define		DEFAULT_MATERIAL_COUNT			50
@@ -45,7 +46,7 @@ public:
 	void Render();
 
 public:
-	ComPtr<ID3D12DescriptorHeap> GetShaderResourceViewHeap()const { return _srvHeap; }
+	ComPtr<ID3D12DescriptorHeap> GetCommonSRVHeap()const { return _srvHeap; }
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }

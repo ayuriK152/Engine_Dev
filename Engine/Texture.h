@@ -19,7 +19,7 @@ public:
 
 	void CreateSRV();
 
-	int GetSRVHeapIndex() { return _srvHeapIndex; }
+	int GetSRVHeapIndex() { return _srvOffset; }
 
 	static int GetCount() { return count; }
 	static bool IsTextureExists(wstring& fileName);
@@ -32,6 +32,7 @@ public:
 
 private:
 	string _textureFormat;
-	int _srvHeapIndex;
+	int _srvOffset;
+	// int _srvHeapIndex;
 };
 

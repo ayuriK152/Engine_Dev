@@ -19,7 +19,7 @@ SamplerState samAnisotropicClamp : register(s5);
 StructuredBuffer<Light> Lights  : register(t0);
 TextureCube CubeMap             : register(t1);
 Texture2D   ShadowMap           : register(t2);
-Texture2D   DiffuseMap          : register(t3);
+Texture2D   DiffuseMap[50]      : register(t3);
 
 cbuffer LightInfo : register(b0)
 {
@@ -41,6 +41,7 @@ cbuffer cbMaterial : register(b2)
     float4   Emissive;
     float2   Tilling;
     float    Shiness;
+    uint     DiffuseMapIndex;
 };
 
 cbuffer cbCamera : register(b3)

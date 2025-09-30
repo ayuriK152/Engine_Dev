@@ -52,7 +52,7 @@ void RenderManager::Init()
 		SetDefaultPSO();
 	}
 
-	_materialCB = make_unique<UploadBuffer<MaterialConstants>>(DEFAULT_MATERIAL_COUNT, true);
+	_materialSB = make_unique<UploadBuffer<MaterialConstants>>(DEFAULT_MATERIAL_COUNT, false);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
@@ -60,7 +60,8 @@ void RenderManager::Init()
 
 	_animationSB = make_unique<UploadBuffer<XMFLOAT4X4>>(DEFAULT_ANIMATION_COUNT, false);
 	_animationStateCB = make_unique<UploadBuffer<AnimationStateConstants>>(1, true);
-
+	
+	BuildMaterialBufferSRV();
 	BuildAnimationBufferSRV();
 }
 
@@ -88,20 +89,26 @@ void RenderManager::Render()
 
 	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
 
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
 	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_SR, tex);
+	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	mat.Offset(_materialSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	skybox.Offset(_skyboxTexSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SKYBOX_SR, skybox);
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_CB, lightDesc);
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
+
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_CB, _lights.size(), 0);
 
 	// Animation Buffer
@@ -348,36 +355,38 @@ void RenderManager::BuildRootSignature()
 {
 	// space0 (common)
 	CD3DX12_DESCRIPTOR_RANGE lightTable;
-	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_LIGHT_SB);
+	CD3DX12_DESCRIPTOR_RANGE matTable;
+	matTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_MAT_SB);
 	CD3DX12_DESCRIPTOR_RANGE cubemapTable;
-	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_SKYBOX_SR);
 	CD3DX12_DESCRIPTOR_RANGE shadowTexTable;
-	shadowTexTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2);
+	shadowTexTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_SHADOWMAP_SR);
 	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 50, 3);
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, TEXTURE_DESCRIPTOR_HEAP_SIZE, REGISTER_NUM_TEXTURE_ARR);
 
 	// space1 (skinned mesh)
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
-	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
+	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_BONE_SB, 1);
 	CD3DX12_DESCRIPTOR_RANGE animTable;
-	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 1);
+	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_ANIM_SB, 1);
 
 	// Slot Root Parameter
 	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
-	slotRootParameter[ROOT_PARAM_LIGHT_CB].InitAsDescriptorTable(1, &lightTable);
+	slotRootParameter[ROOT_PARAM_LIGHT_SB].InitAsDescriptorTable(1, &lightTable);
+	slotRootParameter[ROOT_PARAM_MATERIAL_SB].InitAsDescriptorTable(1, &matTable);
 	slotRootParameter[ROOT_PARAM_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
-	slotRootParameter[ROOT_PARAM_TEXTURE_SR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	slotRootParameter[ROOT_PARAM_LIGHTINFO_CB].InitAsConstantBufferView(0);
-	slotRootParameter[ROOT_PARAM_OBJECT_CB].InitAsConstantBufferView(1);
-	slotRootParameter[ROOT_PARAM_MATERIAL_CB].InitAsConstantBufferView(2);
-	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(3);
+	slotRootParameter[ROOT_PARAM_LIGHTINFO_CB].InitAsConstantBufferView(REGISTER_NUM_LIGHTINFO_CB);
+	slotRootParameter[ROOT_PARAM_OBJECT_CB].InitAsConstantBufferView(REGISTER_NUM_OBJECT_CB);
+	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
 
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
 	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);
-	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsConstantBufferView(0, 1);
+	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsConstantBufferView(REGISTER_NUM_ANIMSTATE_CB, 1);
 
 	auto staticSamplers = GetStaticSamplers();
 
@@ -444,6 +453,24 @@ void RenderManager::BuildSRVDescriptorHeap()
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
 }
 
+void RenderManager::BuildMaterialBufferSRV()
+{
+	_materialSrvHeapIndex = GetAndIncreaseSRVHeapIndex();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(GetCommonSRVHeap()->GetCPUDescriptorHandleForHeapStart());
+	hDescriptor.Offset(_materialSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	srvDesc.Buffer.FirstElement = 0;
+	srvDesc.Buffer.NumElements = DEFAULT_MATERIAL_COUNT;
+	srvDesc.Buffer.StructureByteStride = sizeof(MaterialConstants);
+	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+	GRAPHIC->GetDevice()->CreateShaderResourceView(_materialSB->GetResource(), &srvDesc, hDescriptor);
+}
+
 void RenderManager::BuildAnimationBufferSRV()
 {
 	_animationSrvHeapIndex = GetAndIncreaseSRVHeapIndex();
@@ -487,7 +514,7 @@ void RenderManager::UpdateMaterialCB()
 			matConstants.Shiness = mat->shiness;
 			matConstants.DiffuseMapIndex = mat->diffuseSrvHeapIndex;
 
-			_materialCB->CopyData(mat->matCBIndex, matConstants);
+			_materialSB->CopyData(mat->matCBIndex, matConstants);
 
 			mat->numFramesDirty--;
 		}

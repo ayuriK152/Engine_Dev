@@ -82,8 +82,6 @@ shared_ptr<T> GameObject::GetComponent()
 	ComponentType componentType = GetComponentType<T>();
 	if (components.contains(componentType))
 		return static_pointer_cast<T>(components[componentType]);
-	else if (componentType == ComponentType::SkinnedMeshRenderer)
-		return static_pointer_cast<T>(components[ComponentType::MeshRenderer]);
 	else
 		return nullptr;
 }

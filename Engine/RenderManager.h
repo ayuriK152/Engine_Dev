@@ -12,14 +12,14 @@
 #pragma region Root_Parameters
 #define		ROOT_PARAMETER_COUNT			11
 
-#define		ROOT_PARAM_LIGHT_CB			0
+#define		ROOT_PARAM_LIGHT_SB			0
 #define		ROOT_PARAM_SKYBOX_SR		1
 #define		ROOT_PARAM_SHADOWMAP_SR		2
-#define		ROOT_PARAM_TEXTURE_SR		3
+#define		ROOT_PARAM_TEXTURE_ARR		3
 
 #define		ROOT_PARAM_LIGHTINFO_CB		4
 #define		ROOT_PARAM_OBJECT_CB		5
-#define		ROOT_PARAM_MATERIAL_CB		6
+#define		ROOT_PARAM_MATERIAL_SB		6
 #define		ROOT_PARAM_CAMERA_CB		7
 
 #define		ROOT_PARAM_BONE_SB			8
@@ -27,8 +27,25 @@
 #define		ROOT_PARAM_ANIMSTATE_CB		10
 #pragma endregion
 
-#define		DESCRIPTOR_HEAP_SIZE			150
-#define		TEXTURE_DESCRIPTOR_HEAP_SIZE	50
+#pragma region Register_Numbers
+#define		REGISTER_NUM_LIGHT_SB		0
+#define		REGISTER_NUM_MAT_SB			1
+#define		REGISTER_NUM_SKYBOX_SR		2
+#define		REGISTER_NUM_SHADOWMAP_SR	3
+#define		REGISTER_NUM_TEXTURE_ARR	4
+
+#define		REGISTER_NUM_LIGHTINFO_CB	0
+#define		REGISTER_NUM_OBJECT_CB		1
+#define		REGISTER_NUM_CAMERA_CB		2
+
+#define		REGISTER_NUM_BONE_SB		0
+#define		REGISTER_NUM_ANIM_SB		1
+
+#define		REGISTER_NUM_ANIMSTATE_CB	0
+#pragma endregion
+
+#define		DESCRIPTOR_HEAP_SIZE			250
+#define		TEXTURE_DESCRIPTOR_HEAP_SIZE	100
 #define		STATIC_SAMPLER_COUNT			6
 #define		DEFAULT_ANIMATION_COUNT			500
 #define		DEFAULT_MATERIAL_COUNT			50
@@ -50,7 +67,7 @@ public:
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
-	const unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialCB; }
+	const unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialSB; }
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
@@ -86,6 +103,8 @@ private:
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
+
+	void BuildMaterialBufferSRV();
 	void BuildAnimationBufferSRV();
 
 	void UpdateMaterialCB();
@@ -118,7 +137,8 @@ private:
 	int _skyboxTexSrvHeapIndex = -1;
 
 	// Constant Buffers
-	unique_ptr<UploadBuffer<MaterialConstants>> _materialCB = nullptr;
+	UINT _materialSrvHeapIndex = 0;
+	unique_ptr<UploadBuffer<MaterialConstants>> _materialSB = nullptr;
 
 	CameraConstants _cameraConstants;
 	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;

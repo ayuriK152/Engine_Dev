@@ -3,11 +3,16 @@
 float4 PS(VertexOut pin) : SV_TARGET
 {
     float3 eyePos = GetCameraPosition();
-    float4 albedo = DiffuseMap[DiffuseMapIndex].Sample(samAnisotropicWrap, pin.texUV * Tilling);
+    float4 albedo = DiffuseMap[Materials[MaterialIdx].DiffuseMapIndex].Sample(samAnisotropicWrap, pin.texUV * Materials[MaterialIdx].Tilling);
     float3 eyeDir = normalize(eyePos - pin.positionWorld);
     pin.normal = normalize(pin.normal);
 
-    Material mat = { Ambient, Diffuse, Specular, Emissive, Shiness };
+    Material mat;
+    mat.Ambient = Materials[MaterialIdx].Ambient;
+    mat.Diffuse = Materials[MaterialIdx].Diffuse;
+    mat.Specular = Materials[MaterialIdx].Specular;
+    mat.Emissive = Materials[MaterialIdx].Emissive;
+    mat.Shiness = Materials[MaterialIdx].Shiness;
     float4 lighting = ComputeLight(mat, albedo, pin.normal, eyeDir);
 
     float2 shadowMapTex;

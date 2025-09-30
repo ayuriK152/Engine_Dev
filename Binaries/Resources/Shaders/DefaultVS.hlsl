@@ -48,7 +48,7 @@ VertexOut VS(VertexIn vin)
     vout.positionWorld = posW.xyz;
     //vout.normal =  normalize(mul(vin.Normal, (float3x3)World));
     vout.position = mul(posW, ViewProj);
-	vout.texUV = mul(float4(vin.TexC, 0.0f, 1.0f), MatTransform).xy;
+	vout.texUV = mul(float4(vin.TexC, 0.0f, 1.0f), Materials[MaterialIdx].MatTransform).xy;
 
     vout.shadowPos = mul(posW, mul(Lights[0].View, Lights[0].Proj));
 	

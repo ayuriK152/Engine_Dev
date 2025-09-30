@@ -45,6 +45,10 @@ void FrameResource::UpdateObjectCB()
 			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
 			XMStoreFloat4x4(&objConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
 
+			shared_ptr<MeshRenderer> meshRenderer = o->GetComponent<MeshRenderer>();
+			if (meshRenderer == nullptr) meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
+			if (meshRenderer != nullptr) objConstants.MaterialIndex = meshRenderer->GetMaterial()->matCBIndex;
+
 			objectCB->CopyData(o->objCBIndex, objConstants);
 
 			o->ReleaseFramesDirty();

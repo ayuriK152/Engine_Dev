@@ -34,23 +34,26 @@ struct Light
 {
     float4x4 View;
     float4x4 Proj;
-    float4  Ambient;
-    float4  Diffuse;
-    float4  Specular;
-    float3  Direction;
-    int     LightType;
-    float2  FalloffInfo;
-    float   SpotPower;
-    int     padding1;
+    float4   Ambient;
+    float4   Diffuse;
+    float4   Specular;
+    float3   Direction;
+    int      LightType;
+    float2   FalloffInfo;
+    float    SpotPower;
+    int      padding1;
 };
 
 struct Material
 {
-    float4  Ambient;
-    float4  Diffuse;
-    float4  Specular;
-    float4  Emissive;
-    float   Shiness;
+    float4x4 MatTransform;
+    float4   Ambient;
+    float4   Diffuse;
+    float4   Specular;
+    float4   Emissive;
+    float2   Tilling;
+    float    Shiness;
+    uint     DiffuseMapIndex;
 };
 
 /**********/

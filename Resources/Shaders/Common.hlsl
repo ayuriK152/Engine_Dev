@@ -16,10 +16,11 @@ SamplerState samAnisotropicClamp : register(s5);
 /***********/
 
 // Common
-StructuredBuffer<Light> Lights  : register(t0);
-TextureCube CubeMap             : register(t1);
-Texture2D   ShadowMap           : register(t2);
-Texture2D   DiffuseMap[50]      : register(t3);
+StructuredBuffer<Light> Lights          : register(t0);
+StructuredBuffer<Material> Materials    : register(t1);
+TextureCube CubeMap                     : register(t2);
+Texture2D   ShadowMap                   : register(t3);
+Texture2D   DiffuseMap[100]             : register(t4);
 
 cbuffer LightInfo : register(b0)
 {
@@ -30,21 +31,10 @@ cbuffer cbPerObject : register(b1)
 {
     float4x4 World;
     float4x4 WorldInv;
+    uint MaterialIdx;
 };
 
-cbuffer cbMaterial : register(b2)
-{
-	float4x4 MatTransform;
-    float4   Ambient;
-	float4   Diffuse;
-    float4   Specular;
-    float4   Emissive;
-    float2   Tilling;
-    float    Shiness;
-    uint     DiffuseMapIndex;
-};
-
-cbuffer cbCamera : register(b3)
+cbuffer cbCamera : register(b2)
 {
     float4x4 View;
     float4x4 ViewInv;
@@ -59,7 +49,8 @@ cbuffer cbCamera : register(b3)
 // Skinned Mesh
 StructuredBuffer<float4x4> BoneTransforms       : register(t0, space1);
 StructuredBuffer<float4x4> AnimationsTransforms : register(t1, space1);
-cbuffer cbAnimState                             : register(b0, space1)
+
+cbuffer cbAnimState : register(b0, space1)
 {
     float currentTick;
     uint currentAnimIdx;

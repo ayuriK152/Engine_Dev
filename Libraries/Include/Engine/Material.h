@@ -20,7 +20,7 @@ public:
 
 public:
 	string textureName;
-	int matCBIndex;
+	int matSBIndex;
 	int diffuseSrvHeapIndex;
 	int normalSrvHeapIndex;
 	int numFramesDirty;

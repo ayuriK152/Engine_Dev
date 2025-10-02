@@ -19,12 +19,6 @@ private:
 	shared_ptr<GameObject> player;
 	shared_ptr<GameObject> test;
 
-	shared_ptr<GameObject> sphere1;
-	shared_ptr<GameObject> sphere2;
-	shared_ptr<GameObject> sphere3;
-	shared_ptr<GameObject> sphere4;
-	shared_ptr<GameObject> sphere5;
-
 	vector<shared_ptr<GameObject>> gameObjects;
 };
 

@@ -99,45 +99,6 @@ void TestScene::Init()
 		gameObjects.push_back(ground);
 	}
 
-	{
-		sphere1 = make_shared<GameObject>();
-		sphere1->SetName("Sphere1");
-		sphere1->AddComponent(make_shared<MeshRenderer>());
-		sphere1->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-	}
-
-	{
-		sphere1 = make_shared<GameObject>();
-		sphere1->SetName("Sphere1");
-		sphere1->AddComponent(make_shared<MeshRenderer>());
-		sphere1->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-		gameObjects.push_back(sphere1);
-
-		sphere2 = make_shared<GameObject>();
-		sphere2->SetName("Sphere2");
-		sphere2->AddComponent(make_shared<MeshRenderer>());
-		sphere2->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-		gameObjects.push_back(sphere2);
-
-		sphere3 = make_shared<GameObject>();
-		sphere3->SetName("Sphere3");
-		sphere3->AddComponent(make_shared<MeshRenderer>());
-		sphere3->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-		gameObjects.push_back(sphere3);
-
-		sphere4 = make_shared<GameObject>();
-		sphere4->SetName("Sphere4");
-		sphere4->AddComponent(make_shared<MeshRenderer>());
-		sphere4->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-		gameObjects.push_back(sphere4);
-
-		sphere5 = make_shared<GameObject>();
-		sphere5->SetName("Sphere5");
-		sphere5->AddComponent(make_shared<MeshRenderer>());
-		sphere5->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
-		gameObjects.push_back(sphere5);
-	}
-
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 
 	while (gameObjects.size() > 0)

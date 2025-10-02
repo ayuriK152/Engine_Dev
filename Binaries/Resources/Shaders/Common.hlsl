@@ -47,11 +47,11 @@ StructuredBuffer<float4x4> BoneTransforms       : register(t0, space1);
 StructuredBuffer<float4x4> AnimationsTransforms : register(t1, space1);
 
 cbuffer cbAnimState : register(b0, space1) {
-    float currentTick;
-    uint currentAnimIdx;
-    float transitionTick;
-    uint nextAnimIdx;
-    bool isOnTransition;
+    float CurrentTick;
+    uint CurrentAnimIdx;
+    float TransitionTick;
+    uint NextAnimIdx;
+    bool IsOnTransition;
 };
 
 /*************/

@@ -1,4 +1,3 @@
-float4 PS() : SV_TARGET
-{
+float4 PS() : SV_TARGET {
     return 1.0f;
 }

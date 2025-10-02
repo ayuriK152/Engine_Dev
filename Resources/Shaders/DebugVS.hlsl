@@ -1,8 +1,7 @@
 #include "Common.hlsl"
 
-VertexColorOut VS(VertexColorIn vin)
-{
-    VertexColorOut vout;
+VertexPosColorOut VS(VertexPosColorIn vin) {
+    VertexPosColorOut vout;
 
     vout.Position = mul(float4(vin.Pos, 1.0f), ViewProj);
     vout.Color = vin.Color;

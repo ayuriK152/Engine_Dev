@@ -1,7 +1,6 @@
 #include "Common.hlsl"
 
-VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID)
-{
+VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
     VertexOut vout;
 
 #ifdef SKINNED
@@ -28,7 +27,7 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID)
 #else
     float4 posW = mul(float4(vin.Pos, 1.0f), Instances[instanceID + InstanceStartIndex].World);
 #endif
-    vout.position = mul(posW, mul(Lights[0].View, Lights[0].Proj));
+    vout.Position = mul(posW, mul(Lights[0].View, Lights[0].Proj));
 
     return vout;
 }

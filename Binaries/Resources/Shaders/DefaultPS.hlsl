@@ -1,27 +1,22 @@
 #include "LightingUtil.hlsl"
 
-float4 PS(VertexOut pin) : SV_TARGET
-{
-    float3 eyePos = GetCameraPosition();
-    float4 albedo = DiffuseMap[Materials[pin.MaterialIdx].DiffuseMapIndex].Sample(samAnisotropicWrap, pin.texUV * Materials[pin.MaterialIdx].Tilling);
-    float3 eyeDir = normalize(eyePos - pin.positionWorld);
-    pin.normal = normalize(pin.normal);
+float4 PS(VertexOut pin) : SV_TARGET {
+    Material mat = Materials[pin.MaterialIdx];
 
-    Material mat;
-    mat.Ambient = Materials[pin.MaterialIdx].Ambient;
-    mat.Diffuse = Materials[pin.MaterialIdx].Diffuse;
-    mat.Specular = Materials[pin.MaterialIdx].Specular;
-    mat.Emissive = Materials[pin.MaterialIdx].Emissive;
-    mat.Shiness = Materials[pin.MaterialIdx].Shiness;
-    float4 lighting = ComputeLight(mat, albedo, pin.normal, eyeDir);
+    float3 eyePos = GetCameraPosition();
+    float4 albedo = DiffuseMap[mat.DiffuseMapIndex].Sample(samAnisotropicWrap, pin.TexUV * mat.Tilling);
+    float3 eyeDir = normalize(eyePos - pin.PositionWorld);
+    pin.Normal = normalize(pin.Normal);
+
+    float4 lighting = ComputeLight(mat, albedo, pin.Normal, eyeDir);
 
     float2 shadowMapTex;
     float bias = 0.001f;
-    shadowMapTex.x = pin.shadowPos.x / pin.shadowPos.w / 2.0f + 0.5f;
-    shadowMapTex.y = -pin.shadowPos.y / pin.shadowPos.w / 2.0f + 0.5f;
+    shadowMapTex.x = pin.ShadowPos.x / pin.ShadowPos.w / 2.0f + 0.5f;
+    shadowMapTex.y = -pin.ShadowPos.y / pin.ShadowPos.w / 2.0f + 0.5f;
 
     float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex).r;
-    float lightDepthValue = pin.shadowPos.z / pin.shadowPos.w;
+    float lightDepthValue = pin.ShadowPos.z / pin.ShadowPos.w;
     lightDepthValue = lightDepthValue - bias;
 
     if (lightDepthValue < depthValue) {

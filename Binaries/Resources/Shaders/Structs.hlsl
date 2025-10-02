@@ -72,30 +72,30 @@ struct VertexIn {
 };
 
 struct VertexOut {
-	float4 position         : SV_POSITION;
-    float3 positionWorld    : POSITION;
-    float3 normal           : NORMAL;
-	float2 texUV            : TEXCOORD2;
-    float4 shadowPos        : TEXCOORD1;
+	float4 Position         : SV_POSITION;
+    float3 PositionWorld    : POSITION;
+    float3 Normal           : NORMAL;
+	float2 TexUV            : TEXCOORD2;
+    float4 ShadowPos        : TEXCOORD1;
     uint MaterialIdx        : MATINDEX;
 };
 
-struct VertexColorIn {
+struct VertexPosColorIn {
     float3 Pos          : POSITION;
     float4 Color        : COLOR;
 };
 
-struct VertexColorOut {
+struct VertexPosColorOut {
     float4 Position     : SV_POSITION;
     float4 Color        : COLOR;
 };
 
-struct VertexTexIn {
+struct VertexPosTexIn {
     float3 PosL : POSITION;
     float2 TexC : TEXCOORD;
 };
 
-struct VertexTexOut {
+struct VertexPosTexOut {
     float4 PosH : SV_POSITION;
     float2 TexC : TEXCOORD;
 };

@@ -569,7 +569,7 @@ void RenderManager::UpdateMaterialCB()
 			matConstants.Shiness = mat->shiness;
 			matConstants.DiffuseMapIndex = mat->diffuseSrvHeapIndex;
 
-			_materialSB->CopyData(mat->matCBIndex, matConstants);
+			_materialSB->CopyData(mat->matSBIndex, matConstants);
 
 			mat->numFramesDirty--;
 		}

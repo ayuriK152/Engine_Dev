@@ -5,7 +5,7 @@ int Material::_count = 0;
 
 Material::Material() : Super(ResourceType::Material)
 {
-	matCBIndex = _count++;
+	matSBIndex = _count++;
 
 	diffuseSrvHeapIndex = -1;
 	normalSrvHeapIndex = -1;
@@ -27,7 +27,7 @@ Material::Material(string name) : Material(name, L"Tex_Default")
 
 Material::Material(string name, wstring textureName) : Super(ResourceType::Material)
 {
-	matCBIndex = _count++;
+	matSBIndex = _count++;
 	normalSrvHeapIndex = -1;
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 	SetName(name);

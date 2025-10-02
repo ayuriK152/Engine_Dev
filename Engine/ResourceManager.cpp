@@ -45,6 +45,7 @@ void ResourceManager::CreateDefaultResources()
 	auto skyboxTex = make_shared<Texture>(L"Skybox_Daylight.dds", TextureType::Skybox);
 	Add<Texture>(L"Tex_DefaultSkybox", skyboxTex);
 
+
 	//==========Material==========
 	auto defaultMat = make_shared<Material>("Default");
 	Add<Material>(L"Mat_Default", defaultMat);
@@ -65,6 +66,10 @@ void ResourceManager::CreateDefaultResources()
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
 	quadMesh->SetName("BasicQuad");
 	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
+
+	shared_ptr<Mesh> skyboxSphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 1));
+	skyboxSphereMesh->SetName("SkyboxSphere");
+	Add<Mesh>(L"Mesh_SkyboxSphere", skyboxSphereMesh);
 }
 
 void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)

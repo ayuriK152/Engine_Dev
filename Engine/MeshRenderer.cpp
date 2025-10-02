@@ -40,7 +40,7 @@ void MeshRenderer::Render()
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	UINT startIndex = RENDER->GetMeshInstanceStartIndex(_mesh);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_CB, startIndex, 0);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, startIndex, 0);
 
 	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), _mesh->GetInstanceCount(), 0, 0, 0);
 }

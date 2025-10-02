@@ -112,7 +112,7 @@ void RenderManager::Render()
 	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
 
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_CB, _lights.size(), 0);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
 
 	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
@@ -441,9 +441,9 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	slotRootParameter[ROOT_PARAM_LIGHTINFO_CB].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_CB);
+	slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_CB);
 	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-	slotRootParameter[ROOT_PARAM_MESHINFO_CB].InitAsConstants(1, REGISTER_NUM_MESHINFO_CB);
+	slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_CB);
 
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
 	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);

@@ -5,33 +5,28 @@
 /* Skinned Mesh */
 /****************/
 
-struct BoneTransform
-{
+struct BoneTransform {
     float4x4 transform;
 };
 
-struct KeyFrame
-{
+struct KeyFrame {
     float4x4 transform;
 };
 
-struct AnimationData
-{
+struct AnimationData {
     KeyFrame keyFrames[MAX_KEYFRAME_COUNT];
     uint keyFrameCount;
 };
 
-struct Animation
-{
+struct Animation {
     AnimationData animationDatas[MAX_BONE_COUNT];
 };
 
-/*********/
-/* Light */
-/*********/
+/****************/
+/* Buffer Stuff */
+/****************/
 
-struct Light
-{
+struct Light {
     float4x4 View;
     float4x4 Proj;
     float4   Ambient;
@@ -44,8 +39,13 @@ struct Light
     int      padding1;
 };
 
-struct Material
-{
+struct Instance {
+    float4x4 World;
+    float4x4 WorldInv;
+    uint MaterialIdx;
+};
+
+struct Material {
     float4x4 MatTransform;
     float4   Ambient;
     float4   Diffuse;
@@ -60,8 +60,7 @@ struct Material
 /* Vertex */
 /**********/
 
-struct VertexIn
-{
+struct VertexIn {
 	float3 Pos          : POSITION;
     float3 Normal       : NORMAL;
     float3 Tangent      : TANGENT;
@@ -72,45 +71,39 @@ struct VertexIn
 #endif
 };
 
-struct VertexOut
-{
+struct VertexOut {
 	float4 position         : SV_POSITION;
     float3 positionWorld    : POSITION;
     float3 normal           : NORMAL;
 	float2 texUV            : TEXCOORD2;
     float4 shadowPos        : TEXCOORD1;
+    uint MaterialIdx        : MATINDEX;
 };
 
-struct VertexColorIn
-{
+struct VertexColorIn {
     float3 Pos          : POSITION;
     float4 Color        : COLOR;
 };
 
-struct VertexColorOut
-{
+struct VertexColorOut {
     float4 Position     : SV_POSITION;
     float4 Color        : COLOR;
 };
 
-struct VertexTexIn
-{
+struct VertexTexIn {
     float3 PosL : POSITION;
     float2 TexC : TEXCOORD;
 };
 
-struct VertexTexOut
-{
+struct VertexTexOut {
     float4 PosH : SV_POSITION;
     float2 TexC : TEXCOORD;
 };
 
-struct VertexPosIn
-{
+struct VertexPosIn {
     float3 Pos : POSITION;
 };
 
-struct VertexPosOut
-{
+struct VertexPosOut {
     float4 Pos : SV_POSITION;
 };

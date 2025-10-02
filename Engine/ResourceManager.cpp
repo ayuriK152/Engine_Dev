@@ -55,12 +55,15 @@ void ResourceManager::CreateDefaultResources()
 
 	//==========Mesh==========
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
+	boxMesh->SetName("BasicBox");
 	Add<Mesh>(L"Mesh_BasicBox", boxMesh);
 
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 3));
+	sphereMesh->SetName("BasicSphere");
 	Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
 
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
+	quadMesh->SetName("BasicQuad");
 	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
 }
 
@@ -292,6 +295,8 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 	loadedMesh->SetName(meshName);
 	loadedMesh->SetPath(filePath);
 	loadedMesh->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+
+	Add<Mesh>(loadedMesh->GetNameW(), loadedMesh);
 
 	return loadedMesh;
 }

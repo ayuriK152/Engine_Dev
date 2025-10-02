@@ -61,7 +61,7 @@ public:
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
-	UINT objCBIndex;
+	UINT objectID;
 
 	map<ComponentType, shared_ptr<Component>> components;
 
@@ -82,8 +82,6 @@ shared_ptr<T> GameObject::GetComponent()
 	ComponentType componentType = GetComponentType<T>();
 	if (components.contains(componentType))
 		return static_pointer_cast<T>(components[componentType]);
-	//else if (componentType == ComponentType::SkinnedMeshRenderer)
-	//	return static_pointer_cast<T>(components[ComponentType::MeshRenderer]);
 	else
 		return nullptr;
 }

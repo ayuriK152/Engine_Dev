@@ -181,6 +181,10 @@ void Graphic::RenderEnd()
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	ThrowIfFailed(_swapChain->Present(0, 0));
+#ifdef _DEBUG
+	HRESULT hr = GRAPHIC->GetDevice()->GetDeviceRemovedReason();
+#endif
+
 	_currBackBuffer = (_currBackBuffer + 1) % _SwapChainBufferCount;
 
 	_currFrameResource->fence = ++_currentFence;

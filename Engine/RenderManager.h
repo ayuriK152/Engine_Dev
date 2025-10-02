@@ -10,33 +10,35 @@
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
 
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT			11
+#define		ROOT_PARAMETER_COUNT			12
 
-#define		ROOT_PARAM_LIGHT_SB			0
-#define		ROOT_PARAM_SKYBOX_SR		1
-#define		ROOT_PARAM_SHADOWMAP_SR		2
-#define		ROOT_PARAM_TEXTURE_ARR		3
+#define		ROOT_PARAM_INSTCANCE_SB		0
+#define		ROOT_PARAM_MATERIAL_SB		1
+#define		ROOT_PARAM_LIGHT_SB			2
+#define		ROOT_PARAM_SKYBOX_SR		3
+#define		ROOT_PARAM_SHADOWMAP_SR		4
+#define		ROOT_PARAM_TEXTURE_ARR		5
 
-#define		ROOT_PARAM_LIGHTINFO_CB		4
-#define		ROOT_PARAM_OBJECT_CB		5
-#define		ROOT_PARAM_MATERIAL_SB		6
+#define		ROOT_PARAM_LIGHTINFO_CB		6
 #define		ROOT_PARAM_CAMERA_CB		7
+#define		ROOT_PARAM_MESHINFO_CB		8
 
-#define		ROOT_PARAM_BONE_SB			8
-#define		ROOT_PARAM_ANIM_SB			9
-#define		ROOT_PARAM_ANIMSTATE_CB		10
+#define		ROOT_PARAM_BONE_SB			9
+#define		ROOT_PARAM_ANIM_SB			10
+#define		ROOT_PARAM_ANIMSTATE_CB		11
 #pragma endregion
 
 #pragma region Register_Numbers
-#define		REGISTER_NUM_LIGHT_SB		0
+#define		REGISTER_NUM_INSTANCE_SB	0
 #define		REGISTER_NUM_MAT_SB			1
-#define		REGISTER_NUM_SKYBOX_SR		2
-#define		REGISTER_NUM_SHADOWMAP_SR	3
-#define		REGISTER_NUM_TEXTURE_ARR	4
+#define		REGISTER_NUM_LIGHT_SB		2
+#define		REGISTER_NUM_SKYBOX_SR		3
+#define		REGISTER_NUM_SHADOWMAP_SR	4
+#define		REGISTER_NUM_TEXTURE_ARR	5
 
 #define		REGISTER_NUM_LIGHTINFO_CB	0
-#define		REGISTER_NUM_OBJECT_CB		1
-#define		REGISTER_NUM_CAMERA_CB		2
+#define		REGISTER_NUM_CAMERA_CB		1
+#define		REGISTER_NUM_MESHINFO_CB	2
 
 #define		REGISTER_NUM_BONE_SB		0
 #define		REGISTER_NUM_ANIM_SB		1
@@ -44,11 +46,12 @@
 #define		REGISTER_NUM_ANIMSTATE_CB	0
 #pragma endregion
 
-#define		DESCRIPTOR_HEAP_SIZE			250
-#define		TEXTURE_DESCRIPTOR_HEAP_SIZE	100
-#define		STATIC_SAMPLER_COUNT			6
-#define		DEFAULT_ANIMATION_COUNT			500
+#define		DESCRIPTOR_HEAP_SIZE			512
 #define		DEFAULT_MATERIAL_COUNT			50
+#define		DEFAULT_TEXTURE_ARR_SIZE		100
+#define		STATIC_SAMPLER_COUNT			6
+
+#define		DEFAULT_ANIMATION_COUNT			500		// Not used yet
 
 class RenderManager
 {
@@ -90,6 +93,21 @@ public:
 
 	const ShadowMap* GetShadowMap() { return _shadowMap.get(); }
 
+	void UpdateMeshInstanceStartIndices();
+	UINT GetMeshInstanceStartIndex(const shared_ptr<Mesh>& mesh) {
+		if (_meshInstanceStartIndex.contains(mesh))
+			return _meshInstanceStartIndex[mesh];
+		return 0;
+	}
+
+	void RefreshMeshRenderCheckMap();
+	bool IsMeshRendered(const shared_ptr<Mesh>& mesh) { 
+		if (!_meshRenderCheckMap.contains(mesh))
+			_meshRenderCheckMap[mesh] = false;
+		return _meshRenderCheckMap[mesh]; 
+	}
+	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh] = true; }
+
 	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
 
@@ -117,14 +135,11 @@ private:
 
 	ComPtr<ID3D12RootSignature> _rootSignature;
 
-	ComPtr<ID3D12DescriptorHeap> _srvHeap;
-	UINT _srvHeapIndex = 0;
-
+	// Input Layout
 	vector<D3D12_INPUT_ELEMENT_DESC> _solidInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skyInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _colliderDebugInputLayout;
-	vector<D3D12_INPUT_ELEMENT_DESC> _shadowDebugInputLayout;
 
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
@@ -132,22 +147,31 @@ private:
 
 	vector<shared_ptr<GameObject>> _objects;
 	unordered_map<string, vector<shared_ptr<GameObject>>> _sortedObjects;
+	unordered_map<shared_ptr<Mesh>, UINT> _meshInstanceStartIndex;
+	unordered_map<shared_ptr<Mesh>, bool> _meshRenderCheckMap;
+
 	vector<Light*> _lights;
 
-	int _skyboxTexSrvHeapIndex = -1;
+	// SRV Heap
+	ComPtr<ID3D12DescriptorHeap> _srvHeap;
+	UINT _srvHeapIndex = 0;
 
-	// Constant Buffers
+	int _skyboxTexSrvHeapIndex = -1;
+	unique_ptr<ShadowMap> _shadowMap = nullptr;
+
+	UINT _instanceSrvHeapIndex = 0;
+	unique_ptr<UploadBuffer<InstanceConstants>> _instanceSB = nullptr;
+
 	UINT _materialSrvHeapIndex = 0;
 	unique_ptr<UploadBuffer<MaterialConstants>> _materialSB = nullptr;
-
-	CameraConstants _cameraConstants;
-	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
-
-	unique_ptr<ShadowMap> _shadowMap = nullptr;
 
 	UINT _animationBufferOffset = 0;
 	UINT _animationSrvHeapIndex = 0;
 	unique_ptr<UploadBuffer<XMFLOAT4X4>> _animationSB = nullptr;
+
+	// Constant Buffers
+	CameraConstants _cameraConstants;
+	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
 
 	unique_ptr<UploadBuffer<AnimationStateConstants>> _animationStateCB = nullptr;
 

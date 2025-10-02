@@ -10,7 +10,7 @@
 #define		POINT_LIGHT		 1
 #define		SPOT_LIGHT		 2
 
-struct ObjectConstants
+struct InstanceConstants
 {
 	XMFLOAT4X4 World = MathHelper::Identity4x4();
 	XMFLOAT4X4 WorldInv = MathHelper::Identity4x4();

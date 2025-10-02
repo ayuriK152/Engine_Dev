@@ -28,6 +28,10 @@ public:
 
 	void SetWeights(UINT boneId, vector<BoneWeight>& weights);
 
+	UINT GetInstanceCount() { return _instanceCount; }
+	void IncreaseInstanceCount();
+	void DecreaseInstanceCount();
+
 	void CreateBuffer();
 
 public:
@@ -43,4 +47,6 @@ public:
 private:
 	shared_ptr<Geometry> _geometry;
 	shared_ptr<Material> _material;
+
+	UINT _instanceCount = 0;
 };

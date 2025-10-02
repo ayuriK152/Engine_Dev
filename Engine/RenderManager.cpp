@@ -52,6 +52,7 @@ void RenderManager::Init()
 		SetDefaultPSO();
 	}
 
+	_instanceSB = make_unique<UploadBuffer<InstanceConstants>>(DEFAULT_INSTANCE_COUNT, false);
 	_materialSB = make_unique<UploadBuffer<MaterialConstants>>(DEFAULT_MATERIAL_COUNT, false);
 	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
 	
@@ -60,7 +61,7 @@ void RenderManager::Init()
 
 	_animationSB = make_unique<UploadBuffer<XMFLOAT4X4>>(DEFAULT_ANIMATION_COUNT, false);
 	_animationStateCB = make_unique<UploadBuffer<AnimationStateConstants>>(1, true);
-	
+
 	BuildMaterialBufferSRV();
 	BuildAnimationBufferSRV();
 }
@@ -89,15 +90,17 @@ void RenderManager::Render()
 
 	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
 
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
+	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	instance.Offset(GRAPHIC->GetCurrFrameResource()->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	mat.Offset(_materialSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	skybox.Offset(_skyboxTexSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
@@ -110,6 +113,8 @@ void RenderManager::Render()
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
 
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_CB, _lights.size(), 0);
+
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// Animation Buffer
 	CD3DX12_GPU_DESCRIPTOR_HANDLE hAnimDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
@@ -127,27 +132,21 @@ void RenderManager::Render()
 	cmdList->ClearDepthStencilView(_shadowMap->GetDsv(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	cmdList->OMSetRenderTargets(0, nullptr, false, &_shadowMap->GetDsv());
 
+	// Shadow Map Solid
 	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
 
-	for (auto& p : _sortedObjects)
-	{
-		if (p.first == PSO_SKYBOX || p.first == PSO_OPAQUE_SKINNED)
-			continue;
-
-		for (int i = 0; i < p.second.size(); i++)
-			p.second[i]->Render();
+	for (auto& o : _sortedObjects[PSO_OPAQUE_SOLID]) {
+		o->Render();
 	}
 
+	// Shadow Map Skinned
 	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
 
-	for (auto& p : _sortedObjects)
-	{
-		if (p.first == PSO_SKYBOX || p.first == PSO_OPAQUE_SOLID)
-			continue;
-
-		for (int i = 0; i < p.second.size(); i++)
-			p.second[i]->Render();
+	for (auto& o : _sortedObjects[PSO_OPAQUE_SKINNED]) {
+		o->Render();
 	}
+
+	RefreshMeshRenderCheckMap();
 
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
 		D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
@@ -164,17 +163,44 @@ void RenderManager::Render()
 
 	cmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
 
-	// 이거 최적화할 필요 있을듯
-	for (auto& p : _sortedObjects)
-	{
-		if (_isPSOFixed && p.first != PSO_SKYBOX)
-			cmdList->SetPipelineState(_currPSO.Get());
-		else
-			cmdList->SetPipelineState(_PSOs[p.first].Get());
-
-		for (int i = 0; i < p.second.size(); i++)
-			p.second[i]->Render();
+	// Skybox
+	if (_sortedObjects[PSO_SKYBOX].size() > 0) {
+		cmdList->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
+		for (auto& o : _sortedObjects[PSO_SKYBOX]) {
+			o->Render();
+		}
 	}
+
+	// Check PSO Fixed
+	if (!_isPSOFixed) {
+		// Opaque Solid
+		if (_sortedObjects[PSO_OPAQUE_SOLID].size() > 0) {
+			cmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SOLID].Get());
+			for (auto& o : _sortedObjects[PSO_OPAQUE_SOLID]) {
+				o->Render();
+			}
+		}
+
+		// Opaque Skinned
+		if (_sortedObjects[PSO_OPAQUE_SKINNED].size() > 0) {
+			cmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SKINNED].Get());
+			for (auto& o : _sortedObjects[PSO_OPAQUE_SKINNED]) {
+				o->Render();
+			}
+		}
+	}
+	else {
+		cmdList->SetPipelineState(_currPSO.Get());
+		for (auto& p : _sortedObjects) {
+			if (p.first != PSO_SKYBOX) {
+				for (auto& o : p.second) {
+					o->Render();
+				}
+			}
+		}
+	}
+
+	RefreshMeshRenderCheckMap();
 
 	if (_isPhysicsDebugRenderEnabled)
 	{
@@ -309,7 +335,7 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 		if (obj == o)
 			return nullptr;
 	}
-	obj->objCBIndex = _objects.size();
+	obj->objectID = _objects.size();
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	_sortedObjects[obj->GetPSOName()].push_back(obj);
@@ -317,6 +343,35 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	return _objects[_objects.size() - 1];
 }
 
+
+void RenderManager::UpdateMeshInstanceStartIndices()
+{
+	int indexStack = 0;
+	for (auto& meshPair : RESOURCE->GetByType<Mesh>()) {
+		shared_ptr<Mesh> mesh = static_pointer_cast<Mesh>(meshPair.second);
+		if (mesh->GetInstanceCount() == 0) {
+			if (_meshInstanceStartIndex.contains(mesh))
+				_meshInstanceStartIndex.erase(mesh);
+			continue;
+		}
+		_meshInstanceStartIndex[mesh] = indexStack;
+		indexStack += mesh->GetInstanceCount();
+	}
+}
+
+void RenderManager::RefreshMeshRenderCheckMap()
+{
+	vector<shared_ptr<Mesh>> unusedMesh;
+	unusedMesh.reserve(_meshRenderCheckMap.size());
+	for (auto& m : _meshRenderCheckMap) {
+		if (m.second)
+			m.second = false;
+		else
+			unusedMesh.push_back(m.first);
+	}
+	for (auto& m : unusedMesh)
+		_meshRenderCheckMap.erase(m);
+}
 
 UINT RenderManager::UploadAnimationData(const map<int, map<int, XMMATRIX>>& animationMap)
 {
@@ -354,16 +409,21 @@ void RenderManager::BuildPSO(string name, D3D12_COMPUTE_PIPELINE_STATE_DESC psoD
 void RenderManager::BuildRootSignature()
 {
 	// space0 (common)
-	CD3DX12_DESCRIPTOR_RANGE lightTable;
-	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_LIGHT_SB);
+	// Structured Buffers
+	CD3DX12_DESCRIPTOR_RANGE instanceTable;
+	instanceTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_INSTANCE_SB);
 	CD3DX12_DESCRIPTOR_RANGE matTable;
 	matTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_MAT_SB);
+	CD3DX12_DESCRIPTOR_RANGE lightTable;
+	lightTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_LIGHT_SB);
+
+	// Textures
 	CD3DX12_DESCRIPTOR_RANGE cubemapTable;
 	cubemapTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_SKYBOX_SR);
 	CD3DX12_DESCRIPTOR_RANGE shadowTexTable;
 	shadowTexTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_SHADOWMAP_SR);
 	CD3DX12_DESCRIPTOR_RANGE texTable;
-	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, TEXTURE_DESCRIPTOR_HEAP_SIZE, REGISTER_NUM_TEXTURE_ARR);
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, DEFAULT_TEXTURE_ARR_SIZE, REGISTER_NUM_TEXTURE_ARR);
 
 	// space1 (skinned mesh)
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
@@ -374,15 +434,16 @@ void RenderManager::BuildRootSignature()
 	// Slot Root Parameter
 	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
-	slotRootParameter[ROOT_PARAM_LIGHT_SB].InitAsDescriptorTable(1, &lightTable);
+	slotRootParameter[ROOT_PARAM_INSTCANCE_SB].InitAsDescriptorTable(1, &instanceTable);
 	slotRootParameter[ROOT_PARAM_MATERIAL_SB].InitAsDescriptorTable(1, &matTable);
+	slotRootParameter[ROOT_PARAM_LIGHT_SB].InitAsDescriptorTable(1, &lightTable);
 	slotRootParameter[ROOT_PARAM_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	slotRootParameter[ROOT_PARAM_LIGHTINFO_CB].InitAsConstantBufferView(REGISTER_NUM_LIGHTINFO_CB);
-	slotRootParameter[ROOT_PARAM_OBJECT_CB].InitAsConstantBufferView(REGISTER_NUM_OBJECT_CB);
+	slotRootParameter[ROOT_PARAM_LIGHTINFO_CB].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_CB);
 	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
+	slotRootParameter[ROOT_PARAM_MESHINFO_CB].InitAsConstants(1, REGISTER_NUM_MESHINFO_CB);
 
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
 	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);
@@ -435,12 +496,6 @@ void RenderManager::BuildInputLayout()
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-
-	_shadowDebugInputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 

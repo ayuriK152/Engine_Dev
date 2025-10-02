@@ -61,7 +61,7 @@ public:
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
-	UINT objCBIndex;
+	UINT objectID;
 
 	map<ComponentType, shared_ptr<Component>> components;
 

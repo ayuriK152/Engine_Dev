@@ -26,6 +26,18 @@ void Mesh::SetWeights(UINT boneId, vector<BoneWeight>& weights)
 	}
 }
 
+void Mesh::IncreaseInstanceCount()
+{
+	_instanceCount++;
+	RENDER->UpdateMeshInstanceStartIndices();
+}
+
+void Mesh::DecreaseInstanceCount()
+{
+	_instanceCount--;
+	RENDER->UpdateMeshInstanceStartIndices();
+}
+
 void Mesh::CreateBuffer()
 {
 	if (vertexBufferGPU != nullptr || indexBufferGPU != nullptr)

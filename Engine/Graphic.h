@@ -131,6 +131,6 @@ private:
 
 	UINT _passCbvOffset = 0;
 
-	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	UINT _objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(InstanceConstants));
 };
 

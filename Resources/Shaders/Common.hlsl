@@ -16,26 +16,18 @@ SamplerState samAnisotropicClamp : register(s5);
 /***********/
 
 // Common
-StructuredBuffer<Light> Lights          : register(t0);
+StructuredBuffer<Instance> Instances    : register(t0);
 StructuredBuffer<Material> Materials    : register(t1);
-TextureCube CubeMap                     : register(t2);
-Texture2D   ShadowMap                   : register(t3);
-Texture2D   DiffuseMap[100]             : register(t4);
+StructuredBuffer<Light> Lights          : register(t2);
+TextureCube CubeMap                     : register(t3);
+Texture2D   ShadowMap                   : register(t4);
+Texture2D   DiffuseMap[100]             : register(t5);
 
-cbuffer LightInfo : register(b0)
-{
+cbuffer LightInfo : register(b0) {
     uint gNumLights;
 }
 
-cbuffer cbPerObject : register(b1)
-{
-    float4x4 World;
-    float4x4 WorldInv;
-    uint MaterialIdx;
-};
-
-cbuffer cbCamera : register(b2)
-{
+cbuffer cbCamera : register(b1) {
     float4x4 View;
     float4x4 ViewInv;
     float4x4 Proj;
@@ -46,12 +38,15 @@ cbuffer cbCamera : register(b2)
     float2 InvRenderTargetSize;
 };
 
+cbuffer MeshInfo : register(b2) {
+    uint InstanceStartIndex;
+};
+
 // Skinned Mesh
 StructuredBuffer<float4x4> BoneTransforms       : register(t0, space1);
 StructuredBuffer<float4x4> AnimationsTransforms : register(t1, space1);
 
-cbuffer cbAnimState : register(b0, space1)
-{
+cbuffer cbAnimState : register(b0, space1) {
     float currentTick;
     uint currentAnimIdx;
     float transitionTick;
@@ -63,7 +58,6 @@ cbuffer cbAnimState : register(b0, space1)
 /* Functions */
 /*************/
 
-float3 GetCameraPosition()
-{
+float3 GetCameraPosition() {
     return ViewInv._41_42_43;
 }

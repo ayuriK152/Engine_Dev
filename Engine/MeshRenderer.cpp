@@ -28,7 +28,10 @@ void MeshRenderer::Update()
 
 void MeshRenderer::Render()
 {
-	auto matCB = RENDER->GetMaterialCB()->GetResource();
+	if (RENDER->IsMeshRendered(_mesh))
+		return;
+	RENDER->SetMeshRenderCheckValue(_mesh);
+
 	auto cmdList = GRAPHIC->GetCommandList().Get();
 
 	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
@@ -36,21 +39,18 @@ void MeshRenderer::Render()
 	cmdList->IASetIndexBuffer(&_mesh->indexBufferView);
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	UINT objCBByteSize = DXUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	UINT startIndex = RENDER->GetMeshInstanceStartIndex(_mesh);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_CB, startIndex, 0);
 
-	auto objectCB = GRAPHIC->GetCurrFrameResource()->objectCB->GetResource();
-
-	D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objectCB->GetGPUVirtualAddress() + GetGameObject()->objCBIndex * objCBByteSize;
-
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_OBJECT_CB, objCBAddress);
-
-
-	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), _mesh->GetInstanceCount(), 0, 0, 0);
 }
 
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 {
+	if (_mesh != nullptr) _mesh->DecreaseInstanceCount();
+
 	_mesh = mesh;
+	_mesh->IncreaseInstanceCount();
 	_material = _mesh->GetMaterial();
 
 	// asset parser 임시조치

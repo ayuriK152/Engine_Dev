@@ -9,7 +9,7 @@ FrameResource::FrameResource(UINT objectCount)
 
 	// ¾êµµ InitÀ¸·Î ¿Å°Ü¾ßµÊ
 	lightSB = make_unique<UploadBuffer<LightConstants>>(DEFAULT_COUNT_LIGHT, false);
-	objectCB = make_unique<UploadBuffer<ObjectConstants>>(DEFAULT_COUNT_OBJECT, true);
+	instanceSB = make_unique<UploadBuffer<InstanceConstants>>(DEFAULT_INSTANCE_COUNT, false);
 }
 
 FrameResource::~FrameResource()
@@ -19,7 +19,8 @@ FrameResource::~FrameResource()
 
 void FrameResource::Init()
 {
-	CreateLightSRV();
+	BuildInstanceBufferSRV();
+	BuildLightBufferSRV();
 }
 
 void FrameResource::Update()
@@ -35,23 +36,32 @@ void FrameResource::Update()
 
 void FrameResource::UpdateObjectCB()
 {
+	unordered_map<shared_ptr<Mesh>, int> instanceIndexStacks;
 	for (auto& o : RENDER->GetObjects())
 	{
 		if (o->GetFramesDirty() > 0)
 		{
-			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
+			o->ReleaseFramesDirty();
 
-			ObjectConstants objConstants;
-			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
-			XMStoreFloat4x4(&objConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+			InstanceConstants instanceConstants;
 
 			shared_ptr<MeshRenderer> meshRenderer = o->GetComponent<MeshRenderer>();
 			if (meshRenderer == nullptr) meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
-			if (meshRenderer != nullptr) objConstants.MaterialIndex = meshRenderer->GetMaterial()->matCBIndex;
+			if (meshRenderer == nullptr) continue;
 
-			objectCB->CopyData(o->objCBIndex, objConstants);
+			instanceConstants.MaterialIndex = meshRenderer->GetMaterial()->matCBIndex;
 
-			o->ReleaseFramesDirty();
+			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
+			XMStoreFloat4x4(&instanceConstants.World, XMMatrixTranspose(world));
+			XMStoreFloat4x4(&instanceConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+
+			int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
+			if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
+				instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
+			else
+				instanceIndexStacks[meshRenderer->GetMesh()] = 1;
+
+			instanceSB->CopyData(instanceIndex, instanceConstants);
 		}
 	}
 }
@@ -72,7 +82,25 @@ void FrameResource::UpdateLightCB()
 	}
 }
 
-void FrameResource::CreateLightSRV()
+void FrameResource::BuildInstanceBufferSRV()
+{
+	_instanceSrvHeapIndex = RENDER->GetAndIncreaseSRVHeapIndex();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(RENDER->GetCommonSRVHeap()->GetCPUDescriptorHandleForHeapStart());
+	hDescriptor.Offset(_instanceSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	srvDesc.Buffer.FirstElement = 0;
+	srvDesc.Buffer.NumElements = DEFAULT_INSTANCE_COUNT;
+	srvDesc.Buffer.StructureByteStride = sizeof(InstanceConstants);
+	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+	GRAPHIC->GetDevice()->CreateShaderResourceView(instanceSB->GetResource(), &srvDesc, hDescriptor);
+}
+
+void FrameResource::BuildLightBufferSRV()
 {
 	auto lights = RENDER->GetLights();
 

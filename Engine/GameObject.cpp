@@ -13,7 +13,7 @@ GameObject::GameObject()
 	_psoName = PSO_OPAQUE_SOLID;
 	_tag = "Default";
 
-	objCBIndex = -1;
+	objectID = -1;
 
 	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 	_isInitialized = false;

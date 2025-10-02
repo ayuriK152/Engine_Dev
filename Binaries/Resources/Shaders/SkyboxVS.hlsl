@@ -1,6 +1,6 @@
 #include "Skybox.hlsl"
  
-VertexSkyboxOut VS(VertexSkyboxIn vin)
+VertexSkyboxOut VS(VertexSkyboxIn vin, uint instanceID : SV_InstanceID)
 {
 	VertexSkyboxOut vout;
 
@@ -8,7 +8,7 @@ VertexSkyboxOut VS(VertexSkyboxIn vin)
 	vout.LocalPosition = vin.Position;
 	
 	// Transform to world space.
-	float4 posW = mul(float4(vin.Position, 1.0f), World);
+	float4 posW = mul(float4(vin.Position, 1.0f), Instances[instanceID + InstanceStartIndex].World);
 
 	// Always center sky about camera.
 	posW.xyz += GetCameraPosition();

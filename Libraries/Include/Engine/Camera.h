@@ -16,6 +16,7 @@ public:
 	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }
 	static XMFLOAT4X4& GetViewMatrix() { return _currentCamera->_matView; }
 	static XMFLOAT4X4& GetProjMatrix() { return _currentCamera->_matProj; }
+	static int GetFramesDirty() { return _currentCamera->GetGameObject()->GetFramesDirty(); }
 	
 	void SetAsMainCamera() { _currentCamera = this; }
 	bool IsMainCamera() { return _currentCamera == this; }

@@ -47,7 +47,6 @@
 #pragma endregion
 
 #define		DESCRIPTOR_HEAP_SIZE			512
-#define		DEFAULT_MATERIAL_COUNT			50
 #define		DEFAULT_TEXTURE_ARR_SIZE		100
 #define		STATIC_SAMPLER_COUNT			6
 
@@ -70,7 +69,6 @@ public:
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
-	const unique_ptr<UploadBuffer<MaterialConstants>>& GetMaterialCB() { return _materialSB; }
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
@@ -122,11 +120,7 @@ private:
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
 
-	void BuildMaterialBufferSRV();
 	void BuildAnimationBufferSRV();
-
-	void UpdateMaterialCB();
-	void UpdateCameraCB();
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
@@ -159,20 +153,11 @@ private:
 	int _skyboxTexSrvHeapIndex = -1;
 	unique_ptr<ShadowMap> _shadowMap = nullptr;
 
-	UINT _instanceSrvHeapIndex = 0;
-	unique_ptr<UploadBuffer<InstanceConstants>> _instanceSB = nullptr;
-
-	UINT _materialSrvHeapIndex = 0;
-	unique_ptr<UploadBuffer<MaterialConstants>> _materialSB = nullptr;
-
 	UINT _animationBufferOffset = 0;
 	UINT _animationSrvHeapIndex = 0;
 	unique_ptr<UploadBuffer<XMFLOAT4X4>> _animationSB = nullptr;
 
 	// Constant Buffers
-	CameraConstants _cameraConstants;
-	unique_ptr<UploadBuffer<CameraConstants>> _cameraCB = nullptr;
-
 	unique_ptr<UploadBuffer<AnimationStateConstants>> _animationStateCB = nullptr;
 
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;

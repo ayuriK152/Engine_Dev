@@ -51,10 +51,6 @@ void RenderManager::Init()
 		BuildPSO(PSO_DEBUG_PHYSICS, debug);
 		SetDefaultPSO();
 	}
-
-	_instanceSB = make_unique<UploadBuffer<InstanceConstants>>(DEFAULT_INSTANCE_COUNT, false);
-	_materialSB = make_unique<UploadBuffer<MaterialConstants>>(DEFAULT_MATERIAL_COUNT, false);
-	_cameraCB = make_unique<UploadBuffer<CameraConstants>>(1, true);
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
@@ -62,7 +58,6 @@ void RenderManager::Init()
 	_animationSB = make_unique<UploadBuffer<XMFLOAT4X4>>(DEFAULT_ANIMATION_COUNT, false);
 	_animationStateCB = make_unique<UploadBuffer<AnimationStateConstants>>(1, true);
 
-	BuildMaterialBufferSRV();
 	BuildAnimationBufferSRV();
 }
 
@@ -76,14 +71,12 @@ void RenderManager::Update()
 {
 	for (auto& o : _objects)
 		o->Update();
-
-	UpdateMaterialCB();
-	UpdateCameraCB();
 }
 
 void RenderManager::Render()
 {
 	auto cmdList = GRAPHIC->GetCommandList();
+	auto currentFrameResource = GRAPHIC->GetCurrFrameResource();
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
@@ -91,15 +84,15 @@ void RenderManager::Render()
 	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	instance.Offset(GRAPHIC->GetCurrFrameResource()->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	instance.Offset(currentFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	mat.Offset(_materialSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+	mat.Offset(currentFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(GRAPHIC->GetCurrFrameResource()->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	lightDesc.Offset(currentFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
@@ -114,7 +107,7 @@ void RenderManager::Render()
 
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
 
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _cameraCB->GetResource()->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, currentFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// Animation Buffer
 	CD3DX12_GPU_DESCRIPTOR_HANDLE hAnimDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
@@ -508,24 +501,6 @@ void RenderManager::BuildSRVDescriptorHeap()
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
 }
 
-void RenderManager::BuildMaterialBufferSRV()
-{
-	_materialSrvHeapIndex = GetAndIncreaseSRVHeapIndex();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(GetCommonSRVHeap()->GetCPUDescriptorHandleForHeapStart());
-	hDescriptor.Offset(_materialSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.NumElements = DEFAULT_MATERIAL_COUNT;
-	srvDesc.Buffer.StructureByteStride = sizeof(MaterialConstants);
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-
-	GRAPHIC->GetDevice()->CreateShaderResourceView(_materialSB->GetResource(), &srvDesc, hDescriptor);
-}
-
 void RenderManager::BuildAnimationBufferSRV()
 {
 	_animationSrvHeapIndex = GetAndIncreaseSRVHeapIndex();
@@ -542,61 +517,6 @@ void RenderManager::BuildAnimationBufferSRV()
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 	GRAPHIC->GetDevice()->CreateShaderResourceView(_animationSB->GetResource(), &srvDesc, hDescriptor);
-}
-
-#pragma endregion
-
-
-#pragma region Update_Constant_Buffers
-
-void RenderManager::UpdateMaterialCB()
-{
-	auto materials = RESOURCE->GetByType<Material>();
-	for (auto& m : materials)
-	{
-		shared_ptr<Material> mat = static_pointer_cast<Material>(m.second);
-		if (mat->numFramesDirty > 0)
-		{
-			XMMATRIX matTransform = XMLoadFloat4x4(&mat->matTransform);
-
-			MaterialConstants matConstants;
-			XMStoreFloat4x4(&matConstants.matTransform, XMMatrixTranspose(matTransform));
-			matConstants.Ambient = mat->ambient;
-			matConstants.Diffuse = mat->diffuse;
-			matConstants.Specular = mat->specular;
-			matConstants.Emissive = mat->emissive;
-			matConstants.Tilling = mat->tilling;
-			matConstants.Shiness = mat->shiness;
-			matConstants.DiffuseMapIndex = mat->diffuseSrvHeapIndex;
-
-			_materialSB->CopyData(mat->matSBIndex, matConstants);
-
-			mat->numFramesDirty--;
-		}
-	}
-}
-
-void RenderManager::UpdateCameraCB()
-{
-	XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
-	XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
-	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-
-	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
-
-	XMStoreFloat4x4(&_cameraConstants.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&_cameraConstants.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4(&_cameraConstants.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4(&_cameraConstants.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4(&_cameraConstants.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4(&_cameraConstants.InvViewProj, XMMatrixTranspose(invViewProj));
-
-	_cameraConstants.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
-	_cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
-
-	_cameraCB->CopyData(0, _cameraConstants);
 }
 
 #pragma endregion

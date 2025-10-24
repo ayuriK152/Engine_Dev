@@ -54,10 +54,36 @@ cbuffer cbAnimState : register(b0, space1) {
     bool IsOnTransition;
 };
 
+// Particle
+RWStructuredBuffer<Particle> particles : register(u0, space2);
+
+cbuffer cbParticleEmitterInfo : register(b0, space2) {
+    float3  EmitterPos;
+    float   SpawnRate;
+    float3  ParticleInitVelocity;
+    float   ParticleLifeTime;
+    float2  ParticleSize;
+    float   DeltaTime;
+    float   Time;
+    uint    TextureIdx;
+};
+
 /*************/
 /* Functions */
 /*************/
 
 float3 GetCameraPosition() {
     return ViewInv._41_42_43;
+}
+
+float3 GetCameraRight() {
+    return float3(ViewInv._11, ViewInv._12, ViewInv._13);
+}
+
+float3 GetCameraUp() {
+    return float3(ViewInv._21, ViewInv._22, ViewInv._23);
+}
+
+float3 GetCameraForward() {
+    return float3(ViewInv._31, ViewInv._32, ViewInv._33);
 }

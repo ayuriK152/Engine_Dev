@@ -18,7 +18,8 @@ enum class ComponentType
 	Rigidbody,
 	Light,
 	Animator,
-	Script
+	Script,
+	ParticleEmitter
 };
 
 class Component : public enable_shared_from_this<Component>
@@ -37,6 +38,7 @@ public:
 public:
 	shared_ptr<GameObject> GetGameObject();
 	shared_ptr<Transform> GetTransform();
+	UINT GetID() { return _id; }
 
 	bool IsActive() { return _isActive; }
 	void SetActive(bool value) { if (type != ComponentType::Transform) _isActive = value; }
@@ -50,6 +52,8 @@ private:
 	void SetGameObject(shared_ptr<GameObject> gameObject) { _gameObject = gameObject; }
 
 private:
+	static UINT _count;
+	UINT _id;
 	weak_ptr<GameObject> _gameObject;
 	bool _isActive = true;
 };

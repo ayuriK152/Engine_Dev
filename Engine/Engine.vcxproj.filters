@@ -171,6 +171,10 @@
     <ClInclude Include="..\Libraries\Include\stb\stb_image.h">
       <Filter>99. ExtLibraries\stb</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>02. GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -369,5 +373,9 @@
       <Filter>02. GameObject\Components\Physics</Filter>
     </ClCompile>
     <ClCompile Include="ShadowMap.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp" />
   </ItemGroup>
 </Project>

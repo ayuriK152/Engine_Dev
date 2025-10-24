@@ -47,15 +47,11 @@ void TestScene::Init()
 	}
 
 	{
-		//auto loadedObjects = RESOURCE->LoadPrefabObject("Brute");
-		//test = loadedObjects[0];
-		//gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		//test->SetTag("Enemy");
-		//auto collider = make_shared<BoxCollider>();
-		//test->AddComponent(collider);
-		//test->AddComponent(make_shared<EnemyScript>());
-		//collider->SetOffset(Vector3(0.0f, 1.2f, 0.0f));
-		//collider->SetExtent(Vector3(0.6f, 1.2f, 0.6f));
+		test = make_shared<GameObject>();
+		test->SetName("ParticleEmitter");
+		test->AddComponent(make_shared<ParticleEmitter>());
+		test->GetComponent<ParticleEmitter>()->SetPlay(true);
+		gameObjects.push_back(test);
 	}
 
 	{

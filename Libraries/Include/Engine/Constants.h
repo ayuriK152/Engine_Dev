@@ -24,7 +24,7 @@ struct MaterialConstants
 	Color Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Color Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
 	Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
-	Vector2 Tilling = { 1.0f, 1.0f };
+	XMFLOAT2 Tilling = { 1.0f, 1.0f };
 	float Shiness = 0.25f;
 	UINT DiffuseMapIndex;
 };
@@ -83,4 +83,10 @@ struct AnimationStateConstants
 	float TransitionTick;
 	UINT NextAnimIdx;
 	bool IsOnTransition;
+};
+
+struct ParticleEmitterConstants
+{
+	UINT TextureIndex;
+	XMFLOAT2 Size = { 1.0f, 1.0f };
 };

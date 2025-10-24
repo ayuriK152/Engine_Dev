@@ -8,9 +8,10 @@
 #define		PSO_WIREFRAME			"wireframe"
 #define		PSO_DEBUG_PHYSICS		"debug_physics"
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
+#define		PSO_PARTICLE_UPDATE		"particle_update"
 
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT			12
+#define		ROOT_PARAMETER_COUNT			14
 
 #define		ROOT_PARAM_INSTCANCE_SB		0
 #define		ROOT_PARAM_MATERIAL_SB		1
@@ -26,6 +27,9 @@
 #define		ROOT_PARAM_BONE_SB			9
 #define		ROOT_PARAM_ANIM_SB			10
 #define		ROOT_PARAM_ANIMSTATE_CB		11
+
+#define		ROOT_PARAM_PARTICLES_RW		12
+#define		ROOT_PARAM_EMITTER_CB		13
 #pragma endregion
 
 #pragma region Register_Numbers
@@ -44,6 +48,9 @@
 #define		REGISTER_NUM_ANIM_SB		1
 
 #define		REGISTER_NUM_ANIMSTATE_CB	0
+
+#define		REGISTER_NUM_PARTICLES_RW	0
+#define		REGISTER_NUM_EMITTER_CB		0
 #pragma endregion
 
 #define		DESCRIPTOR_HEAP_SIZE			512
@@ -69,6 +76,7 @@ public:
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
+	const ComPtr<ID3D12RootSignature>& GetRootSignature() { return _rootSignature; }
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);

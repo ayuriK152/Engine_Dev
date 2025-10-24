@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "Component.h"
 
+UINT Component::_count = 0;
+
 Component::Component(ComponentType type) : type(type)
 {
-
+	_id = _count++;
 }
 
 Component::~Component()

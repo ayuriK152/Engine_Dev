@@ -11,6 +11,7 @@ class Camera;
 class Rigidbody;
 class Collider;
 class Animator;
+class ParticleEmitter;
 #pragma endregion
 
 
@@ -105,6 +106,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Animator;
 	if (is_same_v<T, Script>)
 		return ComponentType::Script;
+	if (is_same_v<T, ParticleEmitter>)
+		return ComponentType::ParticleEmitter;
 
 	return ComponentType::Undefined;
 }

@@ -37,6 +37,16 @@ void ResourceManager::CreateDefaultResources()
 	auto debugPS = make_shared<Shader>(L"DebugPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"debugPS", debugPS);
 
+	// particle shaders
+	auto particleCS = make_shared<Shader>(L"ParticleCS.hlsl", nullptr, ShaderType::CS);
+	Add<Shader>(L"particleCS", particleCS);
+	auto particleVS = make_shared<Shader>(L"ParticleVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"particleVS", particleVS);
+	auto particleGS = make_shared<Shader>(L"ParticleGS.hlsl", nullptr, ShaderType::GS);
+	Add<Shader>(L"particleGS", particleGS);
+	auto particlePS = make_shared<Shader>(L"ParticlePS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"particlePS", particlePS);
+
 
 	//==========Texture==========
 	auto defaultTex = make_shared<Texture>(L"white1x1.dds");

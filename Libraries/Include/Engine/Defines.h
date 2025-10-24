@@ -26,6 +26,7 @@ public:									\
 #define ENGINESTAT	GET_SINGLE(EngineStatusManager)
 #define DEBUG		GET_SINGLE(DebugManager)
 #define PHYSICS		GET_SINGLE(PhysicsManager)
+#define PARTICLE	GET_SINGLE(ParticleManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 

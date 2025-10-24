@@ -42,6 +42,8 @@ void RenderManager::Init()
 		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		skinnedShadow.RasterizerState = shadow.RasterizerState;;
 
+		auto particleCS = CreateCSPSODesc(L"particleCS");
+
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
 		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
@@ -49,6 +51,7 @@ void RenderManager::Init()
 		BuildPSO(PSO_SHADOWMAP, shadow);
 		BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
 		BuildPSO(PSO_DEBUG_PHYSICS, debug);
+		BuildPSO(PSO_PARTICLE_UPDATE, particleCS);
 		SetDefaultPSO();
 	}
 	
@@ -424,6 +427,9 @@ void RenderManager::BuildRootSignature()
 	CD3DX12_DESCRIPTOR_RANGE animTable;
 	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_ANIM_SB, 1);
 
+	CD3DX12_DESCRIPTOR_RANGE particleTable;
+	particleTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, REGISTER_NUM_PARTICLES_RW, 2);
+
 	// Slot Root Parameter
 	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
@@ -441,6 +447,9 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
 	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);
 	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsConstantBufferView(REGISTER_NUM_ANIMSTATE_CB, 1);
+
+	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsDescriptorTable(1, &particleTable);
+	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstantBufferView(REGISTER_NUM_EMITTER_CB, 2);
 
 	auto staticSamplers = GetStaticSamplers();
 

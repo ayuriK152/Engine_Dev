@@ -117,6 +117,7 @@ using namespace tinyxml2;
 #include "Light.h"
 #include "DirectionalLight.h"
 #include "Script.h"
+#include "ParticleEmitter.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"
@@ -133,6 +134,7 @@ using namespace tinyxml2;
 #include "EngineStatusManager.h"
 #include "DebugManager.h"
 #include "PhysicsManager.h"
+#include "ParticleManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

@@ -54,7 +54,7 @@ void GameObject::Update()
 			c.second->Init();
 			c.second->isInitialized = true;
 		}
-		if (c.second->type == ComponentType::Collider)
+		if (c.second->type == ComponentType::Collider || c.second->type == ComponentType::ParticleEmitter)
 			continue;
 		c.second->Update();
 	}

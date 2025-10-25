@@ -30,8 +30,6 @@ void ParticleEmitter::Update()
 	if (!_isPlaying) return;
 
 	_info.EmitterPos = GetTransform()->GetPosition();
-	_info.DeltaTime = TIME->DeltaTime();
-	_info.Time += TIME->DeltaTime();
 
 	auto cmdList = GRAPHIC->GetCommandList();
 	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_EMITTER_CB, sizeof(EmitterInfo) / 4, &_info, 0);
@@ -39,4 +37,14 @@ void ParticleEmitter::Update()
 	cmdList->SetComputeRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
 
 	cmdList->Dispatch((_maxParticleCount + 255) / 256, 1, 1);
+}
+
+void ParticleEmitter::Render()
+{
+	if (!_isPlaying) return;
+
+	auto cmdList = GRAPHIC->GetCommandList();
+
+	cmdList->SetGraphicsRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
+	cmdList->DrawInstanced(_maxParticleCount, 1, 0, 0);
 }

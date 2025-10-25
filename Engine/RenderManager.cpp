@@ -42,7 +42,9 @@ void RenderManager::Init()
 		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		skinnedShadow.RasterizerState = shadow.RasterizerState;;
 
-		auto particleCS = CreateCSPSODesc(L"particleCS");
+		auto particleUpdate = CreateCSPSODesc(L"particleCS");
+		auto particleRender = CreatePSODesc(L"particleVS", L"particlePS", L"", L"", L"particleGS");
+		particleRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
@@ -51,7 +53,8 @@ void RenderManager::Init()
 		BuildPSO(PSO_SHADOWMAP, shadow);
 		BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
 		BuildPSO(PSO_DEBUG_PHYSICS, debug);
-		BuildPSO(PSO_PARTICLE_UPDATE, particleCS);
+		BuildPSO(PSO_PARTICLE_UPDATE, particleUpdate);
+		BuildPSO(PSO_PARTICLE_RENDER, particleRender);
 		SetDefaultPSO();
 	}
 	
@@ -85,6 +88,11 @@ void RenderManager::Render()
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
+	cmdList->SetComputeRootSignature(RENDER->GetRootSignature().Get());
+
+	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
+	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
+	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	instance.Offset(currentFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
@@ -203,14 +211,29 @@ void RenderManager::Render()
 		cmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
 		DEBUG->Render();
 	}
+
+	PARTICLE->Update();
+
+	cmdList->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	PARTICLE->Render();
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = CreatePSODesc(vsName, psName, dsName, hsName, gsName);
+	psoDesc.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
+
+	return psoDesc;
+}
+
+
+D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
+{
 	AppDesc appDesc = GRAPHIC->GetAppDesc();
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	psoDesc.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
+
 	psoDesc.pRootSignature = _rootSignature.Get();
 
 	if (!vsName.empty())
@@ -278,7 +301,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 
 	return psoDesc;
 }
-
 
 D3D12_COMPUTE_PIPELINE_STATE_DESC RenderManager::CreateCSPSODesc(wstring csName)
 {
@@ -427,9 +449,6 @@ void RenderManager::BuildRootSignature()
 	CD3DX12_DESCRIPTOR_RANGE animTable;
 	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_ANIM_SB, 1);
 
-	CD3DX12_DESCRIPTOR_RANGE particleTable;
-	particleTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, REGISTER_NUM_PARTICLES_RW, 2);
-
 	// Slot Root Parameter
 	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
@@ -440,16 +459,17 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_CB);
+	slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
+	slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 	slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-	slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_CB);
+	slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
 
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
 	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);
 	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsConstantBufferView(REGISTER_NUM_ANIMSTATE_CB, 1);
 
-	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsDescriptorTable(1, &particleTable);
-	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstantBufferView(REGISTER_NUM_EMITTER_CB, 2);
+	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 2);
+	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterInfo) / 4, REGISTER_NUM_EMITTER_CB, 2);
 
 	auto staticSamplers = GetStaticSamplers();
 

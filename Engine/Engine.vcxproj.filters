@@ -164,7 +164,6 @@
     <ClInclude Include="Rigidbody.h">
       <Filter>02. GameObject\Components\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="..\Libraries\Include\stb\stb_image_write.h">
       <Filter>99. ExtLibraries\stb</Filter>
     </ClInclude>
@@ -174,7 +173,10 @@
     <ClInclude Include="ParticleEmitter.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="ParticleManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMap.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -372,10 +374,12 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>02. GameObject\Components\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMap.cpp" />
   </ItemGroup>
 </Project>

@@ -9,9 +9,10 @@
 #define		PSO_DEBUG_PHYSICS		"debug_physics"
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
 #define		PSO_PARTICLE_UPDATE		"particle_update"
+#define		PSO_PARTICLE_RENDER		"particle_render"
 
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT			14
+#define		ROOT_PARAMETER_COUNT			15
 
 #define		ROOT_PARAM_INSTCANCE_SB		0
 #define		ROOT_PARAM_MATERIAL_SB		1
@@ -20,16 +21,17 @@
 #define		ROOT_PARAM_SHADOWMAP_SR		4
 #define		ROOT_PARAM_TEXTURE_ARR		5
 
-#define		ROOT_PARAM_LIGHTINFO_C		6
-#define		ROOT_PARAM_CAMERA_CB		7
-#define		ROOT_PARAM_MESHINFO_C		8
+#define		ROOT_PARAM_CLIENTINFO_C		6
+#define		ROOT_PARAM_LIGHTINFO_C		7
+#define		ROOT_PARAM_CAMERA_CB		8
+#define		ROOT_PARAM_MESHINFO_C		9
 
-#define		ROOT_PARAM_BONE_SB			9
-#define		ROOT_PARAM_ANIM_SB			10
-#define		ROOT_PARAM_ANIMSTATE_CB		11
+#define		ROOT_PARAM_BONE_SB			10
+#define		ROOT_PARAM_ANIM_SB			11
+#define		ROOT_PARAM_ANIMSTATE_CB		12
 
-#define		ROOT_PARAM_PARTICLES_RW		12
-#define		ROOT_PARAM_EMITTER_CB		13
+#define		ROOT_PARAM_PARTICLES_RW		13
+#define		ROOT_PARAM_EMITTER_CB		14
 #pragma endregion
 
 #pragma region Register_Numbers
@@ -40,9 +42,10 @@
 #define		REGISTER_NUM_SHADOWMAP_SR	4
 #define		REGISTER_NUM_TEXTURE_ARR	5
 
-#define		REGISTER_NUM_LIGHTINFO_CB	0
-#define		REGISTER_NUM_CAMERA_CB		1
-#define		REGISTER_NUM_MESHINFO_CB	2
+#define		REGISTER_NUM_CLIENTINFO_C	0
+#define		REGISTER_NUM_LIGHTINFO_C	1
+#define		REGISTER_NUM_CAMERA_CB		2
+#define		REGISTER_NUM_MESHINFO_C		3
 
 #define		REGISTER_NUM_BONE_SB		0
 #define		REGISTER_NUM_ANIM_SB		1
@@ -78,6 +81,7 @@ public:
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
 	const ComPtr<ID3D12RootSignature>& GetRootSignature() { return _rootSignature; }
 
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }

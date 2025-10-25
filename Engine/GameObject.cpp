@@ -64,6 +64,8 @@ void GameObject::Render()
 {
 	for (auto& c : components)
 	{
+		if (c.second->type == ComponentType::ParticleEmitter)
+			continue;
 		c.second->Render();
 	}
 }

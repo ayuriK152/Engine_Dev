@@ -1,17 +1,26 @@
 #include "Common.hlsl"
 
-uint RandomSeed(uint id, float t) {
-    uint h = id * 374761393u + asuint(t * 1000.0f);
-    h = (h << 13) ^ h;
-    return (h * (h * h * 15731u + 789221u) + 1376312589u);
+float Hash(uint n)
+{
+    n = (n << 13U) ^ n;
+    return (1.0f - ((n * (n * n * 15731U + 789221U) + 1376312589U) & 0x7fffffffU) / 1073741824.0f);
 }
 
-float3 RandomDir(uint id, float t) {
-    uint seed = RandomSeed(id, t);
-    float x = frac(sin(seed * 12.9898f) * 43758.5453f);
-    float y = frac(sin(seed * 78.233f) * 43758.5453f);
-    float z = frac(sin(seed * 45.543f) * 43758.5453f);
-    return normalize(float3(x * 2 - 1, y * 2 - 1, z * 2 - 1));
+// 해시를 이용해 2D 또는 3D 난수 벡터를 만드는 함수
+float3 RandomDir(uint instanceID, float time)
+{
+    // 시간과 인스턴스ID를 섞어서 시드 생성
+    uint seed = instanceID * 92837111U + (uint)(time * 1000.0f);
+
+    float randX = Hash(seed);
+    float randY = Hash(seed + 1U);
+    float randZ = Hash(seed + 2U);
+
+    // -1 ~ 1 범위로 정규화
+    float3 v = float3(randX, randY, randZ) * 2.0f - 1.0f;
+
+    // 단위 벡터로 정규화
+    return normalize(v);
 }
 
 [numthreads(256, 1, 1)]
@@ -20,9 +29,9 @@ void CS(int3 threadId : SV_DispatchThreadID) {
     Particle p = particles[id];
 
     if (p.Age >= p.LifeTime) {
-        float dir = RandomDir(id, Time);
+        float3 dir = RandomDir(id, Time);
         p.Position = EmitterPos;
-        p.Velocity = ParticleInitVelocity;
+        p.Velocity = ParticleInitVelocity * dir;
         p.Age = 0.0f;
         p.LifeTime = ParticleLifeTime;
         p.TextureIndex = TextureIdx;
@@ -30,7 +39,9 @@ void CS(int3 threadId : SV_DispatchThreadID) {
         p.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
     else {
+        p.Velocity.y -= 9.8f * DeltaTime;
         p.Position += p.Velocity * DeltaTime;
+        p.Age += DeltaTime;
     }
 
     particles[id] = p;

@@ -13,11 +13,9 @@ struct Particle {
 struct EmitterInfo {
 	XMFLOAT3 EmitterPos;
 	float SpawnRate;
-	XMFLOAT3 ParticleInitialVelocity;
-	float ParticleLifeTime = 1;
-	XMFLOAT2 ParticleSize = { 1.0f, 1.0f };
-	float DeltaTime = 0;
-	float Time = 0;
+	float ParticleInitialVelocity = 5;
+	float ParticleLifeTime = 3;
+	XMFLOAT2 ParticleSize = { 0.2f, 0.2f };
 	UINT TextureIdx = 0;
 };
 
@@ -29,6 +27,7 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void Render() override;
 
 public:
 	bool IsPlaying() { return _isPlaying; }

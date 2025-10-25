@@ -23,11 +23,16 @@ TextureCube CubeMap                     : register(t3);
 Texture2D   ShadowMap                   : register(t4);
 Texture2D   DiffuseMap[100]             : register(t5);
 
-cbuffer LightInfo : register(b0) {
+cbuffer ClientInfo : register(b0) {
+    float   DeltaTime;
+    float   Time;
+}
+
+cbuffer LightInfo : register(b1) {
     uint gNumLights;
 }
 
-cbuffer cbCamera : register(b1) {
+cbuffer cbCamera : register(b2) {
     float4x4 View;
     float4x4 ViewInv;
     float4x4 Proj;
@@ -38,7 +43,7 @@ cbuffer cbCamera : register(b1) {
     float2 InvRenderTargetSize;
 };
 
-cbuffer MeshInfo : register(b2) {
+cbuffer MeshInfo : register(b3) {
     uint InstanceStartIndex;
 };
 
@@ -60,11 +65,9 @@ RWStructuredBuffer<Particle> particles : register(u0, space2);
 cbuffer cbParticleEmitterInfo : register(b0, space2) {
     float3  EmitterPos;
     float   SpawnRate;
-    float3  ParticleInitVelocity;
+    float   ParticleInitVelocity;
     float   ParticleLifeTime;
     float2  ParticleSize;
-    float   DeltaTime;
-    float   Time;
     uint    TextureIdx;
 };
 

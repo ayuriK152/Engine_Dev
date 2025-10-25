@@ -56,6 +56,16 @@ struct Material {
     uint     DiffuseMapIndex;
 };
 
+struct Particle {
+    float3  Position;
+    float3  Velocity;
+    float   Age;
+    float   LifeTime;
+    uint    TextureIndex;
+    float2  Size;
+    float4  Color;
+};
+
 /**********/
 /* Vertex */
 /**********/

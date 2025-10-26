@@ -13,7 +13,7 @@ ParticleEmitter::~ParticleEmitter()
 
 void ParticleEmitter::Init()
 {
-	int byteSize = sizeof(Particle) * _maxParticleCount;
+	int byteSize = sizeof(Particle) * _particleMount;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
@@ -36,7 +36,7 @@ void ParticleEmitter::Update()
 
 	cmdList->SetComputeRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
 
-	cmdList->Dispatch((_maxParticleCount + 255) / 256, 1, 1);
+	cmdList->Dispatch((_particleMount + 255) / 256, 1, 1);
 }
 
 void ParticleEmitter::Render()
@@ -46,5 +46,26 @@ void ParticleEmitter::Render()
 	auto cmdList = GRAPHIC->GetCommandList();
 
 	cmdList->SetGraphicsRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
-	cmdList->DrawInstanced(_maxParticleCount, 1, 0, 0);
+	cmdList->DrawInstanced(_particleMount, 1, 0, 0);
+}
+
+void ParticleEmitter::SetParticleTexture(string textureName)
+{
+	SetParticleTexture(UniversalUtils::ToWString(textureName));
+}
+
+void ParticleEmitter::SetParticleTexture(wstring textureName)
+{
+	shared_ptr<Texture> tex = RESOURCE->Get<Texture>(textureName);
+	if (tex == nullptr) {
+		DEBUG->ErrorLog(UniversalUtils::ToString(textureName) + " does not exits!");
+		return;
+	}
+
+	_info.TextureIdx = tex->GetSRVHeapIndex();
+}
+
+void ParticleEmitter::SetParticleTexture(shared_ptr<Texture> texture)
+{
+	SetParticleTexture(texture->GetNameW());
 }

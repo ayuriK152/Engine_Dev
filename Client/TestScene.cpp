@@ -51,6 +51,8 @@ void TestScene::Init()
 		test->SetName("ParticleEmitter");
 		test->AddComponent(make_shared<ParticleEmitter>());
 		test->GetComponent<ParticleEmitter>()->SetPlay(true);
+		test->GetComponent<ParticleEmitter>()->SetParticleTexture(L"ParticleTest");
+		test->GetTransform()->SetPosition({ 0.0f, 2.0f, 0.0f });
 		gameObjects.push_back(test);
 	}
 

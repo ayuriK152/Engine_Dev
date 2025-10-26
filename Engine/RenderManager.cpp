@@ -20,31 +20,62 @@ void RenderManager::Init()
 		skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 		auto debug = CreatePSODesc(_colliderDebugInputLayout, L"debugVS", L"debugPS");
-		debug.DepthStencilState.DepthEnable = false;
-		debug.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		debug.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-		debug.DepthStencilState.StencilEnable = false;
-		debug.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		debug.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+		{
+			debug.DepthStencilState.DepthEnable = false;
+			debug.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+			debug.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+			debug.DepthStencilState.StencilEnable = false;
+			debug.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+			debug.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+		}
 
 		auto shadow = CreatePSODesc(_solidInputLayout, L"shadowVS", L"shadowPS");
-		shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ±Ì¿Ã∏∏
-		shadow.NumRenderTargets = 0;
-		shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-		shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		shadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-		shadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-		shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
+		{
+			shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ±Ì¿Ã∏∏
+			shadow.NumRenderTargets = 0;
+			shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+			shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+			shadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+			shadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+			shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
+		}
 
 		auto skinnedShadow = CreatePSODesc(_skinnedInputLayout, L"skinnedShadowVS", L"shadowPS");
-		skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
-		skinnedShadow.NumRenderTargets = 0;
-		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-		skinnedShadow.RasterizerState = shadow.RasterizerState;;
+		{
+			skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+			skinnedShadow.NumRenderTargets = 0;
+			skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+			skinnedShadow.RasterizerState = shadow.RasterizerState;;
+		}
 
 		auto particleUpdate = CreateCSPSODesc(L"particleCS");
 		auto particleRender = CreatePSODesc(L"particleVS", L"particlePS", L"", L"", L"particleGS");
-		particleRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		{
+			particleRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+
+			D3D12_BLEND_DESC blendDesc = {};
+			blendDesc.AlphaToCoverageEnable = FALSE;
+			blendDesc.IndependentBlendEnable = FALSE;
+			auto& blendRt = blendDesc.RenderTarget[0];
+			blendRt.BlendEnable = TRUE;
+			blendRt.LogicOpEnable = FALSE;
+			blendRt.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+			blendRt.DestBlend = D3D12_BLEND_ONE;
+			blendRt.BlendOp = D3D12_BLEND_OP_ADD;
+			blendRt.SrcBlendAlpha = D3D12_BLEND_ONE;
+			blendRt.DestBlendAlpha = D3D12_BLEND_ZERO;
+			blendRt.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			blendRt.LogicOp = D3D12_LOGIC_OP_NOOP;
+			blendRt.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			D3D12_DEPTH_STENCIL_DESC depthDesc = {};
+			depthDesc.DepthEnable = TRUE;
+			depthDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+			depthDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+			particleRender.BlendState = blendDesc;
+			particleRender.DepthStencilState = depthDesc;
+		}
 
 		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);

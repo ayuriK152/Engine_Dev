@@ -98,10 +98,6 @@ void Transform::UpdateTransform()
 		_matWorld = _matLocal;
 	}
 
-	if (GetGameObject() != nullptr)
-		if (GetGameObject()->GetName() == "mixamorig:Spine")
-			DEBUG->Log("Asdf");
-
 	_isDirty = false;
 
 	XMVECTOR scale;

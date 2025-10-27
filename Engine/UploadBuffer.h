@@ -42,6 +42,11 @@ public:
 		memcpy(&_mappedData[elementIndex * _elementByteSize], &data, sizeof(T));
 	}
 
+	void CopyData(const T* data, UINT count)
+	{
+		memcpy(_mappedData, data, sizeof(T) * count);
+	}
+
 	static UINT CalcConstantBufferByteSize(UINT byteSize)
 	{
 		return (byteSize + 255) & ~255;

@@ -14,7 +14,7 @@ public:
 
 public:
 	void UpdateBoneTransforms(const shared_ptr<Transform> root);
-	void SetBoneData(const map<string, Bone>& bones) { _bones = bones; }
+	void SetBoneData(const map<string, Bone>& bones);
 	void SetRootBone(const shared_ptr<Transform> rootBone);
 	shared_ptr<Transform> GetRootBone() const { return _rootBone; }
 
@@ -26,11 +26,13 @@ private:
 public:
 
 private:
-	UINT _boneSrvHeapIndex = 0;
+	UINT _boneTransformSrvIndex = 0;
+	UINT _boneOffsetSrvIndex = 0;
 
 	shared_ptr<Transform> _rootBone;
 	vector<shared_ptr<Transform>> _boneTransforms;
-	map<string, Bone> _bones;
+	XMFLOAT4X4 _boneOffsets[MAX_BONE_COUNT];
+	XMFLOAT4X4 _finalMatrices[MAX_BONE_COUNT];
 	unique_ptr<UploadBuffer<XMFLOAT4X4>> _boneTransformUploadBuffer = nullptr;
 };
 

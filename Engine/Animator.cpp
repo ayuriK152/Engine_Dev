@@ -151,9 +151,11 @@ void Animator::UpdateBoneTransform()
 			if (currKeyFrame.tick < 0.0)
 				continue;
 
-			_childs[i]->SetLocalScale(currKeyFrame.scale);
-			_childs[i]->SetLocalQuaternion(currKeyFrame.rotation);
-			_childs[i]->SetLocalPosition(currKeyFrame.position);
+			XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
+			XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
+			XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
+
+			_childs[i]->SetLocalMatrix(matScale * matRotation * matTranslation);
 		}
 	}
 
@@ -183,15 +185,19 @@ void Animator::UpdateBoneTransform()
 				Vector4 rot;
 				XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
 
-				_childs[i]->SetLocalPosition(pos);
-				_childs[i]->SetLocalScale(scale);
-				_childs[i]->SetLocalQuaternion(rot);
+				XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
+				XMMATRIX matTranslation = XMMatrixTranslation(pos.x, pos.y, pos.z);
+
+				_childs[i]->SetLocalMatrix(matScale * matRotation * matTranslation);
 			}
 			else
 			{
-				_childs[i]->SetLocalScale(currKeyFrame.scale);
-				_childs[i]->SetLocalQuaternion(currKeyFrame.rotation);
-				_childs[i]->SetLocalPosition(currKeyFrame.position);
+				XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
+				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
+				XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
+
+				_childs[i]->SetLocalMatrix(matScale * matRotation * matTranslation);
 			}
 		}
 	}

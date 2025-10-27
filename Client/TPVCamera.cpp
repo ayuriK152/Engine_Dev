@@ -25,7 +25,8 @@ void TPVCamera::Update()
 	if (targetTransform == nullptr)
 		return;
 
-	GetTransform()->SetPosition(targetTransform->GetPosition() + offset);
+	if (targetTransform->GetGameObject()->GetFramesDirty() > 0)
+		GetTransform()->SetPosition(targetTransform->GetPosition() + offset);
 
 	if (!isCameraControllOn || cameraTransform == nullptr)
 		return;

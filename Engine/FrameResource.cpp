@@ -49,27 +49,28 @@ void FrameResource::UpdateObjectSB()
 	{
 		shared_ptr<MeshRenderer> meshRenderer = o->GetComponent<MeshRenderer>();
 		if (meshRenderer == nullptr) meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
-		if (meshRenderer == nullptr) continue;
-
-		int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-		if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
-			instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
-		else
-			instanceIndexStacks[meshRenderer->GetMesh()] = 1;
 
 		if (o->GetFramesDirty() > 0)
 		{
 			o->ReleaseFramesDirty();
 
-			InstanceConstants instanceConstants;
+			if (meshRenderer != nullptr) {
+				int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
+				if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
+					instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
+				else
+					instanceIndexStacks[meshRenderer->GetMesh()] = 1;
 
-			instanceConstants.MaterialIndex = meshRenderer->GetMaterial()->matSBIndex;
+				InstanceConstants instanceConstants;
 
-			XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
-			XMStoreFloat4x4(&instanceConstants.World, XMMatrixTranspose(world));
-			XMStoreFloat4x4(&instanceConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+				instanceConstants.MaterialIndex = meshRenderer->GetMaterial()->matSBIndex;
 
-			instanceSB->CopyData(instanceIndex, instanceConstants);
+				XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
+				XMStoreFloat4x4(&instanceConstants.World, XMMatrixTranspose(world));
+				XMStoreFloat4x4(&instanceConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+
+				instanceSB->CopyData(instanceIndex, instanceConstants);
+			}
 		}
 	}
 }

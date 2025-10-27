@@ -380,6 +380,13 @@ void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 	SetDirtyFlag();
 }
 
+void Transform::SetLocalMatrix(XMMATRIX mat)
+{
+	XMFLOAT4X4 matTrans;
+	XMStoreFloat4x4(&matTrans, mat);
+	SetLocalMatrix(matTrans);
+}
+
 void Transform::SetWorldMatrix(XMFLOAT4X4 mat)
 {
 	_matWorld = mat;
@@ -404,11 +411,10 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 {
 	if (HasParent())
 	{
-		XMMATRIX parent = XMLoadFloat4x4(&_parent->GetWorldMatrix());
-
 		if (_isDirty)
 			UpdateTransform();
 
+		XMMATRIX parent = XMLoadFloat4x4(&_parent->GetWorldMatrix());
 		XMMATRIX local = XMLoadFloat4x4(&_matLocal);
 		XMFLOAT4X4 result;
 		XMStoreFloat4x4(&result, local * parent);

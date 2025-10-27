@@ -21,11 +21,6 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
         posL +=     boneWeights[i] * weightNormalizeValue * mul(float4(vin.Pos, 1.0f), BoneTransforms[vin.BoneIndices[i]]).xyz;
         normalL +=  boneWeights[i] * weightNormalizeValue * mul(vin.Normal, (float3x3)BoneTransforms[vin.BoneIndices[i]]);
         tangentL += boneWeights[i] * weightNormalizeValue * mul(vin.Tangent.xyz, (float3x3)BoneTransforms[vin.BoneIndices[i]]);
-        
-        // float4x4 testTransform = AnimationsTransforms[vin.BoneIndices[i]];
-        // posL +=     boneWeights[i] * weightNormalizeValue * mul(float4(vin.Pos, 1.0f), testTransform).xyz;
-        // normalL +=  boneWeights[i] * weightNormalizeValue * mul(vin.Normal, (float3x3)testTransform);
-        // tangentL += boneWeights[i] * weightNormalizeValue * mul(vin.Tangent.xyz, (float3x3)testTransform);
     }
 
     vin.Pos = posL;
@@ -43,10 +38,7 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
     posW = mul(float4(vin.Pos, 1.0f), instanceData.World);
     vout.Normal =  normalize(mul(vin.Normal, (float3x3)instanceData.World));
 #endif
-    // posW = mul(float4(vin.Pos, 1.0f), World);
-    // vout.normal =  normalize(mul(vin.Normal, (float3x3)World));
     vout.PositionWorld = posW.xyz;
-    //vout.normal =  normalize(mul(vin.Normal, (float3x3)World));
     vout.Position = mul(posW, ViewProj);
 	vout.TexUV = mul(float4(vin.TexC, 0.0f, 1.0f), Materials[instanceData.MaterialIdx].MatTransform).xy;
 

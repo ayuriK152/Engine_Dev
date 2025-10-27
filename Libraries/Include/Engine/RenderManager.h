@@ -12,7 +12,7 @@
 #define		PSO_PARTICLE_RENDER		"particle_render"
 
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT			15
+#define		ROOT_PARAMETER_COUNT			13
 
 #define		ROOT_PARAM_INSTCANCE_SB		0
 #define		ROOT_PARAM_MATERIAL_SB		1
@@ -27,11 +27,9 @@
 #define		ROOT_PARAM_MESHINFO_C		9
 
 #define		ROOT_PARAM_BONE_SB			10
-#define		ROOT_PARAM_ANIM_SB			11
-#define		ROOT_PARAM_ANIMSTATE_CB		12
 
-#define		ROOT_PARAM_PARTICLES_RW		13
-#define		ROOT_PARAM_EMITTER_CB		14
+#define		ROOT_PARAM_PARTICLES_RW		11
+#define		ROOT_PARAM_EMITTER_CB		12
 #pragma endregion
 
 #pragma region Register_Numbers
@@ -48,9 +46,6 @@
 #define		REGISTER_NUM_MESHINFO_C		3
 
 #define		REGISTER_NUM_BONE_SB		0
-#define		REGISTER_NUM_ANIM_SB		1
-
-#define		REGISTER_NUM_ANIMSTATE_CB	0
 
 #define		REGISTER_NUM_PARTICLES_RW	0
 #define		REGISTER_NUM_EMITTER_CB		0
@@ -121,18 +116,12 @@ public:
 	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
 
-	// Return Animation SB index
-	UINT UploadAnimationData(const map<int, map<int, XMMATRIX>>& animationMap);
-	void SetAnimationState(const AnimationStateConstants& state);
-
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildPSO(string name, D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc);
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
-
-	void BuildAnimationBufferSRV();
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
@@ -164,13 +153,6 @@ private:
 
 	int _skyboxTexSrvHeapIndex = -1;
 	unique_ptr<ShadowMap> _shadowMap = nullptr;
-
-	UINT _animationBufferOffset = 0;
-	UINT _animationSrvHeapIndex = 0;
-	unique_ptr<UploadBuffer<XMFLOAT4X4>> _animationSB = nullptr;
-
-	// Constant Buffers
-	unique_ptr<UploadBuffer<AnimationStateConstants>> _animationStateCB = nullptr;
 
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
 };

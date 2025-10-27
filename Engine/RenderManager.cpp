@@ -91,11 +91,6 @@ void RenderManager::Init()
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
-
-	_animationSB = make_unique<UploadBuffer<XMFLOAT4X4>>(DEFAULT_ANIMATION_COUNT, false);
-	_animationStateCB = make_unique<UploadBuffer<AnimationStateConstants>>(1, true);
-
-	BuildAnimationBufferSRV();
 }
 
 void RenderManager::FixedUpdate()
@@ -150,12 +145,6 @@ void RenderManager::Render()
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
 
 	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, currentFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
-
-	// Animation Buffer
-	CD3DX12_GPU_DESCRIPTOR_HANDLE hAnimDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	hAnimDesc.Offset(_animationSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_ANIM_SB, hAnimDesc);
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_ANIMSTATE_CB, _animationStateCB->GetResource()->GetGPUVirtualAddress());
 
 	// ShadowMap Pass
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
@@ -422,27 +411,6 @@ void RenderManager::RefreshMeshRenderCheckMap()
 		_meshRenderCheckMap.erase(m);
 }
 
-UINT RenderManager::UploadAnimationData(const map<int, map<int, XMMATRIX>>& animationMap)
-{
-	int currentOffset = _animationBufferOffset;
-	for (auto& dataByTick : animationMap)
-	{
-		for (auto& transform : dataByTick.second)
-		{
-			XMFLOAT4X4 transformData;
-			XMStoreFloat4x4(&transformData, XMMatrixTranspose(transform.second));
-			_animationSB->CopyData(_animationBufferOffset++, transformData);
-		}
-	}
-
-	return currentOffset;
-}
-
-void RenderManager::SetAnimationState(const AnimationStateConstants& state)
-{
-	_animationStateCB->CopyData(0, state);
-}
-
 #pragma region Build_Render_Components
 
 void RenderManager::BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc)
@@ -477,8 +445,6 @@ void RenderManager::BuildRootSignature()
 	// space1 (skinned mesh)
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_BONE_SB, 1);
-	CD3DX12_DESCRIPTOR_RANGE animTable;
-	animTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_ANIM_SB, 1);
 
 	// Slot Root Parameter
 	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
@@ -496,8 +462,6 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
 
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
-	slotRootParameter[ROOT_PARAM_ANIM_SB].InitAsDescriptorTable(1, &animTable);
-	slotRootParameter[ROOT_PARAM_ANIMSTATE_CB].InitAsConstantBufferView(REGISTER_NUM_ANIMSTATE_CB, 1);
 
 	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 2);
 	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterInfo) / 4, REGISTER_NUM_EMITTER_CB, 2);
@@ -559,24 +523,6 @@ void RenderManager::BuildSRVDescriptorHeap()
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
-}
-
-void RenderManager::BuildAnimationBufferSRV()
-{
-	_animationSrvHeapIndex = GetAndIncreaseSRVHeapIndex();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(GetCommonSRVHeap()->GetCPUDescriptorHandleForHeapStart());
-	hDescriptor.Offset(_animationSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	srvDesc.Buffer.FirstElement = 0;
-	srvDesc.Buffer.NumElements = DEFAULT_ANIMATION_COUNT;
-	srvDesc.Buffer.StructureByteStride = sizeof(XMFLOAT4X4);
-	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-
-	GRAPHIC->GetDevice()->CreateShaderResourceView(_animationSB->GetResource(), &srvDesc, hDescriptor);
 }
 
 #pragma endregion

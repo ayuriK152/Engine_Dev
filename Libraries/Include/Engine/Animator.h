@@ -85,8 +85,6 @@ public:
 		UpdateBoneTransform();
 	}
 
-	void UploadAnimationDatas();
-
 private:
 	bool _isPlayOnInit;
 	bool _isPlaying;

@@ -21,7 +21,6 @@ void Animator::Init()
 {
 	_isPlaying = _isPlayOnInit;
 	UpdateChildList();
-	//UploadAnimationDatas();
 }
 
 void Animator::Update()
@@ -101,7 +100,6 @@ void Animator::Update()
 		{
 			animState.IsOnTransition = false;
 		}
-		RENDER->SetAnimationState(animState);
 	}
 }
 
@@ -322,62 +320,5 @@ void Animator::SetPreviewMode(bool value)
 		_isPreviewPlaying = false;
 		_previewAnimation = nullptr;
 		_previewTick = 0.0f;
-	}
-}
-
-// 행렬 연산에 뭔가 문제가 있음
-// 근데 문제가 왜 일어나는지, 뭐가 문제인지 전혀 모르겠음
-// 전달받은 데이터는 분명 똑같은데 왜 결과가 다른지 이해 불능
-// 시간이 꽤나 걸렸으므로 일단 작업을 미뤄둠.
-// 다만 GPU 버퍼 생성부분이나 hlsl 코드 구조 등은 훗날 개선을 위해 일단 남겨두도록 함.
-void Animator::UploadAnimationDatas()
-{
-	for (auto& anim : _animations)
-	{
-		int keyframeCount = (int)anim.second->GetDuration() + 1;
-		auto animationDatas = anim.second->GetAnimationDatas();
-
-		// keyframeIdx | boneId | transform
-		map<int, map<int, XMMATRIX>> animTransforms;
-		for (int i = 0; i < keyframeCount; i++)
-		{
-			for (auto& data : anim.second->GetAnimationDatas())
-			{
-				for (auto& kf : data.second.keyFrames)
-				{
-					if ((int)kf.tick == i)
-					{
-						XMMATRIX S = XMMatrixScaling(kf.scale.x, kf.scale.y, kf.scale.z);
-						XMMATRIX R = XMMatrixRotationQuaternion(XMLoadFloat4(&kf.rotation));
-						XMMATRIX T = XMMatrixTranslation(kf.position.x, kf.position.y, kf.position.z);
-						animTransforms[i][data.second.boneId] = S * R * T;
-					}
-				}
-			}
-
-			vector<int> filledBoneIds;
-			for (auto& bone : _bones)
-			{
-				if (!animTransforms[i].contains(bone.second.id))
-				{
-					animTransforms[i][bone.second.id] = XMLoadFloat4x4(&bone.second.localBindTransform) * XMLoadFloat4x4(&_bones[bone.second.parentId].offsetTransform);
-					filledBoneIds.push_back(bone.second.id);
-				}
-			}
-
-			for (int j = 0; j < _bones.size(); j++)
-			{
-				UINT currentBoneId = _bones[j].id;
-				UINT parentBoneId = _bones[j].parentId;
-				if (find(filledBoneIds.begin(), filledBoneIds.end(), currentBoneId) == filledBoneIds.end())
-				{
-					if (currentBoneId != parentBoneId)
-						animTransforms[i][currentBoneId] = animTransforms[i][currentBoneId] * animTransforms[i][parentBoneId];
-				}
-				animTransforms[i][currentBoneId] = XMMatrixInverse(nullptr, XMLoadFloat4x4(&_bones[parentBoneId].offsetTransform)) * animTransforms[i][currentBoneId];
-			}
-		}
-
-		_animationGpuIndexMap[anim.first] = RENDER->UploadAnimationData(animTransforms);
 	}
 }

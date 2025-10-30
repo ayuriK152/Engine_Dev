@@ -1,8 +1,0 @@
-<Material>
-    <Name>Alpha_Body_MAT</Name>
-    <Ambient r="0" g="0" b="0" a="1"/>
-    <Diffuse r="0.077256009" g="0.33729586" b="0.41760001" a="1"/>
-    <Specular r="0.47862974" g="0.47862974" b="0.47862974" a="1"/>
-    <Emissive r="0" g="0" b="0" a="1"/>
-    <TextureName>white1x1.dds</TextureName>
-</Material>

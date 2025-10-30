@@ -13,13 +13,18 @@ public:
 	virtual ~Material();
 
 public:
-	void SetTexture(shared_ptr<Texture> texture);
-	void SetTexture(wstring textureName);
+	void SetDiffuse(shared_ptr<Texture> texture);
+	void SetDiffuse(wstring textureName);
+
+	void SetNormal(shared_ptr<Texture> texture);
+	void SetNormal(wstring textureName);
 
 	static int GetCount() { return _count; }
 
 public:
-	string textureName;
+	string diffuseTextureName;
+	string normalTextureName;
+
 	int matSBIndex;
 	int diffuseSrvHeapIndex;
 	int normalSrvHeapIndex;

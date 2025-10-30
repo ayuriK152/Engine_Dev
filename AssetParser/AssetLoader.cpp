@@ -214,7 +214,7 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 			{
 				shared_ptr<Texture> texture = make_shared<Texture>(matName + L".dds");
 				RESOURCE->Add<Texture>(matName, texture);
-				mat->SetTexture(RESOURCE->Get<Texture>(matName));
+				mat->SetDiffuse(RESOURCE->Get<Texture>(matName));
 			}
 		}
 		RESOURCE->Add<Material>(matName, mat);
@@ -386,6 +386,8 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 		v.Position = { aimesh->mVertices[i].x, aimesh->mVertices[i].y, aimesh->mVertices[i].z };
 		if (aimesh->HasNormals())
 			v.Normal = { aimesh->mNormals[i].x, aimesh->mNormals[i].y, aimesh->mNormals[i].z };
+		if (aimesh->HasTangentsAndBitangents())
+			v.Tangent = { aimesh->mTangents[i].x, aimesh->mTangents[i].y, aimesh->mTangents[i].z };
 		
 		for (int j = 0; j < aimesh->GetNumUVChannels(); j++)
 		{

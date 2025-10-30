@@ -25,7 +25,7 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
 
     vin.Pos = posL;
     vin.Normal = normalL;
-    vin.Tangent.xyz = tangentL;
+    vin.Tangent = tangentL;
 #endif
 
     Instance instanceData = Instances[instanceID + InstanceStartIndex];
@@ -34,9 +34,11 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
 #ifdef SKINNED
     posW = float4(vin.Pos, 1.0f);
     vout.Normal =  vin.Normal;
+    vout.Tangent = vin.Tangent;
 #else
     posW = mul(float4(vin.Pos, 1.0f), instanceData.World);
     vout.Normal =  normalize(mul(vin.Normal, (float3x3)instanceData.World));
+    vout.Tangent =  normalize(mul(vin.Tangent, (float3x3)instanceData.World));
 #endif
     vout.PositionWorld = posW.xyz;
     vout.Position = mul(posW, ViewProj);

@@ -54,6 +54,7 @@ struct Material {
     float2   Tilling;
     float    Shiness;
     uint     DiffuseMapIndex;
+    uint     NormalMapIndex;
 };
 
 struct Particle {
@@ -85,6 +86,7 @@ struct VertexOut {
 	float4 Position         : SV_POSITION;
     float3 PositionWorld    : POSITION;
     float3 Normal           : NORMAL;
+    float3 Tangent          : TANGENT;
 	float2 TexUV            : TEXCOORD2;
     float4 ShadowPos        : TEXCOORD1;
     uint MaterialIdx        : MATINDEX;

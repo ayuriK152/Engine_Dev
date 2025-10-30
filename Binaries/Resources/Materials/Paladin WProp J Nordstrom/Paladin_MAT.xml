@@ -4,5 +4,6 @@
     <Diffuse r="1" g="1" b="1" a="1"/>
     <Specular r="0.5" g="0.5" b="0.5" a="1"/>
     <Emissive r="0" g="0" b="0" a="1"/>
-    <TextureName>Paladin_diffuse.png</TextureName>
+    <DiffuseTexture>Paladin_diffuse.png</DiffuseTexture>
+    <NormalTexture>Paladin_normal.png</NormalTexture>
 </Material>

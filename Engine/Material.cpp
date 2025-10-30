@@ -7,8 +7,8 @@ Material::Material() : Super(ResourceType::Material)
 {
 	matSBIndex = _count++;
 
-	diffuseSrvHeapIndex = -1;
-	normalSrvHeapIndex = -1;
+	diffuseSrvHeapIndex = 0;
+	normalSrvHeapIndex = 0;
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 
 	ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -28,7 +28,7 @@ Material::Material(string name) : Material(name, L"Tex_Default")
 Material::Material(string name, wstring textureName) : Super(ResourceType::Material)
 {
 	matSBIndex = _count++;
-	normalSrvHeapIndex = -1;
+	normalSrvHeapIndex = 0;
 	numFramesDirty = GRAPHIC->GetNumFrameResources();
 	SetName(name);
 
@@ -40,7 +40,7 @@ Material::Material(string name, wstring textureName) : Super(ResourceType::Mater
 	shiness = 0.25f;
 	matTransform = MathHelper::Identity4x4();
 
-	SetTexture(RESOURCE->Get<Texture>(textureName));
+	SetDiffuse(RESOURCE->Get<Texture>(textureName));
 }
 
 Material::~Material()
@@ -48,21 +48,39 @@ Material::~Material()
 
 }
 
-void Material::SetTexture(shared_ptr<Texture> texture)
+void Material::SetDiffuse(shared_ptr<Texture> texture)
 {
 	if (texture == nullptr)
 	{
-		SetTexture(L"Tex_Default");
+		SetDiffuse(L"Tex_Default");
 		return;
 	}
 
 	diffuseSrvHeapIndex = texture->GetSRVHeapIndex();
-	textureName = UniversalUtils::ToString(texture->GetNameW());
+	diffuseTextureName = UniversalUtils::ToString(texture->GetNameW());
 }
 
-void Material::SetTexture(wstring textureName)
+void Material::SetDiffuse(wstring textureName)
 {
 	// 텍스쳐 이름만 설정하고, 실제 텍스쳐는 기본 텍스쳐로
 	diffuseSrvHeapIndex = 0;
-	this->textureName = UniversalUtils::ToString(textureName);
+	diffuseTextureName = UniversalUtils::ToString(textureName);
+}
+
+void Material::SetNormal(shared_ptr<Texture> texture)
+{
+	if (texture == nullptr)
+	{
+		SetDiffuse(L"Tex_Default");
+		return;
+	}
+
+	normalSrvHeapIndex = texture->GetSRVHeapIndex();
+	normalTextureName = UniversalUtils::ToString(texture->GetNameW());
+}
+
+void Material::SetNormal(wstring textureName)
+{
+	normalSrvHeapIndex = 0;
+	normalTextureName = UniversalUtils::ToString(textureName);
 }

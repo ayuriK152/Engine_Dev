@@ -27,6 +27,7 @@ struct MaterialConstants
 	XMFLOAT2 Tilling = { 1.0f, 1.0f };
 	float Shiness = 0.25f;
 	UINT DiffuseMapIndex;
+	UINT NormalMapIndex;
 };
 
 struct CameraConstants

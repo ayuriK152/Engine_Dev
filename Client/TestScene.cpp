@@ -41,9 +41,9 @@ void TestScene::Init()
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 		player = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		//player->GetTransform()->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+		// player->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 		player->GetComponent<Animator>()->SetBones(RESOURCE->LoadBone("Paladin WProp J Nordstrom"));
-		//player->AddComponent(make_shared<PlayerScript>());
+		// player->AddComponent(make_shared<PlayerScript>());
 	}
 
 	{
@@ -73,7 +73,7 @@ void TestScene::Init()
 		box->SetName("box");
 		box->AddComponent(make_shared<MeshRenderer>());
 		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		box->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture(RESOURCE->Get<Texture>(L"0dot001mm_1"));
+		box->GetComponent<MeshRenderer>()->GetMaterial()->SetDiffuse(RESOURCE->Get<Texture>(L"0dot001mm_1"));
 		box->AddComponent(make_shared<BoxCollider>());
 		box->GetTransform()->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		box->GetTransform()->SetScale(Vector3(5.0f, 1.0f, 5.0f));

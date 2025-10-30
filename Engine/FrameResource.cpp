@@ -94,6 +94,7 @@ void FrameResource::UpdateMaterialSB()
 			matConstants.Tilling = mat->tilling;
 			matConstants.Shiness = mat->shiness;
 			matConstants.DiffuseMapIndex = mat->diffuseSrvHeapIndex;
+			matConstants.NormalMapIndex = mat->normalSrvHeapIndex;
 
 			materialSB->CopyData(mat->matSBIndex, matConstants);
 

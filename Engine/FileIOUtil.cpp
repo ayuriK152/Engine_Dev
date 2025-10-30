@@ -52,8 +52,12 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 	element->SetAttribute("a", material->emissive.w);
 	node->InsertEndChild(element);
 
-	element = doc.NewElement("TextureName");
-	element->SetText(material->textureName.c_str());
+	element = doc.NewElement("DiffuseTexture");
+	element->SetText(material->diffuseTextureName.c_str());
+	node->InsertEndChild(element);
+
+	element = doc.NewElement("NormalTexture");
+	element->SetText(material->normalTextureName.c_str());
 	node->InsertEndChild(element);
 
 	char fullpath[100] = RESOURCE_PATH_MATERIAL;
@@ -138,11 +142,17 @@ void FileIOUtil::LoadMaterials()
 		mat->specular = specular;
 		mat->emissive = emissive;
 
-		element = node->FirstChildElement("TextureName");
 		string textureName = "";
+		element = node->FirstChildElement("DiffuseTexture");
 		if (element->GetText()) {
 			textureName = string(element->GetText());
-			mat->SetTexture(RESOURCE->Get<Texture>(UniversalUtils::ToWString(textureName.substr(0, textureName.length() - 4))));
+			mat->SetDiffuse(RESOURCE->Get<Texture>(UniversalUtils::ToWString(textureName.substr(0, textureName.length() - 4))));
+		}
+
+		element = node->FirstChildElement("NormalTexture");
+		if (element->GetText()) {
+			textureName = string(element->GetText());
+			mat->SetNormal(RESOURCE->Get<Texture>(UniversalUtils::ToWString(textureName.substr(0, textureName.length() - 4))));
 		}
 
 		RESOURCE->Add<Material>(UniversalUtils::ToWString(name), mat);

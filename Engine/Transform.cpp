@@ -409,24 +409,10 @@ XMFLOAT4X4 Transform::GetLocalMatrix()
 
 XMFLOAT4X4 Transform::GetWorldMatrix()
 {
-	if (HasParent())
-	{
-		if (_isDirty)
-			UpdateTransform();
+	if (_isDirty)
+		UpdateTransform();
 
-		XMMATRIX parent = XMLoadFloat4x4(&_parent->GetWorldMatrix());
-		XMMATRIX local = XMLoadFloat4x4(&_matLocal);
-		XMFLOAT4X4 result;
-		XMStoreFloat4x4(&result, local * parent);
-		return result;
-	}
-	else
-	{
-		if (_isDirty)
-			UpdateTransform();
-
-		return _matWorld;
-	}
+	return _matWorld;
 }
 
 void Transform::SetParent(shared_ptr<Transform> parent)

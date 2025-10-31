@@ -7,6 +7,7 @@ float4 PS(VertexOut pin) : SV_TARGET {
     float4 albedo = TextureMaps[mat.DiffuseMapIndex].Sample(samAnisotropicWrap, pin.TexUV * mat.Tilling);
     float3 eyeDir = normalize(eyePos - pin.PositionWorld);
     pin.Normal = normalize(pin.Normal);
+
     if (mat.NormalMapIndex != 0) {
         float3 normalMapSample = TextureMaps[mat.NormalMapIndex].Sample(samAnisotropicWrap, pin.TexUV * mat.Tilling).rgb;
         float3 normalT = 2.0f * normalMapSample - 1.0f;

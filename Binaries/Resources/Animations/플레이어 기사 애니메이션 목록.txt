@@ -1,8 +1,8 @@
 IDLE
-Paladin WProp J Nordstrom\\idle_sword_1  // 교체 요망
-Paladin WProp J Nordstrom\\idle_sword_2  // 교체 요망
-Paladin WProp J Nordstrom\\idle_sword_3  // 교체 요망
-Paladin WProp J Nordstrom\\idle_sword_4     // 기본 베이스  // 교체 요망
+Paladin WProp J Nordstrom\\idle_sword_1
+Paladin WProp J Nordstrom\\idle_sword_2
+Paladin WProp J Nordstrom\\idle_sword_3
+Paladin WProp J Nordstrom\\idle_sword_4  // 기본 베이스
 
 WALK
 Paladin WProp J Nordstrom\\walk_sword_1     // 전진

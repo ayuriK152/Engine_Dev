@@ -59,7 +59,9 @@ void DirectoryIterator(filesystem::path path, int count)
 		else
 		{
 			cout << name << endl;
-			if (name.find(".fbx") == string::npos && name.find(".FBX") == string::npos)
+			if (name.find(".fbx") == string::npos && 
+				name.find(".FBX") == string::npos && 
+				name.find(".gltf") == string::npos)
 				continue;
 			assetCount++;
 			parsableAssetPaths.push_back(i->path().c_str());

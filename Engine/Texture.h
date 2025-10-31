@@ -11,8 +11,8 @@ class Texture : public Resource
 {
 	using Super = Resource;
 public:
-	Texture(wstring fileName);
-	Texture(wstring fileName, TextureType type);
+	Texture(wstring filePath, bool isName = false);
+	Texture(wstring filePath, TextureType type, bool isName = false);
 	virtual ~Texture();
 
 	virtual void Load(const wstring& path) override;

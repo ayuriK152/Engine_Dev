@@ -82,13 +82,9 @@ void InputManager::OnMouseMove(int x, int y)
 
 	if (_isMouseCenterFixed)
 	{
-		RECT rectClient, rectWindow;
-		GetClientRect(GRAPHIC->GetMainWnd(), &rectClient);
-		GetWindowRect(GRAPHIC->GetMainWnd(), &rectWindow);
-		int centerX = (rectClient.left + rectClient.right) / 2;
-		int centerY = (rectClient.top + rectClient.bottom) / 2;
-		SetCursorPos(centerX + rectWindow.left, centerY + rectWindow.top);
-		_mousePosition = Vector2((float)centerX, (float)centerY);
+		_mousePosition = GRAPHIC->GetScreenCenter();
+		//SetCursorPos(centerX + rectWindow.left, centerY + rectWindow.top);
+		SetCursorPos(_mousePosition.x, _mousePosition.y);
 	}
 }
 

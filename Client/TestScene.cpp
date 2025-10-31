@@ -6,14 +6,6 @@
 
 void TestScene::Init()
 {
-	// 텍스쳐 테스트용 나중에 삭제
-	{
-		shared_ptr<Texture> koyuki = make_shared<Texture>(L"0dot001mm_1.dds");
-		RESOURCE->Add<Texture>(L"0dot001mm_1", koyuki);
-	}
-	shared_ptr<Texture> proto1 = make_shared<Texture>(L"prototype_dark1.dds");
-	RESOURCE->Add<Texture>(L"proto_dark1", proto1);
-
 	skybox = make_shared<GameObject>();
 	skybox->SetName("skybox");
 	skybox->AddComponent(make_shared<MeshRenderer>());
@@ -48,11 +40,14 @@ void TestScene::Init()
 
 	{
 		test = make_shared<GameObject>();
-		test->SetName("ParticleEmitter");
-		test->AddComponent(make_shared<ParticleEmitter>());
-		test->GetComponent<ParticleEmitter>()->SetPlay(true);
-		test->GetComponent<ParticleEmitter>()->SetParticleTexture(L"ParticleTest");
-		test->GetTransform()->SetPosition({ 0.0f, 2.0f, 0.0f });
+		test->SetName("test");
+		test->AddComponent(make_shared<MeshRenderer>());
+		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\Cube.001"));
+		test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
+		//test->GetTransform()->SetScale({ 150, 150, 150 });
+		test->GetTransform()->SetPosition({ 0, 1, 0 });
+		test->GetTransform()->SetRotation({ -90, 0, 0 });
+		
 		gameObjects.push_back(test);
 	}
 
@@ -86,7 +81,7 @@ void TestScene::Init()
 		ground->SetName("ground");
 		ground->AddComponent(make_shared<MeshRenderer>());
 		ground->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-		auto mat = make_shared<Material>("Proto_dark1", L"proto_dark1");
+		auto mat = make_shared<Material>("Proto_dark1", L"prototype_dark1");
 		mat->tilling = { 100.0f, 100.0f };
 		RESOURCE->Add<Material>(L"Mat_Proto_dark1", mat);
 		ground->GetComponent<MeshRenderer>()->SetMaterial(mat);

@@ -56,6 +56,7 @@ public:
 
 	D3D12_VIEWPORT GetViewport()const { return _screenViewport; }
 	D3D12_RECT GetScissorRect()const { return _scissorRect; }
+	Vector2 GetScreenCenter()const { return _center; }
 
 	UINT GetDSVDescriptorSize()const { return _dsvDescriptorSize; }
 	UINT GetCBVSRVDescriptorSize()const { return _cbvSrvUavDescriptorSize; }
@@ -111,6 +112,7 @@ private:
 
 	D3D12_VIEWPORT _screenViewport;
 	D3D12_RECT _scissorRect;
+	Vector2 _center;
 
 	UINT _rtvDescriptorSize = 0;
 	UINT _dsvDescriptorSize = 0;

@@ -1,0 +1,9 @@
+<Material>
+    <Name>Stone wall</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Specular r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <DiffuseTexture>Stone_Wall_BaseColor_With_AO.png</DiffuseTexture>
+    <NormalTexture>Stone_Wall_Normal.png</NormalTexture>
+</Material>

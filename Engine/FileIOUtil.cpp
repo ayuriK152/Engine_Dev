@@ -71,7 +71,7 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 void FileIOUtil::LoadTextures()
 {
 	filesystem::path p = RESOURCE_PATH_TEXTURE;
-	filesystem::directory_iterator iter(p);
+	filesystem::recursive_directory_iterator iter(p);
 
 	for (auto& i = iter; i != filesystem::end(iter); i++)
 	{
@@ -83,8 +83,10 @@ void FileIOUtil::LoadTextures()
 		while (getline(ss, format, '.'));
 		if (format != "dds" && format != "png" && format != "jpg")
 			continue;
-
-		auto defaultTex = make_shared<Texture>(UniversalUtils::ToWString(fileName));
+		
+		//auto defaultTex = make_shared<Texture>(UniversalUtils::ToWString(fileName));
+		auto defaultTex = make_shared<Texture>(i->path().c_str());
+		defaultTex->SetName(fileName);
 		RESOURCE->Add<Texture>(UniversalUtils::ToWString(fileName.substr(0, fileName.size() - (format.size() + 1))), defaultTex);
 	}
 }

@@ -11,21 +11,33 @@ bool Texture::IsTextureExists(wstring& fileName)
 		return false;
 }
 
-Texture::Texture(wstring fileName) : Super(ResourceType::Texture)
+Texture::Texture(wstring filePath, bool isName) : Super(ResourceType::Texture)
 {
-	SetName(fileName);
-	_textureFormat = UniversalUtils::ToString(fileName.substr(fileName.find_last_of('.') + 1));
-	SetPath(L"..\\Resources\\Textures\\" + fileName);
+	_textureFormat = UniversalUtils::ToString(filePath.substr(filePath.find_last_of('.') + 1));
+
+	if (isName) {
+		SetName(filePath);
+		SetPath(L"..\\Resources\\Textures\\" + filePath);
+	}
+	else {
+		SetPath(filePath);
+	}
 	Load(_pathw);
 	textureType = TextureType::General;
 	CreateSRV();
 }
 
-Texture::Texture(wstring fileName, TextureType type) : Super(ResourceType::Texture)
+Texture::Texture(wstring filePath, TextureType type, bool isName) : Super(ResourceType::Texture)
 {
-	SetName(fileName);
-	_textureFormat = UniversalUtils::ToString(fileName.substr(fileName.find_last_of('.') + 1));
-	SetPath(L"..\\Resources\\Textures\\" + fileName);
+	_textureFormat = UniversalUtils::ToString(filePath.substr(filePath.find_last_of('.') + 1));
+
+	if (isName) {
+		SetName(filePath);
+		SetPath(L"..\\Resources\\Textures\\" + filePath);
+	}
+	else {
+		SetPath(filePath);
+	}
 	Load(_pathw);
 	textureType = type;
 	CreateSRV();
@@ -38,6 +50,7 @@ Texture::~Texture()
 
 void Texture::Load(const wstring& path)
 {
+	SetPath(path);
 	auto device = GRAPHIC->GetDevice().Get();
 	auto commandQueue = GRAPHIC->GetCommandQueue().Get();
 

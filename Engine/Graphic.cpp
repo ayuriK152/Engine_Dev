@@ -130,6 +130,7 @@ void Graphic::OnResize()
 	_screenViewport.MaxDepth = 1.0f;
 
 	_scissorRect = { 0, 0, _appDesc.clientWidth, _appDesc.clientHeight };
+	_center = { _appDesc.clientWidth / 2.0f, _appDesc.clientHeight / 2.0f };
 
 	ENGINESTAT->ResetValues();
 }

@@ -274,6 +274,11 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath);
+	if (fileHandle == INVALID_HANDLE_VALUE)
+	{
+		DEBUG->ErrorLog("Failed to load mesh file: " + filePath);
+		return nullptr;
+	}
 
 	string meshName;
 	meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
@@ -403,6 +408,11 @@ map<string, Bone> ResourceManager::LoadBone(const string& filePath)
 vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& filePath)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(filePath);
+	if (fileHandle == INVALID_HANDLE_VALUE)
+	{
+		DEBUG->ErrorLog("Failed to load prefab file: " + filePath);
+		return {};
+	}
 
 	vector<shared_ptr<GameObject>> loadedObjects;
 	vector<pair<int, int>> objHierarchyIdxPair;

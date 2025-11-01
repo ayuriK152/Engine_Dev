@@ -9,9 +9,11 @@ DescriptorHeapAllocator EngineGUIManager::_srvHeapDescAllocator;
 
 EngineGUIManager::~EngineGUIManager()
 {
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	// 공식 문서에서는 소멸자에 아래 함수들을 호출하라고 되있는데 이상하게 호출하면 크래시가 뜰 때가 많음
+	// 일단 주석처리로 해결
+	//ImGui_ImplDX12_Shutdown();
+	//ImGui_ImplWin32_Shutdown();
+	//ImGui::DestroyContext();
 }
 
 void EngineGUIManager::Init()

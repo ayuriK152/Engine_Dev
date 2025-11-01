@@ -47,7 +47,7 @@ void TestScene::Init()
 		test = make_shared<GameObject>();
 		test->SetName("test");
 		test->AddComponent(make_shared<MeshRenderer>());
-		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\BezierCircle"));
+		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\StoneWall1"));
 		test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
 		test->GetTransform()->SetPosition({ 0, 1, 0 });
 		test->GetTransform()->SetRotation({ -90, 0, 0 });
@@ -96,8 +96,6 @@ void TestScene::Init()
 		gameObjects.push_back(ground);
 	}
 
-	//camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
-
 	while (gameObjects.size() > 0)
 	{
 		RENDER->AddGameObject(gameObjects[0]);
@@ -117,7 +115,7 @@ void TestScene::Update()
 	if (INPUTM->IsKeyPress(KeyValue::V))
 		RENDER->SetCurrPSO(PSO_WIREFRAME);
 
-	if (INPUTM->IsKeyDown(KeyValue::ALT))
+	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
 	{
 		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
 		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());

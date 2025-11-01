@@ -6,28 +6,34 @@
 
 void TestScene::Init()
 {
-	skybox = make_shared<GameObject>();
-	skybox->SetName("skybox");
-	skybox->AddComponent(make_shared<MeshRenderer>());
-	skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_SkyboxSphere"));
-	skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
-	skybox->SetPSOName(PSO_SKYBOX);
-	gameObjects.push_back(skybox);
-	RENDER->SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
+	{
+		skybox = make_shared<GameObject>();
+		skybox->SetName("skybox");
+		skybox->AddComponent(make_shared<MeshRenderer>());
+		skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_SkyboxSphere"));
+		skybox->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Mat_DefaultSkybox"));
+		skybox->SetPSOName(PSO_SKYBOX);
+		gameObjects.push_back(skybox);
+		RENDER->SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
+	}
 
-	camera = make_shared<GameObject>();
-	camera->SetName("camera");
-	camera->AddComponent(make_shared<Camera>());
-	gameObjects.push_back(camera);
+	{
+		camera = make_shared<GameObject>();
+		camera->SetName("camera");
+		camera->AddComponent(make_shared<Camera>());
+		gameObjects.push_back(camera);
+	}
 
-	globalLight = make_shared<GameObject>();
-	globalLight->SetName("GlobalLight");
-	XMFLOAT4 ambient = { 0.8f, 0.8f, 0.8f, 1.0f };
-	XMFLOAT4 diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
-	XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
-	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
-	globalLight->GetTransform()->LookAt(Vector3(1.0f, -2.0f, 1.0f));
-	gameObjects.push_back(globalLight);
+	{
+		globalLight = make_shared<GameObject>();
+		globalLight->SetName("GlobalLight");
+		XMFLOAT4 ambient = { 0.8f, 0.8f, 0.8f, 1.0f };
+		XMFLOAT4 diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
+		XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+		globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
+		globalLight->GetTransform()->LookAt(Vector3(1.0f, -2.0f, 1.0f));
+		gameObjects.push_back(globalLight);
+	}
 
 	{
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
@@ -41,7 +47,7 @@ void TestScene::Init()
 		test = make_shared<GameObject>();
 		test->SetName("test");
 		test->AddComponent(make_shared<MeshRenderer>());
-		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\Cube.001"));
+		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\BezierCircle"));
 		test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
 		test->GetTransform()->SetPosition({ 0, 1, 0 });
 		test->GetTransform()->SetRotation({ -90, 0, 0 });
@@ -90,7 +96,7 @@ void TestScene::Init()
 		gameObjects.push_back(ground);
 	}
 
-	camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
+	//camera->GetTransform()->SetPosition(Vector3(0.0f, 1.5f, -10.0f));
 
 	while (gameObjects.size() > 0)
 	{

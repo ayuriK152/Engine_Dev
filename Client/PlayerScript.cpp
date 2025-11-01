@@ -69,10 +69,10 @@ void PlayerScript::Update()
 			break;
 
 		case WALK:
-			animator->SetCurrentAnimation("walk_sword_1");
+			animator->SetCurrentAnimation("walk_sword_forward");
 			break;
 		case RUN:
-			animator->SetCurrentAnimation("run_sword_1");
+			animator->SetCurrentAnimation("run_sword_forward");
 			break;
 		case SLASH:
 			animator->SetCurrentAnimation("slash_1");

@@ -33,9 +33,8 @@ void TestScene::Init()
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 		player = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		// player->GetTransform()->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 		player->GetComponent<Animator>()->SetBones(RESOURCE->LoadBone("Paladin WProp J Nordstrom"));
-		// player->AddComponent(make_shared<PlayerScript>());
+		player->AddComponent(make_shared<PlayerScript>());
 	}
 
 	{
@@ -44,7 +43,6 @@ void TestScene::Init()
 		test->AddComponent(make_shared<MeshRenderer>());
 		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\Cube.001"));
 		test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
-		//test->GetTransform()->SetScale({ 150, 150, 150 });
 		test->GetTransform()->SetPosition({ 0, 1, 0 });
 		test->GetTransform()->SetRotation({ -90, 0, 0 });
 		

@@ -19,6 +19,7 @@ void BoxCollider::Init()
 	DEBUG->AddDebugCollider(static_pointer_cast<Collider>(shared_from_this()));
 	PHYSICS->AddCollider(static_pointer_cast<Collider>(shared_from_this()));
 	FitOnMesh();
+	Update();
 }
 
 void BoxCollider::FixedUpdate()

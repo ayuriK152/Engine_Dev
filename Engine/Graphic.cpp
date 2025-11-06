@@ -153,7 +153,7 @@ void Graphic::Update()
 		CloseHandle(eventHandle);
 	}
 
-	_currFrameResource->Update();
+	// _currFrameResource->Update();
 }
 
 void Graphic::RenderBegin()

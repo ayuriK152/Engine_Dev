@@ -103,6 +103,9 @@ void RenderManager::Update()
 {
 	for (auto& o : _objects)
 		o->Update();
+
+	DEBUG->Update();
+	GRAPHIC->GetCurrFrameResource()->Update();
 }
 
 void RenderManager::Render()

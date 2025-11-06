@@ -13,8 +13,6 @@ GameObject::GameObject()
 	_psoName = PSO_OPAQUE_SOLID;
 	_tag = "Default";
 
-	objectID = -1;
-
 	_numFramesDirty = GRAPHIC->GetNumFrameResources();
 	_isInitialized = false;
 }
@@ -43,6 +41,14 @@ void GameObject::FixedUpdate()
 
 void GameObject::Update()
 {
+	if (_isDeleteReserved) {
+		_deleteTime -= TIME->DeltaTime();
+		if (_deleteTime <= 0.0f) {
+			RENDER->DeleteGameobject(shared_from_this());
+			return;
+		}
+	}
+
 	if (!_isInitialized) {
 		Init();
 		_isInitialized = true;
@@ -103,4 +109,10 @@ void GameObject::SetPSONameIncludeChilds(const string& name)
 void GameObject::SetFramesDirty()
 {
 	_numFramesDirty = GRAPHIC->GetNumFrameResources();
+}
+
+void GameObject::Delete(float time)
+{
+	_isDeleteReserved = true;
+	_deleteTime = time;
 }

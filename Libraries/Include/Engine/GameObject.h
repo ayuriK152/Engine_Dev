@@ -35,7 +35,7 @@ public:
 	template<typename T>
 	shared_ptr<T> GetComponent();
 
-	map<ComponentType, shared_ptr<Component>> GetComponents() { return components; }
+	unordered_map<ComponentType, shared_ptr<Component>> GetComponents() { return components; }
 
 	template<typename T>
 	ComponentType GetComponentType();
@@ -59,12 +59,14 @@ public:
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
+	void Delete(float time);
+
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
 	UINT objectID;
 
-	map<ComponentType, shared_ptr<Component>> components;
+	unordered_map<ComponentType, shared_ptr<Component>> components;
 
 private:
 	static int _nextId;
@@ -75,6 +77,9 @@ private:
 
 	bool _isInitialized;
 	int _numFramesDirty;
+
+	float _deleteTime = 0.0f;
+	bool _isDeleteReserved = false;
 };
 
 template<typename T>

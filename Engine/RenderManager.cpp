@@ -373,7 +373,6 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 		if (obj == o)
 			return nullptr;
 	}
-	obj->objectID = _objects.size();
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	_sortedObjects[obj->GetPSOName()].push_back(obj);
@@ -381,6 +380,20 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	return _objects[_objects.size() - 1];
 }
 
+
+void RenderManager::DeleteGameobject(shared_ptr<GameObject> obj)
+{
+	for (int i = 0; i < _objects.size(); i++) {
+		if (obj == _objects[i]) {
+			_objects.erase(_objects.begin() + i);
+		}
+	}
+	for (int i = 0; i < _sortedObjects[obj->GetPSOName()].size(); i++) {
+		if (obj == _sortedObjects[obj->GetPSOName()][i]) {
+			_sortedObjects[obj->GetPSOName()].erase(_sortedObjects[obj->GetPSOName()].begin() + i);
+		}
+	}
+}
 
 void RenderManager::UpdateMeshInstanceStartIndices()
 {

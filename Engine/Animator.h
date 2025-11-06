@@ -89,6 +89,9 @@ public:
 	}
 
 private:
+	void Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile);
+
+private:
 	bool _isPlayOnInit;
 	bool _isPlaying;
 	bool _isCurrentAnimationEnd;		// 콜백 방식으로 바꾸는거 고려.

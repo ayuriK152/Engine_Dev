@@ -1,5 +1,8 @@
 #pragma once
 
+#define	MAX_VERTEX_COUNT	100
+#define MAX_INDEX_COUNT		300
+
 enum LogLevel
 {
 	LOG_INFO,
@@ -30,10 +33,8 @@ public:
 	void ErrorLog(const string& message);
 	void ClearLogs() { _debugLogs.clear(); }
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
-	void AddDebugRender(shared_ptr<Collider> collider);
-
-	XMMATRIX gpuOffset;
-	XMMATRIX gpuOffset2;
+	void AddDebugCollider(shared_ptr<Collider> collider);
+	void DeleteDebugCollider(shared_ptr<Collider> collider);
 
 private:
 	vector<DebugLog> _debugLogs;

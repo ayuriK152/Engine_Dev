@@ -21,14 +21,15 @@ void PhysicsManager::Update()
 	if (_colliders.size() == 0)
 		return;
 
-	for (auto& collider : _colliders)
-	{
-		if (!collider->isInitialized)
-		{
-			DEBUG->Log("asfd");
+	for (int i = 0; i < _colliders.size(); i++) {
+		if (_colliders[i]->GetGameObject() == nullptr) {
+			_colliders.erase(_colliders.begin() + i);
+			i--;
+			continue;
 		}
-		collider->_isOnColliding = false;
-		collider->Update();
+
+		_colliders[i]->_isOnColliding = false;
+		_colliders[i]->Update();
 	}
 
 	for (int i = 0; i < _colliders.size() - 1; i++)
@@ -53,11 +54,13 @@ void PhysicsManager::Update()
 				_colliders[i]->GetGameObject()->OnCollision(_colliders[j]);
 				_colliders[j]->GetGameObject()->OnCollision(_colliders[i]);
 
-				shared_ptr<Rigidbody> rba = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
-				shared_ptr<Rigidbody> rbb = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
+				if (!_colliders[i]->_isTrigger && !_colliders[j]->_isTrigger) {
+					shared_ptr<Rigidbody> rba = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
+					shared_ptr<Rigidbody> rbb = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
 
-				if (rba != nullptr || rbb != nullptr)
-					ResolvePenetration(collInfo, rba, rbb);
+					if (rba != nullptr || rbb != nullptr)
+						ResolvePenetration(collInfo, rba, rbb);
+				}
 			}
 		}
 	}

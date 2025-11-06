@@ -35,34 +35,45 @@ void DebugManager::Update()
 		_indexBufferView.SizeInBytes = sizeof(UINT16) * _bufferIndexCount;
 
 		for (int i = 0; i < _bufferIndexCount; i++)
-		{
 			_indexUploadBuffer->CopyData(i, _indices[i]);
-		}
 	}
 
 	UINT vertexIndex = 0;
-	for (auto& collider : _drawQueue)
+	UINT indexIndex = 0;	// 이거 이름 왜 이따구지
+	for (int i = 0; i < _drawQueue.size(); i++)
 	{
-		switch (collider->GetColliderType())
+		switch (_drawQueue[i]->GetColliderType())
 		{
 			case ColliderType::Box:
 			{
-				if (collider->GetGameObject()->GetFramesDirty() > 0)
+				// 게임 오브젝트 런타임 중 삭제된 경우
+				if (_drawQueue[i]->GetGameObject() == nullptr) {
+					DeleteDebugCollider(_drawQueue[i]);
+					i--;
+					break;
+				}
+
+				if (_drawQueue[i]->GetGameObject()->GetFramesDirty() > 0)
 				{
-					BoundingOrientedBox box = static_pointer_cast<BoxCollider>(collider)->GetBoundingBox();
+					BoundingOrientedBox box = static_pointer_cast<BoxCollider>(_drawQueue[i])->GetBoundingBox();
 
 					Vector3 corners[8];
 					box.GetCorners(corners);
 
 					for (int i = 0; i < 8; i++)
 						_vertices[i + vertexIndex].Position = corners[i];
-
 					for (int i = 0; i < 8; i++)
 						_vertexUploadBuffer->CopyData(i + vertexIndex, _vertices[i + vertexIndex]);
+
+					for (int i = 0; i < 8; i++)
+						_indices[i + indexIndex] = _boxColliderIndices[i] + indexIndex;
+					for (int i = 0; i < _bufferIndexCount; i++)
+						_indexUploadBuffer->CopyData(i, _indices[i]);
 
 				}
 
 				vertexIndex += 8;
+				indexIndex += 24;
 				break;
 			}
 		}
@@ -98,7 +109,7 @@ void DebugManager::ErrorLog(const string& message)
 	_debugLogs.push_back({ TIME->TotalTime(), LOG_ERROR, message });
 }
 
-void DebugManager::AddDebugRender(shared_ptr<Collider> collider)
+void DebugManager::AddDebugCollider(shared_ptr<Collider> collider)
 {
 	_drawQueue.push_back(collider);
 
@@ -124,6 +135,27 @@ void DebugManager::AddDebugRender(shared_ptr<Collider> collider)
 			}
 
 			break;
+		}
+	}
+}
+
+void DebugManager::DeleteDebugCollider(shared_ptr<Collider> collider)
+{
+	bool isExists = false;
+	for (int i = 0; i < _drawQueue.size(); i++) {
+		if (_drawQueue[i] == collider) {
+			_drawQueue.erase(_drawQueue.begin() + i);
+			isExists = true;
+			break;
+		}
+	}
+
+	if (isExists) {
+		switch (collider->GetColliderType()) {
+		case ColliderType::Box: {
+			_vertices.erase(_vertices.end() - 8, _vertices.end());
+			_indices.erase(_indices.end() - 24, _indices.end());
+		}
 		}
 	}
 }

@@ -215,12 +215,15 @@ void Animator::UpdateAnimationEvent()
 	if (_animationEvents.contains(_currentAnimation))
 	{
 		if (_currentAnimationEventIndex < _animationEvents[_currentAnimation].size()) {
-			if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].Tick <= _currentTick) {
-				if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].type == AnimationEventTypes::Speed) {
-					_currentAnimationSpeed = _animationEvents[_currentAnimation][_currentAnimationEventIndex].datas[0].x;
+			AnimationEvent currentEvent = _animationEvents[_currentAnimation][_currentAnimationEventIndex];
+			if (currentEvent.Tick <= _currentTick) {
+				if (currentEvent.type == AnimationEventTypes::Speed) {
+					_currentAnimationSpeed = currentEvent.datas[0].x;
 				}
 				if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].type == AnimationEventTypes::Attack) {
-					DEBUG->Log("Attack");
+					Vector3 offset(currentEvent.datas[0].x, currentEvent.datas[0].y, currentEvent.datas[0].z);
+					Vector3 scale(currentEvent.datas[1].x, currentEvent.datas[1].y, currentEvent.datas[1].z);
+					Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1 ? true : false);
 				}
 
 				_currentAnimationEventIndex++;
@@ -237,12 +240,15 @@ void Animator::UpdateAnimationEvent()
 	if (_animationEvents.contains(_nextAnimation))
 	{
 		if (_nextAnimationEventIndex < _animationEvents[_nextAnimation].size()) {
-			if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].Tick <= _transitionTick) {
-				if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].type == AnimationEventTypes::Speed) {
-					_nextAnimationSpeed = _animationEvents[_nextAnimation][_nextAnimationEventIndex].datas[0].x;
+			AnimationEvent nextEvent = _animationEvents[_nextAnimation][_nextAnimationEventIndex];
+			if (nextEvent.Tick <= _transitionTick) {
+				if (nextEvent.type == AnimationEventTypes::Speed) {
+					_nextAnimationSpeed = nextEvent.datas[0].x;
 				}
-				if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].type == AnimationEventTypes::Attack) {
-					DEBUG->Log("Next Attack");
+				if (nextEvent.type == AnimationEventTypes::Attack) {
+					Vector3 offset(nextEvent.datas[0].x, nextEvent.datas[0].y, nextEvent.datas[0].z);
+					Vector3 scale(nextEvent.datas[1].x, nextEvent.datas[1].y, nextEvent.datas[1].z);
+					Attack(offset, scale, nextEvent.datas[0].w, nextEvent.datas[1].w == 1 ? true : false);
 				}
 
 				_nextAnimationEventIndex++;
@@ -293,6 +299,7 @@ void Animator::LoadAnimationEvents(const string& path)
 				animEvent.datas[1].x = event->FloatAttribute("ScaleX", 1.0f);
 				animEvent.datas[1].y = event->FloatAttribute("ScaleY", 1.0f);
 				animEvent.datas[1].z = event->FloatAttribute("ScaleZ", 1.0f);
+				animEvent.datas[1].w = event->BoolAttribute("IsHostile") ? 1 : 0;
 			}
 			_animationEvents[animationName].push_back(animEvent);
 			event = event->NextSiblingElement();
@@ -316,4 +323,15 @@ void Animator::SetPreviewMode(bool value)
 		_previewAnimation = nullptr;
 		_previewTick = 0.0f;
 	}
+}
+
+void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)
+{
+	shared_ptr<GameObject> attackColliderObj = make_shared<GameObject>();
+	auto attackCollider = make_shared<BoxCollider>();
+	attackCollider->SetTrigger(true);
+	attackColliderObj->AddComponent(attackCollider);
+	attackColliderObj->GetTransform()->SetPosition(GetTransform()->GetPosition());
+	attackColliderObj->Delete(1.0f);
+	RENDER->AddGameObject(attackColliderObj);
 }

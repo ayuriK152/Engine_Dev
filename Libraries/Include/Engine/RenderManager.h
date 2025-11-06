@@ -87,6 +87,7 @@ public:
 	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
+	void DeleteGameobject(shared_ptr<GameObject> obj);
 
 	vector<Light*>& GetLights() { return _lights; }
 	void AddLight(Light* light) { _lights.push_back(light); }

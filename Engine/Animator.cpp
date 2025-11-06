@@ -86,20 +86,6 @@ void Animator::Update()
 		{
 			_isCurrentAnimationEnd = false;
 		}
-
-		AnimationStateConstants animState;
-		animState.CurrentAnimIdx = _animationGpuIndexMap[_currentAnimation];
-		animState.CurrentTick = _currentTick;
-		if (_isInTransition)
-		{
-			animState.NextAnimIdx = _animationGpuIndexMap[_nextAnimation];
-			animState.TransitionTick = _transitionTick;
-			animState.IsOnTransition = true;
-		}
-		else
-		{
-			animState.IsOnTransition = false;
-		}
 	}
 }
 
@@ -210,6 +196,7 @@ void Animator::SetCurrentAnimation(const string& animationName, float _transitio
 		return;
 	}
 	_nextAnimation = animationName;
+	_transitionElapsedTime = 0.0f;
 	_transitionTick = 0.0f;
 	_isInTransition = true;
 }
@@ -224,25 +211,20 @@ void Animator::AddAnimation(shared_ptr<Animation> animation)
 
 void Animator::UpdateAnimationEvent()
 {
+	// Current Animation Event
 	if (_animationEvents.contains(_currentAnimation))
 	{
-		if (_currentAnimationEventIndex + 1 < _animationEvents[_currentAnimation].size())
-		{
-			if (_animationEvents[_currentAnimation][_currentAnimationEventIndex + 1].Tick <= _currentTick)
-			{
-				while (true)
-				{
-					_currentAnimationEventIndex++;
-					if (_currentAnimationEventIndex >= _animationEvents[_currentAnimation].size())
-					{
-						_currentAnimationEventIndex--;
-						break;
-					}
-					if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].Tick <= _currentTick)
-						break;
+		if (_currentAnimationEventIndex < _animationEvents[_currentAnimation].size()) {
+			if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].Tick <= _currentTick) {
+				if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].type == AnimationEventTypes::Speed) {
+					_currentAnimationSpeed = _animationEvents[_currentAnimation][_currentAnimationEventIndex].datas[0].x;
 				}
+				if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].type == AnimationEventTypes::Attack) {
+					DEBUG->Log("Attack");
+				}
+
+				_currentAnimationEventIndex++;
 			}
-			_currentAnimationSpeed = _animationEvents[_currentAnimation][_currentAnimationEventIndex].Speed;
 		}
 	}
 	else
@@ -251,25 +233,20 @@ void Animator::UpdateAnimationEvent()
 		_currentAnimationEventIndex = 0;
 	}
 
+	// Next Animation Event
 	if (_animationEvents.contains(_nextAnimation))
 	{
-		if (_nextAnimationEventIndex + 1 < _animationEvents[_nextAnimation].size())
-		{
-			if (_animationEvents[_nextAnimation][_nextAnimationEventIndex + 1].Tick <= _currentTick)
-			{
-				while (true)
-				{
-					_nextAnimationEventIndex++;
-					if (_nextAnimationEventIndex >= _animationEvents[_nextAnimation].size())
-					{
-						_nextAnimationEventIndex--;
-						break;
-					}
-					if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].Tick <= _currentTick)
-						break;
+		if (_nextAnimationEventIndex < _animationEvents[_nextAnimation].size()) {
+			if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].Tick <= _transitionTick) {
+				if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].type == AnimationEventTypes::Speed) {
+					_nextAnimationSpeed = _animationEvents[_nextAnimation][_nextAnimationEventIndex].datas[0].x;
 				}
+				if (_animationEvents[_nextAnimation][_nextAnimationEventIndex].type == AnimationEventTypes::Attack) {
+					DEBUG->Log("Next Attack");
+				}
+
+				_nextAnimationEventIndex++;
 			}
-			_nextAnimationSpeed = _animationEvents[_nextAnimation][_nextAnimationEventIndex].Speed;
 		}
 	}
 	else
@@ -297,9 +274,27 @@ void Animator::LoadAnimationEvents(const string& path)
 		{
 			if (event == nullptr)
 				break;
-			float tick = event->FloatAttribute("Tick");
-			float speed = event->FloatAttribute("Speed");
-			_animationEvents[animationName].push_back({ tick, speed });
+			AnimationEvent animEvent;
+			animEvent.Tick = event->FloatAttribute("Tick");
+			string eventName(event->Name());
+			if (eventName == "Speed") {
+				animEvent.type = AnimationEventTypes::Speed;
+
+				animEvent.datas[0].x = event->FloatAttribute("Speed");
+			}
+			if (eventName == "Attack") {
+				animEvent.type = AnimationEventTypes::Attack;
+
+				animEvent.datas[0].x = event->FloatAttribute("OffsetX");
+				animEvent.datas[0].y = event->FloatAttribute("OffsetY");
+				animEvent.datas[0].z = event->FloatAttribute("OffsetZ");
+				animEvent.datas[0].w = event->FloatAttribute("Damage");
+
+				animEvent.datas[1].x = event->FloatAttribute("ScaleX", 1.0f);
+				animEvent.datas[1].y = event->FloatAttribute("ScaleY", 1.0f);
+				animEvent.datas[1].z = event->FloatAttribute("ScaleZ", 1.0f);
+			}
+			_animationEvents[animationName].push_back(animEvent);
 			event = event->NextSiblingElement();
 		}
 

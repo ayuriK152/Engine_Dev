@@ -5,17 +5,20 @@
 
 class Animation;
 
-struct AnimationState
-{
-	string StateName;
-	map<string, float> TransitionMap;	// StateName, fade
+enum AnimationEventTypes {
+	Speed,
+	Attack
 };
 
 // 일단은 애니메이션 속도 조절만
+// 현재는 애니메이션을 잘라서 사용하는 경우가 없기 때문에 tick을 0부터 시작한다고 가정
+// 하지만 추후에 애니메이션 앞부분을 잘라서 사용하면 이벤트 처리에 프레임당 딜레이가 생기는 잠재적인 문제가 있음
+// 크런치 이후에 수정이 반드시 필요함
 struct AnimationEvent
 {
+	AnimationEventTypes type;
 	float Tick;
-	float Speed;
+	Vector4 datas[2];
 };
 
 class Animator : public Component
@@ -52,7 +55,7 @@ public:
 	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_ANIMATION ? _animations[_currentAnimation] : nullptr; }
 	void SetCurrentAnimation(const string& animationName, float transitionTime = 0.1f);
 	
-	const map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
+	const unordered_map<string, shared_ptr<Animation>>& GetAnimations() { return _animations; }
 	void AddAnimation(shared_ptr<Animation> animation);
 	void RemoveAnimation(shared_ptr<Animation> animation) { 
 		RemoveAnimation(animation->GetName());
@@ -98,12 +101,12 @@ private:
 	float _transitionElapsedTime = 0.0f;
 	bool _isInTransition = false;
 
-	map<string, shared_ptr<Animation>> _animations;
+	unordered_map<string, shared_ptr<Animation>> _animations;
 
 	string _currentAnimation;
 	string _nextAnimation;
 
-	map<string, vector<AnimationEvent>> _animationEvents;
+	unordered_map<string, vector<AnimationEvent>> _animationEvents;
 	float _currentAnimationSpeed = 1.0f;
 	float _nextAnimationSpeed = 1.0f;
 	int _currentAnimationEventIndex = 0;

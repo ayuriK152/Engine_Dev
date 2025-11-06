@@ -111,7 +111,6 @@ CollisionInfo BoxCollider::CheckCollide(shared_ptr<Collider>& other)
 			float dot = XMVector3Dot(centerVec, XMLoadFloat3(&collInfo.Normal)).m128_f32[0];
 			if (dot < 0.0f)
 				collInfo.Normal = collInfo.Normal * -1.0f;
-				//collInfo.Normal = MathHelper::VectorMultiply(collInfo.Normal, -1.0f);
 
 			XMVECTOR contactPoint = GetContactPoint(boxCollider->GetBoundingBox(), rotA, rotB);
 			collInfo.ContactPoint = Vector3(contactPoint.m128_f32[0], contactPoint.m128_f32[1], contactPoint.m128_f32[2]);

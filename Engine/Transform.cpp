@@ -130,8 +130,8 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 
 void Transform::SetQuaternion(const Vector4& quaternion)
 {
-	_quaternion = XMQuaternionNormalize(XMLoadFloat4(&quaternion));
-	XMVECTOR qLocal;
+	XMVECTOR qLocal = XMQuaternionNormalize(XMLoadFloat4(&quaternion));
+	_quaternion = qLocal;
 	if (HasParent())
 	{
 		XMMATRIX parentRotMat = _parent->GetRotationMatrix();
@@ -144,8 +144,8 @@ void Transform::SetQuaternion(const Vector4& quaternion)
 
 void Transform::SetQuaternion(const XMVECTOR& quaternion)
 {
-	_quaternion = XMQuaternionNormalize(quaternion);
-	XMVECTOR qLocal;
+	XMVECTOR qLocal = XMQuaternionNormalize(quaternion);
+	_quaternion = qLocal;
 	if (HasParent())
 	{
 		XMMATRIX parentRotMat = _parent->GetRotationMatrix();

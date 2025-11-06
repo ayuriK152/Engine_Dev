@@ -328,10 +328,14 @@ void Animator::SetPreviewMode(bool value)
 void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)
 {
 	shared_ptr<GameObject> attackColliderObj = make_shared<GameObject>();
+	attackColliderObj->GetTransform()->SetPosition(GetTransform()->GetPosition());
+	attackColliderObj->GetTransform()->SetQuaternion(GetTransform()->GetQuaternion());
+
 	auto attackCollider = make_shared<BoxCollider>();
 	attackCollider->SetTrigger(true);
+	attackCollider->SetOffset(offset);
 	attackColliderObj->AddComponent(attackCollider);
-	attackColliderObj->GetTransform()->SetPosition(GetTransform()->GetPosition());
+
 	attackColliderObj->Delete(1.0f);
 	RENDER->AddGameObject(attackColliderObj);
 }

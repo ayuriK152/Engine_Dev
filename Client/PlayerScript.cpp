@@ -22,22 +22,14 @@ void PlayerScript::Init()
 	rigidbody->elasticModulus = 0.0f;
 	rigidbody->isPenetrationNormalFixed = true;
 	gameObject->AddComponent(rigidbody);
-
-	//_attackCollider = make_shared<BoxCollider>();
-	//_attackCollider->SetOffset(Vector3(0.0f, 0.0f, -1.0f));
-	//_attackCollider->SetActive(false);
-	//gameObject->AddComponent(_attackCollider);
 }
 
 void PlayerScript::Update()
 {
-	//if (_attackCollider->IsActive())
-	//	_attackCollider->SetActive(false);
 	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH)
 	{
 		animator->SetLoop(false);
 		_playerMovementState = SLASH;
-		//_attackCollider->SetActive(true);
 	}
 
 	if (_playerMovementState == SLASH)

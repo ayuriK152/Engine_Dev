@@ -4,7 +4,7 @@
         <Speed Tick="10.4" Speed="0.7"/>
         <Speed Tick="14.9" Speed="1.3"/>
         <Speed Tick="17.2" Speed="1.65"/>
-        <Attack Tick="17.2" Damage="5.0" OffsetZ="1.0"/>
+        <Attack Tick="17.2" Damage="5.0" OffsetY="0.5" OffsetZ="-1.0"/>
         <Speed Tick="20.7" Speed="0.7"/>
         <Speed Tick="28.2" Speed="1.3"/>
         <Speed Tick="36.0" Speed="1.0"/>

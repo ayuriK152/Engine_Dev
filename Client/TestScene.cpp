@@ -39,7 +39,6 @@ void TestScene::Init()
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 		player = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		player->GetComponent<Animator>()->SetBones(RESOURCE->LoadBone("Paladin WProp J Nordstrom"));
 		player->AddComponent(make_shared<PlayerScript>());
 	}
 

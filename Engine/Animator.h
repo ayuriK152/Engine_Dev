@@ -44,11 +44,6 @@ public:
 	bool IsLoop() { return _isLoop; }
 	void SetLoop(bool loop) { _isLoop = loop; }
 
-	void SetBones(const map<string, Bone>& bones) { 
-		for (auto& bone : bones)
-			_bones[bone.second.id] = bone.second;
-	}
-
 	void UpdateChildList();
 	void UpdateBoneTransform();
 
@@ -122,7 +117,4 @@ private:
 
 	vector<shared_ptr<Transform>> _childs;
 	vector<int> _lastKeyframeIndex;
-
-	map<string, UINT> _animationGpuIndexMap;
-	map<int, Bone> _bones;
 };

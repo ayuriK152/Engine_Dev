@@ -1,0 +1,9 @@
+<Material>
+    <Name>MaleBruteA_Shoes6</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Specular r="0.5" g="0.5" b="0.5" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <DiffuseTexture>MaleBruteA_Shoes_diffuse1.jpg</DiffuseTexture>
+    <NormalTexture>MaleBruteA_Shoes_normal.png</NormalTexture>
+</Material>

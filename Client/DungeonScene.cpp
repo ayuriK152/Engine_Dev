@@ -42,6 +42,12 @@ void DungeonScene::Init()
 	}
 
 	{
+		auto loadedObjects = RESOURCE->LoadPrefabObject("Brute");
+		auto boss = loadedObjects[0];
+		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+	}
+
+	{
 		tpvCameraArm = make_shared<GameObject>();
 		tpvCameraArm->SetName("TPVCameraArm");
 		tpvCameraArm->AddComponent(make_shared<TPVCamera>());
@@ -51,6 +57,24 @@ void DungeonScene::Init()
 		tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
 		tpvCameraScript->isCameraControllOn = false;
 		gameObjects.push_back(tpvCameraArm);
+	}
+
+	{
+		RESOURCE->LoadMesh("Dungeon assets\\Tiles4x4");
+		for (int z = -1; z <= 1; z++) {
+			for (int x = -1; x <= 1; x++) {
+				auto floorTile = make_shared<GameObject>();
+				floorTile->SetName("FloorTiles");
+				floorTile->AddComponent(make_shared<MeshRenderer>());
+				floorTile->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Tiles4x4"));
+				floorTile->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
+				floorTile->AddComponent(make_shared<BoxCollider>());
+				floorTile->GetTransform()->SetPosition({ 4.0f * x, 0, 4.0f * z });
+				floorTile->GetTransform()->SetRotation({ -90, 0, 0 });
+
+				gameObjects.push_back(floorTile);
+			}
+		}
 	}
 
 	while (gameObjects.size() > 0)
@@ -66,5 +90,10 @@ void DungeonScene::Init()
 
 void DungeonScene::Update()
 {
-
+	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
+	{
+		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
+		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+		tpvCameraScript->isCameraControllOn = !tpvCameraScript->isCameraControllOn;
+	}
 }

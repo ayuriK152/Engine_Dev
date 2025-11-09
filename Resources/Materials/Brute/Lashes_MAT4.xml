@@ -1,0 +1,9 @@
+<Material>
+    <Name>Lashes_MAT4</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Specular r="0.15384147" g="0.15384147" b="0.15384147" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <DiffuseTexture>MaleBruteA_Body_diffuse.png</DiffuseTexture>
+    <NormalTexture></NormalTexture>
+</Material>

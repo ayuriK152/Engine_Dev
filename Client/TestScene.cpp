@@ -43,15 +43,16 @@ void TestScene::Init()
 	}
 
 	{
-		test = make_shared<GameObject>();
-		test->SetName("test");
-		test->AddComponent(make_shared<MeshRenderer>());
-		test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\StoneWall1"));
-		test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
-		test->GetTransform()->SetPosition({ 0, 1, 0 });
-		test->GetTransform()->SetRotation({ -90, 0, 0 });
-		
-		gameObjects.push_back(test);
+		//test = make_shared<GameObject>();
+		//test->SetName("test");
+		//test->AddComponent(make_shared<MeshRenderer>());
+		//test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\Tiles4x4"));
+		//test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
+		//test->AddComponent(make_shared<BoxCollider>());
+		//test->GetTransform()->SetPosition({ 3, 1, 0 });
+		//test->GetTransform()->SetRotation({ -90, 0, 0 });
+		//
+		//gameObjects.push_back(test);
 	}
 
 	{
@@ -113,6 +114,8 @@ void TestScene::Update()
 
 	if (INPUTM->IsKeyPress(KeyValue::V))
 		RENDER->SetCurrPSO(PSO_WIREFRAME);
+	else
+		RENDER->SetDefaultPSO();
 
 	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
 	{
@@ -120,6 +123,4 @@ void TestScene::Update()
 		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
 		tpvCameraScript->isCameraControllOn = !tpvCameraScript->isCameraControllOn;
 	}
-	else
-		RENDER->SetDefaultPSO();
 }

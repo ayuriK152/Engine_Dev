@@ -52,6 +52,7 @@ void Animator::Update()
 			_transitionElapsedTime += TIME->DeltaTime();
 			if (_transitionElapsedTime >= _transitionTime) {
 				_isInTransition = false;
+				_isCurrentAnimationEnd = false;
 				_currentAnimation = _nextAnimation;
 				_nextAnimation = EMPTY_ANIMATION;
 				_currentTick = _transitionTick;
@@ -82,8 +83,10 @@ void Animator::Update()
 				_currentTick = GetCurrentAnimation()->GetDuration();
 			}
 		}
-		else
-		{
+		else if (_isCurrentAnimationEnd) {
+			// 여기 뭐 집어넣어야되는데 뭐 넣어야되지
+		}
+		else {
 			_isCurrentAnimationEnd = false;
 		}
 	}
@@ -220,10 +223,13 @@ void Animator::UpdateAnimationEvent()
 				if (currentEvent.type == AnimationEventTypes::Speed) {
 					_currentAnimationSpeed = currentEvent.datas[0].x;
 				}
-				if (_animationEvents[_currentAnimation][_currentAnimationEventIndex].type == AnimationEventTypes::Attack) {
+				if (currentEvent.type == AnimationEventTypes::Attack) {
 					Vector3 offset(currentEvent.datas[0].x, currentEvent.datas[0].y, currentEvent.datas[0].z);
 					Vector3 scale(currentEvent.datas[1].x, currentEvent.datas[1].y, currentEvent.datas[1].z);
 					Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1 ? true : false);
+				}
+				if (currentEvent.type == AnimationEventTypes::End) {
+					_isCurrentAnimationEnd = true;
 				}
 
 				_currentAnimationEventIndex++;
@@ -301,11 +307,14 @@ void Animator::LoadAnimationEvents(const string& path)
 				animEvent.datas[1].z = event->FloatAttribute("ScaleZ", 1.0f);
 				animEvent.datas[1].w = event->BoolAttribute("IsHostile") ? 1 : 0;
 			}
+			if (eventName == "End") {
+				animEvent.type = AnimationEventTypes::End;
+			}
 			_animationEvents[animationName].push_back(animEvent);
 			event = event->NextSiblingElement();
 		}
 
-		animation = node->NextSiblingElement();
+		animation = animation->NextSiblingElement();
 	}
 }
 

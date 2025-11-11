@@ -4,6 +4,6 @@
     <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
     <Specular r="1" g="1" b="1" a="1"/>
     <Emissive r="0" g="0" b="0" a="1"/>
-    <DiffuseTexture>MaleBruteA_Body_diffuse</DiffuseTexture>
+    <DiffuseTexture>MaleBruteA_Body_diffuse.png</DiffuseTexture>
     <NormalTexture></NormalTexture>
 </Material>

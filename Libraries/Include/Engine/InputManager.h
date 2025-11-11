@@ -38,6 +38,7 @@ enum KeyValue
 	NUM_7	=	'7',
 	NUM_8	=	'8',
 	NUM_9	=	'9',
+	SPACE	=	VK_SPACE,
 	ESC		=	VK_ESCAPE,
 	F1		=	VK_F1,
 	F2		=	VK_F2,

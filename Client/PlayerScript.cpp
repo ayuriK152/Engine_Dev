@@ -8,6 +8,8 @@ void PlayerScript::Init()
 	transform = gameObject->GetTransform();
 	animator = gameObject->GetComponent<Animator>();
 	animator->LoadAnimationEvents("..\\Resources\\Animations\\Paladin WProp J Nordstrom\\AnimationEvents.xml");
+	animator->SetLoop(true);
+	animator->SetCurrentAnimation("idle_sword_4");
 
 	_playerMovementState = IDLE;
 	_lastMovementState = IDLE;
@@ -26,13 +28,10 @@ void PlayerScript::Init()
 
 void PlayerScript::Update()
 {
-	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH)
-	{
-		animator->SetLoop(false);
-		_playerMovementState = SLASH;
-	}
+	Roll();
+	Attack();
 
-	if (_playerMovementState == SLASH)
+	if (_playerMovementState == SLASH || _playerMovementState == ROLL)
 	{
 		if (animator->IsCurrentAnimationEnd())
 		{
@@ -40,7 +39,7 @@ void PlayerScript::Update()
 			_playerMovementState = IDLE;
 		}
 	}
-	else
+	else if (_playerMovementState != ROLL)
 	{
 		Move();
 	}
@@ -69,6 +68,9 @@ void PlayerScript::Update()
 		case SLASH:
 			animator->SetCurrentAnimation("slash_1");
 			break;
+		case ROLL:
+			animator->SetCurrentAnimation("roll");
+			break;
 		}
 
 		_lastMovementState = _playerMovementState;
@@ -85,6 +87,10 @@ void PlayerScript::Update()
 		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
+	case ROLL:
+		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 2.2f);
+		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
+		break;
 	}
 }
 
@@ -95,6 +101,25 @@ void PlayerScript::OnCollision(shared_ptr<Collider> other)
 		DEBUG->Log("Attack Complete");
 		auto enemy = static_pointer_cast<EnemyScript>(other->GetGameObject()->GetComponent<Script>());
 		enemy->TakeDamage(10);
+	}
+}
+
+void PlayerScript::Roll()
+{
+	if (INPUTM->IsKeyDown(KeyValue::SPACE))
+	{
+		animator->SetLoop(false);
+		_playerMovementState = ROLL;
+	}
+}
+
+void PlayerScript::Attack()
+{
+
+	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH)
+	{
+		animator->SetLoop(false);
+		_playerMovementState = SLASH;
 	}
 }
 

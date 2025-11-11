@@ -7,7 +7,8 @@ class Animation;
 
 enum AnimationEventTypes {
 	Speed,
-	Attack
+	Attack,
+	End
 };
 
 // 일단은 애니메이션 속도 조절만

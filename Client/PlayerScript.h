@@ -6,7 +6,8 @@ enum PlayerMovementState
 	IDLE,
 	WALK,
 	RUN,
-	SLASH
+	SLASH,
+	ROLL
 };
 
 class PlayerScript : public Script
@@ -18,6 +19,8 @@ public:
 	void OnCollision(shared_ptr<Collider> other) override;
 
 public:
+	void Roll();
+	void Attack();
 	void Move();
 
 private:

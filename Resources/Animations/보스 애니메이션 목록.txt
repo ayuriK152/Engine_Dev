@@ -1,0 +1,8 @@
+IDLE
+Brute\\idle
+
+WALK
+Brute\\walk_forward     // 전진
+
+RUN
+Brute\\run_forward      // 전진

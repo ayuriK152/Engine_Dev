@@ -61,8 +61,8 @@ void DungeonScene::Init()
 
 	{
 		RESOURCE->LoadMesh("Dungeon assets\\Tiles4x4");
-		for (int z = -1; z <= 1; z++) {
-			for (int x = -1; x <= 1; x++) {
+		for (int z = -2; z <= 2; z++) {
+			for (int x = -2; x <= 2; x++) {
 				auto floorTile = make_shared<GameObject>();
 				floorTile->SetName("FloorTiles");
 				floorTile->AddComponent(make_shared<MeshRenderer>());

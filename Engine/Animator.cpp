@@ -226,10 +226,13 @@ void Animator::UpdateAnimationEvent()
 				if (currentEvent.type == AnimationEventTypes::Attack) {
 					Vector3 offset(currentEvent.datas[0].x, currentEvent.datas[0].y, currentEvent.datas[0].z);
 					Vector3 scale(currentEvent.datas[1].x, currentEvent.datas[1].y, currentEvent.datas[1].z);
-					Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1 ? true : false);
+					Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1);
 				}
 				if (currentEvent.type == AnimationEventTypes::End) {
 					_isCurrentAnimationEnd = true;
+				}
+				if (currentEvent.type == AnimationEventTypes::BlockTransition) {
+					_isTransitionBlocked = currentEvent.datas[0].x == 1;
 				}
 
 				_currentAnimationEventIndex++;
@@ -240,6 +243,7 @@ void Animator::UpdateAnimationEvent()
 	{
 		_currentAnimationSpeed = 1.0f;
 		_currentAnimationEventIndex = 0;
+		_isTransitionBlocked = false;
 	}
 
 	// Next Animation Event
@@ -309,6 +313,10 @@ void Animator::LoadAnimationEvents(const string& path)
 			}
 			if (eventName == "End") {
 				animEvent.type = AnimationEventTypes::End;
+			}
+			if (eventName == "BlockTransition") {
+				animEvent.type = AnimationEventTypes::BlockTransition;
+				animEvent.datas[0].x = event->BoolAttribute("Flag") ? 1 : 0;
 			}
 			_animationEvents[animationName].push_back(animEvent);
 			event = event->NextSiblingElement();

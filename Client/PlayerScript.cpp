@@ -88,7 +88,7 @@ void PlayerScript::Update()
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
 	case ROLL:
-		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 2.2f);
+		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
 	}
@@ -106,7 +106,7 @@ void PlayerScript::OnCollision(shared_ptr<Collider> other)
 
 void PlayerScript::Roll()
 {
-	if (INPUTM->IsKeyDown(KeyValue::SPACE))
+	if (INPUTM->IsKeyDown(KeyValue::SPACE) && !animator->IsTransitionBlocked())
 	{
 		animator->SetLoop(false);
 		_playerMovementState = ROLL;
@@ -116,7 +116,7 @@ void PlayerScript::Roll()
 void PlayerScript::Attack()
 {
 
-	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH)
+	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH && !animator->IsTransitionBlocked())
 	{
 		animator->SetLoop(false);
 		_playerMovementState = SLASH;

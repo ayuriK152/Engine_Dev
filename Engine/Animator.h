@@ -8,7 +8,8 @@ class Animation;
 enum AnimationEventTypes {
 	Speed,
 	Attack,
-	End
+	End,
+	BlockTransition
 };
 
 // 일단은 애니메이션 속도 조절만
@@ -41,6 +42,7 @@ public:
 	void PlayAnimation();
 	void PauseAnimation();
 	bool IsCurrentAnimationEnd() { return _isCurrentAnimationEnd; }
+	bool IsTransitionBlocked() { return _isTransitionBlocked; }
 
 	bool IsLoop() { return _isLoop; }
 	void SetLoop(bool loop) { _isLoop = loop; }
@@ -93,6 +95,7 @@ private:
 	bool _isCurrentAnimationEnd;		// 콜백 방식으로 바꾸는거 고려.
 	bool _isLoop;
 	bool _isPreviewMode = false;
+	bool _isTransitionBlocked = false;
 
 	float _currentTick = 0.0f;
 	float _transitionTick = 0.0f;

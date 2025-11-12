@@ -96,11 +96,9 @@ void PlayerScript::Update()
 
 void PlayerScript::OnCollision(shared_ptr<Collider> other)
 {
-	if (other->GetGameObject()->GetTag() == "Enemy")
+	if (other->GetGameObject()->GetTag() == "AttackHostile")
 	{
-		DEBUG->Log("Attack Complete");
-		auto enemy = static_pointer_cast<EnemyScript>(other->GetGameObject()->GetComponent<Script>());
-		enemy->TakeDamage(10);
+		DEBUG->Log("Got Attack");
 	}
 }
 

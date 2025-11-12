@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DungeonScene.h"
 #include "PlayerScript.h"
+#include "EnemyScript.h"
 #include "TPVCamera.h"
 
 void DungeonScene::Init()
@@ -39,11 +40,17 @@ void DungeonScene::Init()
 		player = loadedObjects[0];
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 		player->AddComponent(make_shared<PlayerScript>());
+		player->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 3.0f));
 	}
 
 	{
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Brute");
 		auto boss = loadedObjects[0];
+		auto collider = make_shared<BoxCollider>();
+		collider->SetExtent(Vector3(0.5f, 1.0f, 0.5f));
+		collider->SetOffset(Vector3(0.0f, 1.0f, 0.0f));
+		boss->AddComponent(collider);
+		boss->AddComponent(make_shared<EnemyScript>());
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 	}
 

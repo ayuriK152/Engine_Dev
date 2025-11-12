@@ -11,11 +11,19 @@ void EnemyScript::Update()
 {
 	if (_health <= 0)
 	{
-		if (gameObject->GetComponent<Animator>()->GetCurrentAnimation()->GetName() != "death")
-		{
-			gameObject->GetComponent<Animator>()->SetCurrentAnimation("death");
-			gameObject->GetComponent<Animator>()->SetLoop(false);
-		}
+		//if (gameObject->GetComponent<Animator>()->GetCurrentAnimation()->GetName() != "death")
+		//{
+		//	gameObject->GetComponent<Animator>()->SetCurrentAnimation("death");
+		//	gameObject->GetComponent<Animator>()->SetLoop(false);
+		//}
+	}
+}
+
+void EnemyScript::OnCollision(shared_ptr<Collider> other)
+{
+	if (other->GetGameObject()->GetTag() == "AttackAlly") {
+		DEBUG->Log("Attacked");
+		other->GetGameObject()->Delete(0.0f);
 	}
 }
 

@@ -347,6 +347,7 @@ void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostil
 	shared_ptr<GameObject> attackColliderObj = make_shared<GameObject>();
 	attackColliderObj->GetTransform()->SetPosition(GetTransform()->GetPosition());
 	attackColliderObj->GetTransform()->SetQuaternion(GetTransform()->GetQuaternion());
+	attackColliderObj->SetTag("AttackAlly");
 
 	auto attackCollider = make_shared<BoxCollider>();
 	attackCollider->SetTrigger(true);

@@ -51,7 +51,11 @@ using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-// External Libararies
+
+/////////////////////////
+// External Libararies //
+/////////////////////////
+
 #include "magic_enum/magic_enum.hpp"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -61,17 +65,33 @@ using namespace Microsoft::WRL;
 #include "ImGUI/imgui_stdlib.h"
 #include "ImGUI/imgui_impl_dx12.h"
 #include "ImGUI/imgui_impl_win32.h"
+
+// Jolt Physics
+#include <Jolt/Jolt.h>
+#include <Jolt/RegisterTypes.h>
+#include <Jolt/Core/Factory.h>
+#include <Jolt/Core/TempAllocator.h>
+#include <Jolt/Core/JobSystemThreadPool.h>
+#include <Jolt/Physics/PhysicsSettings.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
 //#include "stb/stb_image.h"
 //#include "stb/stb_image_write.h"
+
 using namespace tinyxml2;
+using namespace JPH;
+using namespace JPH::literals;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTK/Debug/DirectXTK12.lib")
+#pragma comment(lib, "Jolt/Debug/Jolt.lib")
 #else
 #pragma comment(lib, "DirectXTK/Release/DirectXTK12.lib")
+#pragma comment(lib, "Jolt/Release/Jolt.lib")
 #endif
 #pragma comment(lib, "assimp/assimp-vc143-mtd.lib")
 

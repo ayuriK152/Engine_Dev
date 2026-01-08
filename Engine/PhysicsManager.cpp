@@ -7,8 +7,31 @@ PhysicsManager::~PhysicsManager()
 }
 
 void PhysicsManager::Init()
-{
+{// 1. 전역 시스템 초기화
+	JPH::RegisterDefaultAllocator();
+	JPH::Factory::sInstance = new JPH::Factory();
+	JPH::RegisterTypes();
 
+	// 2. 메모리 및 잡 시스템 생성
+	_tempAlloc = new JPH::TempAllocatorImpl(10 * 1024 * 1024); // 10MB
+	_jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, JPH::thread::hardware_concurrency() - 1);
+
+	// 3. 인터페이스 할당
+	_bpLayerInterface = new BPLayerInterfaceImpl();
+	_objVsBPFilter = new ObjectVsBPFilterImpl();
+	_objLayerFilter = new ObjectLayerPairFilterImpl();
+
+	// 4. 물리 시스템 생성
+	_physicsSystem = new JPH::PhysicsSystem();
+	const UINT maxBodies = 1024;
+	const UINT numBodyMutexes = 0;
+	const UINT maxBodyPairs = 1024;
+	const UINT maxContactConstraints = 1024;
+
+	_physicsSystem->Init(maxBodies, numBodyMutexes, maxBodyPairs, maxContactConstraints,
+		*_bpLayerInterface,
+		(JPH::ObjectVsBroadPhaseLayerFilter&)*_objVsBPFilter,
+		(JPH::ObjectLayerPairFilter&)*_objLayerFilter);
 }
 
 void PhysicsManager::FixedUpdate()
@@ -64,6 +87,8 @@ void PhysicsManager::Update()
 			}
 		}
 	}
+
+	_physicsSystem->Update(TIME->DeltaTime(), 1, _tempAlloc, _jobSystem);
 }
 
 void PhysicsManager::LateUpdate()

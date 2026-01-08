@@ -33,6 +33,7 @@ bool Graphic::Initialize()
 		_appDesc.app->Init();
 	ENGINEGUI->Init();
 	DEBUG->Init();
+	PHYSICS->Init();
 
 	BuildFrameResources();
 

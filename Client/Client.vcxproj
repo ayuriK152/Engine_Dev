@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="DungeonScene.h" />
     <ClInclude Include="EnemyScript.h" />
+    <ClInclude Include="PhysicsTestScene.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="DungeonScene.cpp" />
     <ClCompile Include="EnemyScript.cpp" />
+    <ClCompile Include="PhysicsTestScene.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">

@@ -2,11 +2,12 @@
 #include "Main.h"
 #include "TestScene.h"
 #include "DungeonScene.h"
+#include "PhysicsTestScene.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {
 	AppDesc desc;
-	desc.app = make_shared<DungeonScene>();
+	desc.app = make_shared<PhysicsTestScene>();
 	desc.mainWndCaption = L"GameApplication";
 	desc._4xMsaaState = false;
 	desc._4xMsaaQuality = 0;

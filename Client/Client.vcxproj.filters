@@ -8,6 +8,7 @@
     <ClInclude Include="TPVCamera.h" />
     <ClInclude Include="EnemyScript.h" />
     <ClInclude Include="DungeonScene.h" />
+    <ClInclude Include="PhysicsTestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -17,5 +18,6 @@
     <ClCompile Include="TPVCamera.cpp" />
     <ClCompile Include="EnemyScript.cpp" />
     <ClCompile Include="DungeonScene.cpp" />
+    <ClCompile Include="PhysicsTestScene.cpp" />
   </ItemGroup>
 </Project>

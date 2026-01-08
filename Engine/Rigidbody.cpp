@@ -28,8 +28,35 @@ Rigidbody::~Rigidbody()
 
 }
 
+void Rigidbody::Init()
+{
+	auto transform = GetTransform();
+	auto pos = transform->GetPosition();
+	auto rot = transform->GetQuaternion();
+
+	// 1. Shape 생성 (기존 Collider 정보를 활용)
+	// 예: BoxCollider라고 가정
+	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(1.0f, 1.0f, 1.0f));
+	JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+
+	// 2. Body 생성 설정
+	JPH::BodyCreationSettings bodySettings(shapeResult.Get(),
+		JPH::RVec3(pos.x, pos.y, pos.z),
+		JPH::Quat(rot.x, rot.y, rot.z, rot.w),
+		isGravity ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static,
+		isGravity ? Layers::MOVING : Layers::NON_MOVING);
+
+	// 3. 시스템에 등록
+	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
+	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
+
+	PHYSICS->AddRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
+}
+
 void Rigidbody::FixedUpdate()
 {
+	return;
+
 	if (isGravity)
 		_netForce.y = GRAVITY;
 	else
@@ -38,6 +65,8 @@ void Rigidbody::FixedUpdate()
 
 void Rigidbody::Update()
 {
+	return;
+
 	// 선형 운동
 	_velocity = _velocity + _netForce * TIME->DeltaTime();
 	//_velocity = _velocity * (1.0f - drag * TIME->DeltaTime()); // 저항 적용

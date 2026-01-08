@@ -41,6 +41,7 @@ void PhysicsManager::FixedUpdate()
 
 void PhysicsManager::Update()
 {
+	/*
 	if (_colliders.size() == 0)
 		return;
 
@@ -87,8 +88,20 @@ void PhysicsManager::Update()
 			}
 		}
 	}
-
+	*/
 	_physicsSystem->Update(TIME->DeltaTime(), 1, _tempAlloc, _jobSystem);
+
+	for (auto& rigidbody : _rigidbodies) {
+		JPH::BodyInterface& bodyInterface = _physicsSystem->GetBodyInterface();
+
+		JPH::RVec3 position;
+		JPH::Quat rotation;
+		bodyInterface.GetPositionAndRotation(rigidbody->GetBodyID(), position, rotation);
+
+		// DX12 엔진의 Transform 업데이트
+		rigidbody->GetTransform()->SetLocalPosition(Vector3(position.GetX(), position.GetY(), position.GetZ()));
+		rigidbody->GetTransform()->SetQuaternion(Vector4(rotation.GetX(), rotation.GetY(), rotation.GetZ(), rotation.GetW()));
+	}
 }
 
 void PhysicsManager::LateUpdate()
@@ -103,6 +116,18 @@ void PhysicsManager::DeleteCollider(shared_ptr<Collider> collider)
 		if (_colliders[i] == collider)
 		{
 			_colliders.erase(_colliders.begin() + i);
+			break;
+		}
+	}
+}
+
+void PhysicsManager::DeleteRigidbody(shared_ptr<Rigidbody> rbd)
+{
+	for (int i = 0; i < _rigidbodies.size(); i++)
+	{
+		if (_rigidbodies[i] == rbd)
+		{
+			_rigidbodies.erase(_rigidbodies.begin() + i);
 			break;
 		}
 	}

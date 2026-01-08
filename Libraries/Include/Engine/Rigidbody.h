@@ -10,12 +10,15 @@ public:
 	Rigidbody();
 	virtual ~Rigidbody();
 
+	void Init()override;
 	void FixedUpdate()override;
 	void Update()override;
 
 public:
 	Vector3 GetVelocity() { return _velocity; }
 	void SetVelocity(Vector3& veclocity) { _velocity = veclocity; }
+
+	BodyID GetBodyID() { return _bodyID; }
 
 	void AddForce(const Vector3& force);
 	void AddTorque(const Vector3& torque);
@@ -42,5 +45,7 @@ private:
 	Vector3 _angularVelocity;	// 각속도
 	Vector3 _netTorque;			// 합토크
 	Vector3 _inertiaTensor;		// 박스면 대각선 값
+
+	JPH::BodyID _bodyID;
 };
 

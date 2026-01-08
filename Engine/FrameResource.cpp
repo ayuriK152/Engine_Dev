@@ -35,11 +35,11 @@ void FrameResource::Update()
 		_isInitialized = true;
 	}
 
+	// 순서 바꾸면 안됨!!!
+	UpdateCameraCB();
 	UpdateObjectSB();
 	UpdateMaterialSB();
 	UpdateLightSB();
-
-	UpdateCameraCB();
 }
 
 void FrameResource::UpdateObjectSB()

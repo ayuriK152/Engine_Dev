@@ -15,6 +15,8 @@ public:
 	void Update()override;
 
 public:
+	void SetColliderSize(const Vector3& size);
+
 	Vector3 GetVelocity() { return _velocity; }
 	void SetVelocity(Vector3& veclocity) { _velocity = veclocity; }
 
@@ -22,6 +24,9 @@ public:
 
 	void AddForce(const Vector3& force);
 	void AddTorque(const Vector3& torque);
+
+private:
+	JPH::ShapeSettings::ShapeResult FitOnMesh();
 
 public:
 	// velocity essential

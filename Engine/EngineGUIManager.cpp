@@ -588,10 +588,6 @@ void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Checkbox("Gravity", &rigidbody->isGravity);
-		ImGui::InputFloat("Elastic Modulus", &rigidbody->elasticModulus, 0.0f, 0.0f, "%.2f");
-		ImGui::InputFloat("Friction", &rigidbody->friction, 0.0f, 0.0f, "%.2f");
-		ImGui::InputFloat("Mass", &rigidbody->mass, 0.0f, 0.0f, "%.2f");
-		ImGui::InputFloat("Drag", &rigidbody->drag, 0.0f, 0.0f, "%.2f");
 	}
 }
 

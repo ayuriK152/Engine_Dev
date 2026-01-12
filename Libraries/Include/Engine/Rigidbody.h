@@ -22,34 +22,14 @@ public:
 
 	BodyID GetBodyID() { return _bodyID; }
 
-	void AddForce(const Vector3& force);
-	void AddTorque(const Vector3& torque);
-
 private:
 	JPH::ShapeSettings::ShapeResult FitOnMesh();
 
 public:
-	// velocity essential
 	bool isGravity;				// 중력 여부
-	float elasticModulus;		// 탄성계수
-	float friction;				// 마찰계수
-	float mass;					// 질량
-	float drag;					// 공기저항 계수
-
-	// angular essential
-	bool isAngular;
-	float angularDrag;			// 회전 저항 계수
-	float angularVelocityPower;	// 회전 운동 에너지
-
-	bool isPenetrationNormalFixed;	// 충돌 후 침투 보간시 미끄러짐 방지를 위한 필드
 
 private:
 	Vector3 _velocity;			// 속도
-	Vector3 _netForce;			// 합력
-
-	Vector3 _angularVelocity;	// 각속도
-	Vector3 _netTorque;			// 합토크
-	Vector3 _inertiaTensor;		// 박스면 대각선 값
 
 	JPH::BodyID _bodyID;
 };

@@ -89,8 +89,6 @@ public:
 	void AddRigidbody(shared_ptr<Rigidbody> rbd) { _rigidbodies.push_back(rbd); }
 	void DeleteRigidbody(shared_ptr<Rigidbody> rbd);
 
-	void ResolvePenetration(CollisionInfo& collInfo, shared_ptr<Rigidbody>& rba, shared_ptr<Rigidbody>& rbb);
-
 private:
 	vector<shared_ptr<Collider>> _colliders;
 	vector<shared_ptr<Rigidbody>> _rigidbodies;

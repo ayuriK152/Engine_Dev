@@ -20,6 +20,9 @@ void PhysicsTestScene::Init()
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
 	gameObjects.push_back(camera);
 
+	auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
+	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+
 	auto globalLight = make_shared<GameObject>();
 	globalLight->SetName("GlobalLight");
 	XMFLOAT4 ambient = { 0.8f, 0.8f, 0.8f, 1.0f };

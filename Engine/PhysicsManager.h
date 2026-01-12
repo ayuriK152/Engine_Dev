@@ -81,8 +81,9 @@ public:
 	void LateUpdate();
 
 public:
-	PhysicsSystem* GetPhysicsSystem() { return _physicsSystem; }
+	JPH::PhysicsSystem* GetPhysicsSystem() { return _physicsSystem; }
 
+	// Legacy, 삭제 고려
 	void AddCollider(shared_ptr<Collider> collider) { _colliders.push_back(collider); }
 	void DeleteCollider(shared_ptr<Collider> collider);
 

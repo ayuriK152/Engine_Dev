@@ -35,11 +35,11 @@ void FrameResource::Update()
 		_isInitialized = true;
 	}
 
+	// 순서 바꾸면 안됨!!!
+	UpdateCameraCB();
 	UpdateObjectSB();
 	UpdateMaterialSB();
 	UpdateLightSB();
-
-	UpdateCameraCB();
 }
 
 void FrameResource::UpdateObjectSB()
@@ -47,19 +47,29 @@ void FrameResource::UpdateObjectSB()
 	unordered_map<shared_ptr<Mesh>, int> instanceIndexStacks;
 	for (auto& o : RENDER->GetObjects())
 	{
+		int instanceIndex = 0;
+
 		shared_ptr<MeshRenderer> meshRenderer = o->GetComponent<MeshRenderer>();
 		if (meshRenderer == nullptr) meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
+
+		if (meshRenderer != nullptr) {
+			instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
+			if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
+				instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
+			else
+				instanceIndexStacks[meshRenderer->GetMesh()] = 1;
+		}
 
 		if (o->GetFramesDirty() > 0)
 		{
 			o->ReleaseFramesDirty();
 
 			if (meshRenderer != nullptr) {
-				int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-				if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
-					instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
-				else
-					instanceIndexStacks[meshRenderer->GetMesh()] = 1;
+				//int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
+				//if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
+				//	instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
+				//else
+				//	instanceIndexStacks[meshRenderer->GetMesh()] = 1;
 
 				InstanceConstants instanceConstants;
 

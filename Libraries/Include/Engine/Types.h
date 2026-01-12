@@ -157,5 +157,4 @@ struct Vector4 : public XMFLOAT4
 };
 
 using ColorRGBA		= XMFLOAT4;
-using Color			= ColorRGBA;
 using ColorRGB		= XMFLOAT3;

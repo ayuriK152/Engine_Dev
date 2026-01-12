@@ -53,7 +53,7 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW _vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW _indexBufferView;
 
-	Color _colliderDebugColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+	ColorRGBA _colliderDebugColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 	const UINT16 _boxColliderIndices[24] = {
 				0, 1,

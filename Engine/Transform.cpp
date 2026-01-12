@@ -348,7 +348,6 @@ void Transform::LookAtWithNoRoll(const Vector3& targetPos)
 
 	float pitch = -asin(dir.y);
 	float yaw = atan2(dir.x, dir.z);
-	float roll = 0.0f;
 
 	XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), pitch);
 	XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw);

@@ -87,7 +87,7 @@ struct VertexPC
 	VertexPC() {};
 	VertexPC(
 		const Vector3& p, 
-		const Color& c) : 
+		const ColorRGBA& c) :
 		Position(p), 
 		Color(c) {}
 	VertexPC(
@@ -97,7 +97,7 @@ struct VertexPC
 		Color(cr, cg, cb, ca) {}
 
 	Vector3 Position;
-	Color Color;
+	ColorRGBA Color;
 };
 
 struct VertexPT

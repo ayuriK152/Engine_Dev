@@ -20,10 +20,10 @@ struct InstanceConstants
 struct MaterialConstants
 {
 	XMFLOAT4X4 matTransform = MathHelper::Identity4x4();
-	Color Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
-	Color Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
-	Color Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
-	Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
+	ColorRGBA Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+	ColorRGBA Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+	ColorRGBA Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
+	ColorRGBA Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT2 Tilling = { 1.0f, 1.0f };
 	float Shiness = 0.25f;
 	UINT DiffuseMapIndex;

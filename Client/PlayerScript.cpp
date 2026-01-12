@@ -21,8 +21,6 @@ void PlayerScript::Init()
 	gameObject->AddComponent(playerCollider);
 
 	auto rigidbody = make_shared<Rigidbody>();
-	rigidbody->elasticModulus = 0.0f;
-	rigidbody->isPenetrationNormalFixed = true;
 	gameObject->AddComponent(rigidbody);
 }
 

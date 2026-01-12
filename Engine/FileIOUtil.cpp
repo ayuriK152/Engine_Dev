@@ -111,28 +111,28 @@ void FileIOUtil::LoadMaterials()
 			name = string(element->GetText());
 
 		element = node->FirstChildElement("Ambient");
-		Color ambient;
+		ColorRGBA ambient;
 		ambient.x = element->FloatAttribute("r");
 		ambient.y = element->FloatAttribute("g");
 		ambient.z = element->FloatAttribute("b");
 		ambient.w = element->FloatAttribute("a");
 
 		element = node->FirstChildElement("Diffuse");
-		Color diffuse;
+		ColorRGBA diffuse;
 		diffuse.x = element->FloatAttribute("r");
 		diffuse.y = element->FloatAttribute("g");
 		diffuse.z = element->FloatAttribute("b");
 		diffuse.w = element->FloatAttribute("a");
 
 		element = node->FirstChildElement("Specular");
-		Color specular;
+		ColorRGBA specular;
 		specular.x = element->FloatAttribute("r");
 		specular.y = element->FloatAttribute("g");
 		specular.z = element->FloatAttribute("b");
 		specular.w = element->FloatAttribute("a");
 
 		element = node->FirstChildElement("Emissive");
-		Color emissive;
+		ColorRGBA emissive;
 		emissive.x = element->FloatAttribute("r");
 		emissive.y = element->FloatAttribute("g");
 		emissive.z = element->FloatAttribute("b");

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PhysicsTestScene.h"
+#include "EditorCamera.h"
 
 void PhysicsTestScene::Init()
 {
@@ -15,6 +16,7 @@ void PhysicsTestScene::Init()
 	auto camera = make_shared<GameObject>();
 	camera->SetName("camera");
 	camera->AddComponent(make_shared<Camera>());
+	camera->AddComponent(make_shared<EditorCamera>());
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
 	gameObjects.push_back(camera);
 

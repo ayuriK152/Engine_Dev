@@ -9,6 +9,7 @@
     <ClInclude Include="EnemyScript.h" />
     <ClInclude Include="DungeonScene.h" />
     <ClInclude Include="PhysicsTestScene.h" />
+    <ClInclude Include="EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -19,5 +20,6 @@
     <ClCompile Include="EnemyScript.cpp" />
     <ClCompile Include="DungeonScene.cpp" />
     <ClCompile Include="PhysicsTestScene.cpp" />
+    <ClCompile Include="EditorCamera.cpp" />
   </ItemGroup>
 </Project>

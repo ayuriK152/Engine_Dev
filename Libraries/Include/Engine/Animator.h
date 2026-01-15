@@ -47,7 +47,6 @@ public:
 	bool IsLoop() { return _isLoop; }
 	void SetLoop(bool loop) { _isLoop = loop; }
 
-	void UpdateChildList();
 	void UpdateBoneTransform();
 
 	shared_ptr<Animation> GetCurrentAnimation() { return _currentAnimation != EMPTY_ANIMATION ? _animations[_currentAnimation] : nullptr; }
@@ -86,6 +85,10 @@ public:
 		UpdateBoneTransform();
 	}
 
+	// Recently Optimized
+	void SetBone(map<string, Bone> bone);
+	void UpdateBoneInstances();
+
 private:
 	void Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile);
 
@@ -103,7 +106,9 @@ private:
 	float _transitionElapsedTime = 0.0f;
 	bool _isInTransition = false;
 
+	// 이거도 vector로 변경 고려
 	unordered_map<string, shared_ptr<Animation>> _animations;
+	vector<Bone> _bone;
 
 	string _currentAnimation;
 	string _nextAnimation;
@@ -119,6 +124,5 @@ private:
 	bool _isPreviewPlaying = false;
 	float _previewTick = 0.0f;
 
-	vector<shared_ptr<Transform>> _childs;
 	vector<int> _lastKeyframeIndex;
 };

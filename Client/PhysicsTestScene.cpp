@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PhysicsTestScene.h"
 #include "EditorCamera.h"
+#include "PlayerScript.h"
 
 void PhysicsTestScene::Init()
 {
@@ -21,6 +22,8 @@ void PhysicsTestScene::Init()
 	gameObjects.push_back(camera);
 
 	auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
+	loadedObjects[0]->GetComponent<Animator>()->SetBone(RESOURCE->LoadBone("Paladin WProp J Nordstrom"));
+	loadedObjects[0]->AddComponent(make_shared<PlayerScript>());
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 
 	auto globalLight = make_shared<GameObject>();

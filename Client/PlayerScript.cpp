@@ -15,11 +15,6 @@ void PlayerScript::Init()
 	_lastMovementState = IDLE;
 	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
-	auto playerCollider = make_shared<BoxCollider>();
-	playerCollider->SetOffset(Vector3(0.0f, 0.8f, 0.0f));
-	playerCollider->SetExtent(Vector3(0.3f, 0.8f, 0.3f));
-	gameObject->AddComponent(playerCollider);
-
 	auto rigidbody = make_shared<Rigidbody>();
 	gameObject->AddComponent(rigidbody);
 }
@@ -27,7 +22,7 @@ void PlayerScript::Init()
 void PlayerScript::Update()
 {
 	Roll();
-	Attack();
+	//Attack();
 
 	if (_playerMovementState == SLASH || _playerMovementState == ROLL)
 	{

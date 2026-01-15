@@ -37,10 +37,12 @@ public:
 	unordered_map<string, AnimationData>* GetAnimationDatasPtr() { return &_animationDatas; }
 
 	KeyFrame Interpolate(const string& boneName, float tick, int& lastIdx);
+	KeyFrame Interpolate(int boneIdx, float tick, int& lastIdx);
 
 private:
 	float _duration;
 	float _ticksPerSecond;
 	unordered_map<string, AnimationData> _animationDatas;
+	vector<AnimationData> _animationDatasNew;
 };
 

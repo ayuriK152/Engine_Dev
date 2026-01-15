@@ -20,7 +20,6 @@ Animator::~Animator()
 void Animator::Init()
 {
 	_isPlaying = _isPlayOnInit;
-	UpdateChildList();
 }
 
 void Animator::Update()
@@ -115,25 +114,13 @@ void Animator::PauseAnimation()
 	_isPlaying = false;
 }
 
-void Animator::UpdateChildList()
-{
-	_childs = GetTransform()->GetChilds();
-	for (int i = 0; i < _childs.size(); i++)
-	{
-		_childs.insert(_childs.end(), _childs[i]->GetChilds().begin(), _childs[i]->GetChilds().end());
-	}
-	_lastKeyframeIndex.clear();
-	_lastKeyframeIndex.resize(_childs.size(), 0);
-}
-
 void Animator::UpdateBoneTransform()
 {
 	if (_isPreviewMode)
 	{
-		for (int i = 0; i < _childs.size(); i++)
+		for (int i = 0; i < _bone.size(); i++)
 		{
-			string objName = _childs[i]->GetGameObject()->GetName();
-			Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(objName, _previewTick, _lastKeyframeIndex[i]);
+			Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(i, _previewTick, _lastKeyframeIndex[i]);
 
 			if (currKeyFrame.tick < 0.0)
 				continue;
@@ -142,16 +129,14 @@ void Animator::UpdateBoneTransform()
 			XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
 			XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
 
-			_childs[i]->SetLocalMatrix(matScale * matRotation * matTranslation);
+			_bone[i].instancedObj->GetTransform()->SetLocalMatrix(matScale * matRotation * matTranslation);
 		}
 	}
 
 	else
 	{
-		for (int i = 0; i < _childs.size(); i++)
-		{
-			string objName = _childs[i]->GetGameObject()->GetName();
-			Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(objName, _currentTick, _lastKeyframeIndex[i]);
+		for (int i = 0; i < _bone.size(); i++) {
+			Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(i, _currentTick, _lastKeyframeIndex[i]);
 
 			if (currKeyFrame.tick < 0.0)
 				continue;
@@ -160,7 +145,7 @@ void Animator::UpdateBoneTransform()
 			{
 				// 다음 애니메이션 키프레임
 				int dummyIdx = 0;
-				Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(objName, _transitionTick, dummyIdx);
+				Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(i, _transitionTick, dummyIdx);
 
 				// 가중치 계산
 				float alpha = _transitionElapsedTime / _transitionTime;
@@ -176,7 +161,7 @@ void Animator::UpdateBoneTransform()
 				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
 				XMMATRIX matTranslation = XMMatrixTranslation(pos.x, pos.y, pos.z);
 
-				_childs[i]->SetLocalMatrix(matScale * matRotation * matTranslation);
+				_bone[i].instancedObj->GetTransform()->SetLocalMatrix(matScale * matRotation * matTranslation);
 			}
 			else
 			{
@@ -184,7 +169,7 @@ void Animator::UpdateBoneTransform()
 				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
 				XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
 
-				_childs[i]->SetLocalMatrix(matScale * matRotation * matTranslation);
+				_bone[i].instancedObj->GetTransform()->SetLocalMatrix(matScale * matRotation * matTranslation);
 			}
 		}
 	}
@@ -340,6 +325,38 @@ void Animator::SetPreviewMode(bool value)
 		_previewAnimation = nullptr;
 		_previewTick = 0.0f;
 	}
+}
+
+void Animator::SetBone(map<string, Bone> bone)
+{
+	for (int i = 0; i < bone.size(); i++)
+		_bone.push_back(Bone());
+	for (auto b : bone)
+		_bone[b.second.id] = b.second;
+
+	UpdateBoneInstances();
+	_lastKeyframeIndex.clear();
+	_lastKeyframeIndex.resize(_bone.size(), 0);
+}
+
+void Animator::UpdateBoneInstances()
+{
+	auto childs = GetTransform()->GetChilds();
+	for (int i = 0; i < childs.size(); i++)
+	{
+		childs.insert(childs.end(), childs[i]->GetChilds().begin(), childs[i]->GetChilds().end());
+	}
+
+	for (int i = 0; i < childs.size(); i++)
+	{
+		for (int j = 0; j < _bone.size(); j++) {
+			if (_bone[j].instancedObj != nullptr || childs[i]->GetGameObject()->GetName() != _bone[j].name)
+				continue;
+			_bone[j].instancedObj = childs[i]->GetGameObject();
+			break;
+		}
+	}
+
 }
 
 void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)

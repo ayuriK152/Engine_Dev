@@ -96,7 +96,7 @@ public:
 	bool IsMouseLeftButtonPress() { return _mouseStates.LeftButton == KeyState::Press; }
 
 	bool IsMouseRightButtonDown() { return  _mouseStates.RightButton == KeyState::Down; }
-	bool IsMouseRightButtonPress() { return  _mouseStates.RightButton == KeyState::Press; }
+	bool IsMouseRightButtonPress() { return _mouseStates.RightButton == KeyState::Press; }
 
 	void OnMouseClick(USHORT buttonFlags);
 	void OnMouseMove(int x, int y);

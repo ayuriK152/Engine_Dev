@@ -22,7 +22,7 @@ void PhysicsTestScene::Init()
 	gameObjects.push_back(camera);
 
 	auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
-	loadedObjects[0]->GetComponent<Animator>()->SetBone(RESOURCE->LoadBone("Paladin WProp J Nordstrom"));
+	loadedObjects[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
 	loadedObjects[0]->AddComponent(make_shared<PlayerScript>());
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 

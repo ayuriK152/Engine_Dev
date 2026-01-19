@@ -177,6 +177,8 @@
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
     <ClInclude Include="ShadowMap.h" />
+    <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="SkeletonManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -381,5 +383,7 @@
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="ShadowMap.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="SkeletonManager.cpp" />
   </ItemGroup>
 </Project>

@@ -65,12 +65,6 @@ void FrameResource::UpdateObjectSB()
 			o->ReleaseFramesDirty();
 
 			if (meshRenderer != nullptr) {
-				//int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-				//if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
-				//	instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
-				//else
-				//	instanceIndexStacks[meshRenderer->GetMesh()] = 1;
-
 				InstanceConstants instanceConstants;
 
 				instanceConstants.MaterialIndex = meshRenderer->GetMaterial()->matSBIndex;

@@ -6,15 +6,13 @@ class SkinnedMeshRenderer;
 class Animator;
 class Animation;
 
-enum ModelFormat
-{
+enum ModelFormat {
 	UNKOWN = -1,
 	FBX,
 	GLTF
 };
 
-class AssetLoader
-{
+class AssetLoader {
 public:
 	AssetLoader();
 	~AssetLoader();

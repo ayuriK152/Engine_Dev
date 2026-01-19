@@ -26,13 +26,13 @@ public:
 
 	void SaveMesh(shared_ptr<Mesh> mesh, const string& filePath = "");
 	void SaveAnimation(shared_ptr<Animation> animation, const string& filePath = "");
-	void SaveBone(map<string, Bone> bones, const string& boneName, const string& filePath = "");
+	void SaveBone(map<string, BoneData> bones, const string& boneName, const string& filePath = "");
 	void SavePrefab(shared_ptr<GameObject> prefabObject, const string& filePath = "");
 	void SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> object, int parentIdx, const string& prefabName);
 
 	shared_ptr<Mesh> LoadMesh(const string& filePath);
 	shared_ptr<Animation> LoadAnimation(const string& filePath);
-	map<string, Bone> LoadBone(const string& filePath);
+	map<string, BoneData> LoadBone(const string& filePath);
 	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath);
 
 private:

@@ -41,7 +41,7 @@ HANDLE FileIOUtil::CreateFileHandle(string fileName, bool createNotExists) {
 			fullPath = RESOURCE_PATH_MESH + fileName + BULB_EXT_MESH;
 		else if (is_same_v<T, Animation>)
 			fullPath = RESOURCE_PATH_ANIMATION + fileName + BULB_EXT_ANIMATION;
-		else if (is_same_v<T, Bone>)
+		else if (is_same_v<T, BoneData>)
 			fullPath = RESOURCE_PATH_BONE + fileName + BULB_EXT_BONE;
 		else if (is_same_v<T, GameObject>)
 			fullPath = RESOURCE_PATH_PREFAB + fileName + BULB_EXT_PREFAB;

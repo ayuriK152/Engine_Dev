@@ -143,6 +143,11 @@ using namespace JPH::literals;
 #include "FrameResource.h"
 #include "ShadowMap.h"
 
+/*******/
+/* ETC */
+/*******/
+#include "Skeleton.h"
+
 /************/
 /* Managers */
 /************/
@@ -155,6 +160,7 @@ using namespace JPH::literals;
 #include "DebugManager.h"
 #include "PhysicsManager.h"
 #include "ParticleManager.h"
+#include "SkeletonManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

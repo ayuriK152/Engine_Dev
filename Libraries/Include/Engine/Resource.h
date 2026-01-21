@@ -43,6 +43,8 @@ public:
 	string GetPath() { return UniversalUtils::ToString(_pathw); }
 	wstring GetPathW() { return _pathw; }
 
+	UINT GetID() { return _id; }
+
 protected:
 	virtual void Load(const wstring& path) { }
 
@@ -53,5 +55,9 @@ protected:
 
 	wstring _pathw;
 
-	UINT32 _id = 0;
+	// 현재는 각 리소스 타입에 따라 따로 아이디를 관리하도록 하고있음.
+	// 따라서 동일한 아이디를 갖는 다른 타입의 리소스가 존재할 수 있음.
+	// 나중에 보고 문제가 될 것 같다 싶으면 로직 수정하기.
+	// ex) id 1을 동시에 갖는 Mesh와 Animation -> 존재 가능
+	UINT _id = 0;
 };

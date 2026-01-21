@@ -49,6 +49,5 @@ private:
 
 	bool _isInitialized = false;
 
-	// Mesh, <IndexStart, Current Index>
-	unordered_map<shared_ptr<Mesh>, pair<int, int>> _instanceIndexMap;
+	unordered_map<shared_ptr<Mesh>, int> _instanceIndexMap;
 };

@@ -28,6 +28,8 @@ using namespace std;
 #include <assert.h>
 #include <comdef.h>
 #include <Shlwapi.h>
+#include <thread>
+#include <future>
 
 #pragma comment(lib, "Shlwapi.lib")
 

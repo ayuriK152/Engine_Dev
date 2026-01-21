@@ -44,7 +44,6 @@ void FrameResource::Update()
 
 void FrameResource::UpdateObjectSB()
 {
-	unordered_map<shared_ptr<Mesh>, int> instanceIndexStacks;
 	for (auto& o : RENDER->GetObjects())
 	{
 		int instanceIndex = 0;
@@ -54,10 +53,10 @@ void FrameResource::UpdateObjectSB()
 
 		if (meshRenderer != nullptr) {
 			instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-			if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
-				instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
+			if (_instanceIndexMap.contains(meshRenderer->GetMesh()))
+				instanceIndex += _instanceIndexMap[meshRenderer->GetMesh()]++;
 			else
-				instanceIndexStacks[meshRenderer->GetMesh()] = 1;
+				_instanceIndexMap[meshRenderer->GetMesh()] = 1;
 		}
 
 		if (o->GetFramesDirty() > 0)
@@ -77,6 +76,8 @@ void FrameResource::UpdateObjectSB()
 			}
 		}
 	}
+
+	_instanceIndexMap.clear();
 }
 
 void FrameResource::UpdateMaterialSB()

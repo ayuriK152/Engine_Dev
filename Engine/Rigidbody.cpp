@@ -43,7 +43,18 @@ void Rigidbody::FixedUpdate()
 
 void Rigidbody::Update()
 {
+	if (_gameObject.lock()->GetFramesDirty() > 0) {
+		auto transform = _gameObject.lock()->GetTransform();
+		auto pos = transform->GetPosition();
+		auto rot = transform->GetQuaternion();
 
+		PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetPositionAndRotation(
+			_bodyID,
+			JPH::RVec3(pos.x, pos.y, pos.z),
+			JPH::Quat(rot.x, rot.y, rot.z, rot.w),
+			JPH::EActivation::Activate
+		);
+	}
 }
 
 void Rigidbody::SetColliderSize(const Vector3& size)

@@ -47,14 +47,16 @@ public:
 	ComponentType type;
 	bool isInitialized = false;
 
+protected:
+	UINT _id;
+	weak_ptr<GameObject> _gameObject;
+	bool _isActive = true;
+
 private:
 	friend class GameObject;
 	void SetGameObject(shared_ptr<GameObject> gameObject) { _gameObject = gameObject; }
 
 private:
 	static UINT _count;
-	UINT _id;
-	weak_ptr<GameObject> _gameObject;
-	bool _isActive = true;
 };
 

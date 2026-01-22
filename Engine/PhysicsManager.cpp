@@ -45,11 +45,12 @@ void PhysicsManager::Update()
 	_physicsSystem->Update(TIME->DeltaTime(), 1, _tempAlloc, _jobSystem);
 
 	for (auto& rigidbody : _rigidbodies) {
-		JPH::BodyInterface& bodyInterface = _physicsSystem->GetBodyInterface();
+		if (!_physicsSystem->GetBodyInterface().IsActive(rigidbody->GetBodyID()))
+			continue;
 
 		JPH::RVec3 position;
 		JPH::Quat rotation;
-		bodyInterface.GetPositionAndRotation(rigidbody->GetBodyID(), position, rotation);
+		_physicsSystem->GetBodyInterface().GetPositionAndRotation(rigidbody->GetBodyID(), position, rotation);
 
 		// DX12 엔진의 Transform 업데이트
 		rigidbody->GetTransform()->SetLocalPosition(Vector3(position.GetX(), position.GetY(), position.GetZ()));

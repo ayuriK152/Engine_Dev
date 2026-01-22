@@ -114,6 +114,8 @@ public:
 	const ShadowMap* GetShadowMap() { return _shadowMap.get(); }
 
 	void AddMeshInfo(int id) {
+		while (_meshInstanceStartIndex.size() <= id)
+			_meshInstanceStartIndex.push_back(0);
 		while (_meshRenderCheckMap.size() <= id)
 			_meshRenderCheckMap.push_back(false);
 	}
@@ -153,7 +155,7 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	vector<shared_ptr<GameObject>> _objects;
-	vector<shared_ptr<GameObject>> _sortedObjects[PSO_COUNT];
+	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _sortedObjects;
 	vector<UINT> _meshInstanceStartIndex;
 	vector<bool> _meshRenderCheckMap;
 

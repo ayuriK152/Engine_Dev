@@ -181,6 +181,7 @@
     <ClInclude Include="SkeletonManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -389,5 +390,6 @@
     <ClCompile Include="SkeletonManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadManager.cpp" />
   </ItemGroup>
 </Project>

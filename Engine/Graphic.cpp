@@ -27,6 +27,7 @@ bool Graphic::Initialize()
 
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
+	THREAD->Init();
 	RENDER->Init();
 	FILEIO->Init();
 	if (_appDesc.app != nullptr)

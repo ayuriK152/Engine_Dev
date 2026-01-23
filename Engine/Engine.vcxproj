@@ -76,6 +76,7 @@
     <ClInclude Include="SkinnedMeshRenderer.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniversalUtils.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UniversalUtils.cpp" />
   </ItemGroup>

@@ -18,10 +18,8 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+#include <queue>
 #include <algorithm>
-#include <filesystem>
-#include <fstream>
-using namespace std;
 
 // Win
 #include <windows.h>
@@ -31,8 +29,12 @@ using namespace std;
 #include <Shlwapi.h>
 #include <thread>
 #include <future>
+#include <filesystem>
+#include <fstream>
 
 #pragma comment(lib, "Shlwapi.lib")
+
+using namespace std;
 
 // DX
 #include "d3dx12/d3dx12.h"
@@ -51,6 +53,7 @@ using namespace std;
 #include "DirectXTK/VertexTypes.h"
 #include "DirectXTK/Effects.h"
 #include "DirectXTK/CommonStates.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -164,6 +167,7 @@ using namespace JPH::literals;
 #include "PhysicsManager.h"
 #include "ParticleManager.h"
 #include "SkeletonManager.h"
+#include "ThreadManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

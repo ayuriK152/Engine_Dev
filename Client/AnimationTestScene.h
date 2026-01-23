@@ -1,7 +1,7 @@
 #pragma once
 #include "IExecute.h"
 
-class PhysicsTestScene : public IExecute
+class AnimationTestScene : public IExecute
 {
 public:
 	void Init() override;
@@ -10,3 +10,4 @@ public:
 private:
 	vector<shared_ptr<GameObject>> gameObjects;
 };
+

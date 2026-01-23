@@ -1,9 +1,8 @@
 #include "pch.h"
-#include "PhysicsTestScene.h"
+#include "AnimationTestScene.h"
 #include "EditorCamera.h"
-#include "PlayerScript.h"
 
-void PhysicsTestScene::Init()
+void AnimationTestScene::Init()
 {
 	auto skybox = make_shared<GameObject>();
 	skybox->SetName("skybox");
@@ -23,7 +22,8 @@ void PhysicsTestScene::Init()
 
 	auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 	loadedObjects[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
-	loadedObjects[0]->AddComponent(make_shared<PlayerScript>());
+	loadedObjects[0]->GetComponent<Animator>()->SetCurrentAnimation("idle_sword_4");
+	loadedObjects[0]->GetComponent<Animator>()->SetLoop(true);
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 
 	auto globalLight = make_shared<GameObject>();
@@ -34,30 +34,6 @@ void PhysicsTestScene::Init()
 	globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
 	globalLight->GetTransform()->LookAt(Vector3(1.0f, -2.0f, 1.0f));
 	gameObjects.push_back(globalLight);
-
-	auto ground = make_shared<GameObject>();
-	ground->SetName("ground");
-	ground->AddComponent(make_shared<MeshRenderer>());
-	ground->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-	auto mat = make_shared<Material>("Proto_dark1", L"prototype_dark1");
-	mat->tilling = { 100.0f, 100.0f };
-	RESOURCE->Add<Material>(L"Mat_Proto_dark1", mat);
-	ground->GetComponent<MeshRenderer>()->SetMaterial(mat);
-	ground->GetTransform()->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
-	ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));
-	ground->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
-	ground->AddComponent(make_shared<Rigidbody>());
-	ground->GetComponent<Rigidbody>()->isGravity = false;
-	gameObjects.push_back(ground);
-
-	auto cube1 = make_shared<GameObject>();
-	cube1->SetName("Cube1");
-	cube1->AddComponent(make_shared<Rigidbody>());
-	cube1->AddComponent(make_shared<MeshRenderer>());
-	cube1->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
-	cube1->GetComponent<MeshRenderer>()->GetMaterial()->SetDiffuse(RESOURCE->Get<Texture>(L"0dot001mm_1"));
-	cube1->GetTransform()->SetPosition(Vector3(3.0f, 5.0f, 3.0f));
-	gameObjects.push_back(cube1);
 
 	while (gameObjects.size() > 0)
 	{
@@ -70,7 +46,7 @@ void PhysicsTestScene::Init()
 	}
 }
 
-void PhysicsTestScene::Update()
+void AnimationTestScene::Update()
 {
 
 }

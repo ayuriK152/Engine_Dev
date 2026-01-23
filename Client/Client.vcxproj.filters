@@ -3,23 +3,68 @@
   <ItemGroup>
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="TestScene.h" />
-    <ClInclude Include="PlayerScript.h" />
-    <ClInclude Include="TPVCamera.h" />
-    <ClInclude Include="EnemyScript.h" />
-    <ClInclude Include="DungeonScene.h" />
-    <ClInclude Include="PhysicsTestScene.h" />
-    <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="DungeonScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationTestScene.h">
+      <Filter>Scenes\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsTestScene.h">
+      <Filter>Scenes\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyScript.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerScript.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="TPVCamera.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="TestScene.cpp" />
-    <ClCompile Include="PlayerScript.cpp" />
-    <ClCompile Include="TPVCamera.cpp" />
-    <ClCompile Include="EnemyScript.cpp" />
-    <ClCompile Include="DungeonScene.cpp" />
-    <ClCompile Include="PhysicsTestScene.cpp" />
-    <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="DungeonScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationTestScene.cpp">
+      <Filter>Scenes\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsTestScene.cpp">
+      <Filter>Scenes\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyScript.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerScript.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="TPVCamera.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{2c61006e-f195-408f-902c-e3689d72afc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\Tests">
+      <UniqueIdentifier>{a153e896-2f02-4252-aa03-05363beddac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{107ae496-467c-432f-9f47-3a64b4a2e05e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

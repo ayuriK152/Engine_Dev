@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationTestScene.h" />
     <ClInclude Include="DungeonScene.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EnemyScript.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="TPVCamera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationTestScene.cpp" />
     <ClCompile Include="DungeonScene.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EnemyScript.cpp" />

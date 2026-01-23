@@ -91,6 +91,9 @@ public:
 	void UpdateBoneInstances();
 
 private:
+	void UpdateBoneTransform(int boneIdx);
+	void UpdateBoneTransformPreviewMode(int boneIdx);
+
 	void Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile);
 
 private:

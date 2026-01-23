@@ -290,6 +290,7 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 
 	// 좀 더 개선할 수 있을 것 같음. 나머지 리소스들도 다.
 	if (RESOURCE->CheckResourceExists(filePath)) {
+		CloseHandle(fileHandle);
 		return RESOURCE->Get<Mesh>(UniversalUtils::ToWString(meshName));
 	}
 
@@ -344,6 +345,7 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	animName = animName.substr(0, animName.find_last_of('.'));
 
 	if (RESOURCE->CheckResourceExists(filePath)) {
+		CloseHandle(fileHandle);
 		return RESOURCE->Get<Animation>(UniversalUtils::ToWString(animName));
 	}
 

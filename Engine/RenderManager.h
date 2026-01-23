@@ -89,8 +89,11 @@ public:
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
 	const ComPtr<ID3D12RootSignature>& GetRootSignature() { return _rootSignature; }
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	// Create PSO Descriptor
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	// Create PSO Descriptor without InputLayout
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	// Create PSO Descriptor for Compute Shader
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
 	void SetCurrPSO(string name);

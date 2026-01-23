@@ -250,7 +250,6 @@ D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INP
 	return psoDesc;
 }
 
-
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
 	AppDesc appDesc = GRAPHIC->GetAppDesc();

@@ -49,21 +49,32 @@ void Skeleton::SetBone(map<string, BoneData> bones)
 
 void Skeleton::MapTransform(shared_ptr<Transform> transform)
 {
+	int depthOffset = -1;
+	depthSortedTransformIndices.clear();
+
 	vector<shared_ptr<Transform>> childs;
 	childs.push_back(transform);
 	childs.insert(childs.end(), transform->GetChilds().begin(), transform->GetChilds().end());
 
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < childs.size(); ++i)
 	{
 		childs.insert(childs.end(), childs[i]->GetChilds().begin(), childs[i]->GetChilds().end());
 	}
 
-	for (int i = 0; i < childs.size(); i++)
+	for (int i = 0; i < childs.size(); ++i)
 	{
-		for (int j = 0; j < _bones.size(); j++) {
+		for (int j = 0; j < _bones.size(); ++j) {
 			if (instancedTransforms[j] != nullptr || childs[i]->GetGameObject()->GetName() != _bones[j].name)
 				continue;
+
 			instancedTransforms[j] = childs[i];
+
+			int depthLevel = instancedTransforms[j]->GetDepthLevel();
+			if (depthOffset == -1) depthOffset = depthLevel;
+			while (depthSortedTransformIndices.size() <= depthLevel - depthOffset)
+				depthSortedTransformIndices.push_back({});
+			depthSortedTransformIndices[depthLevel - depthOffset].push_back(j);
+
 			UpdateBoneTransform(j);
 			break;
 		}

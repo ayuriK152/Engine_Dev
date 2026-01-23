@@ -122,62 +122,65 @@ void Animator::UpdateBoneTransform()
 {
 	if (_isPreviewMode)
 	{
-		for (int i = 0; i < _skeleton->instancedTransforms.size(); i++)
-		{
-			Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(i, _previewTick, _lastKeyframeIndex[i]);
+		for (vector<int> indices : _skeleton->depthSortedTransformIndices) {
+			for (int idx : indices) {
+				Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(idx, _previewTick, _lastKeyframeIndex[idx]);
 
-			if (currKeyFrame.tick < 0.0) {
-				_skeleton->UpdateBoneTransform(i);
-				continue;
+				if (currKeyFrame.tick < 0.0) {
+					_skeleton->UpdateBoneTransform(idx);
+					continue;
+				}
+
+				XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
+				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
+				XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
+
+				_skeleton->UpdateBoneTransform(idx, matScale * matRotation * matTranslation);
 			}
-
-			XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
-			XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
-			XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
-
-			_skeleton->UpdateBoneTransform(i, matScale * matRotation * matTranslation);
 		}
 	}
 
 	else
 	{
-		for (int i = 0; i < _skeleton->instancedTransforms.size(); i++) {
-			Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(i, _currentTick, _lastKeyframeIndex[i]);
+		for (vector<int> indices : _skeleton->depthSortedTransformIndices) {
+			for (int idx : indices) {
+				Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(idx, _currentTick, _lastKeyframeIndex[idx]);
 
-			if (currKeyFrame.tick < 0.0) {
-				_skeleton->UpdateBoneTransform(i);
-				continue;
-			}
+				if (currKeyFrame.tick < 0.0) {
+					_skeleton->UpdateBoneTransform(idx);
+					continue;
+				}
 
-			if (_isInTransition && _animations.contains(_nextAnimation))
-			{
-				// 다음 애니메이션 키프레임
-				int dummyIdx = 0;
-				Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(i, _transitionTick, dummyIdx);
+				if (_isInTransition && _animations.contains(_nextAnimation))
+				{
+					// 다음 애니메이션 키프레임
+					int dummyIdx = 0;
+					Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(idx, _transitionTick, dummyIdx);
 
-				// 가중치 계산
-				float alpha = _transitionElapsedTime / _transitionTime;
-				alpha = std::clamp(alpha, 0.0f, 1.0f);
+					// 가중치 계산
+					float alpha = _transitionElapsedTime / _transitionTime;
+					alpha = std::clamp(alpha, 0.0f, 1.0f);
 
-				// Lerp / Slerp
-				Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
-				Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
-				Vector4 rot;
-				XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
+					// Lerp / Slerp
+					Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
+					Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
+					Vector4 rot;
+					XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
 
-				XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
-				XMMATRIX matTranslation = XMMatrixTranslation(pos.x, pos.y, pos.z);
+					XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+					XMMATRIX matRotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
+					XMMATRIX matTranslation = XMMatrixTranslation(pos.x, pos.y, pos.z);
 
-				_skeleton->UpdateBoneTransform(i, matScale * matRotation * matTranslation);
-			}
-			else
-			{
-				XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
-				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
-				XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
+					_skeleton->UpdateBoneTransform(idx, matScale * matRotation * matTranslation);
+				}
+				else
+				{
+					XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
+					XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
+					XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
 
-				_skeleton->UpdateBoneTransform(i, matScale * matRotation * matTranslation);
+					_skeleton->UpdateBoneTransform(idx, matScale * matRotation * matTranslation);
+				}
 			}
 		}
 	}

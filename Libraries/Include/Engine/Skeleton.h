@@ -23,6 +23,7 @@ private:
 
 public:
 	vector<shared_ptr<Transform>> instancedTransforms;
+	vector<vector<int>> depthSortedTransformIndices;
 
 private:
 	vector<BoneData> _bones;

@@ -22,6 +22,8 @@ public:
 	template<typename T>
 	ResourceType GetResourceType();
 
+	bool CheckResourceExists(const string& filePath);
+
 	void CreateDefaultResources();
 
 	void SaveMesh(shared_ptr<Mesh> mesh, const string& filePath = "");
@@ -38,6 +40,7 @@ public:
 private:
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;
+	set<string> _resourcePaths;
 };
 
 template<typename T>
@@ -51,6 +54,7 @@ bool ResourceManager::Add(const wstring& key, shared_ptr<T> resource)
 	if (found != keyObjMap.end())
 		return false;
 
+	_resourcePaths.insert(static_pointer_cast<Resource>(resource)->GetPath());
 	keyObjMap[key] = resource;
 	return true;
 }

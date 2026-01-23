@@ -24,6 +24,7 @@ void SkinnedMeshRenderer::Init()
 	GetGameObject()->SetPSONameIncludeChilds(PSO_OPAQUE_SKINNED);
 }
 
+// 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.
 void SkinnedMeshRenderer::Render()
 {
 	auto cmdList = GRAPHIC->GetCommandList().Get();
@@ -36,7 +37,15 @@ void SkinnedMeshRenderer::Render()
 		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_BONE_SB, bone);
 	}
 
-	Super::Render();
+	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
+	cmdList->IASetVertexBuffers(0, 1, &_mesh->vertexBufferView);
+	cmdList->IASetIndexBuffer(&_mesh->indexBufferView);
+	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	UINT startIndex = RENDER->GetMeshInstanceStartIndex(_mesh);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, startIndex, 0);
+
+	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 }
 
 void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)

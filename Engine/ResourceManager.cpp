@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "ResourceManager.h"
 
+bool ResourceManager::CheckResourceExists(const string& filePath)
+{
+	return _resourcePaths.find(filePath) != _resourcePaths.end();
+}
+
 void ResourceManager::CreateDefaultResources()
 {
 	//==========Shader==========
@@ -280,9 +285,13 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 		return nullptr;
 	}
 
-	string meshName;
-	meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
+	string meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
 	meshName = meshName.substr(0, meshName.find_last_of('.'));
+
+	// 좀 더 개선할 수 있을 것 같음. 나머지 리소스들도 다.
+	if (RESOURCE->CheckResourceExists(filePath)) {
+		return RESOURCE->Get<Mesh>(UniversalUtils::ToWString(meshName));
+	}
 
 	UINT32 vertexCount;
 	FILEIO->ReadFileData(fileHandle, &vertexCount, sizeof(UINT32));
@@ -333,6 +342,10 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	string animName;
 	animName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
 	animName = animName.substr(0, animName.find_last_of('.'));
+
+	if (RESOURCE->CheckResourceExists(filePath)) {
+		return RESOURCE->Get<Animation>(UniversalUtils::ToWString(animName));
+	}
 
 	float duration, ticks;
 	FILEIO->ReadFileData(fileHandle, &duration, sizeof(float));

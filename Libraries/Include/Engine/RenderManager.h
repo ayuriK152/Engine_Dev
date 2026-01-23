@@ -124,8 +124,11 @@ public:
 	UINT GetMeshInstanceStartIndex(const shared_ptr<Mesh>& mesh) { return _meshInstanceStartIndex[mesh->GetID()]; }
 
 	void RefreshMeshRenderCheckMap();
-	bool IsMeshRendered(const shared_ptr<Mesh>& mesh) { return _meshRenderCheckMap[mesh->GetID()]; }
-	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()] = true; }
+
+	// Returns whether mesh rendered or not
+	bool CheckMeshRender(const shared_ptr<Mesh>& mesh) { return _meshRenderCheckMap[mesh->GetID()] == 1; }
+
+	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()]++; }
 
 	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
@@ -157,7 +160,7 @@ private:
 	vector<shared_ptr<GameObject>> _objects;
 	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _sortedObjects;
 	vector<UINT> _meshInstanceStartIndex;
-	vector<bool> _meshRenderCheckMap;
+	vector<UINT> _meshRenderCheckMap;
 
 	vector<Light*> _lights;
 

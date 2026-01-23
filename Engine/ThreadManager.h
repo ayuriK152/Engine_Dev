@@ -10,6 +10,7 @@ public:
 
 private:
 	size_t _numThreads;
+	bool _stop = false;
 
 	vector<thread> _threads;
 	queue<function<void()>> _jobs;

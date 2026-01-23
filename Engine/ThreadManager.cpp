@@ -3,7 +3,17 @@
 
 ThreadManager::~ThreadManager()
 {
+	{
+		unique_lock<mutex> lock(_queueMutex);
+		_stop = true;
+	}
+	_condition.notify_all();
 
+	for (thread& t : _threads)
+	{
+		if (t.joinable())
+			t.join();
+	}
 }
 
 void ThreadManager::Init()
@@ -17,10 +27,10 @@ void ThreadManager::Init()
 				{
 					unique_lock<mutex> lock(_queueMutex);
 					_condition.wait(lock, [this] {
-						return !_jobs.empty();
+						return _stop || !_jobs.empty();
 					});
 
-					if (_jobs.empty())
+					if (_stop && _jobs.empty())
 						return;
 
 					job = move(this->_jobs.front());

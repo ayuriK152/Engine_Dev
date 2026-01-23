@@ -13,6 +13,8 @@ Transform::Transform() : Super(ComponentType::Transform)
 	_parent = nullptr;
 
 	_isDirty = true;
+
+	_depthLevel = 0;
 	UpdateTransform();
 }
 
@@ -118,6 +120,13 @@ void Transform::UpdateTransform()
 	{
 		child->SetDirtyFlag();
 	}
+}
+
+void Transform::UpdateDepthLevel()
+{
+	_depthLevel = _parent->GetDepthLevel() + 1;
+	for (auto& child : _childs)
+		child->UpdateDepthLevel();
 }
 
 void Transform::SetLocalRotationRadian(const Vector3& rotation)
@@ -431,6 +440,7 @@ void Transform::SetParent(shared_ptr<Transform> parent)
 void Transform::AddChild(shared_ptr<Transform> child)
 {
 	_childs.push_back(child);
+	child->UpdateDepthLevel();
 }
 
 void Transform::SetDirtyFlag()

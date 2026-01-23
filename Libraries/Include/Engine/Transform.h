@@ -141,6 +141,11 @@ public:
 
 	void SetDirtyFlag();
 
+	UINT GetDepthLevel() { return _depthLevel; }
+
+protected:
+	void UpdateDepthLevel();
+
 private:
 	void UpdateTransform();
 
@@ -163,5 +168,7 @@ private:
 
 	shared_ptr<Transform> _parent;
 	vector<shared_ptr<Transform>> _childs;
+
+	UINT _depthLevel;
 };
 

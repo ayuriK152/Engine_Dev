@@ -177,5 +177,7 @@ private:
 	unique_ptr<ShadowMap> _shadowMap = nullptr;
 
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
+
+	vector<future<void>> _futures;
 };
 

@@ -91,6 +91,9 @@ void RenderManager::Init()
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
+
+	for (auto& o : _objects)
+		o->Init();
 }
 
 void RenderManager::FixedUpdate()
@@ -102,6 +105,8 @@ void RenderManager::FixedUpdate()
 void RenderManager::Update()
 {
 	for (auto& o : _objects) {
+		if (o->GetComponents().size() <= 1) continue;
+
 		o->Update();
 	}
 

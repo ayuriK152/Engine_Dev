@@ -23,16 +23,6 @@ Transform::~Transform()
 
 }
 
-void Transform::Update()
-{
-
-}
-
-void Transform::Render()
-{
-
-}
-
 void Transform::ForceUpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);

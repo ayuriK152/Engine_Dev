@@ -4,6 +4,8 @@
 #define	DEFAULT_MATERIAL_COUNT		50
 #define DEFAULT_COUNT_LIGHT			20
 
+#define BUFFER_COUNT	4
+
 struct FrameResource
 {
 public:
@@ -50,4 +52,6 @@ private:
 	bool _isInitialized = false;
 
 	unordered_map<shared_ptr<Mesh>, int> _instanceIndexMap;
+
+	array<future<void>, BUFFER_COUNT> _futures;
 };

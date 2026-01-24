@@ -8,9 +8,6 @@ public:
 	Transform();
 	virtual ~Transform();
 
-	void Update() override;
-	void Render() override;
-
 public:
 	void ForceUpdateTransform();
 

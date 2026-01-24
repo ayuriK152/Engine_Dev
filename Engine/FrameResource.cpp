@@ -36,10 +36,15 @@ void FrameResource::Update()
 	}
 
 	// 순서 바꾸면 안됨!!!
-	UpdateCameraCB();
-	UpdateObjectSB();
-	UpdateMaterialSB();
-	UpdateLightSB();
+	_futures[0] = THREAD->EnqueueJob([this] { UpdateCameraCB(); });
+	_futures[1] = THREAD->EnqueueJob([this] { UpdateObjectSB(); });
+	_futures[2] = THREAD->EnqueueJob([this] { UpdateMaterialSB(); });
+	_futures[3] = THREAD->EnqueueJob([this] { UpdateLightSB(); });
+
+	_futures[0].get();
+	_futures[1].get();
+	_futures[2].get();
+	_futures[3].get();
 }
 
 void FrameResource::UpdateObjectSB()

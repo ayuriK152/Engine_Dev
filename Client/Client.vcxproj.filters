@@ -6,9 +6,6 @@
     <ClInclude Include="DungeonScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="AnimationTestScene.h">
       <Filter>Scenes\Tests</Filter>
     </ClInclude>
@@ -27,14 +24,14 @@
     <ClInclude Include="TPVCamera.h">
       <Filter>Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scenes\Tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DungeonScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="AnimationTestScene.cpp">
@@ -54,6 +51,9 @@
     </ClCompile>
     <ClCompile Include="TPVCamera.cpp">
       <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Scenes\Tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

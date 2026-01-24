@@ -26,6 +26,7 @@ struct AnimationEvent
 
 class Animator : public Component
 {
+	friend class AnimationManager;
 public:
 	Animator();
 	virtual ~Animator();

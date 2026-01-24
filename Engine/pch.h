@@ -168,6 +168,7 @@ using namespace JPH::literals;
 #include "ParticleManager.h"
 #include "SkeletonManager.h"
 #include "ThreadManager.h"
+#include "AnimationManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

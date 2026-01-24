@@ -79,6 +79,7 @@ void GameApplication::Update()
 		PHYSICS->Update();
 		//PARTICLE->Update();
 		RENDER->Update();
+		ANIMATION->Update();
 		// DEBUG->Update();
 		ENGINESTAT->Update();
 		ENGINEGUI->Update();

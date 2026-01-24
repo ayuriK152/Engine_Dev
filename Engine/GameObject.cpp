@@ -60,7 +60,9 @@ void GameObject::Update()
 			c.second->Init();
 			c.second->isInitialized = true;
 		}
-		if (c.second->type == ComponentType::Collider || c.second->type == ComponentType::ParticleEmitter)
+		if (c.second->type == ComponentType::Collider || 
+			c.second->type == ComponentType::ParticleEmitter ||
+			c.second->type == ComponentType::Animator)
 			continue;
 		c.second->Update();
 	}

@@ -22,6 +22,8 @@ Animator::~Animator()
 void Animator::Init()
 {
 	_isPlaying = _isPlayOnInit;
+
+	ANIMATION->AddAnimator(static_pointer_cast<Animator>(shared_from_this()));
 }
 
 void Animator::Update()

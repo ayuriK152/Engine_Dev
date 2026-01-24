@@ -29,6 +29,7 @@ public:									\
 #define PARTICLE	GET_SINGLE(ParticleManager)
 #define SKELETON	GET_SINGLE(SkeletonManager)
 #define THREAD		GET_SINGLE(ThreadManager)
+#define ANIMATION	GET_SINGLE(AnimationManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 

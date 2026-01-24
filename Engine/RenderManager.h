@@ -70,6 +70,8 @@
 
 #define		DEFAULT_ANIMATION_COUNT			500		// Not used yet
 
+#define		MAX_HIERARCHY_DEPTH		32
+
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
@@ -161,7 +163,7 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	vector<shared_ptr<GameObject>> _objects;
-	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _sortedObjects;
+	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _objectsSortedPSO;
 	vector<UINT> _meshInstanceStartIndex;
 	vector<UINT> _meshRenderCheckMap;
 

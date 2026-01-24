@@ -163,14 +163,14 @@ void RenderManager::Render()
 	// Shadow Map Solid
 	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
 
-	for (auto& o : _sortedObjects[PSO_IDX_OPAQUE_SOLID]) {
+	for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
 		o->Render();
 	}
 
 	// Shadow Map Skinned
 	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
 
-	for (auto& o : _sortedObjects[PSO_IDX_OPAQUE_SKINNED]) {
+	for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
 		o->Render();
 	}
 
@@ -192,9 +192,9 @@ void RenderManager::Render()
 	cmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
 
 	// Skybox
-	if (_sortedObjects[PSO_IDX_SKYBOX].size() > 0) {
+	if (_objectsSortedPSO[PSO_IDX_SKYBOX].size() > 0) {
 		cmdList->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
-		for (auto& o : _sortedObjects[PSO_IDX_SKYBOX]) {
+		for (auto& o : _objectsSortedPSO[PSO_IDX_SKYBOX]) {
 			o->Render();
 		}
 	}
@@ -202,17 +202,17 @@ void RenderManager::Render()
 	// Check PSO Fixed
 	if (!_isPSOFixed) {
 		// Opaque Solid
-		if (_sortedObjects[PSO_IDX_OPAQUE_SOLID].size() > 0) {
+		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SOLID].size() > 0) {
 			cmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SOLID].Get());
-			for (auto& o : _sortedObjects[PSO_IDX_OPAQUE_SOLID]) {
+			for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
 				o->Render();
 			}
 		}
 
 		// Opaque Skinned
-		if (_sortedObjects[PSO_IDX_OPAQUE_SKINNED].size() > 0) {
+		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED].size() > 0) {
 			cmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SKINNED].Get());
-			for (auto& o : _sortedObjects[PSO_IDX_OPAQUE_SKINNED]) {
+			for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
 				o->Render();
 			}
 		}
@@ -221,7 +221,7 @@ void RenderManager::Render()
 		cmdList->SetPipelineState(_currPSO.Get());
 		for (int i = 0; i < PSO_COUNT; i++) {
 			if (i != PSO_IDX_SKYBOX) {
-				for (auto& o : _sortedObjects[i])
+				for (auto& o : _objectsSortedPSO[i])
 					o->Render();
 			}
 		}
@@ -359,12 +359,12 @@ void RenderManager::UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO
 {
 	int objPsoIdx = Temp_GetPSOIndex(obj->GetPSOName());
 	int targetPsoIdx = Temp_GetPSOIndex(targetPSO);
-	for (int i = 0; i < _sortedObjects[objPsoIdx].size(); i++)
+	for (int i = 0; i < _objectsSortedPSO[objPsoIdx].size(); i++)
 	{
-		if (_sortedObjects[objPsoIdx][i] == obj)
+		if (_objectsSortedPSO[objPsoIdx][i] == obj)
 		{
-			_sortedObjects[objPsoIdx].erase(_sortedObjects[objPsoIdx].begin() + i);
-			_sortedObjects[targetPsoIdx].push_back(obj);
+			_objectsSortedPSO[objPsoIdx].erase(_objectsSortedPSO[objPsoIdx].begin() + i);
+			_objectsSortedPSO[targetPsoIdx].push_back(obj);
 			break;
 		}
 	}
@@ -393,7 +393,7 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 	}
 	obj->primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	_sortedObjects[Temp_GetPSOIndex(obj->GetPSOName())].push_back(obj);
+	_objectsSortedPSO[Temp_GetPSOIndex(obj->GetPSOName())].push_back(obj);
 	_objects.push_back(move(obj));
 	return _objects[_objects.size() - 1];
 }
@@ -408,9 +408,9 @@ void RenderManager::DeleteGameobject(shared_ptr<GameObject> obj)
 	}
 
 	int objPsoIdx = Temp_GetPSOIndex(obj->GetPSOName());
-	for (int i = 0; i < _sortedObjects[objPsoIdx].size(); i++) {
-		if (obj == _sortedObjects[objPsoIdx][i]) {
-			_sortedObjects[objPsoIdx].erase(_sortedObjects[objPsoIdx].begin() + i);
+	for (int i = 0; i < _objectsSortedPSO[objPsoIdx].size(); i++) {
+		if (obj == _objectsSortedPSO[objPsoIdx][i]) {
+			_objectsSortedPSO[objPsoIdx].erase(_objectsSortedPSO[objPsoIdx].begin() + i);
 		}
 	}
 }

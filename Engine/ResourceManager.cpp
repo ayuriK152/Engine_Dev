@@ -122,19 +122,19 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 	FILEIO->WriteToFile(fileHandle, animation->GetDuration());
 	FILEIO->WriteToFile(fileHandle, animation->GetTicksPerSecond());
 
-	unordered_map<string, Animation::AnimationData> animationDatas = animation->GetAnimationDatas();
+	vector<Animation::AnimationData> animationDatas = animation->GetAnimationDatas();
 	FILEIO->WriteToFile(fileHandle, (UINT32)animationDatas.size());
 
 	for (auto& animData : animationDatas)
 	{
-		FILEIO->WriteToFile(fileHandle, animData.first);
+		FILEIO->WriteToFile(fileHandle, animData.boneName);
 
-		UINT32 boneId = animData.second.boneId;
+		UINT32 boneId = animData.boneId;
 		FILEIO->WriteToFile(fileHandle, boneId);
 
-		UINT32 keyFrameCount = animData.second.keyFrames.size();
+		UINT32 keyFrameCount = animData.keyFrames.size();
 		FILEIO->WriteToFile(fileHandle, keyFrameCount);
-		for (auto& keyFrame : animData.second.keyFrames)
+		for (auto& keyFrame : animData.keyFrames)
 		{
 			FILEIO->WriteToFile(fileHandle, keyFrame);
 		}

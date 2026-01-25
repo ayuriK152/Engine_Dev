@@ -154,8 +154,6 @@ void Graphic::Update()
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
-
-	// _currFrameResource->Update();
 }
 
 void Graphic::RenderBegin()

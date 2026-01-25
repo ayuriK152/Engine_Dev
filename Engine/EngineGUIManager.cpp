@@ -348,9 +348,12 @@ void EngineGUIManager::ShowTransform()
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		bool isChanged = false;
-		Vector3 pos = _selectedObj->GetTransform()->GetLocalPosition();
-		Vector3 rot = _selectedObj->GetTransform()->GetLocalRotation();
-		Vector3 scale = _selectedObj->GetTransform()->GetLocalScale();
+		auto transform = _selectedObj->GetTransform();
+		Vector3 pos = transform->GetLocalPosition();
+		Vector3 rot = transform->GetLocalRotation();
+		Vector3 scale = transform->GetLocalScale();
+
+		ImGui::Text("Depth Level: %d", transform->GetDepthLevel());
 
 		ImGui::SeparatorText("Position");
 		ImGui::Text("X");
@@ -368,11 +371,13 @@ void EngineGUIManager::ShowTransform()
 
 		if (isChanged)
 		{
-			_selectedObj->GetTransform()->SetLocalPosition(pos);
+			transform->SetLocalPosition(pos);
+
+			// 물리엔진 교체 후 작업 필요한 상황임
 			auto rb = _selectedObj->GetComponent<Rigidbody>();
 			if (rb != nullptr)
 			{
-				rb->SetVelocity(Vector3(0.0f, 0.0f, 0.0f));
+				// rb->SetVelocity(Vector3(0.0f, 0.0f, 0.0f));
 			}
 		}
 
@@ -392,7 +397,7 @@ void EngineGUIManager::ShowTransform()
 			isChanged = true;
 
 		if (isChanged)
-			_selectedObj->GetTransform()->SetLocalRotation(rot);
+			transform->SetLocalRotation(rot);
 
 		isChanged = false;
 		ImGui::SeparatorText("Scale");
@@ -410,7 +415,7 @@ void EngineGUIManager::ShowTransform()
 			isChanged = true;
 
 		if (isChanged)
-			_selectedObj->GetTransform()->SetLocalScale(scale);
+			transform->SetLocalScale(scale);
 	}
 }
 

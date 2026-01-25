@@ -55,12 +55,16 @@ void GameObject::Update()
 	}
 	for (auto& c : components)
 	{
+		// 런타임 중에 추가되는 컴포넌트
 		if (!c.second->isInitialized)
 		{
 			c.second->Init();
 			c.second->isInitialized = true;
 		}
-		if (c.second->type == ComponentType::Collider || c.second->type == ComponentType::ParticleEmitter)
+
+		if (c.second->type == ComponentType::Collider || 
+			c.second->type == ComponentType::ParticleEmitter ||
+			c.second->type == ComponentType::Animator)
 			continue;
 		c.second->Update();
 	}

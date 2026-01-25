@@ -36,15 +36,19 @@ void FrameResource::Update()
 	}
 
 	// 순서 바꾸면 안됨!!!
-	UpdateCameraCB();
-	UpdateObjectSB();
-	UpdateMaterialSB();
-	UpdateLightSB();
+	_futures[0] = THREAD->EnqueueJob([this] { UpdateCameraCB(); });
+	_futures[1] = THREAD->EnqueueJob([this] { UpdateObjectSB(); });
+	_futures[2] = THREAD->EnqueueJob([this] { UpdateMaterialSB(); });
+	_futures[3] = THREAD->EnqueueJob([this] { UpdateLightSB(); });
+
+	_futures[0].get();
+	_futures[1].get();
+	_futures[2].get();
+	_futures[3].get();
 }
 
 void FrameResource::UpdateObjectSB()
 {
-	unordered_map<shared_ptr<Mesh>, int> instanceIndexStacks;
 	for (auto& o : RENDER->GetObjects())
 	{
 		int instanceIndex = 0;
@@ -54,10 +58,10 @@ void FrameResource::UpdateObjectSB()
 
 		if (meshRenderer != nullptr) {
 			instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-			if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
-				instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
+			if (_instanceIndexMap.contains(meshRenderer->GetMesh()))
+				instanceIndex += _instanceIndexMap[meshRenderer->GetMesh()]++;
 			else
-				instanceIndexStacks[meshRenderer->GetMesh()] = 1;
+				_instanceIndexMap[meshRenderer->GetMesh()] = 1;
 		}
 
 		if (o->GetFramesDirty() > 0)
@@ -65,12 +69,6 @@ void FrameResource::UpdateObjectSB()
 			o->ReleaseFramesDirty();
 
 			if (meshRenderer != nullptr) {
-				//int instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-				//if (instanceIndexStacks.contains(meshRenderer->GetMesh()))
-				//	instanceIndex += instanceIndexStacks[meshRenderer->GetMesh()]++;
-				//else
-				//	instanceIndexStacks[meshRenderer->GetMesh()] = 1;
-
 				InstanceConstants instanceConstants;
 
 				instanceConstants.MaterialIndex = meshRenderer->GetMaterial()->matSBIndex;
@@ -83,6 +81,8 @@ void FrameResource::UpdateObjectSB()
 			}
 		}
 	}
+
+	_instanceIndexMap.clear();
 }
 
 void FrameResource::UpdateMaterialSB()

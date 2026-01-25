@@ -10,6 +10,8 @@ Animator::Animator() : Component(ComponentType::Animator)
 
 	_currentAnimation = EMPTY_ANIMATION;
 	_nextAnimation = EMPTY_ANIMATION;
+
+	_skeleton = make_shared<Skeleton>();
 }
 
 Animator::~Animator()
@@ -20,6 +22,8 @@ Animator::~Animator()
 void Animator::Init()
 {
 	_isPlaying = _isPlayOnInit;
+
+	ANIMATION->AddAnimator(static_pointer_cast<Animator>(shared_from_this()));
 }
 
 void Animator::Update()
@@ -30,6 +34,7 @@ void Animator::Update()
 			return;
 
 		UpdateBoneTransform();
+		_skeleton->UpdateUploadBuffer();
 
 		float ticksPerSecond = (GetPreviewAnimation()->GetTicksPerSecond() != 0.0f) ? GetPreviewAnimation()->GetTicksPerSecond() : 25.0f;
 		_previewTick += TIME->DeltaTime() * ticksPerSecond;
@@ -45,6 +50,7 @@ void Animator::Update()
 			return;
 
 		UpdateBoneTransform();
+		_skeleton->UpdateUploadBuffer();
 		UpdateAnimationEvent();
 
 		if (_isInTransition) {
@@ -116,63 +122,78 @@ void Animator::PauseAnimation()
 
 void Animator::UpdateBoneTransform()
 {
-	if (_isPreviewMode)
-	{
-		for (int i = 0; i < _bone.size(); i++)
-		{
-			Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(i, _previewTick, _lastKeyframeIndex[i]);
-
-			if (currKeyFrame.tick < 0.0)
-				continue;
-
-			XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
-			XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
-			XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
-
-			_bone[i].instancedObj->GetTransform()->SetLocalMatrix(matScale * matRotation * matTranslation);
+	if (!_isPreviewMode) {
+		for (vector<int> indices : _skeleton->depthSortedTransformIndices) {
+			for (int idx : indices) {
+				UpdateBoneTransform(idx);
+			}
 		}
 	}
 
+	else {
+		for (vector<int> indices : _skeleton->depthSortedTransformIndices) {
+			for (int idx : indices) {
+				UpdateBoneTransformPreviewMode(idx);
+			}
+		}
+	}
+}
+
+void Animator::UpdateBoneTransform(int boneIdx)
+{
+	Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(boneIdx, _currentTick, _lastKeyframeIndex[boneIdx]);
+
+	if (currKeyFrame.tick < 0.0) {
+		_skeleton->UpdateBoneTransform(boneIdx);
+		return;
+	}
+
+	if (_isInTransition && _animations.contains(_nextAnimation))
+	{
+		// 다음 애니메이션 키프레임
+		int dummyIdx = 0;
+		Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(boneIdx, _transitionTick, dummyIdx);
+
+		// 가중치 계산
+		float alpha = _transitionElapsedTime / _transitionTime;
+		alpha = std::clamp(alpha, 0.0f, 1.0f);
+
+		// Lerp / Slerp
+		Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
+		Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
+		Vector4 rot;
+		XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
+
+		XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+		XMMATRIX matRotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
+		XMMATRIX matTranslation = XMMatrixTranslation(pos.x, pos.y, pos.z);
+
+		_skeleton->UpdateBoneTransform(boneIdx, matScale * matRotation * matTranslation);
+	}
 	else
 	{
-		for (int i = 0; i < _bone.size(); i++) {
-			Animation::KeyFrame currKeyFrame = GetCurrentAnimation()->Interpolate(i, _currentTick, _lastKeyframeIndex[i]);
+		XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
+		XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
+		XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
 
-			if (currKeyFrame.tick < 0.0)
-				continue;
-
-			if (_isInTransition && _animations.contains(_nextAnimation))
-			{
-				// 다음 애니메이션 키프레임
-				int dummyIdx = 0;
-				Animation::KeyFrame nextFrame = _animations[_nextAnimation]->Interpolate(i, _transitionTick, dummyIdx);
-
-				// 가중치 계산
-				float alpha = _transitionElapsedTime / _transitionTime;
-				alpha = std::clamp(alpha, 0.0f, 1.0f);
-
-				// Lerp / Slerp
-				Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
-				Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
-				Vector4 rot;
-				XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
-
-				XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
-				XMMATRIX matTranslation = XMMatrixTranslation(pos.x, pos.y, pos.z);
-
-				_bone[i].instancedObj->GetTransform()->SetLocalMatrix(matScale * matRotation * matTranslation);
-			}
-			else
-			{
-				XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
-				XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
-				XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
-
-				_bone[i].instancedObj->GetTransform()->SetLocalMatrix(matScale * matRotation * matTranslation);
-			}
-		}
+		_skeleton->UpdateBoneTransform(boneIdx, matScale * matRotation * matTranslation);
 	}
+}
+
+void Animator::UpdateBoneTransformPreviewMode(int boneIdx)
+{
+	Animation::KeyFrame currKeyFrame = GetPreviewAnimation()->Interpolate(boneIdx, _previewTick, _lastKeyframeIndex[boneIdx]);
+
+	if (currKeyFrame.tick < 0.0) {
+		_skeleton->UpdateBoneTransform(boneIdx);
+		return;
+	}
+
+	XMMATRIX matScale = XMMatrixScaling(currKeyFrame.scale.x, currKeyFrame.scale.y, currKeyFrame.scale.z);
+	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&currKeyFrame.rotation));
+	XMMATRIX matTranslation = XMMatrixTranslation(currKeyFrame.position.x, currKeyFrame.position.y, currKeyFrame.position.z);
+
+	_skeleton->UpdateBoneTransform(boneIdx, matScale * matRotation * matTranslation);
 }
 
 void Animator::SetCurrentAnimation(const string& animationName, float _transitionTime)
@@ -327,20 +348,31 @@ void Animator::SetPreviewMode(bool value)
 	}
 }
 
-void Animator::SetBone(map<string, Bone> bone)
+void Animator::SetBone(string boneFileName)
 {
-	for (int i = 0; i < bone.size(); i++)
-		_bone.push_back(Bone());
-	for (auto b : bone)
-		_bone[b.second.id] = b.second;
+	_boneFileName = boneFileName;
 
 	UpdateBoneInstances();
+
+	_skeleton = SKELETON->GetSkeleton(_rootBone);
+	if (_skeleton == nullptr)
+		_skeleton = SKELETON->LoadSkeleton(_boneFileName, _rootBone);
+
 	_lastKeyframeIndex.clear();
-	_lastKeyframeIndex.resize(_bone.size(), 0);
+	_lastKeyframeIndex.resize(_skeleton->instancedTransforms.size(), 0);
 }
 
 void Animator::UpdateBoneInstances()
 {
+	auto bones = RESOURCE->LoadBone(_boneFileName);
+	string rootBoneName = "";
+	for (auto& bone : bones) {
+		if (bone.second.id == 0) {
+			rootBoneName = bone.second.name;
+			break;
+		}
+	}
+
 	auto childs = GetTransform()->GetChilds();
 	for (int i = 0; i < childs.size(); i++)
 	{
@@ -349,16 +381,12 @@ void Animator::UpdateBoneInstances()
 
 	for (int i = 0; i < childs.size(); i++)
 	{
-		for (int j = 0; j < _bone.size(); j++) {
-			if (_bone[j].instancedObj != nullptr || childs[i]->GetGameObject()->GetName() != _bone[j].name)
-				continue;
-			_bone[j].instancedObj = childs[i]->GetGameObject();
-			break;
-		}
+		if (rootBoneName == childs[i]->GetGameObject()->GetName())
+			_rootBone = childs[i];
 	}
-
 }
 
+// Legacy Physics!!
 void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)
 {
 	shared_ptr<GameObject> attackColliderObj = make_shared<GameObject>();

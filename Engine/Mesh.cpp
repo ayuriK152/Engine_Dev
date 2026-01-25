@@ -1,9 +1,13 @@
 #include "pch.h"
 #include "Mesh.h"
 
+UINT Mesh::_totalMeshCount = 0;
+
 Mesh::Mesh(shared_ptr<Geometry> geometry) : Super(ResourceType::Mesh), _geometry(geometry)
 {
 	_material = RESOURCE->Get<Material>(L"Mat_Default");
+	_id = _totalMeshCount++;
+	RENDER->AddMeshInfo(_id);
 }
 
 Mesh::~Mesh()

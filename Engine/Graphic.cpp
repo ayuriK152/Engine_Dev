@@ -27,6 +27,7 @@ bool Graphic::Initialize()
 
 	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
 
+	THREAD->Init();
 	RENDER->Init();
 	FILEIO->Init();
 	if (_appDesc.app != nullptr)
@@ -153,8 +154,6 @@ void Graphic::Update()
 		WaitForSingleObject(eventHandle, INFINITE);
 		CloseHandle(eventHandle);
 	}
-
-	// _currFrameResource->Update();
 }
 
 void Graphic::RenderBegin()

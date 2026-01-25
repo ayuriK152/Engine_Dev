@@ -27,6 +27,9 @@ public:									\
 #define DEBUG		GET_SINGLE(DebugManager)
 #define PHYSICS		GET_SINGLE(PhysicsManager)
 #define PARTICLE	GET_SINGLE(ParticleManager)
+#define SKELETON	GET_SINGLE(SkeletonManager)
+#define THREAD		GET_SINGLE(ThreadManager)
+#define ANIMATION	GET_SINGLE(AnimationManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 

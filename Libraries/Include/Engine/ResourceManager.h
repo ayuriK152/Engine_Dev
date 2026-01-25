@@ -22,22 +22,25 @@ public:
 	template<typename T>
 	ResourceType GetResourceType();
 
+	bool CheckResourceExists(const string& filePath);
+
 	void CreateDefaultResources();
 
 	void SaveMesh(shared_ptr<Mesh> mesh, const string& filePath = "");
 	void SaveAnimation(shared_ptr<Animation> animation, const string& filePath = "");
-	void SaveBone(map<string, Bone> bones, const string& boneName, const string& filePath = "");
+	void SaveBone(map<string, BoneData> bones, const string& boneName, const string& filePath = "");
 	void SavePrefab(shared_ptr<GameObject> prefabObject, const string& filePath = "");
 	void SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> object, int parentIdx, const string& prefabName);
 
 	shared_ptr<Mesh> LoadMesh(const string& filePath);
 	shared_ptr<Animation> LoadAnimation(const string& filePath);
-	map<string, Bone> LoadBone(const string& filePath);
+	map<string, BoneData> LoadBone(const string& filePath);
 	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath);
 
 private:
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;
+	set<string> _resourcePaths;
 };
 
 template<typename T>
@@ -51,6 +54,7 @@ bool ResourceManager::Add(const wstring& key, shared_ptr<T> resource)
 	if (found != keyObjMap.end())
 		return false;
 
+	_resourcePaths.insert(static_pointer_cast<Resource>(resource)->GetPath());
 	keyObjMap[key] = resource;
 	return true;
 }

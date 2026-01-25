@@ -45,6 +45,8 @@ public:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 private:
+	static UINT _totalMeshCount;
+
 	shared_ptr<Geometry> _geometry;
 	shared_ptr<Material> _material;
 

@@ -22,7 +22,7 @@ void PhysicsTestScene::Init()
 	gameObjects.push_back(camera);
 
 	auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
-	loadedObjects[0]->GetComponent<Animator>()->SetBone(RESOURCE->LoadBone("Paladin WProp J Nordstrom"));
+	loadedObjects[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
 	loadedObjects[0]->AddComponent(make_shared<PlayerScript>());
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 
@@ -47,7 +47,6 @@ void PhysicsTestScene::Init()
 	ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));
 	ground->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	ground->AddComponent(make_shared<Rigidbody>());
-	//ground->GetComponent<Rigidbody>()->SetColliderSize(Vector3(100.0f, 1.0f, 100.0f));
 	ground->GetComponent<Rigidbody>()->isGravity = false;
 	gameObjects.push_back(ground);
 

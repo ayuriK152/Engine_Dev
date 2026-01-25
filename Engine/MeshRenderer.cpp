@@ -28,7 +28,7 @@ void MeshRenderer::Update()
 
 void MeshRenderer::Render()
 {
-	if (RENDER->IsMeshRendered(_mesh))
+	if (RENDER->CheckMeshRender(_mesh))
 		return;
 	RENDER->SetMeshRenderCheckValue(_mesh);
 

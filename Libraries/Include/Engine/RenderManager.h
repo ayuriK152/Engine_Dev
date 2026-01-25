@@ -1,5 +1,7 @@
 #pragma once
 
+#define		PSO_COUNT				10
+
 #define		PSO_OPAQUE_SOLID		"opaque_solid"
 #define		PSO_OPAQUE_SKINNED		"opaque_skinned"
 #define		PSO_SKYBOX				"skybox"
@@ -11,8 +13,19 @@
 #define		PSO_PARTICLE_UPDATE		"particle_update"
 #define		PSO_PARTICLE_RENDER		"particle_render"
 
+#define		PSO_IDX_OPAQUE_SOLID		0
+#define		PSO_IDX_OPAQUE_SKINNED		1
+#define		PSO_IDX_SKYBOX				2
+#define		PSO_IDX_SHADOWMAP			3
+#define		PSO_IDX_SHADOWMAP_SKINNED	4
+#define		PSO_IDX_WIREFRAME			5
+#define		PSO_IDX_DEBUG_PHYSICS		6
+#define		PSO_IDX_DEBUG_SHADOW		7
+#define		PSO_IDX_PARTICLE_UPDATE		8
+#define		PSO_IDX_PARTICLE_RENDER		9
+
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT			13
+#define		ROOT_PARAMETER_COUNT		13
 
 #define		ROOT_PARAM_INSTCANCE_SB		0
 #define		ROOT_PARAM_MATERIAL_SB		1
@@ -57,6 +70,8 @@
 
 #define		DEFAULT_ANIMATION_COUNT			500		// Not used yet
 
+#define		MAX_HIERARCHY_DEPTH		32
+
 class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
@@ -76,13 +91,17 @@ public:
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
 	const ComPtr<ID3D12RootSignature>& GetRootSignature() { return _rootSignature; }
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	// Create PSO Descriptor
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	// Create PSO Descriptor without InputLayout
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	// Create PSO Descriptor for Compute Shader
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
 	void UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO);
+	UINT Temp_GetPSOIndex(string name);
 
 	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
 
@@ -99,20 +118,22 @@ public:
 
 	const ShadowMap* GetShadowMap() { return _shadowMap.get(); }
 
-	void UpdateMeshInstanceStartIndices();
-	UINT GetMeshInstanceStartIndex(const shared_ptr<Mesh>& mesh) {
-		if (_meshInstanceStartIndex.contains(mesh))
-			return _meshInstanceStartIndex[mesh];
-		return 0;
+	void AddMeshInfo(int id) {
+		while (_meshInstanceStartIndex.size() <= id)
+			_meshInstanceStartIndex.push_back(0);
+		while (_meshRenderCheckMap.size() <= id)
+			_meshRenderCheckMap.push_back(false);
 	}
 
+	void UpdateMeshInstanceStartIndices();
+	UINT GetMeshInstanceStartIndex(const shared_ptr<Mesh>& mesh) { return _meshInstanceStartIndex[mesh->GetID()]; }
+
 	void RefreshMeshRenderCheckMap();
-	bool IsMeshRendered(const shared_ptr<Mesh>& mesh) { 
-		if (!_meshRenderCheckMap.contains(mesh))
-			_meshRenderCheckMap[mesh] = false;
-		return _meshRenderCheckMap[mesh]; 
-	}
-	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh] = true; }
+
+	// Returns whether mesh rendered or not
+	bool CheckMeshRender(const shared_ptr<Mesh>& mesh) { return _meshRenderCheckMap[mesh->GetID()] == 1; }
+
+	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()]++; }
 
 	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
@@ -142,9 +163,9 @@ private:
 	ComPtr<ID3D12PipelineState> _currPSO;
 
 	vector<shared_ptr<GameObject>> _objects;
-	unordered_map<string, vector<shared_ptr<GameObject>>> _sortedObjects;
-	unordered_map<shared_ptr<Mesh>, UINT> _meshInstanceStartIndex;
-	unordered_map<shared_ptr<Mesh>, bool> _meshRenderCheckMap;
+	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _objectsSortedPSO;
+	vector<UINT> _meshInstanceStartIndex;
+	vector<UINT> _meshRenderCheckMap;
 
 	vector<Light*> _lights;
 
@@ -156,5 +177,7 @@ private:
 	unique_ptr<ShadowMap> _shadowMap = nullptr;
 
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
+
+	vector<future<void>> _futures;
 };
 

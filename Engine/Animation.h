@@ -33,16 +33,14 @@ public:
 	float GetTicksPerSecond() const { return _ticksPerSecond; }
 
 	void AddAnimationData(const AnimationData animation);
-	unordered_map<string, AnimationData>& GetAnimationDatas() { return _animationDatas; }
-	unordered_map<string, AnimationData>* GetAnimationDatasPtr() { return &_animationDatas; }
+	vector<AnimationData>& GetAnimationDatas() { return _animationDatas; }
+	vector<AnimationData>* GetAnimationDatasPtr() { return &_animationDatas; }
 
-	KeyFrame Interpolate(const string& boneName, float tick, int& lastIdx);
 	KeyFrame Interpolate(int boneIdx, float tick, int& lastIdx);
 
 private:
 	float _duration;
 	float _ticksPerSecond;
-	unordered_map<string, AnimationData> _animationDatas;
-	vector<AnimationData> _animationDatasNew;
+	vector<AnimationData> _animationDatas;
 };
 

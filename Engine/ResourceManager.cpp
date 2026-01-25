@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "ResourceManager.h"
 
+bool ResourceManager::CheckResourceExists(const string& filePath)
+{
+	return _resourcePaths.find(filePath) != _resourcePaths.end();
+}
+
 void ResourceManager::CreateDefaultResources()
 {
 	//==========Shader==========
@@ -117,19 +122,19 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 	FILEIO->WriteToFile(fileHandle, animation->GetDuration());
 	FILEIO->WriteToFile(fileHandle, animation->GetTicksPerSecond());
 
-	unordered_map<string, Animation::AnimationData> animationDatas = animation->GetAnimationDatas();
+	vector<Animation::AnimationData> animationDatas = animation->GetAnimationDatas();
 	FILEIO->WriteToFile(fileHandle, (UINT32)animationDatas.size());
 
 	for (auto& animData : animationDatas)
 	{
-		FILEIO->WriteToFile(fileHandle, animData.first);
+		FILEIO->WriteToFile(fileHandle, animData.boneName);
 
-		UINT32 boneId = animData.second.boneId;
+		UINT32 boneId = animData.boneId;
 		FILEIO->WriteToFile(fileHandle, boneId);
 
-		UINT32 keyFrameCount = animData.second.keyFrames.size();
+		UINT32 keyFrameCount = animData.keyFrames.size();
 		FILEIO->WriteToFile(fileHandle, keyFrameCount);
-		for (auto& keyFrame : animData.second.keyFrames)
+		for (auto& keyFrame : animData.keyFrames)
 		{
 			FILEIO->WriteToFile(fileHandle, keyFrame);
 		}
@@ -138,10 +143,10 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 	CloseHandle(fileHandle);
 }
 
-void ResourceManager::SaveBone(map<string, Bone> bones, const string& boneName, const string& filePath)
+void ResourceManager::SaveBone(map<string, BoneData> bones, const string& boneName, const string& filePath)
 {
 	string finalPath = filePath == "" ? boneName : filePath;
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(finalPath);
+	HANDLE fileHandle = FILEIO->CreateFileHandle<BoneData>(finalPath);
 
 	UINT32 boneCount = bones.size();
 	FILEIO->WriteToFile(fileHandle, boneCount);
@@ -280,9 +285,14 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 		return nullptr;
 	}
 
-	string meshName;
-	meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
+	string meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
 	meshName = meshName.substr(0, meshName.find_last_of('.'));
+
+	// 좀 더 개선할 수 있을 것 같음. 나머지 리소스들도 다.
+	if (RESOURCE->CheckResourceExists(filePath)) {
+		CloseHandle(fileHandle);
+		return RESOURCE->Get<Mesh>(UniversalUtils::ToWString(meshName));
+	}
 
 	UINT32 vertexCount;
 	FILEIO->ReadFileData(fileHandle, &vertexCount, sizeof(UINT32));
@@ -334,6 +344,11 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	animName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
 	animName = animName.substr(0, animName.find_last_of('.'));
 
+	if (RESOURCE->CheckResourceExists(filePath)) {
+		CloseHandle(fileHandle);
+		return RESOURCE->Get<Animation>(UniversalUtils::ToWString(animName));
+	}
+
 	float duration, ticks;
 	FILEIO->ReadFileData(fileHandle, &duration, sizeof(float));
 	FILEIO->ReadFileData(fileHandle, &ticks, sizeof(float));
@@ -377,11 +392,11 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 	return loadedAnimation;
 }
 
-map<string, Bone> ResourceManager::LoadBone(const string& filePath)
+map<string, BoneData> ResourceManager::LoadBone(const string& filePath)
 {
-	map<string, Bone> boneData;
+	map<string, BoneData> boneData;
 
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Bone>(filePath, false);
+	HANDLE fileHandle = FILEIO->CreateFileHandle<BoneData>(filePath, false);
 	if (fileHandle == INVALID_HANDLE_VALUE)
 	{
 		DEBUG->ErrorLog("Failed to load bone file: " + filePath);
@@ -392,7 +407,7 @@ map<string, Bone> ResourceManager::LoadBone(const string& filePath)
 	FILEIO->ReadFileData(fileHandle, &boneCount, sizeof(UINT32));
 	for (int i = 0; i < boneCount; i++)
 	{
-		Bone bone;
+		BoneData bone;
 		FILEIO->ReadFileData(fileHandle, bone.name);
 		FILEIO->ReadFileData(fileHandle, &bone.id, sizeof(UINT));
 		FILEIO->ReadFileData(fileHandle, &bone.parentId, sizeof(UINT));
@@ -481,7 +496,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 					string boneDataName;
 					FILEIO->ReadFileData(fileHandle, boneDataName);
-					meshRenderer->SetBoneData(LoadBone(boneDataName));
+					meshRenderer->SetBoneData(boneDataName);
 
 					boneSettingQueue.push_back({ meshRenderer, rootBoneName });
 					go->AddComponent(meshRenderer);

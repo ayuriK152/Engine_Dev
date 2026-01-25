@@ -4,6 +4,7 @@
 #define EMPTY_ANIMATION		"empty"
 
 class Animation;
+class Skeleton;
 
 enum AnimationEventTypes {
 	Speed,
@@ -25,6 +26,7 @@ struct AnimationEvent
 
 class Animator : public Component
 {
+	friend class AnimationManager;
 public:
 	Animator();
 	virtual ~Animator();
@@ -86,10 +88,13 @@ public:
 	}
 
 	// Recently Optimized
-	void SetBone(map<string, Bone> bone);
+	void SetBone(string boneFileName);
 	void UpdateBoneInstances();
 
 private:
+	void UpdateBoneTransform(int boneIdx);
+	void UpdateBoneTransformPreviewMode(int boneIdx);
+
 	void Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile);
 
 private:
@@ -108,7 +113,10 @@ private:
 
 	// 이거도 vector로 변경 고려
 	unordered_map<string, shared_ptr<Animation>> _animations;
-	vector<Bone> _bone;
+
+	shared_ptr<Transform> _rootBone;
+	string _boneFileName;
+	shared_ptr<Skeleton> _skeleton;
 
 	string _currentAnimation;
 	string _nextAnimation;

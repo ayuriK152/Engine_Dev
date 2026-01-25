@@ -32,7 +32,7 @@ void MeshRenderer::Render()
 		return;
 	RENDER->SetMeshRenderCheckValue(_mesh);
 
-	auto cmdList = GRAPHIC->GetCommandList().Get();
+	auto cmdList = GRAPHIC->GetCommandList();
 
 	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
 	cmdList->IASetVertexBuffers(0, 1, &_mesh->vertexBufferView);

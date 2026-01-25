@@ -5,7 +5,7 @@ Light::Light() : Component(ComponentType::Light)
 {
 	ambient = {};
 
-	_numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = RENDER->GetNumFrameResources();
 }
 
 Light::Light(
@@ -17,7 +17,7 @@ Light::Light(
 	diffuse(diffuse),
 	specular(specular)
 {
-	_numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = RENDER->GetNumFrameResources();
 }
 
 Light::~Light()
@@ -27,6 +27,6 @@ Light::~Light()
 
 void Light::SetFramesDirty()
 {
-	_numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = RENDER->GetNumFrameResources();
 }
 

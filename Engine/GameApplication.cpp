@@ -55,7 +55,7 @@ bool GameApplication::Initialize()
 {
 	if (!TIME->Initialize())
 		return false;
-	if (!GRAPHIC->Initialize())
+	if (!GRAPHIC->Init())
 		return false;
 
 	INPUTM->Initialize();
@@ -86,9 +86,7 @@ void GameApplication::Update()
 
 		PHYSICS->LateUpdate();
 
-		GRAPHIC->RenderBegin();
 		RENDER->Render();
-		GRAPHIC->RenderEnd();
 	}
 	else
 	{

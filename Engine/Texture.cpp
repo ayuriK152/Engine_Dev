@@ -51,8 +51,8 @@ Texture::~Texture()
 void Texture::Load(const wstring& path)
 {
 	SetPath(path);
-	auto device = GRAPHIC->GetDevice().Get();
-	auto commandQueue = GRAPHIC->GetCommandQueue().Get();
+	auto device = GRAPHIC->GetDevice();
+	auto commandQueue = GRAPHIC->GetCommandQueue();
 
 	ResourceUploadBatch upload(device);
 	upload.Begin();

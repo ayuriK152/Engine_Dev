@@ -3,6 +3,7 @@
 
 void RenderManager::Init()
 {
+	BuildFrameResources();
 	BuildRootSignature();
 	BuildInputLayout();
 	BuildSRVDescriptorHeap();
@@ -104,6 +105,13 @@ void RenderManager::FixedUpdate()
 
 void RenderManager::Update()
 {
+	// Frame Resource Update
+	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
+	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
+
+	GRAPHIC->WaitForFence(_currFrameResource->fence);
+
+	// Objects Update
 	for (auto& o : _objects) {
 		if (o->GetComponents().size() <= 1) continue;
 
@@ -111,13 +119,16 @@ void RenderManager::Update()
 	}
 
 	DEBUG->Update();
-	GRAPHIC->GetCurrFrameResource()->Update();
+	_currFrameResource->Update();
 }
 
 void RenderManager::Render()
 {
+	auto cmdListAlloc = _currFrameResource->cmdListAlloc;
 	auto cmdList = GRAPHIC->GetCommandList();
-	auto currentFrameResource = GRAPHIC->GetCurrFrameResource();
+
+	ThrowIfFailed(cmdListAlloc->Reset());
+	ThrowIfFailed(cmdList->Reset(cmdListAlloc.Get(), RENDER->GetCurrPSO().Get()));
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
@@ -130,15 +141,15 @@ void RenderManager::Render()
 	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	instance.Offset(currentFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	instance.Offset(_currFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	mat.Offset(currentFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(currentFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	lightDesc.Offset(_currFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
@@ -153,7 +164,7 @@ void RenderManager::Render()
 
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
 
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, currentFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _currFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
 
 	// ShadowMap Pass
 	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
@@ -244,7 +255,24 @@ void RenderManager::Render()
 
 	cmdList->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+
 	PARTICLE->Render();
+
+	ENGINEGUI->Render();
+
+	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+	ThrowIfFailed(cmdList->Close());
+
+	ID3D12CommandList* cmdsLists[] = { cmdList };
+
+	auto commaneQueue = GRAPHIC->GetCommandQueue();
+	commaneQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	ThrowIfFailed(GRAPHIC->GetSwapChain()->Present(0, 0));
+
+	GRAPHIC->RenderEnd(_currFrameResource);
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
@@ -387,6 +415,12 @@ UINT RenderManager::Temp_GetPSOIndex(string name)
 	if (name == PSO_DEBUG_SHADOW)		return 7;
 	if (name == PSO_PARTICLE_UPDATE)	return 8;
 	if (name == PSO_PARTICLE_RENDER)	return 9;
+}
+
+void RenderManager::BuildFrameResources()
+{
+	for (int i = 0; i < _numFrameResources; ++i)
+		_frameResources.push_back(make_unique<FrameResource>());
 }
 
 shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)

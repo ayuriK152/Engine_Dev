@@ -9,7 +9,7 @@ Material::Material() : Super(ResourceType::Material)
 
 	diffuseSrvHeapIndex = 0;
 	normalSrvHeapIndex = 0;
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	numFramesDirty = RENDER->GetNumFrameResources();
 
 	ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
 	diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -29,7 +29,7 @@ Material::Material(string name, wstring textureName) : Super(ResourceType::Mater
 {
 	matSBIndex = _count++;
 	normalSrvHeapIndex = 0;
-	numFramesDirty = GRAPHIC->GetNumFrameResources();
+	numFramesDirty = RENDER->GetNumFrameResources();
 	SetName(name);
 
 	ambient = { 1.0f, 1.0f, 1.0f, 1.0f };

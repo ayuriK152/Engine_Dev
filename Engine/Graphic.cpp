@@ -15,7 +15,7 @@ Graphic::~Graphic()
 }
 
 
-bool Graphic::Initialize()
+bool Graphic::Init()
 {
 	if (!InitMainWindow())
 		return false;
@@ -36,8 +36,6 @@ bool Graphic::Initialize()
 	DEBUG->Init();
 	PHYSICS->Init();
 
-	BuildFrameResources();
-
 	ThrowIfFailed(_commandList->Close());
 	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
@@ -47,6 +45,17 @@ bool Graphic::Initialize()
 	return true;
 }
 
+
+void Graphic::WaitForFence(UINT64 fenceValue)
+{
+	if (fenceValue != 0 && _fence->GetCompletedValue() < fenceValue)
+	{
+		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+		ThrowIfFailed(_fence->SetEventOnCompletion(fenceValue, eventHandle));
+		WaitForSingleObject(eventHandle, INFINITE);
+		CloseHandle(eventHandle);
+	}
+}
 
 void Graphic::OnResize()
 {
@@ -143,52 +152,14 @@ void Graphic::Update()
 	//UniversalUtils::CalculateFrameStats();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Update();
-
-	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
-	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
-
-	if (_currFrameResource->fence != 0 && _fence->GetCompletedValue() < _currFrameResource->fence)
-	{
-		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
-		ThrowIfFailed(_fence->SetEventOnCompletion(_currFrameResource->fence, eventHandle));
-		WaitForSingleObject(eventHandle, INFINITE);
-		CloseHandle(eventHandle);
-	}
-}
-
-void Graphic::RenderBegin()
-{
-	/* 
-	* CommandList 초기화 후 렌더링에 필요한 기초 요소들 설정
-	*/
-	auto cmdListAlloc = _currFrameResource->cmdListAlloc;
-
-	ThrowIfFailed(cmdListAlloc->Reset());
-
-	ThrowIfFailed(_commandList->Reset(cmdListAlloc.Get(), RENDER->GetCurrPSO().Get()));
 }
 
 
-void Graphic::RenderEnd()
+void Graphic::RenderEnd(FrameResource* currentFrameResource)
 {
-	ENGINEGUI->Render();
-
-	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
-
-	ThrowIfFailed(_commandList->Close());
-
-	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
-	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	ThrowIfFailed(_swapChain->Present(0, 0));
-#ifdef _DEBUG
-	HRESULT hr = GRAPHIC->GetDevice()->GetDeviceRemovedReason();
-#endif
-
 	_currBackBuffer = (_currBackBuffer + 1) % _SwapChainBufferCount;
 
-	_currFrameResource->fence = ++_currentFence;
+	currentFrameResource->fence = ++_currentFence;
 
 	_commandQueue->Signal(_fence.Get(), _currentFence);
 }
@@ -509,15 +480,6 @@ void Graphic::BuildDescriptorHeaps()
 	dsvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
-}
-
-
-void Graphic::BuildFrameResources()
-{
-	for (int i = 0; i < _numFrameResources; ++i)
-	{
-		_frameResources.push_back(make_unique<FrameResource>((UINT)RENDER->GetObjects().size()));
-	}
 }
 
 void Graphic::FlushCommandQueue()

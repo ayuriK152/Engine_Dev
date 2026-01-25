@@ -85,7 +85,7 @@ void DebugManager::Render()
 	if (_bufferVertexCount == 0 || _bufferIndexCount == 0)
 		return;
 
-	auto cmdList = GRAPHIC->GetCommandList().Get();
+	auto cmdList = GRAPHIC->GetCommandList();
 
 	cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
 	cmdList->IASetIndexBuffer(&_indexBufferView);

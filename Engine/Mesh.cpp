@@ -56,11 +56,11 @@ void Mesh::CreateBuffer()
 	//ThrowIfFailed(D3DCreateBlob(ibByteSize, &this->indexBufferCPU));
 	//CopyMemory(this->indexBufferCPU->GetBufferPointer(), _indices.data(), ibByteSize);
 
-	vertexBufferGPU = DXUtil::CreateDefaultBuffer(GRAPHIC->GetDevice().Get(),
-		GRAPHIC->GetCommandList().Get(), _geometry->GetVertexData(), vbByteSize, vertexBufferUploader);
+	vertexBufferGPU = DXUtil::CreateDefaultBuffer(GRAPHIC->GetDevice(),
+		GRAPHIC->GetCommandList(), _geometry->GetVertexData(), vbByteSize, vertexBufferUploader);
 
-	indexBufferGPU = DXUtil::CreateDefaultBuffer(GRAPHIC->GetDevice().Get(),
-		GRAPHIC->GetCommandList().Get(), _geometry->GetIndexData(), ibByteSize, indexBufferUploader);
+	indexBufferGPU = DXUtil::CreateDefaultBuffer(GRAPHIC->GetDevice(),
+		GRAPHIC->GetCommandList(), _geometry->GetIndexData(), ibByteSize, indexBufferUploader);
 
 	{	// Vertex Buffer View Setting
 		vertexBufferView.BufferLocation = vertexBufferGPU->GetGPUVirtualAddress();

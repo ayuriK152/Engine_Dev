@@ -9,7 +9,7 @@
 struct FrameResource
 {
 public:
-	FrameResource(UINT objectCount);
+	FrameResource();
 	FrameResource(const FrameResource& rhs) = delete;
 	FrameResource& operator=(const FrameResource& rhs) = delete;
 	~FrameResource();

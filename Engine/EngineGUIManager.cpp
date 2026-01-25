@@ -18,7 +18,7 @@ EngineGUIManager::~EngineGUIManager()
 
 void EngineGUIManager::Init()
 {
-	_srvHeapDescAllocator.Create(GRAPHIC->GetDevice().Get(), RENDER->GetCommonSRVHeap().Get());
+	_srvHeapDescAllocator.Create(GRAPHIC->GetDevice(), RENDER->GetCommonSRVHeap().Get());
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -29,9 +29,9 @@ void EngineGUIManager::Init()
 	ImGui_ImplWin32_Init(GRAPHIC->GetMainWnd());
 
 	ImGui_ImplDX12_InitInfo init_info = {};
-	init_info.Device = GRAPHIC->GetDevice().Get();
-	init_info.CommandQueue = GRAPHIC->GetCommandQueue().Get();
-	init_info.NumFramesInFlight = GRAPHIC->GetNumFrameResources();
+	init_info.Device = GRAPHIC->GetDevice();
+	init_info.CommandQueue = GRAPHIC->GetCommandQueue();
+	init_info.NumFramesInFlight = RENDER->GetNumFrameResources();
 	init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	init_info.SrvDescriptorHeap = RENDER->GetCommonSRVHeap().Get();
@@ -92,7 +92,7 @@ void EngineGUIManager::Render()
 	}
 
 	ImGui::Render();
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GRAPHIC->GetCommandList().Get());
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GRAPHIC->GetCommandList());
 }
 
 void EngineGUIManager::ShowEngineStatus()

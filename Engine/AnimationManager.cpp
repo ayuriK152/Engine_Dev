@@ -12,7 +12,6 @@ void AnimationManager::Update()
 
 	for (auto& animator : _animators) {
 		_futures.push_back(THREAD->EnqueueJob([animator] { animator->Update(); }));
-		// animator->Update();
 	}
 
 	for (auto& f : _futures)

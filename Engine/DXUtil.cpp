@@ -36,7 +36,7 @@ void DXUtil::UpdateBuffer(ComPtr<ID3D12Resource>& buffer, ComPtr<ID3D12Resource>
 	GRAPHIC->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(buffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 
-	UpdateSubresources(GRAPHIC->GetCommandList().Get(), buffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+	UpdateSubresources(GRAPHIC->GetCommandList(), buffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
 
 	GRAPHIC->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(buffer.Get(),
 		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));

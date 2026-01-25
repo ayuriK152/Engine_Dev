@@ -103,6 +103,9 @@ public:
 	void UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO);
 	UINT Temp_GetPSOIndex(string name);
 
+	void BuildFrameResources();
+	int GetNumFrameResources() { return _numFrameResources; }
+
 	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
@@ -161,6 +164,11 @@ private:
 	bool _isPSOFixed = false;
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	ComPtr<ID3D12PipelineState> _currPSO;
+
+	static const int _numFrameResources = 3;
+	int _currFrameResourceIndex = 0;
+	FrameResource* _currFrameResource = nullptr;
+	vector<unique_ptr<FrameResource>> _frameResources;
 
 	vector<shared_ptr<GameObject>> _objects;
 	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _objectsSortedPSO;

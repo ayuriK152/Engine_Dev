@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "FrameResource.h"
 
-FrameResource::FrameResource(UINT objectCount)
+FrameResource::FrameResource()
 {
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,

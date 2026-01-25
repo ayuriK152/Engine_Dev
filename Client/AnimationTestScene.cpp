@@ -26,25 +26,6 @@ void AnimationTestScene::Init()
 	loadedObjects[0]->GetComponent<Animator>()->SetLoop(true);
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 
-	//auto loadedObjects2 = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
-	//loadedObjects2[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
-	//loadedObjects2[0]->GetComponent<Animator>()->SetCurrentAnimation("idle_sword_4");
-	//loadedObjects2[0]->GetComponent<Animator>()->SetLoop(true);
-	//loadedObjects2[0]->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
-	//gameObjects.insert(gameObjects.end(), loadedObjects2.begin(), loadedObjects2.end());
-
-	//auto loadedObjects3 = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
-	//loadedObjects3[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
-	//loadedObjects3[0]->GetComponent<Animator>()->SetCurrentAnimation("idle_sword_4");
-	//loadedObjects3[0]->GetComponent<Animator>()->SetLoop(true);
-	//loadedObjects3[0]->GetTransform()->SetPosition(Vector3(5.0f, 0.0f, 0.0f));
-	//gameObjects.insert(gameObjects.end(), loadedObjects3.begin(), loadedObjects3.end());
-
-	//auto loadedObjects2 = RESOURCE->LoadPrefabObject("Brute");
-	//loadedObjects2[0]->GetComponent<Animator>()->SetBone("Brute");
-	//loadedObjects2[0]->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
-	//gameObjects.insert(gameObjects.end(), loadedObjects2.begin(), loadedObjects2.end());
-
 	auto globalLight = make_shared<GameObject>();
 	globalLight->SetName("GlobalLight");
 	XMFLOAT4 ambient = { 0.8f, 0.8f, 0.8f, 1.0f };

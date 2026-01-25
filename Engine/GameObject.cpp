@@ -13,7 +13,7 @@ GameObject::GameObject()
 	_psoName = PSO_OPAQUE_SOLID;
 	_tag = "Default";
 
-	_numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = RENDER->GetNumFrameResources();
 	_isInitialized = false;
 }
 
@@ -112,7 +112,7 @@ void GameObject::SetPSONameIncludeChilds(const string& name)
 
 void GameObject::SetFramesDirty()
 {
-	_numFramesDirty = GRAPHIC->GetNumFrameResources();
+	_numFramesDirty = RENDER->GetNumFrameResources();
 }
 
 void GameObject::Delete(float time)

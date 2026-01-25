@@ -27,7 +27,7 @@ void SkinnedMeshRenderer::Init()
 // 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.
 void SkinnedMeshRenderer::Render()
 {
-	auto cmdList = GRAPHIC->GetCommandList().Get();
+	auto cmdList = GRAPHIC->GetCommandList();
 
 	if (_rootBone != nullptr)
 	{

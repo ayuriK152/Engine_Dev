@@ -11,21 +11,19 @@ void ParticleManager::Init()
 
 }
 
-void ParticleManager::Update()
+void ParticleManager::Update(ID3D12GraphicsCommandList* cmdList)
 {
-	auto cmdList = GRAPHIC->GetCommandList();
-
 	cmdList->SetPipelineState(RENDER->GetPSO(PSO_PARTICLE_UPDATE).Get());
 
 	for (auto& emitter : _particleEmitters) {
-		emitter.second->Update();
+		emitter.second->Update(cmdList);
 	}
 }
 
-void ParticleManager::Render()
+void ParticleManager::Render(ID3D12GraphicsCommandList* cmdList)
 {
 	for (auto& emitter : _particleEmitters) {
-		emitter.second->Render();
+		emitter.second->Render(cmdList);
 	}
 }
 

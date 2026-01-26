@@ -11,7 +11,7 @@ public:
 
 	void Init() override;
 	void Update() override;
-	void Render() override;
+	void Render(ID3D12GraphicsCommandList* cmdList) override;
 
 protected:
 	MeshRenderer(ComponentType type);

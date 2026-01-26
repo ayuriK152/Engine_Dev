@@ -26,13 +26,11 @@ void MeshRenderer::Update()
 
 }
 
-void MeshRenderer::Render()
+void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList)
 {
 	if (RENDER->CheckMeshRender(_mesh))
 		return;
 	RENDER->SetMeshRenderCheckValue(_mesh);
-
-	auto cmdList = GRAPHIC->GetCommandList();
 
 	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
 	cmdList->IASetVertexBuffers(0, 1, &_mesh->vertexBufferView);

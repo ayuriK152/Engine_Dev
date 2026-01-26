@@ -73,7 +73,7 @@ public:
 	void Init();
 	void FixedUpdate();
 	void Update();
-	void Render();
+	void Render(ID3D12GraphicsCommandList* cmdList);
 
 private:
 	void ToggleWindows();

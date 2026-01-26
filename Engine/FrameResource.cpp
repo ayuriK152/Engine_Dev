@@ -5,7 +5,8 @@ FrameResource::FrameResource()
 {
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(cmdListAlloc.GetAddressOf())));
+		IID_PPV_ARGS(&cmdListAlloc)));
+
 
 	// ¾êµµ InitÀ¸·Î ¿Å°Ü¾ßµÊ
 	instanceSB = make_unique<UploadBuffer<InstanceConstants>>(DEFAULT_INSTANCE_COUNT, false);

@@ -70,13 +70,13 @@ void GameObject::Update()
 	}
 }
 
-void GameObject::Render()
+void GameObject::Render(ID3D12GraphicsCommandList* cmdList)
 {
 	for (auto& c : components)
 	{
 		if (c.second->type == ComponentType::ParticleEmitter)
 			continue;
-		c.second->Render();
+		c.second->Render(cmdList);
 	}
 }
 

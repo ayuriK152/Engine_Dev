@@ -25,10 +25,8 @@ void SkinnedMeshRenderer::Init()
 }
 
 // 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.
-void SkinnedMeshRenderer::Render()
+void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList)
 {
-	auto cmdList = GRAPHIC->GetCommandList();
-
 	if (_rootBone != nullptr)
 	{
 		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());

@@ -69,7 +69,7 @@ void EngineGUIManager::Update()
 	ToggleWindows();
 }
 
-void EngineGUIManager::Render()
+void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)
 {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -92,7 +92,7 @@ void EngineGUIManager::Render()
 	}
 
 	ImGui::Render();
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GRAPHIC->GetCommandList());
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), cmdList);
 }
 
 void EngineGUIManager::ShowEngineStatus()

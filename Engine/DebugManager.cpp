@@ -80,18 +80,19 @@ void DebugManager::Update()
 	}
 }
 
+// Jolt 추가 이후 로직 수정이 필요함
 void DebugManager::Render()
 {
-	if (_bufferVertexCount == 0 || _bufferIndexCount == 0)
-		return;
+	//if (_bufferVertexCount == 0 || _bufferIndexCount == 0)
+	//	return;
 
-	auto cmdList = GRAPHIC->GetCommandList();
+	//auto cmdList = GRAPHIC->GetCommandList();
 
-	cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-	cmdList->IASetIndexBuffer(&_indexBufferView);
-	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	//cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
+	//cmdList->IASetIndexBuffer(&_indexBufferView);
+	//cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-	cmdList->DrawIndexedInstanced(_indices.size(), 1, 0, 0, 0);
+	//cmdList->DrawIndexedInstanced(_indices.size(), 1, 0, 0, 0);
 }
 
 void DebugManager::Log(const string& message)

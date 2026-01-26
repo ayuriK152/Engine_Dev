@@ -9,6 +9,8 @@ private:
 	Graphic& operator=(const Graphic& rhs) = delete;
 	~Graphic();
 
+
+// Getter/Setter
 public:
 	HWND GetMainWnd() const { return _hMainWnd; }
 	ComPtr<IDXGIFactory4> GetDXGIFactory()const { return _dxgiFactory; }
@@ -30,7 +32,7 @@ public:
 	void SetAppDesc(AppDesc appDesc) { _appDesc = appDesc; }
 
 	ID3D12Device* GetDevice() const { return _device.Get(); }
-	ID3D12GraphicsCommandList* GetCommandList() const { return _commandList.Get(); }
+	ID3D12GraphicsCommandList* GetCommandList() const { return _graphicsCmdList; }
 	ID3D12CommandQueue* GetCommandQueue() const { return _commandQueue.Get(); }
 	IDXGISwapChain* GetSwapChain() const { return _swapChain.Get(); }
 
@@ -92,8 +94,8 @@ private:
 	UINT64 _currentFence = 0;
 
 	ComPtr<ID3D12CommandQueue> _commandQueue;
-	ComPtr<ID3D12CommandAllocator> _directCmdListAlloc;
-	ComPtr<ID3D12GraphicsCommandList> _commandList;
+	ID3D12GraphicsCommandList* _graphicsCmdList;
+	ID3D12CommandAllocator* _graphicsCmdListAlloc;
 
 	static const int _SwapChainBufferCount = 2;
 	int _currBackBuffer = 0;

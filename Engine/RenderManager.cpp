@@ -3,6 +3,19 @@
 
 void RenderManager::Init()
 {
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(&_mainCmdListAlloc)));
+
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		_mainCmdListAlloc,
+		nullptr,
+		IID_PPV_ARGS(&_mainCmdList)));
+
+	ThrowIfFailed(_mainCmdList->Close());
+
 	BuildFrameResources();
 	BuildRootSignature();
 	BuildInputLayout();
@@ -32,7 +45,7 @@ void RenderManager::Init()
 
 		auto shadow = CreatePSODesc(_solidInputLayout, L"shadowVS", L"shadowPS");
 		{
-			shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ���̸�
+			shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ���̸�
 			shadow.NumRenderTargets = 0;
 			shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 			shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
@@ -125,120 +138,87 @@ void RenderManager::Update()
 void RenderManager::Render()
 {
 	auto cmdListAlloc = _currFrameResource->cmdListAlloc;
-	auto cmdList = GRAPHIC->GetCommandList();
 
 	ThrowIfFailed(cmdListAlloc->Reset());
-	ThrowIfFailed(cmdList->Reset(cmdListAlloc.Get(), RENDER->GetCurrPSO().Get()));
+	ThrowIfFailed(_mainCmdList->Reset(cmdListAlloc, RENDER->GetCurrPSO().Get()));
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
-	cmdList->SetComputeRootSignature(RENDER->GetRootSignature().Get());
-
-	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
-	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
-	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	instance.Offset(_currFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(_currFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	skybox.Offset(_skyboxTexSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SKYBOX_SR, skybox);
-
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
-
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
-
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _currFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
+	SetCommonState(_mainCmdList);
 
 	// ShadowMap Pass
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
+	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
 		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
-	cmdList->RSSetViewports(1, &_shadowMap->GetViewport());
-	cmdList->RSSetScissorRects(1, &_shadowMap->GetScissorRect());
+	_mainCmdList->RSSetViewports(1, &_shadowMap->GetViewport());
+	_mainCmdList->RSSetScissorRects(1, &_shadowMap->GetScissorRect());
 
-	cmdList->ClearDepthStencilView(_shadowMap->GetDsv(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	cmdList->OMSetRenderTargets(0, nullptr, false, &_shadowMap->GetDsv());
+	_mainCmdList->ClearDepthStencilView(_shadowMap->GetDsv(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	_mainCmdList->OMSetRenderTargets(0, nullptr, false, &_shadowMap->GetDsv());
 
 	// Shadow Map Solid
-	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
+	_mainCmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
 
 	for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
-		o->Render();
+		o->Render(_mainCmdList);
 	}
 
 	// Shadow Map Skinned
-	cmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
+	_mainCmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
 
 	for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
-		o->Render();
+		o->Render(_mainCmdList);
 	}
 
 	RefreshMeshRenderCheckMap();
 
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
+	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
 		D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
 
 	// Main Pass
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
+	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	cmdList->RSSetViewports(1, &GRAPHIC->GetViewport());
-	cmdList->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
+	_mainCmdList->RSSetViewports(1, &GRAPHIC->GetViewport());
+	_mainCmdList->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
 
-	cmdList->ClearRenderTargetView(GRAPHIC->GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	cmdList->ClearDepthStencilView(GRAPHIC->GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	_mainCmdList->ClearRenderTargetView(GRAPHIC->GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	_mainCmdList->ClearDepthStencilView(GRAPHIC->GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-	cmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
+	_mainCmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
 
 	// Skybox
 	if (_objectsSortedPSO[PSO_IDX_SKYBOX].size() > 0) {
-		cmdList->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
+		_mainCmdList->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
 		for (auto& o : _objectsSortedPSO[PSO_IDX_SKYBOX]) {
-			o->Render();
+			o->Render(_mainCmdList);
 		}
 	}
 
 	// Check PSO Fixed
+	// 이부분 굳이 필요한가 싶음
+	// 디버그용 파이프라인 변경에 대한 별도의 기능을 따로 구현하는 편이 좋을듯
 	if (!_isPSOFixed) {
 		// Opaque Solid
 		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SOLID].size() > 0) {
-			cmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SOLID].Get());
+			_mainCmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SOLID].Get());
 			for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
-				o->Render();
+				o->Render(_mainCmdList);
 			}
 		}
 
 		// Opaque Skinned
 		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED].size() > 0) {
-			cmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SKINNED].Get());
+			_mainCmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SKINNED].Get());
 			for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
-				o->Render();
+				o->Render(_mainCmdList);
 			}
 		}
 	}
 	else {
-		cmdList->SetPipelineState(_currPSO.Get());
+		_mainCmdList->SetPipelineState(_currPSO.Get());
 		for (int i = 0; i < PSO_COUNT; i++) {
 			if (i != PSO_IDX_SKYBOX) {
 				for (auto& o : _objectsSortedPSO[i])
-					o->Render();
+					o->Render(_mainCmdList);
 			}
 		}
 	}
@@ -247,25 +227,26 @@ void RenderManager::Render()
 
 	if (_isPhysicsDebugRenderEnabled)
 	{
-		cmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
+		_mainCmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
 		DEBUG->Render();
 	}
 
-	PARTICLE->Update();
+	// Particle System Update / Render
+	PARTICLE->Update(_mainCmdList);
 
-	cmdList->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	_mainCmdList->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
+	_mainCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	PARTICLE->Render();
+	PARTICLE->Render(_mainCmdList);
 
-	ENGINEGUI->Render();
+	ENGINEGUI->Render(_mainCmdList);
 
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
+	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	ThrowIfFailed(cmdList->Close());
+	ThrowIfFailed(_mainCmdList->Close());
 
-	ID3D12CommandList* cmdsLists[] = { cmdList };
+	ID3D12CommandList* cmdsLists[] = { _mainCmdList };
 
 	auto commaneQueue = GRAPHIC->GetCommandQueue();
 	commaneQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
@@ -467,7 +448,7 @@ void RenderManager::UpdateMeshInstanceStartIndices()
 	}
 }
 
-// �̻�� �޽� ������ Ȯ�ο� �޼ҵ�
+// �̻�� �޽� ������ Ȯ�ο� �޼ҵ�
 void RenderManager::RefreshMeshRenderCheckMap()
 {
 	int meshCount = _meshRenderCheckMap.size();
@@ -587,6 +568,45 @@ void RenderManager::BuildSRVDescriptorHeap()
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
+}
+
+void RenderManager::SetCommonState(ID3D12GraphicsCommandList* cmdList)
+{
+	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
+	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	cmdList->SetGraphicsRootSignature(_rootSignature.Get());
+	cmdList->SetComputeRootSignature(RENDER->GetRootSignature().Get());
+
+	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
+	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
+	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	instance.Offset(_currFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	lightDesc.Offset(_currFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	skybox.Offset(_skyboxTexSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SKYBOX_SR, skybox);
+
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
+
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
+
+	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _currFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
 }
 
 #pragma endregion

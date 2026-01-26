@@ -25,13 +25,12 @@ void ParticleEmitter::Init()
 	PARTICLE->AddParticleEmitter(static_pointer_cast<ParticleEmitter>(shared_from_this()));
 }
 
-void ParticleEmitter::Update()
+void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 {
 	if (!_isPlaying) return;
 
 	_info.EmitterPos = GetTransform()->GetPosition();
 
-	auto cmdList = GRAPHIC->GetCommandList();
 	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_EMITTER_CB, sizeof(EmitterInfo) / 4, &_info, 0);
 
 	cmdList->SetComputeRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
@@ -39,11 +38,9 @@ void ParticleEmitter::Update()
 	cmdList->Dispatch((_particleMount + 255) / 256, 1, 1);
 }
 
-void ParticleEmitter::Render()
+void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList)
 {
 	if (!_isPlaying) return;
-
-	auto cmdList = GRAPHIC->GetCommandList();
 
 	cmdList->SetGraphicsRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
 	cmdList->DrawInstanced(_particleMount, 1, 0, 0);

@@ -97,6 +97,7 @@ public:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	// Create PSO Descriptor for Compute Shader
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
+	// GetPSO with PSO name string. Refactoring on plan
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
@@ -148,10 +149,15 @@ private:
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
 
+	void SetCommonState(ID3D12GraphicsCommandList* cmdList);
+
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
 private:
 	bool _isPhysicsDebugRenderEnabled = false;
+
+	ID3D12CommandAllocator* _mainCmdListAlloc;
+	ID3D12GraphicsCommandList* _mainCmdList;
 
 	ComPtr<ID3D12RootSignature> _rootSignature;
 
@@ -162,6 +168,7 @@ private:
 	vector<D3D12_INPUT_ELEMENT_DESC> _colliderDebugInputLayout;
 
 	bool _isPSOFixed = false;
+	// Refactoring on plan
 	unordered_map<string, ComPtr<ID3D12PipelineState>> _PSOs;
 	ComPtr<ID3D12PipelineState> _currPSO;
 
@@ -186,6 +193,6 @@ private:
 
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
 
-	vector<future<void>> _futures;
+	array<future<void>, 4> _futures;
 };
 

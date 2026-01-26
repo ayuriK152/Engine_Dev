@@ -31,7 +31,7 @@ public:
 	virtual void Init() { }
 	virtual void FixedUpdate() { }
 	virtual void Update() { }
-	virtual void Render() { }
+	virtual void Render(ID3D12GraphicsCommandList* cmdList) { }
 
 	virtual void OnCollision(shared_ptr<Collider> other) { }
 

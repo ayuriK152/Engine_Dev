@@ -25,7 +25,7 @@ bool Graphic::Init()
 
 	OnResize();
 
-	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
+	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
 
 	THREAD->Init();
 	RENDER->Init();
@@ -36,8 +36,8 @@ bool Graphic::Init()
 	DEBUG->Init();
 	PHYSICS->Init();
 
-	ThrowIfFailed(_commandList->Close());
-	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
+	ThrowIfFailed(_graphicsCmdList->Close());
+	ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	FlushCommandQueue();
@@ -61,11 +61,10 @@ void Graphic::OnResize()
 {
 	assert(_device);
 	assert(_swapChain);
-	assert(_directCmdListAlloc);
 
 	FlushCommandQueue();
 
-	ThrowIfFailed(_commandList->Reset(_directCmdListAlloc.Get(), nullptr));
+	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
 
 	for (int i = 0; i < _SwapChainBufferCount; ++i)
 		_swapChainBuffer[i].Reset();
@@ -124,11 +123,11 @@ void Graphic::OnResize()
 	hDsv.Offset(GetAndIncreaseDSVHeapIndex(), _dsvDescriptorSize);
 	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, GetDSVHandle());
 
-	_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_depthStencilBuffer.Get(),
+	_graphicsCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_depthStencilBuffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
-	ThrowIfFailed(_commandList->Close());
-	ID3D12CommandList* cmdsLists[] = { _commandList.Get() };
+	ThrowIfFailed(_graphicsCmdList->Close());
+	ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };
 	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	FlushCommandQueue();
@@ -149,7 +148,6 @@ void Graphic::OnResize()
 
 void Graphic::Update()
 {
-	//UniversalUtils::CalculateFrameStats();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Update();
 }
@@ -422,16 +420,16 @@ void Graphic::BuildCommandObjects()
 
 	ThrowIfFailed(_device->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(_directCmdListAlloc.GetAddressOf())));
+		IID_PPV_ARGS(&_graphicsCmdListAlloc)));
 
 	ThrowIfFailed(_device->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		_directCmdListAlloc.Get(),
+		_graphicsCmdListAlloc,
 		nullptr,
-		IID_PPV_ARGS(_commandList.GetAddressOf())));
+		IID_PPV_ARGS(&_graphicsCmdList)));
 
-	_commandList->Close();
+	_graphicsCmdList->Close();
 }
 
 void Graphic::BuildSwapChain()

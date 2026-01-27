@@ -20,10 +20,10 @@ void Rigidbody::Init()
 	auto rot = transform->GetQuaternion();
 
 	// 1. Shape 생성
-	JPH::ShapeSettings::ShapeResult shapeResult = FitOnMesh();
+	_shapeResult = FitOnMesh();
 
 	// 2. Body 생성 설정
-	JPH::BodyCreationSettings bodySettings(shapeResult.Get(),
+	JPH::BodyCreationSettings bodySettings(_shapeResult.Get(),
 		JPH::RVec3(pos.x, pos.y, pos.z),
 		JPH::Quat(rot.x, rot.y, rot.z, rot.w),
 		isGravity ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static,
@@ -32,6 +32,16 @@ void Rigidbody::Init()
 	// 3. 시스템에 등록
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
+
+	if (_colliderSizeDirtyFlag) {
+		_colliderSizeDirtyFlag = false;
+		UpdateColliderSize();
+	}
+
+	if (_colliderOffsetDirtyFlag) {
+		_colliderOffsetDirtyFlag = false;
+		UpdateColliderOffset();
+	}
 
 	PHYSICS->AddRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
 }
@@ -48,6 +58,8 @@ void Rigidbody::Update()
 		auto pos = transform->GetPosition();
 		auto rot = transform->GetQuaternion();
 
+		pos = pos + XMVector3Rotate(XMLoadFloat3(&_colliderOffset), XMLoadFloat4(&rot));
+
 		PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetPositionAndRotation(
 			_bodyID,
 			JPH::RVec3(pos.x, pos.y, pos.z),
@@ -59,13 +71,44 @@ void Rigidbody::Update()
 
 void Rigidbody::SetColliderSize(const Vector3& size)
 {
-	if (!isInitialized) return;
+	_colliderSize = size;
 
-	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(size.x, size.y, size.z));
-	JPH::ShapeSettings::ShapeResult shapeResult = shapeSettings.Create();
+	if (!isInitialized) {
+		_colliderSizeDirtyFlag = true;
+		return;
+	}
+
+	UpdateColliderSize();
+}
+
+void Rigidbody::SetColliderOffset(const Vector3& offset)
+{
+	_colliderOffset = offset;
+
+	if (!isInitialized) {
+		_colliderOffsetDirtyFlag = true;
+		return;
+	}
+
+	UpdateColliderOffset();
+}
+
+void Rigidbody::UpdateColliderSize()
+{
+	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(_colliderSize.x, _colliderSize.y, _colliderSize.z));
+	_shapeResult = shapeSettings.Create();
 
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
-	bodyInterface.SetShape(_bodyID, shapeResult.Get(), true, JPH::EActivation::Activate);
+	bodyInterface.SetShape(_bodyID, _shapeResult.Get(), true, JPH::EActivation::Activate);
+}
+
+void Rigidbody::UpdateColliderOffset()
+{
+	JPH::OffsetCenterOfMassShapeSettings offsetSettings(JPH::Vec3(_colliderOffset.x, _colliderOffset.y, _colliderOffset.z), _shapeResult.Get());
+	_shapeResult = offsetSettings.Create();
+
+	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
+	bodyInterface.SetShape(_bodyID, _shapeResult.Get(), true, JPH::EActivation::Activate);
 }
 
 JPH::ShapeSettings::ShapeResult Rigidbody::FitOnMesh()

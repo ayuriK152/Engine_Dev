@@ -53,8 +53,11 @@ void PhysicsManager::Update()
 		_physicsSystem->GetBodyInterface().GetPositionAndRotation(rigidbody->GetBodyID(), position, rotation);
 
 		// DX12 엔진의 Transform 업데이트
-		rigidbody->GetTransform()->SetLocalPosition(Vector3(position.GetX(), position.GetY(), position.GetZ()));
-		rigidbody->GetTransform()->SetQuaternion(Vector4(rotation.GetX(), rotation.GetY(), rotation.GetZ(), rotation.GetW()));
+		Vector3 pos(position.GetX(), position.GetY(), position.GetZ());
+		Vector4 rot(rotation.GetX(), rotation.GetY(), rotation.GetZ(), rotation.GetW());
+		pos = pos - XMVector3Rotate(XMLoadFloat3(&rigidbody->GetColliderOffset()), XMLoadFloat4(&rot));
+		rigidbody->GetTransform()->SetLocalPosition(pos);
+		rigidbody->GetTransform()->SetQuaternion(rot);
 	}
 }
 

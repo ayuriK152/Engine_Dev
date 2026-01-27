@@ -16,6 +16,8 @@ public:
 
 public:
 	void SetColliderSize(const Vector3& size);
+	void SetColliderOffset(const Vector3& offset);
+	Vector3 GetColliderOffset() { return _colliderOffset; }
 
 	Vector3 GetVelocity() { return _velocity; }
 	void SetVelocity(Vector3& veclocity) { _velocity = veclocity; }
@@ -23,6 +25,8 @@ public:
 	BodyID GetBodyID() { return _bodyID; }
 
 private:
+	void UpdateColliderSize();
+	void UpdateColliderOffset();
 	JPH::ShapeSettings::ShapeResult FitOnMesh();
 
 public:
@@ -30,7 +34,13 @@ public:
 
 private:
 	Vector3 _velocity;			// ¼Óµµ
+	Vector3 _colliderSize = { 1.0f, 1.0f, 1.0f };
+	Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };
+
+	bool _colliderSizeDirtyFlag = false;
+	bool _colliderOffsetDirtyFlag = false;
 
 	JPH::BodyID _bodyID;
+	JPH::ShapeSettings::ShapeResult _shapeResult;
 };
 

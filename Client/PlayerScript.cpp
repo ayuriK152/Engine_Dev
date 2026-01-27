@@ -16,6 +16,8 @@ void PlayerScript::Init()
 	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
 	auto rigidbody = make_shared<Rigidbody>();
+	rigidbody->SetColliderSize(Vector3(0.3f, 1.6f, 0.3f));
+	rigidbody->SetColliderOffset(Vector3(0.0f, 1.6f, 0.0f));
 	gameObject->AddComponent(rigidbody);
 }
 

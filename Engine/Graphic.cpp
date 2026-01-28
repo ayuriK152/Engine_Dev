@@ -33,8 +33,8 @@ bool Graphic::Init()
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
 	ENGINEGUI->Init();
-	DEBUG->Init();
 	PHYSICS->Init();
+	DEBUG->Init();
 
 	ThrowIfFailed(_graphicsCmdList->Close());
 	ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };

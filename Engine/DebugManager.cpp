@@ -10,89 +10,116 @@ void DebugManager::Init()
 {
 	_vertexBufferView.StrideInBytes = sizeof(VertexPC);
 	_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
+
+	_bufferVertexCount = 100;
+	_vertexUploadBuffer = make_unique<UploadBuffer<VertexPC>>(100, false);
+
+	_vertexBufferView.BufferLocation = _vertexUploadBuffer->GetResource()->GetGPUVirtualAddress();
+	_vertexBufferView.SizeInBytes = sizeof(VertexPC) * 100;
+
+	_bufferIndexCount = 200;
+	_indexUploadBuffer = make_unique<UploadBuffer<UINT16>>(200, false);
+
+	_indexBufferView.BufferLocation = _indexUploadBuffer->GetResource()->GetGPUVirtualAddress();
+	_indexBufferView.SizeInBytes = sizeof(UINT16) * 200;
+
+	_debugLines.clear();
+	Initialize();
 }
 
 void DebugManager::Update()
 {
-	if (_vertices.size() != _bufferVertexCount)
-	{
-		_bufferVertexCount = _vertices.size();
-		_vertexUploadBuffer = make_unique<UploadBuffer<VertexPC>>(_bufferVertexCount, false);
+	_debugLines.clear();
+	_vertices.clear();
+	_indices.clear();
 
-		_vertexBufferView.BufferLocation = _vertexUploadBuffer->GetResource()->GetGPUVirtualAddress();
-		_vertexBufferView.SizeInBytes = sizeof(VertexPC) * _bufferVertexCount;
+	JPH::BodyManager::DrawSettings drawSettings;
+	//drawSettings.mDrawShape = true;
+	drawSettings.mDrawShapeWireframe = true;
+	PHYSICS->GetPhysicsSystem()->DrawBodies(drawSettings, this);
 
-		for (int i = 0; i < _bufferVertexCount; i++)
-			_vertexUploadBuffer->CopyData(i, _vertices[i]);
-	}
-
-	if (_indices.size() != _bufferIndexCount)
-	{
-		_bufferIndexCount = _indices.size();
-		_indexUploadBuffer = make_unique<UploadBuffer<UINT16>>(_bufferIndexCount, false);
-
-		_indexBufferView.BufferLocation = _indexUploadBuffer->GetResource()->GetGPUVirtualAddress();
-		_indexBufferView.SizeInBytes = sizeof(UINT16) * _bufferIndexCount;
-
-		for (int i = 0; i < _bufferIndexCount; i++)
-			_indexUploadBuffer->CopyData(i, _indices[i]);
-	}
-
-	UINT vertexIndex = 0;
-	UINT indexIndex = 0;	// 이거 이름 왜 이따구지
-	for (int i = 0; i < _drawQueue.size(); i++)
-	{
-		switch (_drawQueue[i]->GetColliderType())
-		{
-			case ColliderType::Box:
-			{
-				// 게임 오브젝트 런타임 중 삭제된 경우
-				if (_drawQueue[i]->GetGameObject() == nullptr) {
-					DeleteDebugCollider(_drawQueue[i]);
-					i--;
-					break;
-				}
-
-				if (_drawQueue[i]->GetGameObject()->GetFramesDirty() > 0)
-				{
-					BoundingOrientedBox box = static_pointer_cast<BoxCollider>(_drawQueue[i])->GetBoundingBox();
-
-					Vector3 corners[8];
-					box.GetCorners(corners);
-
-					for (int i = 0; i < 8; i++)
-						_vertices[i + vertexIndex].Position = corners[i];
-					for (int i = 0; i < 8; i++)
-						_vertexUploadBuffer->CopyData(i + vertexIndex, _vertices[i + vertexIndex]);
-
-					for (int i = 0; i < 8; i++)
-						_indices[i + indexIndex] = _boxColliderIndices[i] + indexIndex;
-					for (int i = 0; i < _bufferIndexCount; i++)
-						_indexUploadBuffer->CopyData(i, _indices[i]);
-
-				}
-
-				vertexIndex += 8;
-				indexIndex += 24;
-				break;
-			}
-		}
-	}
+	_vertexUploadBuffer->CopyData(_vertices.data(), _vertices.size());
+	_indexUploadBuffer->CopyData(_indices.data(), _indices.size());
 }
 
 // Jolt 추가 이후 로직 수정이 필요함
-void DebugManager::Render()
+void DebugManager::Render(ID3D12GraphicsCommandList* cmdList)
 {
-	//if (_bufferVertexCount == 0 || _bufferIndexCount == 0)
-	//	return;
+	cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
+	cmdList->IASetIndexBuffer(&_indexBufferView);
+	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-	//auto cmdList = GRAPHIC->GetCommandList();
+	cmdList->DrawIndexedInstanced(_indices.size(), 1, 0, 0, 0);
+}
 
-	//cmdList->IASetVertexBuffers(0, 1, &_vertexBufferView);
-	//cmdList->IASetIndexBuffer(&_indexBufferView);
-	//cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+void DebugManager::DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg inColor)
+{
+	_debugLines.push_back(DebugLine(
+		inFrom.GetX(), 
+		inFrom.GetY(),
+		inFrom.GetZ(),
+		inTo.GetX(),
+		inTo.GetY(),
+		inTo.GetZ(),
+		inColor.r,
+		inColor.g,
+		inColor.b,
+		inColor.a
+	));
+}
 
-	//cmdList->DrawIndexedInstanced(_indices.size(), 1, 0, 0, 0);
+void DebugManager::DrawLine(Vector3 from, Vector3 to, ColorRGBA color)
+{
+	_debugLines.push_back(DebugLine(
+		from, 
+		to,
+		color
+	));
+}
+
+void DebugManager::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow /*= ECastShadow::Off*/)
+{
+	DrawLine(inV1, inV2, inColor);
+	DrawLine(inV2, inV3, inColor);
+	DrawLine(inV3, inV1, inColor);
+}
+
+JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount)
+{
+	return Batch();
+}
+
+JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Vertex* inVertices, int inVertexCount, const uint32* inIndices, int inIndexCount)
+{
+	return Batch();
+}
+
+void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpaceBounds, float inLODScaleSq, ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode /*= ECullMode::CullBackFace*/, ECastShadow inCastShadow /*= ECastShadow::On*/, EDrawMode inDrawMode /*= EDrawMode::Solid*/)
+{
+	XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&inModelMatrix);
+
+	AABox localBox = inGeometry->mBounds;
+	Vector3 minP = Vector3(localBox.mMin.GetX(), localBox.mMin.GetY(), localBox.mMin.GetZ());
+	Vector3 maxP = Vector3(localBox.mMax.GetX(), localBox.mMax.GetY(), localBox.mMax.GetZ());
+
+	// 로컬 박스의 8개 점 계산
+	Vector3 corners[8] = {
+		Vector3(minP.x, minP.y, minP.z), Vector3(maxP.x, minP.y, minP.z),
+		Vector3(maxP.x, maxP.y, minP.z), Vector3(minP.x, maxP.y, minP.z),
+		Vector3(minP.x, minP.y, maxP.z), Vector3(maxP.x, minP.y, maxP.z),
+		Vector3(maxP.x, maxP.y, maxP.z), Vector3(minP.x, maxP.y, maxP.z)
+	};
+
+	// 8개 점을 world 행렬로 변환하여 선 12개 긋기
+	for (int i = 0; i < 24; i++)
+		_indices.push_back(_boxColliderIndices[i] + _vertices.size());
+	for (int i = 0; i < 8; i++)
+		_vertices.push_back(VertexPC(XMVector3TransformCoord(XMLoadFloat3(&corners[i]), world), ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f)));
+}
+
+void DebugManager::DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor /*= Color::sWhite*/, float inHeight /*= 0.5f*/)
+{
+
 }
 
 void DebugManager::Log(const string& message)

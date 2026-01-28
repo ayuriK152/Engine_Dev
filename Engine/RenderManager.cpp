@@ -228,7 +228,7 @@ void RenderManager::Render()
 	if (_isPhysicsDebugRenderEnabled)
 	{
 		_mainCmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
-		DEBUG->Render();
+		DEBUG->Render(_mainCmdList);
 	}
 
 	// Particle System Update / Render

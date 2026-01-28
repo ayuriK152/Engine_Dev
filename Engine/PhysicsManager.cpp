@@ -58,6 +58,15 @@ void PhysicsManager::Update()
 		pos = pos - XMVector3Rotate(XMLoadFloat3(&rigidbody->GetColliderOffset()), XMLoadFloat4(&rot));
 		rigidbody->GetTransform()->SetLocalPosition(pos);
 		rigidbody->GetTransform()->SetQuaternion(rot);
+
+		//_physicsSystem->GetBodyInterface().GetShape(rigidbody->GetBodyID())->Draw(
+		//	DEBUG,
+		//	RMat44Arg(rigidbody->GetTransform()->GetWorldMatrix()),
+		//	JPH::Vec3::sOne(),
+		//	JPH::Color::sGreen,
+		//	false,
+		//	false
+		//);
 	}
 }
 

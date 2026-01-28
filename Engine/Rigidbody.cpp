@@ -38,11 +38,6 @@ void Rigidbody::Init()
 		UpdateColliderSize();
 	}
 
-	if (_colliderOffsetDirtyFlag) {
-		_colliderOffsetDirtyFlag = false;
-		UpdateColliderOffset();
-	}
-
 	PHYSICS->AddRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
 }
 
@@ -84,13 +79,6 @@ void Rigidbody::SetColliderSize(const Vector3& size)
 void Rigidbody::SetColliderOffset(const Vector3& offset)
 {
 	_colliderOffset = offset;
-
-	if (!isInitialized) {
-		_colliderOffsetDirtyFlag = true;
-		return;
-	}
-
-	UpdateColliderOffset();
 }
 
 void Rigidbody::UpdateColliderSize()

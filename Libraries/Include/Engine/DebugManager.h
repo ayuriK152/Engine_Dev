@@ -1,4 +1,5 @@
 #pragma once
+#include <Jolt/Renderer/DebugRenderer.h>
 
 #define	MAX_VERTEX_COUNT	100
 #define MAX_INDEX_COUNT		300
@@ -17,15 +18,50 @@ struct DebugLog
 	string message;
 };
 
-class DebugManager
+struct DebugLine
 {
+	DebugLine(float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a) {
+		from = Vector3(x1, y1, z1);
+		to = Vector3(x2, y2, z2);
+		color = ColorRGBA(r, g, b, a);
+	}
+
+	DebugLine(Vector3 _from, Vector3 _to, ColorRGBA _color) {
+		from = _from;
+		to = _to;
+		color = _color;
+	}
+
+	Vector3 from;
+	Vector3 to;
+	ColorRGBA color;
+};
+
+class DebugManager : public JPH::DebugRenderer
+{
+	JPH_OVERRIDE_NEW_DELETE
 	DECLARE_SINGLE(DebugManager);
+	using Super = JPH::DebugRenderer;
 public:
 	~DebugManager();
 
 	void Init();
 	void Update();
-	void Render();
+	void Render(ID3D12GraphicsCommandList* cmdList);
+
+
+	void DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg inColor) override;
+	void DrawLine(Vector3 from, Vector3 to, ColorRGBA color);
+
+	void DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off) override;
+
+	Batch CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount) override;
+
+	Batch CreateTriangleBatch(const Vertex* inVertices, int inVertexCount, const uint32* inIndices, int inIndexCount) override;
+
+	void DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpaceBounds, float inLODScaleSq, ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode = ECullMode::CullBackFace, ECastShadow inCastShadow = ECastShadow::On, EDrawMode inDrawMode = EDrawMode::Solid) override;
+
+	void DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor = Color::sWhite, float inHeight = 0.5f) override;
 
 public:
 	void Log(const string& message);
@@ -69,5 +105,7 @@ private:
 				6, 7,
 				7, 4
 	};
+
+	vector<DebugLine> _debugLines;
 };
 

@@ -26,8 +26,8 @@ void GameObject::Init()
 {
 	for (auto& c : components)
 	{
-		c.second->Init();
 		c.second->isInitialized = true;
+		c.second->Init();
 	}
 }
 
@@ -50,16 +50,16 @@ void GameObject::Update()
 	}
 
 	if (!_isInitialized) {
-		Init();
 		_isInitialized = true;
+		Init();
 	}
 	for (auto& c : components)
 	{
 		// 런타임 중에 추가되는 컴포넌트
 		if (!c.second->isInitialized)
 		{
-			c.second->Init();
 			c.second->isInitialized = true;
+			c.second->Init();
 		}
 
 		if (c.second->type == ComponentType::Collider || 

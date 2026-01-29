@@ -11,7 +11,6 @@ Collider::~Collider()
 	try
 	{
 		PHYSICS->DeleteCollider(static_pointer_cast<Collider>(shared_from_this()));
-		DEBUG->DeleteDebugCollider(static_pointer_cast<Collider>(shared_from_this()));
 	} catch (exception e)
 	{
 

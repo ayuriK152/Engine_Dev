@@ -11,30 +11,28 @@ void DebugManager::Init()
 	_vertexBufferView.StrideInBytes = sizeof(VertexPC);
 	_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 
-	_bufferVertexCount = 100;
-	_vertexUploadBuffer = make_unique<UploadBuffer<VertexPC>>(100, false);
+	_bufferVertexCount = DEFAULT_VERTEX_BUFFER_SIZE;
+	_vertexUploadBuffer = make_unique<UploadBuffer<VertexPC>>(DEFAULT_VERTEX_BUFFER_SIZE, false);
 
 	_vertexBufferView.BufferLocation = _vertexUploadBuffer->GetResource()->GetGPUVirtualAddress();
-	_vertexBufferView.SizeInBytes = sizeof(VertexPC) * 100;
+	_vertexBufferView.SizeInBytes = sizeof(VertexPC) * DEFAULT_VERTEX_BUFFER_SIZE;
 
-	_bufferIndexCount = 200;
-	_indexUploadBuffer = make_unique<UploadBuffer<UINT16>>(200, false);
+	_bufferIndexCount = DEFAULT_INDEX_BUFFER_SIZE;
+	_indexUploadBuffer = make_unique<UploadBuffer<UINT16>>(DEFAULT_INDEX_BUFFER_SIZE, false);
 
 	_indexBufferView.BufferLocation = _indexUploadBuffer->GetResource()->GetGPUVirtualAddress();
-	_indexBufferView.SizeInBytes = sizeof(UINT16) * 200;
+	_indexBufferView.SizeInBytes = sizeof(UINT16) * DEFAULT_INDEX_BUFFER_SIZE;
 
-	_debugLines.clear();
 	Initialize();
 }
 
 void DebugManager::Update()
 {
-	_debugLines.clear();
 	_vertices.clear();
 	_indices.clear();
 
 	JPH::BodyManager::DrawSettings drawSettings;
-	//drawSettings.mDrawShape = true;
+	drawSettings.mDrawShape = true;
 	drawSettings.mDrawShapeWireframe = true;
 	PHYSICS->GetPhysicsSystem()->DrawBodies(drawSettings, this);
 
@@ -54,27 +52,20 @@ void DebugManager::Render(ID3D12GraphicsCommandList* cmdList)
 
 void DebugManager::DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg inColor)
 {
-	_debugLines.push_back(DebugLine(
-		inFrom.GetX(), 
-		inFrom.GetY(),
-		inFrom.GetZ(),
-		inTo.GetX(),
-		inTo.GetY(),
-		inTo.GetZ(),
-		inColor.r,
-		inColor.g,
-		inColor.b,
-		inColor.a
-	));
+	_indices.push_back(_vertices.size());
+	_indices.push_back(_vertices.size() + 1);
+
+	_vertices.push_back(VertexPC(inFrom.GetX(), inFrom.GetY(), inFrom.GetZ(), inColor.r, inColor.g, inColor.b, inColor.a));
+	_vertices.push_back(VertexPC(inTo.GetX(), inTo.GetY(), inTo.GetZ(), inColor.r, inColor.g, inColor.b, inColor.a));
 }
 
 void DebugManager::DrawLine(Vector3 from, Vector3 to, ColorRGBA color)
 {
-	_debugLines.push_back(DebugLine(
-		from, 
-		to,
-		color
-	));
+	_indices.push_back(_vertices.size());
+	_indices.push_back(_vertices.size() + 1);
+
+	_vertices.push_back(VertexPC(from, color));
+	_vertices.push_back(VertexPC(to, color));
 }
 
 void DebugManager::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow /*= ECastShadow::Off*/)
@@ -94,6 +85,7 @@ JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Vertex* inVert
 	return Batch();
 }
 
+// 박스만 렌더링 할 수 있도록 되있음. 개선 가능하면 개선하는 편이 좋을 듯.
 void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpaceBounds, float inLODScaleSq, ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode /*= ECullMode::CullBackFace*/, ECastShadow inCastShadow /*= ECastShadow::On*/, EDrawMode inDrawMode /*= EDrawMode::Solid*/)
 {
 	XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&inModelMatrix);
@@ -135,55 +127,4 @@ void DebugManager::WarnLog(const string& message)
 void DebugManager::ErrorLog(const string& message)
 {
 	_debugLogs.push_back({ TIME->TotalTime(), LOG_ERROR, message });
-}
-
-void DebugManager::AddDebugCollider(shared_ptr<Collider> collider)
-{
-	_drawQueue.push_back(collider);
-
-	switch (collider->GetColliderType())
-	{
-		case ColliderType::Box:
-		{
-			BoundingOrientedBox box = static_pointer_cast<BoxCollider>(collider)->GetBoundingBox();
-
-			// 정점 배열에 요소가 추가되기 전 크기를 받아와야되기 때문에 인덱스 먼저 추가
-			for (int i = 0; i < 24; i++)
-				_indices.push_back(_boxColliderIndices[i] + _vertices.size());
-
-			Vector3 corners[8];
-			box.GetCorners(corners);
-
-			VertexPC v[8];
-			for (int i = 0; i < 8; i++)
-			{
-				v[i].Position = corners[i];
-				v[i].Color = _colliderDebugColor;
-				_vertices.push_back(v[i]);
-			}
-
-			break;
-		}
-	}
-}
-
-void DebugManager::DeleteDebugCollider(shared_ptr<Collider> collider)
-{
-	bool isExists = false;
-	for (int i = 0; i < _drawQueue.size(); i++) {
-		if (_drawQueue[i] == collider) {
-			_drawQueue.erase(_drawQueue.begin() + i);
-			isExists = true;
-			break;
-		}
-	}
-
-	if (isExists) {
-		switch (collider->GetColliderType()) {
-		case ColliderType::Box: {
-			_vertices.erase(_vertices.end() - 8, _vertices.end());
-			_indices.erase(_indices.end() - 24, _indices.end());
-		}
-		}
-	}
 }

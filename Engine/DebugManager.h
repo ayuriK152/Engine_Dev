@@ -4,6 +4,9 @@
 #define	MAX_VERTEX_COUNT	100
 #define MAX_INDEX_COUNT		300
 
+#define DEFAULT_VERTEX_BUFFER_SIZE	10000
+#define DEFAULT_INDEX_BUFFER_SIZE	30000
+
 enum LogLevel
 {
 	LOG_INFO,
@@ -58,7 +61,7 @@ public:
 	Batch CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount) override;
 
 	Batch CreateTriangleBatch(const Vertex* inVertices, int inVertexCount, const uint32* inIndices, int inIndexCount) override;
-
+	
 	void DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpaceBounds, float inLODScaleSq, ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode = ECullMode::CullBackFace, ECastShadow inCastShadow = ECastShadow::On, EDrawMode inDrawMode = EDrawMode::Solid) override;
 
 	void DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor = Color::sWhite, float inHeight = 0.5f) override;
@@ -69,13 +72,9 @@ public:
 	void ErrorLog(const string& message);
 	void ClearLogs() { _debugLogs.clear(); }
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
-	void AddDebugCollider(shared_ptr<Collider> collider);
-	void DeleteDebugCollider(shared_ptr<Collider> collider);
 
 private:
 	vector<DebugLog> _debugLogs;
-
-	vector<shared_ptr<Collider>> _drawQueue;
 
 	vector<VertexPC> _vertices;
 	vector<UINT16> _indices;
@@ -105,7 +104,5 @@ private:
 				6, 7,
 				7, 4
 	};
-
-	vector<DebugLine> _debugLines;
 };
 

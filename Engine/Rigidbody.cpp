@@ -19,9 +19,12 @@ void Rigidbody::Init()
 	auto pos = transform->GetPosition();
 	auto rot = transform->GetQuaternion();
 
-	// 1. Shape 积己
-	_shapeResult = FitOnMesh();
-
+	if (!_shapeDataDirtyFlag) {
+		_shapeResult = FitOnMesh();
+	}
+	else {
+		CreateShape();
+	}
 	// 2. Body 积己 汲沥
 	JPH::BodyCreationSettings bodySettings(_shapeResult.Get(),
 		JPH::RVec3(pos.x, pos.y, pos.z),
@@ -33,9 +36,9 @@ void Rigidbody::Init()
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 
-	if (_colliderSizeDirtyFlag) {
-		_colliderSizeDirtyFlag = false;
-		UpdateColliderSize();
+	if (_shapeDataDirtyFlag) {
+		_shapeDataDirtyFlag = false;
+		UpdateShapeData();
 	}
 
 	PHYSICS->AddRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
@@ -64,16 +67,20 @@ void Rigidbody::Update()
 	}
 }
 
-void Rigidbody::SetColliderSize(const Vector3& size)
+void Rigidbody::SetColliderExtents(const Vector3& extents)
 {
-	_colliderSize = size;
+	_colliderExtents = extents;
 
-	if (!isInitialized) {
-		_colliderSizeDirtyFlag = true;
-		return;
-	}
+	if (_colliderShape == ColliderShape::Box)
+		UpdateShapeData();
+}
 
-	UpdateColliderSize();
+void Rigidbody::SetColliderRadius(float radius)
+{
+	_colliderRadius = radius;
+
+	if (_colliderShape == ColliderShape::Shpere)
+		UpdateShapeData();
 }
 
 void Rigidbody::SetColliderOffset(const Vector3& offset)
@@ -81,19 +88,40 @@ void Rigidbody::SetColliderOffset(const Vector3& offset)
 	_colliderOffset = offset;
 }
 
-void Rigidbody::UpdateColliderSize()
+void Rigidbody::SetColliderShape(ColliderShape colliderShape)
 {
-	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(_colliderSize.x, _colliderSize.y, _colliderSize.z));
-	_shapeResult = shapeSettings.Create();
+	if (_colliderShape == colliderShape) return;
 
-	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
-	bodyInterface.SetShape(_bodyID, _shapeResult.Get(), true, JPH::EActivation::Activate);
+	_colliderShape = colliderShape;
+
+	CreateShape();
+
+	UpdateShapeData();
 }
 
-void Rigidbody::UpdateColliderOffset()
+void Rigidbody::CreateShape()
 {
-	JPH::OffsetCenterOfMassShapeSettings offsetSettings(JPH::Vec3(_colliderOffset.x, _colliderOffset.y, _colliderOffset.z), _shapeResult.Get());
-	_shapeResult = offsetSettings.Create();
+	if (!isInitialized) {
+		_shapeDataDirtyFlag = true;
+		return;
+	}
+
+	if (_colliderShape == ColliderShape::Box) {
+		JPH::BoxShapeSettings boxShapeSetting(JPH::Vec3(_colliderExtents.x, _colliderExtents.y, _colliderExtents.z));
+		_shapeResult = boxShapeSetting.Create();
+	}
+	else if (_colliderShape == ColliderShape::Shpere) {
+		JPH::SphereShapeSettings sphereShapeSetting(_colliderRadius);
+		_shapeResult = sphereShapeSetting.Create();
+	}
+}
+
+void Rigidbody::UpdateShapeData()
+{
+	if (!isInitialized) {
+		_shapeDataDirtyFlag = true;
+		return;
+	}
 
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	bodyInterface.SetShape(_bodyID, _shapeResult.Get(), true, JPH::EActivation::Activate);
@@ -133,6 +161,8 @@ JPH::ShapeSettings::ShapeResult Rigidbody::FitOnMesh()
 		if (maxZ < vertex.z) maxZ = vertex.z;
 	}
 
-	JPH::BoxShapeSettings shapeSettings(JPH::Vec3((maxX - minX) / 2, (maxY - minY) / 2, (maxZ - minZ) / 2));
+	_colliderExtents = Vector3((maxX - minX) / 2, (maxY - minY) / 2, (maxZ - minZ) / 2);
+
+	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(_colliderExtents.x, _colliderExtents.y, _colliderExtents.z));
 	return shapeSettings.Create();
 }

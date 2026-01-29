@@ -59,6 +59,16 @@ void PhysicsTestScene::Init()
 	cube1->GetTransform()->SetPosition(Vector3(3.0f, 5.0f, 3.0f));
 	gameObjects.push_back(cube1);
 
+	auto sphere1 = make_shared<GameObject>();
+	sphere1->SetName("Sphere1");
+	sphere1->AddComponent(make_shared<Rigidbody>());
+	sphere1->GetComponent<Rigidbody>()->SetColliderShape(ColliderShape::Shpere);
+	sphere1->AddComponent(make_shared<MeshRenderer>());
+	sphere1->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicSphere"));
+	sphere1->GetComponent<MeshRenderer>()->GetMaterial()->SetDiffuse(RESOURCE->Get<Texture>(L"0dot001mm_1"));
+	sphere1->GetTransform()->SetPosition(Vector3(-3.0f, 5.0f, 3.0f));
+	gameObjects.push_back(sphere1);
+
 	while (gameObjects.size() > 0)
 	{
 		RENDER->AddGameObject(gameObjects[0]);

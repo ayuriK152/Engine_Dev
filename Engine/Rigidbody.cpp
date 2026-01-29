@@ -32,6 +32,8 @@ void Rigidbody::Init()
 		isGravity ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static,
 		isGravity ? Layers::MOVING : Layers::NON_MOVING);
 
+	bodySettings.mIsSensor = _isTrigger;
+
 	// 3. 시스템에 등록
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
@@ -67,12 +69,27 @@ void Rigidbody::Update()
 	}
 }
 
+void Rigidbody::OnDestroy()
+{
+	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
+	bodyInterface.RemoveBody(_bodyID);
+	// bodyInterface.DestroyBody(_bodyID);
+	PHYSICS->DeleteRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
+}
+
 void Rigidbody::SetColliderExtents(const Vector3& extents)
 {
 	_colliderExtents = extents;
 
 	if (_colliderShape == ColliderShape::Box)
 		UpdateShapeData();
+}
+
+void Rigidbody::SetColliderTrigger(bool value)
+{
+	if (value == _isTrigger) return;
+
+	_isTrigger = value;
 }
 
 void Rigidbody::SetColliderRadius(float radius)

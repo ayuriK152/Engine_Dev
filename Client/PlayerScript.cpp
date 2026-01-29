@@ -24,7 +24,7 @@ void PlayerScript::Init()
 void PlayerScript::Update()
 {
 	Roll();
-	//Attack();
+	Attack();
 
 	if (_playerMovementState == SLASH || _playerMovementState == ROLL)
 	{

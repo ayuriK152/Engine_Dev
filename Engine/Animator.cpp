@@ -386,7 +386,7 @@ void Animator::UpdateBoneInstances()
 	}
 }
 
-// Legacy Physics!!
+
 void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)
 {
 	shared_ptr<GameObject> attackColliderObj = make_shared<GameObject>();
@@ -394,9 +394,11 @@ void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostil
 	attackColliderObj->GetTransform()->SetQuaternion(GetTransform()->GetQuaternion());
 	attackColliderObj->SetTag("AttackAlly");
 
-	auto attackCollider = make_shared<BoxCollider>();
-	attackCollider->SetTrigger(true);
-	attackCollider->SetOffset(offset);
+	auto attackCollider = make_shared<Rigidbody>();
+	attackCollider->SetColliderExtents(scale / 2);
+	attackCollider->SetColliderOffset(offset);
+	attackCollider->SetColliderTrigger(true);
+	attackCollider->isGravity = false;
 	attackColliderObj->AddComponent(attackCollider);
 
 	attackColliderObj->Delete(1.0f);

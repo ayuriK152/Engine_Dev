@@ -19,7 +19,11 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
+	for (auto& c : components) {
+		c.second->OnDestroy();
+	}
 
+	components.clear();
 }
 
 void GameObject::Init()

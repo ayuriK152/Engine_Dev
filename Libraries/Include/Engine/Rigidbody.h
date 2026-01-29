@@ -17,12 +17,16 @@ public:
 	Rigidbody();
 	virtual ~Rigidbody();
 
-	void Init()override;
-	void FixedUpdate()override;
-	void Update()override;
+	void Init() override;
+	void FixedUpdate() override;
+	void Update() override;
+
+	void OnDestroy() override;
 
 public:
 	void SetColliderExtents(const Vector3& size);
+
+	void SetColliderTrigger(bool value);
 
 	void SetColliderRadius(float radius);
 
@@ -47,6 +51,7 @@ public:
 
 private:
 	Vector3 _velocity;			// ¼Óµµ
+	bool _isTrigger = false;
 	Vector3 _colliderExtents = { 0.5f, 0.5f, 0.5f };
 	float _colliderRadius = 0.5f;
 	Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };

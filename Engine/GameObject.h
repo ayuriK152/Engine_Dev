@@ -37,10 +37,15 @@ public:
 	template<typename T>
 	shared_ptr<T> GetComponent();
 
-	unordered_map<ComponentType, shared_ptr<Component>> GetComponents() { return components; }
+	template<typename T>
+	const vector<shared_ptr<T>>& GetAllComponents();
+
+	array<vector<shared_ptr<Component>>, static_cast<int>(ComponentType::ComponentTypeCount) - 1> GetAllComponents() { return _components; }
 
 	template<typename T>
 	ComponentType GetComponentType();
+
+	int GetComponentTypeIndex(ComponentType type);
 
 	// 인스턴스 ID는 프리팹에 저장하지 않는 정보
 	// CB 인덱스와 다르게 숫자 밀려도 상관없음. 그냥 식별할 수 있기만 하면 됨.
@@ -68,7 +73,7 @@ public:
 
 	UINT objectID;
 
-	unordered_map<ComponentType, shared_ptr<Component>> components;
+	// unordered_map<ComponentType, shared_ptr<Component>> components;
 
 private:
 	static int _nextId;
@@ -82,16 +87,20 @@ private:
 
 	float _deleteTime = 0.0f;
 	bool _isDeleteReserved = false;
+
+	array<vector<shared_ptr<Component>>, static_cast<int>(ComponentType::ComponentTypeCount) - 1> _components;
 };
 
 template<typename T>
 shared_ptr<T> GameObject::GetComponent()
 {
 	ComponentType componentType = GetComponentType<T>();
-	if (components.contains(componentType))
-		return static_pointer_cast<T>(components[componentType]);
-	else
-		return nullptr;
+	int componentTypeIdx = GetComponentTypeIndex(componentType);
+
+	if (componentTypeIdx == -1) return nullptr;
+	if (_components[componentTypeIdx].size() > 0)
+		return static_pointer_cast<T>(_components[componentTypeIdx][0]);
+	else return nullptr;
 }
 
 template<typename T>

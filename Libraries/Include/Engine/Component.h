@@ -19,7 +19,8 @@ enum class ComponentType
 	Light,
 	Animator,
 	Script,
-	ParticleEmitter
+	ParticleEmitter,
+	ComponentTypeCount
 };
 
 class Component : public enable_shared_from_this<Component>

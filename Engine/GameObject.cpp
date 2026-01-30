@@ -19,27 +19,35 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	for (auto& c : components) {
-		c.second->OnDestroy();
-	}
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
 
-	components.clear();
+		for (auto& c : componentVec)
+			c->OnDestroy();
+		componentVec.clear();
+	}
 }
 
 void GameObject::Init()
 {
-	for (auto& c : components)
-	{
-		c.second->isInitialized = true;
-		c.second->Init();
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			c->isInitialized = true;
+			c->Init();
+		}
 	}
 }
 
 void GameObject::FixedUpdate()
 {
-	for (auto& c : components)
-	{
-		c.second->FixedUpdate();
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			c->FixedUpdate();
+		}
 	}
 }
 
@@ -57,61 +65,79 @@ void GameObject::Update()
 		_isInitialized = true;
 		Init();
 	}
-	for (auto& c : components)
-	{
-		// 런타임 중에 추가되는 컴포넌트
-		if (!c.second->isInitialized)
-		{
-			c.second->isInitialized = true;
-			c.second->Init();
-		}
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
 
-		if (c.second->type == ComponentType::Collider || 
-			c.second->type == ComponentType::ParticleEmitter ||
-			c.second->type == ComponentType::Animator)
-			continue;
-		c.second->Update();
+		for (auto& c : componentVec) {
+			// 런타임 중에 추가되는 컴포넌트
+			if (!c->isInitialized)
+			{
+				c->isInitialized = true;
+				c->Init();
+			}
+
+			if (c->type == ComponentType::Collider ||
+				c->type == ComponentType::ParticleEmitter ||
+				c->type == ComponentType::Animator)
+				continue;
+			c->Update();
+		}
 	}
 }
 
 void GameObject::Render(ID3D12GraphicsCommandList* cmdList)
 {
-	for (auto& c : components)
-	{
-		if (c.second->type == ComponentType::ParticleEmitter)
-			continue;
-		c.second->Render(cmdList);
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			if (c->type == ComponentType::ParticleEmitter)
+				continue;
+			c->Render(cmdList);
+		}
 	}
 }
 
 void GameObject::OnCollisionEnter(shared_ptr<GameObject> other)
 {
-	for (auto& c : components)
-	{
-		c.second->OnCollisionEnter(other);
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			c->OnCollisionEnter(other);
+		}
 	}
 }
 
 void GameObject::OnCollision(shared_ptr<GameObject> other)
 {
-	for (auto& c : components)
-	{
-		c.second->OnCollision(other);
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			c->OnCollision(other);
+		}
 	}
 }
 
 void GameObject::OnCollisionExit(shared_ptr<GameObject> other)
 {
-	for (auto& c : components)
-	{
-		c.second->OnCollisionExit(other);
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			c->OnCollisionExit(other);
+		}
 	}
 }
 
 void GameObject::AddComponent(shared_ptr<Component> component)
 {
+	int componentTypeIdx = GetComponentTypeIndex(component->type);
+	if (componentTypeIdx == -1) return;
+	
 	component->SetGameObject(shared_from_this());
-	components.insert({component->type, component});
+	_components[componentTypeIdx].push_back(component);
 }
 
 shared_ptr<Transform> GameObject::GetTransform()
@@ -122,6 +148,21 @@ shared_ptr<Transform> GameObject::GetTransform()
 		AddComponent(transform);
 	}
 	return transform;
+}
+
+int GameObject::GetComponentTypeIndex(ComponentType type)
+{
+	if (type == ComponentType::Undefined)			return -1;
+	if (type == ComponentType::Transform)			return 0;
+	if (type == ComponentType::MeshRenderer)		return 1;
+	if (type == ComponentType::SkinnedMeshRenderer) return 2;
+	if (type == ComponentType::Camera)				return 3;
+	if (type == ComponentType::Rigidbody)			return 7;
+	if (type == ComponentType::Light)				return 5;
+	if (type == ComponentType::Animator)			return 6;
+	if (type == ComponentType::Script)				return 4;
+	if (type == ComponentType::ParticleEmitter)		return 8;
+	if (type == ComponentType::Collider)			return 9;
 }
 
 void GameObject::SetPSONameIncludeChilds(const string& name)

@@ -97,7 +97,7 @@ void PlayerScript::OnCollisionEnter(shared_ptr<GameObject> other)
 
 void PlayerScript::Roll()
 {
-	if (INPUTM->IsKeyDown(KeyValue::SPACE) && !animator->IsTransitionBlocked())
+	if (INPUTM->IsKeyDown(KeyValue::SPACE) && !animator->IsTransitionBlocked() && _playerMovementState != PlayerMovementState::IDLE)
 	{
 		animator->SetLoop(false);
 		_playerMovementState = PlayerMovementState::ROLL;

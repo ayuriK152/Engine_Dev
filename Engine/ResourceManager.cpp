@@ -191,19 +191,19 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 	FILEIO->WriteToFile(fileHandle, object->GetPSOName());
 	FILEIO->WriteToFile(fileHandle, object->GetTransform()->GetWorldMatrix());
 	FILEIO->WriteToFile(fileHandle, parentIdx);		// 부모 인덱스
-	FILEIO->WriteToFile(fileHandle, (UINT32)object->GetComponents().size() - 1);
-	for (auto& c : object->GetComponents())
-	{
-		if (c.first == ComponentType::Transform)
-			continue;
+	FILEIO->WriteToFile(fileHandle, (UINT32)object->GetAllComponents().size() - 1);
+	for (auto& componentVec : object->GetAllComponents()) {
+		for (auto& c : componentVec) {
+			if (c->type == ComponentType::Transform)
+				continue;
 
-		FILEIO->WriteToFile(fileHandle, c.first);	// 컴포넌트 타입
+			FILEIO->WriteToFile(fileHandle, c->type);	// 컴포넌트 타입
 
-		switch (c.first)
-		{
+			switch (c->type)
+			{
 			case ComponentType::MeshRenderer:
 			{
-				auto meshRenderer = static_pointer_cast<MeshRenderer>(c.second);
+				auto meshRenderer = static_pointer_cast<MeshRenderer>(c);
 
 				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
 				FILEIO->WriteToFile(fileHandle, meshPath);
@@ -216,7 +216,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 
 			case ComponentType::SkinnedMeshRenderer:
 			{
-				auto meshRenderer = static_pointer_cast<SkinnedMeshRenderer>(c.second);
+				auto meshRenderer = static_pointer_cast<SkinnedMeshRenderer>(c);
 
 				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
 				FILEIO->WriteToFile(fileHandle, meshPath);
@@ -235,7 +235,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 
 			case ComponentType::Animator:
 			{
-				auto animator = static_pointer_cast<Animator>(c.second);
+				auto animator = static_pointer_cast<Animator>(c);
 
 				FILEIO->WriteToFile(fileHandle, animator->IsPlayOnInit());
 				FILEIO->WriteToFile(fileHandle, animator->IsLoop());
@@ -255,7 +255,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 
 			case ComponentType::Camera:
 			{
-				auto camera = static_pointer_cast<Camera>(c.second);
+				auto camera = static_pointer_cast<Camera>(c);
 
 				FILEIO->WriteToFile(fileHandle, camera->IsMainCamera());
 
@@ -266,6 +266,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 			{
 				// 일단 씬에서 수동적으로 넣어주는 방식으로 작동중.
 				// 세이브를 한다면 어떻게?
+			}
 			}
 		}
 	}

@@ -38,20 +38,19 @@ void DungeonScene::Init()
 	{
 		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 		player = loadedObjects[0];
+		player->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 		player->AddComponent(make_shared<PlayerScript>());
 		player->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 3.0f));
 	}
 
 	{
-		auto loadedObjects = RESOURCE->LoadPrefabObject("Brute");
-		auto boss = loadedObjects[0];
-		auto collider = make_shared<BoxCollider>();
-		collider->SetExtent(Vector3(0.5f, 1.0f, 0.5f));
-		collider->SetOffset(Vector3(0.0f, 1.0f, 0.0f));
-		boss->AddComponent(collider);
-		boss->AddComponent(make_shared<EnemyScript>());
-		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+		auto brute = RESOURCE->LoadPrefabObject("Brute");
+		brute[0]->GetComponent<Animator>()->SetBone("Brute");
+		shared_ptr<EnemyScript> enemyScript = make_shared<EnemyScript>();
+		enemyScript->target = player;
+		brute[0]->AddComponent(enemyScript);
+		gameObjects.insert(gameObjects.end(), brute.begin(), brute.end());
 	}
 
 	{
@@ -75,7 +74,8 @@ void DungeonScene::Init()
 				floorTile->AddComponent(make_shared<MeshRenderer>());
 				floorTile->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Tiles4x4"));
 				floorTile->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
-				floorTile->AddComponent(make_shared<BoxCollider>());
+				floorTile->AddComponent(make_shared<Rigidbody>());
+				floorTile->GetComponent<Rigidbody>()->isGravity = false;
 				floorTile->GetTransform()->SetPosition({ 4.0f * x, 0, 4.0f * z });
 				floorTile->GetTransform()->SetRotation({ -90, 0, 0 });
 

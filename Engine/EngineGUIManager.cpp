@@ -227,45 +227,48 @@ void EngineGUIManager::ShowInspectorView()
 			ShowTransform();
 		
 			// Other Components
-			for (auto& c : _selectedObj->GetComponents())
-			{
-				ComponentType componentType = c.first;
-				if (componentType == ComponentType::Transform)
-					continue;
+			for (auto& componentVec : _selectedObj->GetAllComponents()) {
+				if (componentVec.size() == 0) continue;
 
-				switch (componentType)
-				{
+				for (auto& c : componentVec) {
+					ComponentType componentType = c->type;
+					if (componentType == ComponentType::Transform)
+						continue;
+
+					switch (componentType)
+					{
 					case ComponentType::MeshRenderer:
-						ShowMeshRenderer(static_pointer_cast<MeshRenderer>(c.second));
+						ShowMeshRenderer(static_pointer_cast<MeshRenderer>(c));
 						break;
 
 					case ComponentType::SkinnedMeshRenderer:
-						ShowSkinnedMeshRenderer(static_pointer_cast<SkinnedMeshRenderer>(c.second));
+						ShowSkinnedMeshRenderer(static_pointer_cast<SkinnedMeshRenderer>(c));
 						break;
 
 					case ComponentType::Camera:
-						ShowCamera(static_pointer_cast<Camera>(c.second));
+						ShowCamera(static_pointer_cast<Camera>(c));
 						break;
 
 					case ComponentType::Light:
-						ShowLight(static_pointer_cast<Light>(c.second));
+						ShowLight(static_pointer_cast<Light>(c));
 						break;
 
 					case ComponentType::Animator:
-						ShowAnimator(static_pointer_cast<Animator>(c.second));
+						ShowAnimator(static_pointer_cast<Animator>(c));
 						break;
 
 					case ComponentType::Script:
-						ShowScript(static_pointer_cast<Script>(c.second));
+						ShowScript(static_pointer_cast<Script>(c));
 						break;
 
 					case ComponentType::Collider:
-						ShowCollider(static_pointer_cast<Collider>(c.second));
+						ShowCollider(static_pointer_cast<Collider>(c));
 						break;
 
 					case ComponentType::Rigidbody:
-						ShowRigidbody(static_pointer_cast<Rigidbody>(c.second));
+						ShowRigidbody(static_pointer_cast<Rigidbody>(c));
 						break;
+					}
 				}
 			}
 		}

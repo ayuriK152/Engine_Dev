@@ -126,7 +126,7 @@ void RenderManager::Update()
 
 	// Objects Update
 	for (auto& o : _objects) {
-		if (o->GetComponents().size() <= 1) continue;
+		if (o->GetAllComponents().size() <= 1) continue;
 
 		o->Update();
 	}

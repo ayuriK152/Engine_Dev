@@ -84,11 +84,27 @@ void GameObject::Render(ID3D12GraphicsCommandList* cmdList)
 	}
 }
 
-void GameObject::OnCollision(shared_ptr<Collider> other)
+void GameObject::OnCollisionEnter(shared_ptr<GameObject> other)
+{
+	for (auto& c : components)
+	{
+		c.second->OnCollisionEnter(other);
+	}
+}
+
+void GameObject::OnCollision(shared_ptr<GameObject> other)
 {
 	for (auto& c : components)
 	{
 		c.second->OnCollision(other);
+	}
+}
+
+void GameObject::OnCollisionExit(shared_ptr<GameObject> other)
+{
+	for (auto& c : components)
+	{
+		c.second->OnCollisionExit(other);
 	}
 }
 

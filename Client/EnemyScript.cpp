@@ -5,6 +5,11 @@ void EnemyScript::Init()
 {
 	gameObject = GetGameObject();
 	gameObject->SetTag("Enemy");
+
+	auto rigidbody = make_shared<Rigidbody>();
+	rigidbody->SetColliderExtents(Vector3(0.3f, 0.9f, 0.3f));
+	rigidbody->SetColliderOffset(Vector3(0.0f, 0.9f, 0.0f));
+	gameObject->AddComponent(rigidbody);
 }
 
 void EnemyScript::Update()
@@ -19,11 +24,12 @@ void EnemyScript::Update()
 	}
 }
 
-void EnemyScript::OnCollision(shared_ptr<Collider> other)
+void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
 {
-	if (other->GetGameObject()->GetTag() == "AttackAlly") {
+	if (other->GetTag() == "AttackAlly") {
 		DEBUG->Log("Attacked");
-		other->GetGameObject()->Delete(0.0f);
+		TakeDamage(10);
+		// other->Delete(0.0f);
 	}
 }
 

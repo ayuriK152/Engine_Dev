@@ -2,6 +2,7 @@
 #include "PhysicsTestScene.h"
 #include "EditorCamera.h"
 #include "PlayerScript.h"
+#include "EnemyScript.h"
 
 void PhysicsTestScene::Init()
 {
@@ -25,6 +26,11 @@ void PhysicsTestScene::Init()
 	loadedObjects[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
 	loadedObjects[0]->AddComponent(make_shared<PlayerScript>());
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
+
+	auto brute = RESOURCE->LoadPrefabObject("Brute");
+	brute[0]->GetComponent<Animator>()->SetBone("Brute");
+	brute[0]->AddComponent(make_shared<EnemyScript>());
+	gameObjects.insert(gameObjects.end(), brute.begin(), brute.end());
 
 	auto globalLight = make_shared<GameObject>();
 	globalLight->SetName("GlobalLight");

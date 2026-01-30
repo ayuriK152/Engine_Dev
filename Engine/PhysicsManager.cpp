@@ -33,6 +33,8 @@ void PhysicsManager::Init()
 		*_bpLayerInterface,
 		(JPH::ObjectVsBroadPhaseLayerFilter&)*_objVsBPFilter,
 		(JPH::ObjectLayerPairFilter&)*_objLayerFilter);
+
+	_physicsSystem->SetContactListener(this);
 }
 
 void PhysicsManager::FixedUpdate()
@@ -62,6 +64,29 @@ void PhysicsManager::Update()
 }
 
 void PhysicsManager::LateUpdate()
+{
+
+}
+
+void PhysicsManager::OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings)
+{
+	auto obj1 = reinterpret_cast<GameObject*>(inBody1.GetUserData())->shared_from_this();
+	auto obj2 = reinterpret_cast<GameObject*>(inBody2.GetUserData())->shared_from_this();
+
+	obj1->OnCollisionEnter(obj2);
+	obj2->OnCollisionEnter(obj1);
+}
+
+void PhysicsManager::OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings)
+{
+	auto obj1 = reinterpret_cast<GameObject*>(inBody1.GetUserData())->shared_from_this();
+	auto obj2 = reinterpret_cast<GameObject*>(inBody2.GetUserData())->shared_from_this();
+
+	obj1->OnCollision(obj2);
+	obj2->OnCollision(obj1);
+}
+
+void PhysicsManager::OnContactRemoved(const SubShapeIDPair& inSubShapePair)
 {
 
 }

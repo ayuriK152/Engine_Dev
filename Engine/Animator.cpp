@@ -201,12 +201,14 @@ void Animator::SetCurrentAnimation(const string& animationName, float _transitio
 	if (_currentAnimation == EMPTY_ANIMATION || _transitionTime == 0.0f)
 	{
 		_currentAnimation = animationName;
+		_isCurrentAnimationEnd = false;
 		_currentTick = 0.0f;
 		return;
 	}
 	_nextAnimation = animationName;
 	_transitionElapsedTime = 0.0f;
 	_transitionTick = 0.0f;
+	_isCurrentAnimationEnd = false;
 	_isInTransition = true;
 }
 

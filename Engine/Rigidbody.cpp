@@ -25,7 +25,8 @@ void Rigidbody::Init()
 	else {
 		CreateShape();
 	}
-	// 2. Body 생성 설정
+
+	// Body 생성 설정
 	JPH::BodyCreationSettings bodySettings(_shapeResult.Get(),
 		JPH::RVec3(pos.x, pos.y, pos.z),
 		JPH::Quat(rot.x, rot.y, rot.z, rot.w),
@@ -33,8 +34,9 @@ void Rigidbody::Init()
 		isGravity ? Layers::MOVING : Layers::NON_MOVING);
 
 	bodySettings.mIsSensor = _isTrigger;
+	bodySettings.mUserData = reinterpret_cast<JPH::uint64>(_gameObject.lock().get());
 
-	// 3. 시스템에 등록
+	// 시스템 등록
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 
@@ -90,6 +92,8 @@ void Rigidbody::SetColliderTrigger(bool value)
 	if (value == _isTrigger) return;
 
 	_isTrigger = value;
+
+	// Trigger는 런타임 중에 값이 바뀌면 body를 다시 만들어줘야함. 이부분 일단 구현 안해뒀으니까 나중에 해야함.
 }
 
 void Rigidbody::SetColliderRadius(float radius)

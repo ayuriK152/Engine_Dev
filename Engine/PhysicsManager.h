@@ -69,7 +69,7 @@ public:
 	}
 };
 
-class PhysicsManager
+class PhysicsManager : public JPH::ContactListener
 {
 	DECLARE_SINGLE(PhysicsManager);
 public:
@@ -79,6 +79,14 @@ public:
 	void FixedUpdate();
 	void Update();
 	void LateUpdate();
+
+#pragma region JPH::ContactListener 상속 가상함수
+	void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override;
+
+	void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override;
+
+	void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override;
+#pragma endregion
 
 public:
 	JPH::PhysicsSystem* GetPhysicsSystem() { return _physicsSystem; }

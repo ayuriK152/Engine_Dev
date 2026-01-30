@@ -31,11 +31,13 @@ public:
 	virtual void Init() { }
 	virtual void FixedUpdate() { }
 	virtual void Update() { }
-	virtual void Render(ID3D12GraphicsCommandList* cmdList) { };
+	virtual void Render(ID3D12GraphicsCommandList* cmdList) { }
 
-	virtual void OnDestroy() { };
+	virtual void OnDestroy() { }
 
-	virtual void OnCollision(shared_ptr<Collider> other) { }
+	virtual void OnCollisionEnter(shared_ptr<GameObject> other) { }
+	virtual void OnCollision(shared_ptr<GameObject> other) { }
+	virtual void OnCollisionExit(shared_ptr<GameObject> other) { }
 
 public:
 	shared_ptr<GameObject> GetGameObject();

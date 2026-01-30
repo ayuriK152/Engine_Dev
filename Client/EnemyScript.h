@@ -8,7 +8,7 @@ public:
     void Init() override;
 	void Update() override;
 
-	void OnCollision(shared_ptr<Collider> other) override;
+	void OnCollisionEnter(shared_ptr<GameObject> other) override;
 
 public:
     void TakeDamage(int damage);

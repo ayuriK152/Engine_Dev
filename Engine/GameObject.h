@@ -26,7 +26,9 @@ public:
 	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 
-	void OnCollision(shared_ptr<Collider> other);
+	void OnCollisionEnter(shared_ptr<GameObject> other);
+	void OnCollision(shared_ptr<GameObject> other);
+	void OnCollisionExit(shared_ptr<GameObject> other);
 
 public:
 	void AddComponent(shared_ptr<Component> component);

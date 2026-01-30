@@ -89,9 +89,9 @@ void PlayerScript::Update()
 	}
 }
 
-void PlayerScript::OnCollision(shared_ptr<Collider> other)
+void PlayerScript::OnCollisionEnter(shared_ptr<GameObject> other)
 {
-	if (other->GetGameObject()->GetTag() == "AttackHostile")
+	if (other->GetTag() == "AttackHostile")
 	{
 		DEBUG->Log("Got Attack");
 	}

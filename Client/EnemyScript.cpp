@@ -6,6 +6,9 @@ void EnemyScript::Init()
 	gameObject = GetGameObject();
 	gameObject->SetTag("Enemy");
 
+	animator = gameObject->GetComponent<Animator>();
+	animator->SetLoop(true);
+
 	auto rigidbody = make_shared<Rigidbody>();
 	rigidbody->SetColliderExtents(Vector3(0.3f, 0.9f, 0.3f));
 	rigidbody->SetColliderOffset(Vector3(0.0f, 0.9f, 0.0f));
@@ -14,22 +17,30 @@ void EnemyScript::Init()
 
 void EnemyScript::Update()
 {
-	if (_health <= 0)
+	if (_health <= 0 && _currentState != EnemyMovementState::DEATH)
 	{
-		//if (gameObject->GetComponent<Animator>()->GetCurrentAnimation()->GetName() != "death")
-		//{
-		//	gameObject->GetComponent<Animator>()->SetCurrentAnimation("death");
-		//	gameObject->GetComponent<Animator>()->SetLoop(false);
-		//}
+		_currentState = EnemyMovementState::DEATH;
+	}
+
+	if (_lastState != _currentState) {
+		_lastState = _currentState;
+
+		if (_currentState == EnemyMovementState::IDLE) {
+			animator->SetCurrentAnimation("idle");
+		}
+		else if (_currentState == EnemyMovementState::DEATH) {
+			animator->SetCurrentAnimation("death1");
+			animator->SetLoop(false);
+		}
 	}
 }
 
 void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
 {
 	if (other->GetTag() == "AttackAlly") {
-		DEBUG->Log("Attacked");
-		TakeDamage(10);
-		// other->Delete(0.0f);
+		if (_health > 0) {
+			TakeDamage(10);
+		}
 	}
 }
 

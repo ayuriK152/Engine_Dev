@@ -1,7 +1,7 @@
 #pragma once
 #include "Script.h"
 
-enum PlayerMovementState
+enum class PlayerMovementState
 {
 	IDLE,
 	WALK,
@@ -29,8 +29,8 @@ private:
 	shared_ptr<Animator> animator;
 	float speed = 1.55f;
 
-	PlayerMovementState _playerMovementState;
-	PlayerMovementState _lastMovementState;
+	PlayerMovementState _playerMovementState = PlayerMovementState::IDLE;
+	PlayerMovementState _lastMovementState = PlayerMovementState::IDLE;
 	Vector3 _movingDirection;
 	Vector3 _cameraForward;
 	Vector3 _cameraRight;

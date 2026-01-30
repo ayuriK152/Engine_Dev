@@ -11,8 +11,6 @@ void PlayerScript::Init()
 	animator->SetLoop(true);
 	animator->SetCurrentAnimation("idle_sword_4");
 
-	_playerMovementState = IDLE;
-	_lastMovementState = IDLE;
 	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
 	auto rigidbody = make_shared<Rigidbody>();
@@ -26,15 +24,15 @@ void PlayerScript::Update()
 	Roll();
 	Attack();
 
-	if (_playerMovementState == SLASH || _playerMovementState == ROLL)
+	if (_playerMovementState == PlayerMovementState::SLASH || _playerMovementState == PlayerMovementState::ROLL)
 	{
 		if (animator->IsCurrentAnimationEnd())
 		{
 			animator->SetLoop(true);
-			_playerMovementState = IDLE;
+			_playerMovementState = PlayerMovementState::IDLE;
 		}
 	}
-	else if (_playerMovementState != ROLL)
+	else if (_playerMovementState != PlayerMovementState::ROLL)
 	{
 		Move();
 	}
@@ -43,8 +41,8 @@ void PlayerScript::Update()
 	{
 		switch (_playerMovementState)
 		{
-		case IDLE:
-			if (_lastMovementState == SLASH)
+		case PlayerMovementState::IDLE:
+			if (_lastMovementState == PlayerMovementState::SLASH)
 			{
 				animator->SetCurrentAnimation("idle_sword_4", 0.0f);
 			}
@@ -54,16 +52,16 @@ void PlayerScript::Update()
 			}
 			break;
 
-		case WALK:
+		case PlayerMovementState::WALK:
 			animator->SetCurrentAnimation("walk_sword_forward");
 			break;
-		case RUN:
+		case PlayerMovementState::RUN:
 			animator->SetCurrentAnimation("run_sword_forward");
 			break;
-		case SLASH:
+		case PlayerMovementState::SLASH:
 			animator->SetCurrentAnimation("slash_1");
 			break;
-		case ROLL:
+		case PlayerMovementState::ROLL:
 			animator->SetCurrentAnimation("roll");
 			break;
 		}
@@ -73,16 +71,16 @@ void PlayerScript::Update()
 
 	switch (_playerMovementState)
 	{
-	case WALK:
+	case PlayerMovementState::WALK:
 		transform->Translate(_movingDirection * TIME->DeltaTime() * speed);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
 
-	case RUN:
+	case PlayerMovementState::RUN:
 		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
-	case ROLL:
+	case PlayerMovementState::ROLL:
 		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
@@ -102,17 +100,17 @@ void PlayerScript::Roll()
 	if (INPUTM->IsKeyDown(KeyValue::SPACE) && !animator->IsTransitionBlocked())
 	{
 		animator->SetLoop(false);
-		_playerMovementState = ROLL;
+		_playerMovementState = PlayerMovementState::ROLL;
 	}
 }
 
 void PlayerScript::Attack()
 {
 
-	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != SLASH && !animator->IsTransitionBlocked())
+	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != PlayerMovementState::SLASH && !animator->IsTransitionBlocked())
 	{
 		animator->SetLoop(false);
-		_playerMovementState = SLASH;
+		_playerMovementState = PlayerMovementState::SLASH;
 	}
 }
 
@@ -146,7 +144,7 @@ void PlayerScript::Move()
 
 	if (!flags[0] && !flags[1] && !flags[2] && !flags[3])
 	{
-		_playerMovementState = IDLE;
+		_playerMovementState = PlayerMovementState::IDLE;
 		return;
 	}
 
@@ -169,5 +167,5 @@ void PlayerScript::Move()
 
 	_movingDirection.y = 0.0f;
 	_movingDirection = _movingDirection.Normalize();
-	_playerMovementState = INPUTM->IsKeyPress(KeyValue::SHIFT) ? RUN : WALK;
+	_playerMovementState = INPUTM->IsKeyPress(KeyValue::SHIFT) ? PlayerMovementState::RUN : PlayerMovementState::WALK;
 }

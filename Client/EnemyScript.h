@@ -1,8 +1,13 @@
 #pragma once
 #include "Script.h"
 
-class EnemyScript :
-    public Script
+enum class EnemyMovementState
+{
+    IDLE,
+    DEATH
+};
+
+class EnemyScript : public Script
 {
 public:
     void Init() override;
@@ -15,6 +20,9 @@ public:
 
 private:
     int _health = 100;
+    EnemyMovementState _currentState = EnemyMovementState::IDLE;
+    EnemyMovementState _lastState = EnemyMovementState::IDLE;
     shared_ptr<GameObject> gameObject;
+    shared_ptr<Animator> animator;
 };
 

@@ -4,6 +4,7 @@
 enum class EnemyMovementState
 {
     IDLE,
+    WALK,
     DEATH
 };
 
@@ -18,11 +19,17 @@ public:
 public:
     void TakeDamage(int damage);
 
+public:
+	shared_ptr<GameObject> target;
+
 private:
+	shared_ptr<GameObject> _gameObject;
+
     int _health = 100;
     EnemyMovementState _currentState = EnemyMovementState::IDLE;
     EnemyMovementState _lastState = EnemyMovementState::IDLE;
-    shared_ptr<GameObject> gameObject;
-    shared_ptr<Animator> animator;
+    shared_ptr<Animator> _animator;
+
+    float _targetDistance;
 };
 

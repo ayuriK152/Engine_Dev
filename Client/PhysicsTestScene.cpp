@@ -29,7 +29,9 @@ void PhysicsTestScene::Init()
 
 	auto brute = RESOURCE->LoadPrefabObject("Brute");
 	brute[0]->GetComponent<Animator>()->SetBone("Brute");
-	brute[0]->AddComponent(make_shared<EnemyScript>());
+	shared_ptr<EnemyScript> enemyScript = make_shared<EnemyScript>();
+	enemyScript->target = loadedObjects[0];
+	brute[0]->AddComponent(enemyScript);
 	gameObjects.insert(gameObjects.end(), brute.begin(), brute.end());
 
 	auto globalLight = make_shared<GameObject>();

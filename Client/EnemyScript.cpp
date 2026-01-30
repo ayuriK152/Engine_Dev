@@ -3,34 +3,51 @@
 
 void EnemyScript::Init()
 {
-	gameObject = GetGameObject();
-	gameObject->SetTag("Enemy");
+	_gameObject = GetGameObject();
+	_gameObject->SetTag("Enemy");
 
-	animator = gameObject->GetComponent<Animator>();
-	animator->SetLoop(true);
+	_animator = _gameObject->GetComponent<Animator>();
+	_animator->SetLoop(true);
 
 	auto rigidbody = make_shared<Rigidbody>();
 	rigidbody->SetColliderExtents(Vector3(0.3f, 0.9f, 0.3f));
 	rigidbody->SetColliderOffset(Vector3(0.0f, 0.9f, 0.0f));
-	gameObject->AddComponent(rigidbody);
+	_gameObject->AddComponent(rigidbody);
 }
 
 void EnemyScript::Update()
 {
-	if (_health <= 0 && _currentState != EnemyMovementState::DEATH)
-	{
-		_currentState = EnemyMovementState::DEATH;
+	if (_currentState != EnemyMovementState::DEATH) {
+		if (_health <= 0) {
+			_currentState = EnemyMovementState::DEATH;
+		}
+
+		else {
+			Vector3 targetVec = target->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
+			_targetDistance = targetVec.Length();
+			if (_targetDistance >= 2.0f) {
+				_gameObject->GetTransform()->Translate(targetVec.Normalize() * TIME->DeltaTime());
+				_currentState = EnemyMovementState::WALK;
+			}
+			else {
+				_currentState = EnemyMovementState::IDLE;
+			}
+			_gameObject->GetTransform()->LookAtWithNoRoll(-targetVec + _gameObject->GetTransform()->GetPosition());
+		}
 	}
 
 	if (_lastState != _currentState) {
 		_lastState = _currentState;
 
 		if (_currentState == EnemyMovementState::IDLE) {
-			animator->SetCurrentAnimation("idle");
+			_animator->SetCurrentAnimation("idle");
+		}
+		else if (_currentState == EnemyMovementState::WALK) {
+			_animator->SetCurrentAnimation("walk_forward");
 		}
 		else if (_currentState == EnemyMovementState::DEATH) {
-			animator->SetCurrentAnimation("death1");
-			animator->SetLoop(false);
+			_animator->SetCurrentAnimation("death1");
+			_animator->SetLoop(false);
 		}
 	}
 }

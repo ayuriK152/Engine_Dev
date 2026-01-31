@@ -262,10 +262,6 @@ void EngineGUIManager::ShowInspectorView()
 						ShowScript(static_pointer_cast<Script>(c));
 						break;
 
-					case ComponentType::Collider:
-						ShowCollider(static_pointer_cast<Collider>(c));
-						break;
-
 					case ComponentType::Rigidbody:
 						ShowRigidbody(static_pointer_cast<Rigidbody>(c));
 						break;
@@ -563,32 +559,6 @@ void EngineGUIManager::ShowScript(shared_ptr<Script> script)
 	if (ImGui::CollapsingHeader("Script", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 
-	}
-}
-
-void EngineGUIManager::ShowCollider(shared_ptr<Collider> collider)
-{
-	if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::SeparatorText("Collider Type");
-		switch (collider->GetColliderType())
-		{
-			case ColliderType::Box:
-				ImGui::Text("Box Collider");
-				break;
-			case ColliderType::Sphere:
-				ImGui::Text("Sphere Collider");
-				break;
-			default:
-				ImGui::Text("Unknown Collider Type");
-				break;
-		}
-
-		ImGui::SeparatorText("Is On Collide");
-		if (collider->IsOnColliding())
-			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "On Collide");
-		else
-			ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Not On Collide");
 	}
 }
 

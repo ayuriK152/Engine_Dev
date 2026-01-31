@@ -76,8 +76,7 @@ void GameObject::Update()
 		for (auto& c : componentVec) {
 			// 런타임 중에 추가되는 컴포넌트
 
-			if (c->type == ComponentType::Collider ||
-				c->type == ComponentType::ParticleEmitter ||
+			if (c->type == ComponentType::ParticleEmitter ||
 				c->type == ComponentType::Animator)
 				continue;
 			c->Update();
@@ -158,13 +157,12 @@ int GameObject::GetComponentTypeIndex(ComponentType type)
 	if (type == ComponentType::MeshRenderer)		return 1;
 	if (type == ComponentType::SkinnedMeshRenderer) return 2;
 	if (type == ComponentType::Camera)				return 3;
-	if (type == ComponentType::Rigidbody)			return 7;
+	if (type == ComponentType::Script)				return 4;
 	if (type == ComponentType::Light)				return 5;
 	if (type == ComponentType::Animator)			return 6;
-	if (type == ComponentType::Script)				return 4;
+	if (type == ComponentType::Rigidbody)			return 7;
 	if (type == ComponentType::ParticleEmitter)		return 8;
-	if (type == ComponentType::Collider)			return 9;
-	if (type == ComponentType::CharacterController) return 10;
+	if (type == ComponentType::CharacterController) return 9;
 }
 
 void GameObject::SetPSONameIncludeChilds(const string& name)

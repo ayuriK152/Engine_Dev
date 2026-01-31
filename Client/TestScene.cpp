@@ -73,7 +73,6 @@ void TestScene::Init()
 		box->AddComponent(make_shared<MeshRenderer>());
 		box->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_BasicBox"));
 		box->GetComponent<MeshRenderer>()->GetMaterial()->SetDiffuse(RESOURCE->Get<Texture>(L"0dot001mm_1"));
-		box->AddComponent(make_shared<BoxCollider>());
 		box->GetTransform()->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		box->GetTransform()->SetScale(Vector3(5.0f, 1.0f, 5.0f));
 		box->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 20.0f));
@@ -89,7 +88,6 @@ void TestScene::Init()
 		mat->tilling = { 100.0f, 100.0f };
 		RESOURCE->Add<Material>(L"Mat_Proto_dark1", mat);
 		ground->GetComponent<MeshRenderer>()->SetMaterial(mat);
-		ground->AddComponent(make_shared<BoxCollider>());
 		ground->GetTransform()->SetPosition(Vector3(0.0f, -0.5f, 0.0f));
 		ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));
 		ground->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));

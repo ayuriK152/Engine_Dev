@@ -93,6 +93,9 @@ void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
 	mesh->SetPath(RESOURCE_PATH_MESH + finalPath + BULB_EXT_MESH);
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(finalPath);
 
+	UINT32 fileVersion = FILE_VERSION_MESH;
+	FILEIO->WriteToFile(fileHandle, fileVersion);
+
 	UINT32 vertexCount = mesh->GetVertexCount();
 	FILEIO->WriteToFile(fileHandle, vertexCount);
 	for (const Vertex& v : mesh->GetVertices())
@@ -118,6 +121,9 @@ void ResourceManager::SaveAnimation(shared_ptr<Animation> animation, const strin
 	string finalPath = filePath == "" ? animation->GetName() : filePath;
 	animation->SetPath(RESOURCE_PATH_ANIMATION + finalPath + BULB_EXT_ANIMATION);
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(finalPath);
+
+	UINT32 fileVersion = FILE_VERSION_ANIM;
+	FILEIO->WriteToFile(fileHandle, fileVersion);
 
 	FILEIO->WriteToFile(fileHandle, animation->GetDuration());
 	FILEIO->WriteToFile(fileHandle, animation->GetTicksPerSecond());
@@ -148,6 +154,9 @@ void ResourceManager::SaveBone(map<string, BoneData> bones, const string& boneNa
 	string finalPath = filePath == "" ? boneName : filePath;
 	HANDLE fileHandle = FILEIO->CreateFileHandle<BoneData>(finalPath);
 
+	UINT32 fileVersion = FILE_VERSION_BONE;
+	FILEIO->WriteToFile(fileHandle, fileVersion);
+
 	UINT32 boneCount = bones.size();
 	FILEIO->WriteToFile(fileHandle, boneCount);
 
@@ -164,15 +173,18 @@ void ResourceManager::SaveBone(map<string, BoneData> bones, const string& boneNa
 
 void ResourceManager::SavePrefab(shared_ptr<GameObject> prefabObject, const string& filePath)
 {
+	string finalPath = filePath == "" ? prefabObject->GetName() : filePath;
+	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(prefabObject->GetName());
+
+	UINT32 fileVersion = FILE_VERSION_PREFAB;
+	FILEIO->WriteToFile(fileHandle, fileVersion);
+
 	vector<shared_ptr<Transform>> allObjects;
 	allObjects.push_back(prefabObject->GetTransform());
 	for (int i = 0; i < allObjects.size(); i++)
 	{
 		allObjects.insert(allObjects.end(), allObjects[i]->GetChilds().begin(), allObjects[i]->GetChilds().end());
 	}
-
-	string finalPath = filePath == "" ? prefabObject->GetName() : filePath;
-	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(prefabObject->GetName());
 	
 	FILEIO->WriteToFile(fileHandle, (UINT32)allObjects.size());
 	SavePrefabRecursive(fileHandle, prefabObject, -1, prefabObject->GetName());
@@ -434,6 +446,9 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	vector<pair<int, int>> objHierarchyIdxPair;
 	vector<pair<shared_ptr<SkinnedMeshRenderer>, string>> boneSettingQueue;
 
+	UINT32 fileVersion;
+	FILEIO->ReadFileData(fileHandle, &fileVersion, sizeof(UINT32));
+
 	UINT32 objectCount;
 	FILEIO->ReadFileData(fileHandle, &objectCount, sizeof(UINT32));
 	for (int i = 0; i < objectCount; i++)
@@ -460,6 +475,9 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 		{
 			ComponentType componentType;
 			FILEIO->ReadFileData(fileHandle, &componentType, sizeof(ComponentType));
+
+			if (fileVersion != FILE_VERSION_PREFAB)
+				componentType = MapLegacyComponentTypeData(static_cast<int>(componentType), fileVersion);
 
 			switch (componentType)
 			{
@@ -582,4 +600,24 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	}
 
 	return loadedObjects;
+}
+
+ComponentType ResourceManager::MapLegacyComponentTypeData(int legacyComponentType, int fileVersion)
+{
+	switch (fileVersion) {
+	case 1: {
+		if (legacyComponentType == 1) return ComponentType::Transform;
+		if (legacyComponentType == 2) return ComponentType::MeshRenderer;
+		if (legacyComponentType == 3) return ComponentType::SkinnedMeshRenderer;
+		if (legacyComponentType == 4) return ComponentType::Camera;
+		if (legacyComponentType == 6) return ComponentType::Rigidbody;
+		if (legacyComponentType == 7) return ComponentType::Light;
+		if (legacyComponentType == 8) return ComponentType::Animator;
+		if (legacyComponentType == 9) return ComponentType::Script;
+		if (legacyComponentType == 10) return ComponentType::ParticleEmitter;
+		if (legacyComponentType == 11) return ComponentType::CharacterController;
+		return ComponentType::Undefined;
+		break;
+	}
+	}
 }

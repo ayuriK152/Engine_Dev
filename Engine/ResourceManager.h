@@ -1,6 +1,11 @@
 #pragma once
 #include "Resource.h"
 
+#define FILE_VERSION_MESH		1
+#define FILE_VERSION_ANIM		1
+#define FILE_VERSION_BONE		1
+#define FILE_VERSION_PREFAB		2
+
 class Mesh;
 
 class ResourceManager
@@ -38,6 +43,8 @@ public:
 	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath);
 
 private:
+	ComponentType MapLegacyComponentTypeData(int legacyComponentType, int fileVersion);
+
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;
 	set<string> _resourcePaths;

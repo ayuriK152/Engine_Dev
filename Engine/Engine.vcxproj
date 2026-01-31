@@ -35,11 +35,10 @@
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="Enums.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="ParticleEmitter.h" />
-    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DebugManager.h" />
@@ -76,7 +75,6 @@
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkeletonManager.h" />
     <ClInclude Include="SkinnedMeshRenderer.h" />
-    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Transform.h" />
@@ -128,9 +126,7 @@
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
-    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="FileIOUtil.cpp" />
@@ -167,7 +163,6 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SkeletonManager.cpp" />
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
-    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transform.cpp" />

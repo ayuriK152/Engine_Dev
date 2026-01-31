@@ -1,4 +1,5 @@
 #pragma once
+
 class Geometry;
 class Mesh;
 class GameObject;
@@ -10,6 +11,14 @@ enum ModelFormat {
 	UNKOWN = -1,
 	FBX,
 	GLTF
+};
+
+struct LNode {
+	string name;
+	int id;
+	shared_ptr<LNode> parent;
+	XMFLOAT4X4 transform;
+	XMFLOAT4X4 parentTransform;
 };
 
 class AssetLoader {
@@ -25,7 +34,7 @@ private:
 	void InitializeFields();
 
 	void ProcessMaterials(const aiScene* scene);
-	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
+	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<LNode> parentNode);
 	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	void ProcessAnimation(const aiScene* scene);
 
@@ -52,11 +61,12 @@ private:
 
 	const aiScene* _scene;
 	ModelFormat _modelType;
-	wstring _assetName;
+	wstring _assetNameW;
+	string _assetName;
 
 	// temp data
-	map<string, shared_ptr<Node>> _nodes;
-	map<string, Bone> _bones;
+	map<string, shared_ptr<LNode>> _nodes;
+	map<string, BoneData> _bones;
 	vector<shared_ptr<Mesh>> _meshes;
 
 	// temp instances

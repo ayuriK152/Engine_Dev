@@ -5,14 +5,14 @@ class Geometry;
 class GameObject;
 class Transform;
 
-struct NodeTempData
-{
-	string name;
-	UINT id;
-	shared_ptr<NodeTempData> parent;
-	XMFLOAT4X4 transform;
-	XMFLOAT4X4 parentTransform;
-};
+//struct NodeTempData
+//{
+//	string name;
+//	UINT id;
+//	shared_ptr<NodeTempData> parent;
+//	XMFLOAT4X4 transform;
+//	XMFLOAT4X4 parentTransform;
+//};
 
 struct BoneData
 {
@@ -21,7 +21,7 @@ struct BoneData
 	UINT parentId = 0;
 	XMFLOAT4X4 offsetTransform;
 	XMFLOAT4X4 localBindTransform;
-	shared_ptr<NodeTempData> node;
+	// shared_ptr<NodeTempData> node;
 	shared_ptr<GameObject> instancedObj;
 	shared_ptr<Transform> instancedTransform;
 };

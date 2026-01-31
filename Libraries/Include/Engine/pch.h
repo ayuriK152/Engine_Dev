@@ -81,6 +81,7 @@ using namespace Microsoft::WRL;
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Physics/Character/CharacterVirtual.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
@@ -148,6 +149,7 @@ using namespace JPH::literals;
 #include "DirectionalLight.h"
 #include "Script.h"
 #include "ParticleEmitter.h"
+#include "CharacterController.h"
 
 #include "UploadBuffer.h"
 #include "FrameResource.h"

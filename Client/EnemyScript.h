@@ -24,11 +24,12 @@ public:
 
 private:
 	shared_ptr<GameObject> _gameObject;
+	shared_ptr<Animator> _animator;
+	shared_ptr<CharacterController> controller;
 
     int _health = 100;
     EnemyMovementState _currentState = EnemyMovementState::IDLE;
     EnemyMovementState _lastState = EnemyMovementState::IDLE;
-    shared_ptr<Animator> _animator;
 
     float _targetDistance;
 };

@@ -20,6 +20,7 @@ enum class ComponentType
 	Animator,
 	Script,
 	ParticleEmitter,
+	CharacterController,
 	ComponentTypeCount
 };
 
@@ -30,7 +31,7 @@ public:
 	virtual ~Component();
 
 	virtual void Init() { }
-	virtual void FixedUpdate() { }
+	virtual void PreUpdate() { }
 	virtual void Update() { }
 	virtual void Render(ID3D12GraphicsCommandList* cmdList) { }
 

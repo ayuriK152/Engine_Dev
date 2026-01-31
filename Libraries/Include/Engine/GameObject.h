@@ -12,6 +12,7 @@ class Rigidbody;
 class Collider;
 class Animator;
 class ParticleEmitter;
+class CharacterController;
 #pragma endregion
 
 
@@ -22,7 +23,7 @@ public:
 	~GameObject();
 
 	void Init();
-	void FixedUpdate();
+	void PreUpdate();
 	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 
@@ -127,6 +128,8 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Script;
 	if (is_same_v<T, ParticleEmitter>)
 		return ComponentType::ParticleEmitter;
+	if (is_same_v<T, CharacterController>)
+		return ComponentType::CharacterController;
 
 	return ComponentType::Undefined;
 }

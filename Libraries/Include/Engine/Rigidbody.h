@@ -18,7 +18,7 @@ public:
 	virtual ~Rigidbody();
 
 	void Init() override;
-	void FixedUpdate() override;
+	void PreUpdate() override;
 	void Update() override;
 
 	void OnDestroy() override;

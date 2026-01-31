@@ -27,6 +27,7 @@ private:
 	shared_ptr<GameObject> gameObject;
 	shared_ptr<Transform> transform;
 	shared_ptr<Animator> animator;
+	shared_ptr<CharacterController> controller;
 	float speed = 1.55f;
 
 	PlayerMovementState _playerMovementState = PlayerMovementState::IDLE;

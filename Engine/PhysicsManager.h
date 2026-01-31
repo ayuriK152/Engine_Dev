@@ -76,7 +76,7 @@ public:
 	~PhysicsManager();
 
 	void Init();
-	void FixedUpdate();
+	void PreUpdate();
 	void Update();
 	void LateUpdate();
 
@@ -90,6 +90,7 @@ public:
 
 public:
 	JPH::PhysicsSystem* GetPhysicsSystem() { return _physicsSystem; }
+	JPH::TempAllocator* GetTempAllocator() { return _tempAlloc; }
 
 	// Legacy, 삭제 고려
 	void AddCollider(shared_ptr<Collider> collider) { _colliders.push_back(collider); }

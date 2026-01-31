@@ -110,10 +110,10 @@ void RenderManager::Init()
 		o->Init();
 }
 
-void RenderManager::FixedUpdate()
+void RenderManager::PreUpdate()
 {
 	for (auto& o : _objects)
-		o->FixedUpdate();
+		o->PreUpdate();
 }
 
 void RenderManager::Update()

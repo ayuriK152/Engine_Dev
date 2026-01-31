@@ -80,7 +80,7 @@ public:
 
 public:
 	void Init();
-	void FixedUpdate();
+	void PreUpdate();
 	void Update();
 	void Render();
 

@@ -9,7 +9,7 @@ public:
 	virtual ~SphereCollider();
 
 	virtual void Init()override;
-	virtual void FixedUpdate()override;
+	virtual void PreUpdate()override;
 	virtual void Update()override;
 
 public:

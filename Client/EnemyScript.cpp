@@ -9,10 +9,11 @@ void EnemyScript::Init()
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->SetLoop(true);
 
-	auto rigidbody = make_shared<Rigidbody>();
-	rigidbody->SetColliderExtents(Vector3(0.3f, 0.9f, 0.3f));
-	rigidbody->SetColliderOffset(Vector3(0.0f, 0.9f, 0.0f));
-	_gameObject->AddComponent(rigidbody);
+	controller = make_shared<CharacterController>();
+	controller->SetHalfHeight(0.6f);
+	controller->SetRadius(0.3f);
+	controller->SetOffset(Vector3(0.0f, 0.9f, 0.0f));
+	_gameObject->AddComponent(controller);
 }
 
 void EnemyScript::Update()
@@ -26,7 +27,7 @@ void EnemyScript::Update()
 			Vector3 targetVec = target->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
 			_targetDistance = targetVec.Length();
 			if (_targetDistance >= 2.0f) {
-				_gameObject->GetTransform()->Translate(targetVec.Normalize() * TIME->DeltaTime());
+				controller->SetVelocity(targetVec.Normalize() * 1.1f);
 				_currentState = EnemyMovementState::WALK;
 			}
 			else {

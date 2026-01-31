@@ -37,7 +37,7 @@ void PhysicsManager::Init()
 	_physicsSystem->SetContactListener(this);
 }
 
-void PhysicsManager::FixedUpdate()
+void PhysicsManager::PreUpdate()
 {
 
 }

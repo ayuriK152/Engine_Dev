@@ -48,7 +48,7 @@ void Rigidbody::Init()
 	PHYSICS->AddRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
 }
 
-void Rigidbody::FixedUpdate()
+void Rigidbody::PreUpdate()
 {
 
 }

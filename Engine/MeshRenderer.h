@@ -9,8 +9,6 @@ public:
 	MeshRenderer();
 	virtual ~MeshRenderer();
 
-	void Init() override;
-	void Update() override;
 	void Render(ID3D12GraphicsCommandList* cmdList) override;
 
 protected:

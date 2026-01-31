@@ -42,7 +42,9 @@ int GameApplication::Run()
 		// Otherwise, do animation/game stuff.
 		else
 		{
-			FixedUpdate();
+			TIME->Tick();
+
+			PreUpdate();
 			Update();
 		}
 	}
@@ -63,15 +65,13 @@ bool GameApplication::Initialize()
 	return true;
 }
 
-void GameApplication::FixedUpdate()
+void GameApplication::PreUpdate()
 {
-	RENDER->FixedUpdate();
+	RENDER->PreUpdate();
 }
 
 void GameApplication::Update()
 {
-	TIME->Tick();
-
 	if (!_appStatus.appPaused)
 	{
 		INPUTM->Update();

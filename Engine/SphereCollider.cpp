@@ -19,7 +19,7 @@ void SphereCollider::Init()
 	_boundingSphere.Radius = 0.5f;
 }
 
-void SphereCollider::FixedUpdate()
+void SphereCollider::PreUpdate()
 {
 
 }

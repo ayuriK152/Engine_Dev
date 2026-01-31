@@ -16,16 +16,6 @@ MeshRenderer::~MeshRenderer()
 
 }
 
-void MeshRenderer::Init()
-{
-
-}
-
-void MeshRenderer::Update()
-{
-
-}
-
 void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList)
 {
 	if (RENDER->CheckMeshRender(_mesh))

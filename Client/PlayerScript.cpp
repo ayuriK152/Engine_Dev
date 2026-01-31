@@ -13,10 +13,16 @@ void PlayerScript::Init()
 
 	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
-	auto rigidbody = make_shared<Rigidbody>();
-	rigidbody->SetColliderExtents(Vector3(0.3f, 0.8f, 0.3f));
-	rigidbody->SetColliderOffset(Vector3(0.0f, 0.8f, 0.0f));
-	gameObject->AddComponent(rigidbody);
+	//auto rigidbody = make_shared<Rigidbody>();
+	//rigidbody->SetColliderExtents(Vector3(0.3f, 0.8f, 0.3f));
+	//rigidbody->SetColliderOffset(Vector3(0.0f, 0.8f, 0.0f));
+	//gameObject->AddComponent(rigidbody);
+
+	controller = make_shared<CharacterController>();
+	controller->SetHalfHeight(0.5f);
+	controller->SetRadius(0.3f);
+	controller->SetOffset(Vector3(0.0f, 0.8f, 0.0f));
+	gameObject->AddComponent(controller);
 }
 
 void PlayerScript::Update()
@@ -72,16 +78,19 @@ void PlayerScript::Update()
 	switch (_playerMovementState)
 	{
 	case PlayerMovementState::WALK:
-		transform->Translate(_movingDirection * TIME->DeltaTime() * speed);
+		controller->SetVelocity(_movingDirection * speed);
+		// transform->Translate(_movingDirection * TIME->DeltaTime() * speed);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
 
 	case PlayerMovementState::RUN:
-		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
+		controller->SetVelocity(_movingDirection * speed * 3.0f);
+		// transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
 	case PlayerMovementState::ROLL:
-		transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
+		controller->SetVelocity(_movingDirection * speed * 3.0f);
+		// transform->Translate(_movingDirection * TIME->DeltaTime() * speed * 3.0f);
 		transform->LookAtWithNoRoll(transform->GetPosition() - _movingDirection);
 		break;
 	}

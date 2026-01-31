@@ -13,7 +13,7 @@ public:
 public:
 	int Run();
 	bool Initialize();
-	void FixedUpdate();
+	void PreUpdate();
 	void Update();
 
 	void ExitApplication();

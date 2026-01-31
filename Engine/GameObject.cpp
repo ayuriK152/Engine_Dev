@@ -40,18 +40,7 @@ void GameObject::Init()
 	}
 }
 
-void GameObject::FixedUpdate()
-{
-	for (auto& componentVec : _components) {
-		if (componentVec.size() == 0) continue;
-
-		for (auto& c : componentVec) {
-			c->FixedUpdate();
-		}
-	}
-}
-
-void GameObject::Update()
+void GameObject::PreUpdate()
 {
 	if (_isDeleteReserved) {
 		_deleteTime -= TIME->DeltaTime();
@@ -65,16 +54,27 @@ void GameObject::Update()
 		_isInitialized = true;
 		Init();
 	}
+
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			if (!c->isInitialized) {
+				c->isInitialized = true;
+				c->Init();
+			}
+			c->PreUpdate();
+		}
+	}
+}
+
+void GameObject::Update()
+{
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
 			// 런타임 중에 추가되는 컴포넌트
-			if (!c->isInitialized)
-			{
-				c->isInitialized = true;
-				c->Init();
-			}
 
 			if (c->type == ComponentType::Collider ||
 				c->type == ComponentType::ParticleEmitter ||
@@ -164,6 +164,7 @@ int GameObject::GetComponentTypeIndex(ComponentType type)
 	if (type == ComponentType::Script)				return 4;
 	if (type == ComponentType::ParticleEmitter)		return 8;
 	if (type == ComponentType::Collider)			return 9;
+	if (type == ComponentType::CharacterController) return 10;
 }
 
 void GameObject::SetPSONameIncludeChilds(const string& name)

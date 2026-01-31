@@ -21,7 +21,7 @@ void BoxCollider::Init()
 	Update();
 }
 
-void BoxCollider::FixedUpdate()
+void BoxCollider::PreUpdate()
 {
 
 }

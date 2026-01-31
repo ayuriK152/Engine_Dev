@@ -40,6 +40,8 @@ public:
 	template<typename T>
 	const vector<shared_ptr<T>>& GetAllComponents();
 
+	int GetComponentCount() { return _componentCount; }
+
 	array<vector<shared_ptr<Component>>, static_cast<int>(ComponentType::ComponentTypeCount) - 1> GetAllComponents() { return _components; }
 
 	template<typename T>
@@ -88,6 +90,7 @@ private:
 	float _deleteTime = 0.0f;
 	bool _isDeleteReserved = false;
 
+	int _componentCount = 0;
 	array<vector<shared_ptr<Component>>, static_cast<int>(ComponentType::ComponentTypeCount) - 1> _components;
 };
 

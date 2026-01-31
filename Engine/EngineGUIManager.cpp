@@ -227,7 +227,8 @@ void EngineGUIManager::ShowInspectorView()
 			ShowTransform();
 		
 			// Other Components
-			for (auto& componentVec : _selectedObj->GetAllComponents()) {
+			auto& allComponents = _selectedObj->GetAllComponents();
+			for (auto& componentVec : allComponents) {
 				if (componentVec.size() == 0) continue;
 
 				for (auto& c : componentVec) {

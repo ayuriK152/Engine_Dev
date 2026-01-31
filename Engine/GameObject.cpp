@@ -136,6 +136,7 @@ void GameObject::AddComponent(shared_ptr<Component> component)
 	int componentTypeIdx = GetComponentTypeIndex(component->type);
 	if (componentTypeIdx == -1) return;
 	
+	++_componentCount;
 	component->SetGameObject(shared_from_this());
 	_components[componentTypeIdx].push_back(component);
 }

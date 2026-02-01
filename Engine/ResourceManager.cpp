@@ -191,7 +191,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 	FILEIO->WriteToFile(fileHandle, object->GetPSOName());
 	FILEIO->WriteToFile(fileHandle, object->GetTransform()->GetWorldMatrix());
 	FILEIO->WriteToFile(fileHandle, parentIdx);		// 부모 인덱스
-	FILEIO->WriteToFile(fileHandle, (UINT32)object->GetAllComponents().size() - 1);
+	FILEIO->WriteToFile(fileHandle, (UINT32)object->GetComponentCount() - 1);		// 컴포넌트 개수에 무조건 있는 트랜스폼 하나 빼기
 	for (auto& componentVec : object->GetAllComponents()) {
 		for (auto& c : componentVec) {
 			if (c->type == ComponentType::Transform)
@@ -461,6 +461,8 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 			ComponentType componentType;
 			FILEIO->ReadFileData(fileHandle, &componentType, sizeof(ComponentType));
 
+			componentType = MapLegacyComponentType(static_cast<UINT32>(componentType));
+
 			switch (componentType)
 			{
 				case ComponentType::MeshRenderer:
@@ -582,4 +584,22 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	}
 
 	return loadedObjects;
+}
+
+ComponentType ResourceManager::MapLegacyComponentType(UINT32 legacyType)
+{
+	switch (legacyType) {
+	case 0: return ComponentType::Undefined;
+	case 1: return ComponentType::Transform;
+	case 2: return ComponentType::MeshRenderer;
+	case 3: return ComponentType::SkinnedMeshRenderer;
+	case 4: return ComponentType::Camera;
+	case 5: return ComponentType::Undefined;
+	case 6: return ComponentType::Rigidbody;
+	case 7: return ComponentType::Light;
+	case 8: return ComponentType::Animator;
+	case 9: return ComponentType::Script;
+	case 10: return ComponentType::ParticleEmitter;
+	case 11: return ComponentType::CharacterController;
+	}
 }

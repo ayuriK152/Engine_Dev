@@ -110,6 +110,7 @@ using namespace JPH::literals;
 #include "Defines.h"
 #include "Descriptors.h"
 #include "DataStructures.h"
+#include "Enums.h"
 
 #include "UniversalUtils.h"
 #include "MathHelper.h"
@@ -140,9 +141,6 @@ using namespace JPH::literals;
 #include "SkinnedMeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
-#include "Collider.h"
-#include "BoxCollider.h"
-#include "SphereCollider.h"
 #include "Rigidbody.h"
 #include "Animator.h"
 #include "Light.h"

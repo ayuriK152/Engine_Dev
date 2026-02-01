@@ -37,6 +37,8 @@ public:
 	map<string, BoneData> LoadBone(const string& filePath);
 	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath);
 
+	ComponentType MapLegacyComponentType(UINT32 legacyType);
+
 private:
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;

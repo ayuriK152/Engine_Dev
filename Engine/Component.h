@@ -7,23 +7,6 @@ class Camera;
 class Collider;
 #pragma endregion
 
-enum class ComponentType
-{
-	Undefined,
-	Transform,
-	MeshRenderer,
-	SkinnedMeshRenderer,
-	Camera,
-	Collider,
-	Rigidbody,
-	Light,
-	Animator,
-	Script,
-	ParticleEmitter,
-	CharacterController,
-	ComponentTypeCount
-};
-
 class Component : public enable_shared_from_this<Component>
 {
 public:

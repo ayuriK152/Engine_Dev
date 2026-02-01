@@ -9,7 +9,6 @@ class SkinnedMeshRenderer;
 class Transform;
 class Camera;
 class Rigidbody;
-class Collider;
 class Animator;
 class ParticleEmitter;
 class CharacterController;
@@ -43,7 +42,7 @@ public:
 
 	int GetComponentCount() { return _componentCount; }
 
-	array<vector<shared_ptr<Component>>, static_cast<int>(ComponentType::ComponentTypeCount) - 1> GetAllComponents() { return _components; }
+	array<vector<shared_ptr<Component>>, COUNT_COMPONENTTYPE> GetAllComponents() { return _components; }
 
 	template<typename T>
 	ComponentType GetComponentType();
@@ -92,7 +91,7 @@ private:
 	bool _isDeleteReserved = false;
 
 	int _componentCount = 0;
-	array<vector<shared_ptr<Component>>, static_cast<int>(ComponentType::ComponentTypeCount) - 1> _components;
+	array<vector<shared_ptr<Component>>, COUNT_COMPONENTTYPE> _components;
 };
 
 template<typename T>
@@ -120,8 +119,6 @@ ComponentType GameObject::GetComponentType()
 		return ComponentType::Camera;
 	if (is_same_v<T, Rigidbody>)
 		return ComponentType::Rigidbody;
-	if (is_same_v<T, Collider>)
-		return ComponentType::Collider;
 	if (is_same_v<T, Animator>)
 		return ComponentType::Animator;
 	if (is_same_v<T, Script>)

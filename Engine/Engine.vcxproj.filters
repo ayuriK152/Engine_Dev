@@ -83,12 +83,6 @@
     <ClInclude Include="InputManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
-    </ClInclude>
     <ClInclude Include="Constants.h">
       <Filter>05. Defines</Filter>
     </ClInclude>
@@ -157,9 +151,6 @@
     </ClInclude>
     <ClInclude Include="PhysicsManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereCollider.h">
-      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="Rigidbody.h">
       <Filter>02. GameObject\Components\Physics</Filter>
@@ -235,9 +226,6 @@
     <Filter Include="02. GameObject\Components\Physics">
       <UniqueIdentifier>{465baf47-2de3-44fb-961d-91a5fa577afb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Components\Physics\Colliders">
-      <UniqueIdentifier>{8bb58b28-1335-4c2a-8060-d0f1c386fe42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. ExtLibraries\stb">
       <UniqueIdentifier>{3174e8b7-93dc-47b2-9db7-2aa7c0b743e6}</UniqueIdentifier>
     </Filter>
@@ -310,12 +298,6 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
-      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
@@ -379,9 +361,6 @@
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
-    <ClCompile Include="SphereCollider.cpp">
-      <Filter>02. GameObject\Components\Physics\Colliders</Filter>
-    </ClCompile>
     <ClCompile Include="Rigidbody.cpp">
       <Filter>02. GameObject\Components\Physics</Filter>
     </ClCompile>
@@ -403,5 +382,10 @@
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="CharacterController.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Enums.h">
+      <Filter>05. Defines</Filter>
+    </None>
   </ItemGroup>
 </Project>

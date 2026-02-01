@@ -59,6 +59,8 @@ void GameObject::PreUpdate()
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+
+			// 런타임 중 추가되는 컴포넌트
 			if (!c->isInitialized) {
 				c->isInitialized = true;
 				c->Init();
@@ -74,10 +76,7 @@ void GameObject::Update()
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
-			// 런타임 중에 추가되는 컴포넌트
-
-			if (c->type == ComponentType::ParticleEmitter ||
-				c->type == ComponentType::Animator)
+			if ((UINT32)c->type & ((UINT32)ComponentType::ParticleEmitter | (UINT32)ComponentType::Animator))
 				continue;
 			c->Update();
 		}
@@ -90,7 +89,7 @@ void GameObject::Render(ID3D12GraphicsCommandList* cmdList)
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
-			if (c->type == ComponentType::ParticleEmitter)
+			if ((UINT32)c->type & (UINT32)ComponentType::ParticleEmitter)
 				continue;
 			c->Render(cmdList);
 		}

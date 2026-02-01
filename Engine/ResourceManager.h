@@ -35,7 +35,9 @@ public:
 	shared_ptr<Mesh> LoadMesh(const string& filePath);
 	shared_ptr<Animation> LoadAnimation(const string& filePath);
 	map<string, BoneData> LoadBone(const string& filePath);
-	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath);
+
+	// Use isLegacyComponent parameter when only ComponentType enum data changed!!
+	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath, bool isLegacyComponent = false);
 
 	ComponentType MapLegacyComponentType(UINT32 legacyType);
 

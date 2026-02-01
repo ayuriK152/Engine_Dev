@@ -421,7 +421,7 @@ map<string, BoneData> ResourceManager::LoadBone(const string& filePath)
 	return boneData;
 }
 
-vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& filePath)
+vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& filePath, bool isLegacyComponent)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(filePath, false);
 	if (fileHandle == INVALID_HANDLE_VALUE)
@@ -461,7 +461,8 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 			ComponentType componentType;
 			FILEIO->ReadFileData(fileHandle, &componentType, sizeof(ComponentType));
 
-			componentType = MapLegacyComponentType(static_cast<UINT32>(componentType));
+			if (isLegacyComponent)
+				componentType = MapLegacyComponentType(static_cast<UINT32>(componentType));
 
 			switch (componentType)
 			{
@@ -583,11 +584,16 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 		}
 	}
 
+	if (isLegacyComponent)
+		SavePrefab(loadedObjects[0]);
+
 	return loadedObjects;
 }
 
 ComponentType ResourceManager::MapLegacyComponentType(UINT32 legacyType)
 {
+	return static_cast<ComponentType>(legacyType);
+
 	switch (legacyType) {
 	case 0: return ComponentType::Undefined;
 	case 1: return ComponentType::Transform;

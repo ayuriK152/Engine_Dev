@@ -15,6 +15,8 @@ Animation::Animation(string name, float duration, float ticksPerSecond) : Resour
 
 void Animation::AddAnimationData(const AnimationData animation)
 {
+	if (animation.boneName == "") return;
+
 	// 추가하려는 데이터보다 배열이 작은 경우 추가 공간 할당
 	int animationDataAssignSize = animation.boneId - _animationDatas.size() + 1;
 	for (; animationDataAssignSize > 0; animationDataAssignSize--) {

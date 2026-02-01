@@ -25,10 +25,11 @@ private:
 	void InitializeFields();
 
 	void ProcessMaterials(const aiScene* scene);
-	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode);
+	void ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<NodeTempData> parentNode);
 	shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	void ProcessAnimation(const aiScene* scene);
 
+	void LoadBones();
 	void MapWeights();
 	void MapBones();
 	void BuildBones();
@@ -52,11 +53,12 @@ private:
 
 	const aiScene* _scene;
 	ModelFormat _modelType;
-	wstring _assetName;
+	wstring _assetNameW;
+	string _assetName;
 
 	// temp data
-	map<string, shared_ptr<Node>> _nodes;
-	map<string, Bone> _bones;
+	map<string, shared_ptr<NodeTempData>> _nodes;
+	map<string, BoneData> _bones;
 	vector<shared_ptr<Mesh>> _meshes;
 
 	// temp instances
@@ -67,6 +69,8 @@ private:
 	vector<shared_ptr<GameObject>> _loadedObject;
 
 	map<pair<int, string>, vector<BoneWeight>> _tempBoneWeights;
+	
+	bool _isExternalBone = false;
 
 private:
 	wstring _assetPath = L"..\\Resources\\Assets\\";

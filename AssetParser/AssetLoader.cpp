@@ -59,7 +59,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
 	shared_ptr<GameObject> rootObj = make_shared<GameObject>();
-	rootObj->GetName() = UniversalUtils::ToString(_assetName);
+	// rootObj->GetName() = UniversalUtils::ToString(_assetNameW);
 	_loadedObject.push_back(rootObj);
 
 	ProcessMaterials(_scene);
@@ -74,7 +74,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	// 바이너리 파일 저장
 	{
-		string assetNameStr = UniversalUtils::ToString(_assetName);
+		string assetNameStr = UniversalUtils::ToString(_assetNameW);
 
 		if (_meshes.size() > 0)
 		{
@@ -88,31 +88,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 		if (_animations.size() > 0)
 		{
-			if (_bones.size() == 0)
-			{
-				cout << "No bones found. Type .bbone file or blank." << endl;
-				cout << "* Type blank will fill boneId to -1" << endl;
-				cout << "bbone file name: ";
-				string bboneName;
-				getline(cin, bboneName);
-				if (bboneName != "")
-				{
-					auto bbone = RESOURCE->LoadBone(bboneName);
-
-					for (auto& animation : _animations)
-					{
-						for (auto& animData : *animation->GetAnimationDatasPtr())
-						{
-							if (bbone.contains(animData.first)) {
-								animData.second.boneId = bbone[animData.first].id;
-							}
-							else {
-								animData.second.boneId = -1;
-							}
-						}
-					}
-				}
-			}
+			LoadBones();
 
 			for (auto& animation : _animations)
 			{
@@ -124,7 +100,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 		
 		_loadedObject[0]->GetTransform()->ForceUpdateTransform();
 
-		if (_bones.size() > 0)
+		if (_bones.size() > 0 && !_isExternalBone)
 		{
 			RESOURCE->SaveBone(_bones, assetNameStr);
 			cout << "Bone parsed at " << assetNameStr << endl << endl;
@@ -132,7 +108,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 		if (_loadedObject.size() > 1)
 		{
-			_loadedObject[0]->SetName(UniversalUtils::ToString(_assetName));
+			_loadedObject[0]->SetName(UniversalUtils::ToString(_assetNameW));
 			RESOURCE->SavePrefab(_loadedObject[0]);
 			cout << "Prefab parsed" << endl << endl;
 		}
@@ -219,14 +195,14 @@ void AssetLoader::ProcessMaterials(const aiScene* scene)
 		}
 		RESOURCE->Add<Material>(matName, mat);
 
-		FILEIO->XMLFromMaterial(mat, _assetName);
+		FILEIO->XMLFromMaterial(mat, _assetNameW);
 	}
 }
 
-void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<Node> parentNode)
+void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<NodeTempData> parentNode)
 {
 	// 노드 저장
-	shared_ptr<Node> currNode = make_shared<Node>();
+	shared_ptr<NodeTempData> currNode = make_shared<NodeTempData>();
 	currNode->name = node->mName.C_Str();
 	currNode->id = _nodes.size();
 	currNode->parent = parentNode;
@@ -280,7 +256,7 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 				// 본 중복 확인, 본 이름과 노드 검증
 				if (!_bones.contains(currentBone->mName.C_Str()))
 				{
-					Bone bone;
+					BoneData bone;
 					bone.name = mesh->mBones[i]->mName.C_Str();
 					bone.id = _bones.size();
 					bone.offsetTransform = ConvertToXMFLOAT4X4(mesh->mBones[i]->mOffsetMatrix);
@@ -313,7 +289,7 @@ void AssetLoader::MapBones()
 {
 	for (auto bone = _bones.begin(); bone != _bones.end(); bone++)
 	{
-		shared_ptr<Node> node = _nodes[bone->first];
+		shared_ptr<NodeTempData> node = _nodes[bone->first];
 		if (node == nullptr)
 			continue;
 		bone->second.node = node;
@@ -322,17 +298,17 @@ void AssetLoader::MapBones()
 
 void AssetLoader::BuildBones()
 {
-	vector<Bone> sortedBones;
+	vector<BoneData> sortedBones;
 	sortedBones.reserve(_bones.size());
 	for (auto& b : _bones)
 		sortedBones.push_back(b.second);
 
-	sort(sortedBones.begin(), sortedBones.end(), [](Bone a, Bone b) { return a.id < b.id; });
+	sort(sortedBones.begin(), sortedBones.end(), [](BoneData a, BoneData b) { return a.id < b.id; });
 
 	for (auto& b : sortedBones)
 	{
 		shared_ptr<GameObject> foundObj = nullptr;
-		shared_ptr<Node> currentParent = b.node->parent;
+		shared_ptr<NodeTempData> currentParent = b.node->parent;
 
 		while (true)
 		{
@@ -363,7 +339,7 @@ void AssetLoader::BuildBones()
 	for (auto& meshObj : _meshObjs)
 	{
 		auto renderer = meshObj->GetComponent<SkinnedMeshRenderer>();
-		renderer->SetBoneData(_bones);
+		renderer->SetBoneData(_assetName);
 		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}
 
@@ -459,6 +435,7 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	if (!scene->HasAnimations())
 		return;
 
+	LoadBones();
 	_loadedObject[0]->AddComponent(make_shared<Animator>());
 
 	// 애니메이션 갯수만큼
@@ -520,6 +497,35 @@ void AssetLoader::ProcessAnimation(const aiScene* scene)
 	}
 }
 
+void AssetLoader::LoadBones()
+{
+	if (_bones.size() == 0) {
+		cout << "No bones found. Type .bbone file or blank." << endl;
+		cout << "* Type blank will fill boneId to -1" << endl;
+		cout << "bbone file name: ";
+		string bboneName;
+		getline(cin, bboneName);
+		if (bboneName != "") {
+			_bones = RESOURCE->LoadBone(bboneName);
+
+			if (_animations.size() != 0) {
+				for (auto& animation : _animations) {
+					for (auto& animData : *animation->GetAnimationDatasPtr()) {
+						if (_bones.contains(animData.boneName)) {
+							animData.boneId = _bones[animData.boneName].id;
+						}
+						else {
+							animData.boneId = -1;
+						}
+					}
+				}
+			}
+
+			_isExternalBone = true;
+		}
+	}
+}
+
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 {
 	string matNameStr(scene->mMaterials[index]->GetName().C_Str());
@@ -528,8 +534,9 @@ wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 
 void AssetLoader::ImportModelFormat(wstring fileName)
 {
-	_assetName = fileName;
-	_assetName.erase(_assetName.find_last_of(L"."), wstring::npos);
+	_assetNameW = fileName;
+	_assetNameW.erase(_assetNameW.find_last_of(L"."), wstring::npos);
+	_assetName = UniversalUtils::ToString(_assetNameW);
 
 	istringstream ss(UniversalUtils::ToString(fileName));
 	string format;

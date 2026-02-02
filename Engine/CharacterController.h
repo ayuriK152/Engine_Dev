@@ -20,6 +20,7 @@ public:
 private:
 	JPH::Ref<JPH::CharacterVirtual> _character;
 	JPH::Ref<JPH::Shape> _shape;
+	JPH::BodyID _bodyId;
 
 	float _height = 0.5f;
 	float _radius = 0.5f;

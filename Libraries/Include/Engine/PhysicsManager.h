@@ -69,7 +69,7 @@ public:
 	}
 };
 
-class PhysicsManager : public JPH::ContactListener
+class PhysicsManager : public JPH::ContactListener, public JPH::CharacterContactListener
 {
 	DECLARE_SINGLE(PhysicsManager);
 public:
@@ -81,11 +81,17 @@ public:
 	void LateUpdate();
 
 #pragma region JPH::ContactListener 상속 가상함수
+	// Rigidbody vs Rigidbody
 	void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override;
 
 	void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override;
 
 	void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override;
+
+	// Character vs Something
+	void OnContactAdded(const CharacterVirtual* inCharacter, const BodyID& inBodyID2, const SubShapeID& inSubShapeID2, RVec3Arg inContactPosition, Vec3Arg inContactNormal, CharacterContactSettings& ioSettings) override;
+	
+	void OnCharacterContactAdded(const CharacterVirtual* inCharacter, const CharacterVirtual* inOtherCharacter, const SubShapeID& inSubShapeID2, RVec3Arg inContactPosition, Vec3Arg inContactNormal, CharacterContactSettings& ioSettings) override;
 #pragma endregion
 
 public:

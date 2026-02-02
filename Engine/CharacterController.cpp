@@ -35,7 +35,11 @@ void CharacterController::Init()
 		PHYSICS->GetPhysicsSystem()
 	);
 
+	_bodyId = _character->GetInnerBodyID();
 	_character->SetShapeOffset(JPH::Vec3Arg(_offset.x, _offset.y, _offset.z));
+	_character->SetUserData(reinterpret_cast<JPH::uint64>(_gameObject.lock().get()));
+
+	_character->SetListener(PHYSICS);
 }
 
 void CharacterController::PreUpdate()
@@ -51,7 +55,7 @@ void CharacterController::PreUpdate()
 		-_character->GetUp() * 9.8f,
 		PHYSICS->GetPhysicsSystem()->GetDefaultBroadPhaseLayerFilter(Layers::MOVING),
 		PHYSICS->GetPhysicsSystem()->GetDefaultLayerFilter(Layers::MOVING),
-		{ }, { }, *PHYSICS->GetTempAllocator()
+		{ }, {}, *PHYSICS->GetTempAllocator()
 	);
 
 	JPH::Vec3 newPos = _character->GetPosition();

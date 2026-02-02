@@ -77,6 +77,24 @@ void PhysicsManager::OnContactAdded(const Body& inBody1, const Body& inBody2, co
 	obj2->OnCollisionEnter(obj1);
 }
 
+void PhysicsManager::OnContactAdded(const CharacterVirtual* inCharacter, const BodyID& inBodyID2, const SubShapeID& inSubShapeID2, RVec3Arg inContactPosition, Vec3Arg inContactNormal, CharacterContactSettings& ioSettings)
+{
+	JPH::BodyLockRead lock(_physicsSystem->GetBodyLockInterface(), inBodyID2);
+
+	if (lock.Succeeded()) {
+		auto obj1 = reinterpret_cast<GameObject*>(inCharacter->GetUserData())->shared_from_this();
+		auto obj2 = reinterpret_cast<GameObject*>(lock.GetBody().GetUserData())->shared_from_this();
+
+		obj1->OnCollisionEnter(obj2);
+		obj2->OnCollisionEnter(obj1);
+	}
+}
+
+void PhysicsManager::OnCharacterContactAdded(const CharacterVirtual* inCharacter, const CharacterVirtual* inOtherCharacter, const SubShapeID& inSubShapeID2, RVec3Arg inContactPosition, Vec3Arg inContactNormal, CharacterContactSettings& ioSettings)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
 void PhysicsManager::OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings)
 {
 	auto obj1 = reinterpret_cast<GameObject*>(inBody1.GetUserData())->shared_from_this();

@@ -50,7 +50,8 @@ void FrameResource::Update()
 
 void FrameResource::UpdateObjectSB()
 {
-	for (auto& o : RENDER->GetObjects())
+	auto objects = RENDER->GetObjects();
+	for (auto& o : objects)
 	{
 		int instanceIndex = 0;
 
@@ -58,11 +59,18 @@ void FrameResource::UpdateObjectSB()
 		if (meshRenderer == nullptr) meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
 
 		if (meshRenderer != nullptr) {
-			instanceIndex = RENDER->GetMeshInstanceStartIndex(meshRenderer->GetMesh());
-			if (_instanceIndexMap.contains(meshRenderer->GetMesh()))
-				instanceIndex += _instanceIndexMap[meshRenderer->GetMesh()]++;
-			else
-				_instanceIndexMap[meshRenderer->GetMesh()] = 1;
+			shared_ptr<Mesh> mesh = meshRenderer->GetMesh();
+			instanceIndex = RENDER->GetMeshInstanceStartIndex(mesh);
+
+			UINT meshId = mesh->GetID();
+			if (_instanceIndices.size() > meshId) {
+				instanceIndex += _instanceIndices[meshId];
+				++_instanceIndices[meshId];
+			}
+			else {
+				_instanceIndices.insert(_instanceIndices.end(), meshId - _instanceIndices.size() + 1, 0);
+				_instanceIndices[meshId] = 1;
+			}
 		}
 
 		if (o->GetFramesDirty() > 0)
@@ -83,7 +91,7 @@ void FrameResource::UpdateObjectSB()
 		}
 	}
 
-	_instanceIndexMap.clear();
+	_instanceIndices.assign(_instanceIndices.size(), 0);
 }
 
 void FrameResource::UpdateMaterialSB()

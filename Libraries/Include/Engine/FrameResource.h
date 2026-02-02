@@ -51,7 +51,7 @@ private:
 
 	bool _isInitialized = false;
 
-	unordered_map<shared_ptr<Mesh>, int> _instanceIndexMap;
+	vector<int> _instanceIndices;
 
 	array<future<void>, BUFFER_COUNT> _futures;
 };

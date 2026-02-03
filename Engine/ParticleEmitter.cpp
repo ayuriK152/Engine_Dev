@@ -3,7 +3,7 @@
 
 ParticleEmitter::ParticleEmitter() : Component(ComponentType::ParticleEmitter)
 {
-	_info = {};
+	_emitterSetting = {};
 }
 
 ParticleEmitter::~ParticleEmitter()
@@ -29,9 +29,9 @@ void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 {
 	if (!_isPlaying) return;
 
-	_info.EmitterPos = GetTransform()->GetPosition();
+	_emitterSetting.EmitterPos = GetTransform()->GetPosition();
 
-	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_EMITTER_CB, sizeof(EmitterInfo) / 4, &_info, 0);
+	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_EMITTER_CB, sizeof(EmitterSetting) / 4, &_emitterSetting, 0);
 
 	cmdList->SetComputeRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
 
@@ -59,7 +59,7 @@ void ParticleEmitter::SetParticleTexture(wstring textureName)
 		return;
 	}
 
-	_info.TextureIdx = tex->GetSRVHeapIndex();
+	_emitterSetting.TextureIdx = tex->GetSRVHeapIndex();
 }
 
 void ParticleEmitter::SetParticleTexture(shared_ptr<Texture> texture)

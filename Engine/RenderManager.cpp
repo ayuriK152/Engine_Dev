@@ -509,7 +509,7 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
 
 	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 2);
-	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterInfo) / 4, REGISTER_NUM_EMITTER_CB, 2);
+	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterSetting) / 4, REGISTER_NUM_EMITTER_CB, 2);
 
 	auto staticSamplers = GetStaticSamplers();
 

@@ -10,7 +10,7 @@ struct Particle {
 	XMFLOAT4 Color;
 };
 
-struct EmitterInfo {
+struct EmitterSetting {
 	XMFLOAT3 EmitterPos;
 	float SpawnRate;
 	float ParticleInitialVelocity = 5;
@@ -31,16 +31,20 @@ public:
 
 public:
 	bool IsPlaying() { return _isPlaying; }
+
 	void SetPlay(bool value) { _isPlaying = value; }
+
 	void SetParticleTexture(string textureName);
 	void SetParticleTexture(wstring textureName);
 	void SetParticleTexture(shared_ptr<Texture> texture);
+
+	void SetParticleSetting(EmitterSetting setting) { _emitterSetting = setting; }
 
 private:
 	ComPtr<ID3D12Resource> _particleBuffer;
 	ComPtr<ID3D12Resource> _particleBufferUpload;
 
-	EmitterInfo _info;
+	EmitterSetting _emitterSetting;
 
 	UINT _particleMount = 100;
 	bool _isPlaying = false;

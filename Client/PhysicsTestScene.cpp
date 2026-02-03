@@ -77,6 +77,15 @@ void PhysicsTestScene::Init()
 	sphere1->GetTransform()->SetPosition(Vector3(-3.0f, 5.0f, 3.0f));
 	gameObjects.push_back(sphere1);
 
+	//auto particleObj = make_shared<GameObject>();
+	//particleObj->SetName("ParticleObj");
+	//auto particleEmitter = make_shared<ParticleEmitter>();
+	//particleEmitter->SetPlay(true);
+	//particleEmitter->SetParticleTexture("ParticleTest.png");
+	//particleObj->AddComponent(particleEmitter);
+	//particleObj->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, 0.0f));
+	//gameObjects.push_back(particleObj);
+
 	while (gameObjects.size() > 0)
 	{
 		RENDER->AddGameObject(gameObjects[0]);

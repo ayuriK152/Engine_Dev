@@ -62,6 +62,8 @@ bool GameApplication::Initialize()
 
 	INPUTM->Initialize();
 
+	Utils::Init();
+
 	return true;
 }
 

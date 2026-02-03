@@ -14,7 +14,7 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 	if (filesystem::exists(RESOURCE_PATH_MATERIALW + name + L"\\" + material->GetNameW() + L".xml"))
 		return;
 
-	char* nameChar = UniversalUtils::ToChar(material->GetNameW());
+	char* nameChar = Utils::ToChar(material->GetNameW());
 	tinyxml2::XMLDocument doc;
 
 	XMLNode* node = doc.NewElement("Material");
@@ -61,7 +61,7 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 	node->InsertEndChild(element);
 
 	char fullpath[100] = RESOURCE_PATH_MATERIAL;
-	strcat(fullpath, UniversalUtils::ToChar(name));
+	strcat(fullpath, Utils::ToChar(name));
 	strcat(fullpath, "\\");
 	strcat(fullpath, nameChar);
 	strcat(fullpath, ".xml");
@@ -75,7 +75,7 @@ void FileIOUtil::LoadTextures()
 
 	for (auto& i = iter; i != filesystem::end(iter); i++)
 	{
-		istringstream ss(UniversalUtils::ToString(i->path().c_str()));
+		istringstream ss(Utils::ToString(i->path().c_str()));
 		string fileName;
 		while (getline(ss, fileName, '\\'));
 		ss = istringstream(fileName);
@@ -87,7 +87,7 @@ void FileIOUtil::LoadTextures()
 		//auto defaultTex = make_shared<Texture>(UniversalUtils::ToWString(fileName));
 		auto defaultTex = make_shared<Texture>(i->path().c_str());
 		defaultTex->SetName(fileName);
-		RESOURCE->Add<Texture>(UniversalUtils::ToWString(fileName.substr(0, fileName.size() - (format.size() + 1))), defaultTex);
+		RESOURCE->Add<Texture>(Utils::ToWString(fileName.substr(0, fileName.size() - (format.size() + 1))), defaultTex);
 	}
 }
 
@@ -99,7 +99,7 @@ void FileIOUtil::LoadMaterials()
 
 	for (auto& i = iter; i != filesystem::end(iter); i++)
 	{
-		XMLError e = doc.LoadFile(UniversalUtils::ToChar(i->path().c_str()));
+		XMLError e = doc.LoadFile(Utils::ToChar(i->path().c_str()));
 		if (e != XML_SUCCESS)
 			continue;
 
@@ -148,16 +148,16 @@ void FileIOUtil::LoadMaterials()
 		element = node->FirstChildElement("DiffuseTexture");
 		if (element->GetText()) {
 			textureName = string(element->GetText());
-			mat->SetDiffuse(RESOURCE->Get<Texture>(UniversalUtils::ToWString(textureName.substr(0, textureName.length() - 4))));
+			mat->SetDiffuse(RESOURCE->Get<Texture>(Utils::ToWString(textureName.substr(0, textureName.length() - 4))));
 		}
 
 		element = node->FirstChildElement("NormalTexture");
 		if (element->GetText()) {
 			textureName = string(element->GetText());
-			mat->SetNormal(RESOURCE->Get<Texture>(UniversalUtils::ToWString(textureName.substr(0, textureName.length() - 4))));
+			mat->SetNormal(RESOURCE->Get<Texture>(Utils::ToWString(textureName.substr(0, textureName.length() - 4))));
 		}
 
-		RESOURCE->Add<Material>(UniversalUtils::ToWString(name), mat);
+		RESOURCE->Add<Material>(Utils::ToWString(name), mat);
 	}
 }
 

@@ -48,14 +48,14 @@ void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList)
 
 void ParticleEmitter::SetParticleTexture(string textureName)
 {
-	SetParticleTexture(UniversalUtils::ToWString(textureName));
+	SetParticleTexture(Utils::ToWString(textureName));
 }
 
 void ParticleEmitter::SetParticleTexture(wstring textureName)
 {
 	shared_ptr<Texture> tex = RESOURCE->Get<Texture>(textureName);
 	if (tex == nullptr) {
-		DEBUG->ErrorLog(UniversalUtils::ToString(textureName) + " does not exits!");
+		DEBUG->ErrorLog(Utils::ToString(textureName) + " does not exits!");
 		return;
 	}
 

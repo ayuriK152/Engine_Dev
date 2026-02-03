@@ -424,10 +424,10 @@ void EngineGUIManager::ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer)
 	if (ImGui::CollapsingHeader("MeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::SeparatorText("Mesh");
-		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMesh()->GetNameW()));
+		ImGui::Text(Utils::ToChar(meshRenderer->GetMesh()->GetNameW()));
 
 		ImGui::SeparatorText("Material");
-		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMaterial()->GetNameW()));
+		ImGui::Text(Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()));
 	}
 }
 
@@ -436,10 +436,10 @@ void EngineGUIManager::ShowSkinnedMeshRenderer(shared_ptr<SkinnedMeshRenderer> m
 	if (ImGui::CollapsingHeader("SkinnedMeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::SeparatorText("Mesh");
-		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMesh()->GetNameW()));
+		ImGui::Text(Utils::ToChar(meshRenderer->GetMesh()->GetNameW()));
 
 		ImGui::SeparatorText("Material");
-		ImGui::Text(UniversalUtils::ToChar(meshRenderer->GetMaterial()->GetNameW()));
+		ImGui::Text(Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()));
 
 		ImGui::SeparatorText("RootBone");
 		ImGui::Text(meshRenderer->GetRootBone()->GetGameObject()->GetName().c_str());

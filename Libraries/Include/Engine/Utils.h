@@ -1,6 +1,6 @@
 #pragma once
 
-class UniversalUtils
+class Utils
 {
 public:
 	static void Init();

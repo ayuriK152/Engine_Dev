@@ -21,6 +21,8 @@
 #include <queue>
 #include <algorithm>
 
+#include <random>
+
 // Win
 #include <windows.h>
 #include <windowsx.h>
@@ -112,7 +114,7 @@ using namespace JPH::literals;
 #include "DataStructures.h"
 #include "Enums.h"
 
-#include "UniversalUtils.h"
+#include "Utils.h"
 #include "MathHelper.h"
 #include "DXUtil.h"
 #include "GeometryGenerator.h"

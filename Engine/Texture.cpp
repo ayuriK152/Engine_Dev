@@ -13,7 +13,7 @@ bool Texture::IsTextureExists(wstring& fileName)
 
 Texture::Texture(wstring filePath, bool isName) : Super(ResourceType::Texture)
 {
-	_textureFormat = UniversalUtils::ToString(filePath.substr(filePath.find_last_of('.') + 1));
+	_textureFormat = Utils::ToString(filePath.substr(filePath.find_last_of('.') + 1));
 
 	if (isName) {
 		SetName(filePath);
@@ -29,7 +29,7 @@ Texture::Texture(wstring filePath, bool isName) : Super(ResourceType::Texture)
 
 Texture::Texture(wstring filePath, TextureType type, bool isName) : Super(ResourceType::Texture)
 {
-	_textureFormat = UniversalUtils::ToString(filePath.substr(filePath.find_last_of('.') + 1));
+	_textureFormat = Utils::ToString(filePath.substr(filePath.find_last_of('.') + 1));
 
 	if (isName) {
 		SetName(filePath);

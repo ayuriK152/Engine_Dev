@@ -41,7 +41,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 	auto p = filesystem::path(fileStr);
 	assert(filesystem::exists(p));
 	_scene = _importer->ReadFile(
-		UniversalUtils::ToString(fileStr),
+		Utils::ToString(fileStr),
 		aiProcess_ConvertToLeftHanded |
 		aiProcess_Triangulate |
 		aiProcess_GenUVCoords |
@@ -57,7 +57,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	assert(_scene != nullptr);
 
-	ImportModelFormat(UniversalUtils::ToWString(p.filename().string()));
+	ImportModelFormat(Utils::ToWString(p.filename().string()));
 	shared_ptr<GameObject> rootObj = make_shared<GameObject>();
 	// rootObj->GetName() = UniversalUtils::ToString(_assetNameW);
 	_loadedObject.push_back(rootObj);
@@ -74,7 +74,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 	// 바이너리 파일 저장
 	{
-		string assetNameStr = UniversalUtils::ToString(_assetNameW);
+		string assetNameStr = Utils::ToString(_assetNameW);
 
 		if (_meshes.size() > 0)
 		{
@@ -108,7 +108,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 
 		if (_loadedObject.size() > 1)
 		{
-			_loadedObject[0]->SetName(UniversalUtils::ToString(_assetNameW));
+			_loadedObject[0]->SetName(Utils::ToString(_assetNameW));
 			RESOURCE->SavePrefab(_loadedObject[0]);
 			cout << "Prefab parsed" << endl << endl;
 		}
@@ -222,17 +222,17 @@ void AssetLoader::ProcessNodes(aiNode* node, const aiScene* scene, shared_ptr<No
 	{
 		// 메시 기하정보 로드
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		shared_ptr<Mesh> m = RESOURCE->Get<Mesh>(UniversalUtils::ToWString(mesh->mName.C_Str()));
+		shared_ptr<Mesh> m = RESOURCE->Get<Mesh>(Utils::ToWString(mesh->mName.C_Str()));
 		if (m == nullptr)
 		{
 			m = ProcessMesh(mesh, scene);
-			RESOURCE->Add<Mesh>(UniversalUtils::ToWString(node->mName.C_Str()), m);
+			RESOURCE->Add<Mesh>(Utils::ToWString(node->mName.C_Str()), m);
 		}
 		_meshes.push_back(m);
 
 		// 본 없는 경우에는 그냥 MeshRenderer로 하도록 변경 필요
 		shared_ptr<GameObject> meshObj = make_shared<GameObject>();
-		meshObj->SetName(UniversalUtils::ToString(m->GetNameW()));
+		meshObj->SetName(Utils::ToString(m->GetNameW()));
 		if (mesh->HasBones())
 		{
 			meshObj->AddComponent(make_shared<SkinnedMeshRenderer>());
@@ -422,7 +422,7 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 	geometry->SetIndices(indices);
 
 	shared_ptr<Mesh> mesh = make_shared<Mesh>(geometry);
-	mesh->SetName(UniversalUtils::ToWString(aimesh->mName.C_Str()));
+	mesh->SetName(Utils::ToWString(aimesh->mName.C_Str()));
 	auto mat = RESOURCE->Get<Material>(GetAIMaterialName(scene, aimesh->mMaterialIndex));
 	mesh->SetMaterial(mat);
 	return mesh;
@@ -529,16 +529,16 @@ void AssetLoader::LoadBones()
 wstring AssetLoader::GetAIMaterialName(const aiScene* scene, UINT index)
 {
 	string matNameStr(scene->mMaterials[index]->GetName().C_Str());
-	return UniversalUtils::ToWString(matNameStr);
+	return Utils::ToWString(matNameStr);
 }
 
 void AssetLoader::ImportModelFormat(wstring fileName)
 {
 	_assetNameW = fileName;
 	_assetNameW.erase(_assetNameW.find_last_of(L"."), wstring::npos);
-	_assetName = UniversalUtils::ToString(_assetNameW);
+	_assetName = Utils::ToString(_assetNameW);
 
-	istringstream ss(UniversalUtils::ToString(fileName));
+	istringstream ss(Utils::ToString(fileName));
 	string format;
 	while (getline(ss, format, '.'));
 

@@ -26,21 +26,21 @@ public:
 	ResourceType GetType() { return _type; }
 
 	void SetName(const string& name) { 
-		_namew = UniversalUtils::ToWString(name);
+		_namew = Utils::ToWString(name);
 	}
 	void SetName(const wstring& name) { 
 		_namew = name;
 	}
-	string GetName() { return UniversalUtils::ToString(_namew); }
+	string GetName() { return Utils::ToString(_namew); }
 	wstring GetNameW() { return _namew; }
 
 	void SetPath(const string& path) {
-		_pathw = UniversalUtils::ToWString(path);
+		_pathw = Utils::ToWString(path);
 	}
 	void SetPath(const wstring& path) { 
 		_pathw = path; 
 	}
-	string GetPath() { return UniversalUtils::ToString(_pathw); }
+	string GetPath() { return Utils::ToString(_pathw); }
 	wstring GetPathW() { return _pathw; }
 
 	UINT GetID() { return _id; }

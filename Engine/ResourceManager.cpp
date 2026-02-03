@@ -208,7 +208,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
 				FILEIO->WriteToFile(fileHandle, meshPath);
 
-				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
+				string matName = Utils::ToString(meshRenderer->GetMaterial()->GetNameW());
 				FILEIO->WriteToFile(fileHandle, matName);
 
 				break;
@@ -221,7 +221,7 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
 				FILEIO->WriteToFile(fileHandle, meshPath);
 
-				string matName = UniversalUtils::ToString(meshRenderer->GetMaterial()->GetNameW());
+				string matName = Utils::ToString(meshRenderer->GetMaterial()->GetNameW());
 				FILEIO->WriteToFile(fileHandle, matName);
 
 				string rootBoneName = meshRenderer->GetRootBone()->GetGameObject()->GetName();
@@ -292,7 +292,7 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 	// 좀 더 개선할 수 있을 것 같음. 나머지 리소스들도 다.
 	if (RESOURCE->CheckResourceExists(filePath)) {
 		CloseHandle(fileHandle);
-		return RESOURCE->Get<Mesh>(UniversalUtils::ToWString(meshName));
+		return RESOURCE->Get<Mesh>(Utils::ToWString(meshName));
 	}
 
 	UINT32 vertexCount;
@@ -325,7 +325,7 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);
 	loadedMesh->SetName(meshName);
 	loadedMesh->SetPath(filePath);
-	loadedMesh->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+	loadedMesh->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matName)));
 
 	Add<Mesh>(loadedMesh->GetNameW(), loadedMesh);
 
@@ -347,7 +347,7 @@ shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 
 	if (RESOURCE->CheckResourceExists(filePath)) {
 		CloseHandle(fileHandle);
-		return RESOURCE->Get<Animation>(UniversalUtils::ToWString(animName));
+		return RESOURCE->Get<Animation>(Utils::ToWString(animName));
 	}
 
 	float duration, ticks;
@@ -476,7 +476,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 					string matName;
 					FILEIO->ReadFileData(fileHandle, matName);
-					meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+					meshRenderer->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matName)));
 
 					go->AddComponent(meshRenderer);
 
@@ -493,7 +493,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 					string matName;
 					FILEIO->ReadFileData(fileHandle, matName);
-					meshRenderer->SetMaterial(RESOURCE->Get<Material>(UniversalUtils::ToWString(matName)));
+					meshRenderer->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matName)));
 
 					string rootBoneName;
 					FILEIO->ReadFileData(fileHandle, rootBoneName);

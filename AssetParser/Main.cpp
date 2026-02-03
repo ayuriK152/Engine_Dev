@@ -26,7 +26,7 @@ int main()
 	{
 		shared_ptr<AssetLoader> loader = make_shared<AssetLoader>();
 		wstring assetPathStr = parsableAssetPaths[i];
-		cout << "Parsing: " << UniversalUtils::ToString(assetPathStr.c_str()) << endl;
+		cout << "Parsing: " << Utils::ToString(assetPathStr.c_str()) << endl;
 		loader->ImportAssetFile(assetPathStr);
 		filesystem::path assetPath(assetPathStr);
 		filesystem::path parsedAssetPath(parsedAssetPathStr + parsableAssetNames[i]);
@@ -45,7 +45,7 @@ void DirectoryIterator(filesystem::path path, int count)
 	filesystem::directory_iterator iter(path);
 	for (auto& i = iter; i != filesystem::end(iter); i++)
 	{
-		string pathStr = UniversalUtils::ToString(i->path().c_str());
+		string pathStr = Utils::ToString(i->path().c_str());
 		string name = pathStr.substr(pathStr.find_last_of('\\') + 1);
 		for (int j = 0; j < count; j++)
 			cout << "-";

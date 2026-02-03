@@ -1,11 +1,19 @@
 #pragma once
 
-class UniversalUtils
+class Utils
 {
+public:
+	static void Init();
+
 public:
 	static string ToString(wstring s);
 	static wstring ToWString(string s);
 	static char* ToChar(wstring s);
+
+	static int Random(int from, int to);
+
+private:
+	static mt19937 _gen;
 };
 
 #ifndef ThrowIfFailed

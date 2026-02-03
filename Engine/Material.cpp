@@ -57,14 +57,14 @@ void Material::SetDiffuse(shared_ptr<Texture> texture)
 	}
 
 	diffuseSrvHeapIndex = texture->GetSRVHeapIndex();
-	diffuseTextureName = UniversalUtils::ToString(texture->GetNameW());
+	diffuseTextureName = Utils::ToString(texture->GetNameW());
 }
 
 void Material::SetDiffuse(wstring textureName)
 {
 	// 텍스쳐 이름만 설정하고, 실제 텍스쳐는 기본 텍스쳐로
 	diffuseSrvHeapIndex = 0;
-	diffuseTextureName = UniversalUtils::ToString(textureName);
+	diffuseTextureName = Utils::ToString(textureName);
 }
 
 void Material::SetNormal(shared_ptr<Texture> texture)
@@ -76,11 +76,11 @@ void Material::SetNormal(shared_ptr<Texture> texture)
 	}
 
 	normalSrvHeapIndex = texture->GetSRVHeapIndex();
-	normalTextureName = UniversalUtils::ToString(texture->GetNameW());
+	normalTextureName = Utils::ToString(texture->GetNameW());
 }
 
 void Material::SetNormal(wstring textureName)
 {
 	normalSrvHeapIndex = 0;
-	normalTextureName = UniversalUtils::ToString(textureName);
+	normalTextureName = Utils::ToString(textureName);
 }

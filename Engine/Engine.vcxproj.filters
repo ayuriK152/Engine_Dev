@@ -17,7 +17,7 @@
     <ClInclude Include="FrameResource.h">
       <Filter>01. EngineComponents</Filter>
     </ClInclude>
-    <ClInclude Include="UniversalUtils.h">
+    <ClInclude Include="Utils.h">
       <Filter>98. Utils</Filter>
     </ClInclude>
     <ClInclude Include="Defines.h">
@@ -246,7 +246,7 @@
     <ClCompile Include="FrameResource.cpp">
       <Filter>01. EngineComponents</Filter>
     </ClCompile>
-    <ClCompile Include="UniversalUtils.cpp">
+    <ClCompile Include="Utils.cpp">
       <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="Graphic.cpp">

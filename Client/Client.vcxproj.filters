@@ -27,6 +27,9 @@
     <ClInclude Include="TestScene.h">
       <Filter>Scenes\Tests</Filter>
     </ClInclude>
+    <ClInclude Include="BaseState.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -54,6 +57,9 @@
     </ClCompile>
     <ClCompile Include="TestScene.cpp">
       <Filter>Scenes\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseState.cpp">
+      <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

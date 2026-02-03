@@ -1,5 +1,6 @@
 #pragma once
 #include "Script.h"
+#include "BaseState.h"
 
 enum class EnemyMovementState
 {
@@ -10,6 +11,9 @@ enum class EnemyMovementState
 
 class EnemyScript : public Script
 {
+	friend class IdleState;
+	friend class TrackWalkState;
+	friend class DeathState;
 public:
     void Init() override;
 	void Update() override;
@@ -29,8 +33,42 @@ private:
 
     int _health = 100;
     EnemyMovementState _currentState = EnemyMovementState::IDLE;
-    EnemyMovementState _lastState = EnemyMovementState::IDLE;
+    bool _isStateChanged = false;
+
+    vector<BaseState*> _patterns;
+    Vector3 _targetVec;
 
     float _targetDistance;
 };
 
+class IdleState : public BaseState {
+public:
+	IdleState(shared_ptr<Script> script);
+
+	void StateStart() override;
+	void StateUpdate() override;
+
+private:
+	shared_ptr<EnemyScript> _script;
+};
+
+class TrackWalkState : public BaseState {
+public:
+	TrackWalkState(shared_ptr<Script> script);
+
+	void StateStart() override;
+	void StateUpdate() override;
+
+private:
+	shared_ptr<EnemyScript> _script;
+};
+
+class DeathState : public BaseState {
+public:
+	DeathState(shared_ptr<Script> script);
+
+	void StateStart() override;
+
+private:
+	shared_ptr<EnemyScript> _script;
+};

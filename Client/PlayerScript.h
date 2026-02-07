@@ -1,5 +1,6 @@
 #pragma once
 #include "Script.h"
+#include "BaseState.h"
 
 enum class PlayerMovementState
 {
@@ -12,6 +13,36 @@ enum class PlayerMovementState
 
 class PlayerScript : public Script
 {
+	class IdleState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class WalkState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class RunState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class SlashState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class RollState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
 public:
 	void Init() override;
 	void Update() override;
@@ -24,16 +55,25 @@ public:
 	void Move();
 
 private:
-	shared_ptr<GameObject> gameObject;
-	shared_ptr<Transform> transform;
-	shared_ptr<Animator> animator;
-	shared_ptr<CharacterController> controller;
-	float speed = 1.55f;
+	void SetState(PlayerMovementState state) {
+		if (_playerMovementState == state) return;
+		_playerMovementState = state;
+		_isStateChanged = true;
+	}
+
+private:
+	shared_ptr<GameObject> _gameObject;
+	shared_ptr<Transform> _transform;
+	shared_ptr<Animator> _animator;
+	shared_ptr<CharacterController> _controller;
+	float _speed = 1.55f;
 
 	PlayerMovementState _playerMovementState = PlayerMovementState::IDLE;
-	PlayerMovementState _lastMovementState = PlayerMovementState::IDLE;
+	bool _isStateChanged = false;
+
 	Vector3 _movingDirection;
 	Vector3 _cameraForward;
 	Vector3 _cameraRight;
-};
 
+	vector<BaseState<PlayerScript>*> _states;
+};

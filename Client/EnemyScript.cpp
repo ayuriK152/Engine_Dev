@@ -15,39 +15,36 @@ void EnemyScript::Init()
 	controller->SetOffset(Vector3(0.0f, 0.9f, 0.0f));
 	_gameObject->AddComponent(controller);
 
-	_patterns.push_back(new IdleState(static_pointer_cast<Script>(shared_from_this())));
-	_patterns.push_back(new TrackWalkState(static_pointer_cast<Script>(shared_from_this())));
-	_patterns.push_back(new DeathState(static_pointer_cast<Script>(shared_from_this())));
+	_patterns.push_back(new IdleState());
+	_patterns.push_back(new TrackWalkState());
+	_patterns.push_back(new DeathState());
 }
 
 void EnemyScript::Update()
 {
 	if (_currentState != EnemyMovementState::DEATH) {
 		if (_health <= 0) {
-			_currentState = EnemyMovementState::DEATH;
-			_isStateChanged = true;
+			SetState(EnemyMovementState::DEATH);
 		}
 
 		else {
 			_targetVec = target->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
 			_targetDistance = _targetVec.Length();
 			if (_targetDistance >= 2.0f && _currentState != EnemyMovementState::WALK) {
-				_currentState = EnemyMovementState::WALK;
-				_isStateChanged = true;
+				SetState(EnemyMovementState::WALK);
 			}
 			else if (_targetDistance < 2.0f && _currentState != EnemyMovementState::IDLE) {
-				_currentState = EnemyMovementState::IDLE;
-				_isStateChanged = true;
+				SetState(EnemyMovementState::IDLE);
 			}
 		}
 	}
 
 	if (_isStateChanged) {
-		_patterns[static_cast<int>(_currentState)]->StateStart();
+		_patterns[static_cast<int>(_currentState)]->StateStart(this);
 		_isStateChanged = false;
 	}
 
-	_patterns[static_cast<int>(_currentState)]->StateUpdate();
+	_patterns[static_cast<int>(_currentState)]->StateUpdate(this);
 }
 
 void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
@@ -65,44 +62,29 @@ void EnemyScript::TakeDamage(int damage)
 	DEBUG->Log("Take" + to_string(damage) + "damage. Remain Health - " + to_string(_health));
 }
 
-IdleState::IdleState(shared_ptr<Script> script)
+void EnemyScript::IdleState::StateStart(EnemyScript* owner)
 {
-	_script = static_pointer_cast<EnemyScript>(script);
+	owner->_animator->SetCurrentAnimation("idle");
 }
 
-void IdleState::StateStart()
+void EnemyScript::IdleState::StateUpdate(EnemyScript* owner)
 {
-	_script->_animator->SetCurrentAnimation("idle");
+	owner->_gameObject->GetTransform()->LookAtWithNoRoll(-owner->_targetVec + owner->_gameObject->GetTransform()->GetPosition());
 }
 
-void IdleState::StateUpdate()
+void EnemyScript::TrackWalkState::StateStart(EnemyScript* owner)
 {
-	_script->_gameObject->GetTransform()->LookAtWithNoRoll(-_script->_targetVec + _script->_gameObject->GetTransform()->GetPosition());
+	owner->_animator->SetCurrentAnimation("walk_forward");
 }
 
-TrackWalkState::TrackWalkState(shared_ptr<Script> script)
+void EnemyScript::TrackWalkState::StateUpdate(EnemyScript* owner)
 {
-	_script = static_pointer_cast<EnemyScript>(script);
+	owner->_gameObject->GetTransform()->LookAtWithNoRoll(-owner->_targetVec + owner->_gameObject->GetTransform()->GetPosition());
+	owner->controller->SetVelocity(owner->_targetVec.Normalize() * 1.1f);
 }
 
-void TrackWalkState::StateStart()
+void EnemyScript::DeathState::StateStart(EnemyScript* owner)
 {
-	_script->_animator->SetCurrentAnimation("walk_forward");
-}
-
-void TrackWalkState::StateUpdate()
-{
-	_script->_gameObject->GetTransform()->LookAtWithNoRoll(-_script->_targetVec + _script->_gameObject->GetTransform()->GetPosition());
-	_script->controller->SetVelocity(_script->_targetVec.Normalize() * 1.1f);
-}
-
-DeathState::DeathState(shared_ptr<Script> script)
-{
-	_script = static_pointer_cast<EnemyScript>(script);
-}
-
-void DeathState::StateStart()
-{
-	_script->_animator->SetCurrentAnimation("death1");
-	_script->_animator->SetLoop(false);
+	owner->_animator->SetCurrentAnimation("death1");
+	owner->_animator->SetLoop(false);
 }

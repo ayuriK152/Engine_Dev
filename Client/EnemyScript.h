@@ -11,9 +11,23 @@ enum class EnemyMovementState
 
 class EnemyScript : public Script
 {
-	friend class IdleState;
-	friend class TrackWalkState;
-	friend class DeathState;
+	class IdleState : public BaseState<EnemyScript> {
+	public:
+		void StateStart(EnemyScript* owner) override;
+		void StateUpdate(EnemyScript* owner) override;
+	};
+
+	class TrackWalkState : public BaseState<EnemyScript> {
+	public:
+		void StateStart(EnemyScript* owner) override;
+		void StateUpdate(EnemyScript* owner) override;
+	};
+
+	class DeathState : public BaseState<EnemyScript> {
+	public:
+		void StateStart(EnemyScript* owner) override;
+	};
+
 public:
     void Init() override;
 	void Update() override;
@@ -22,6 +36,13 @@ public:
 
 public:
     void TakeDamage(int damage);
+
+private:
+	void SetState(EnemyMovementState state) {
+		if (_currentState == state) return;
+		_currentState = state;
+		_isStateChanged = true;
+	}
 
 public:
 	shared_ptr<GameObject> target;
@@ -35,40 +56,8 @@ private:
     EnemyMovementState _currentState = EnemyMovementState::IDLE;
     bool _isStateChanged = false;
 
-    vector<BaseState*> _patterns;
+    vector<BaseState<EnemyScript>*> _patterns;
     Vector3 _targetVec;
 
     float _targetDistance;
-};
-
-class IdleState : public BaseState {
-public:
-	IdleState(shared_ptr<Script> script);
-
-	void StateStart() override;
-	void StateUpdate() override;
-
-private:
-	shared_ptr<EnemyScript> _script;
-};
-
-class TrackWalkState : public BaseState {
-public:
-	TrackWalkState(shared_ptr<Script> script);
-
-	void StateStart() override;
-	void StateUpdate() override;
-
-private:
-	shared_ptr<EnemyScript> _script;
-};
-
-class DeathState : public BaseState {
-public:
-	DeathState(shared_ptr<Script> script);
-
-	void StateStart() override;
-
-private:
-	shared_ptr<EnemyScript> _script;
 };

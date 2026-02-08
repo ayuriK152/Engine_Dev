@@ -54,15 +54,21 @@ void DungeonScene::Init()
 	}
 
 	{
+		tpvCamera = make_shared<GameObject>();
+		tpvCamera->SetName("TPVCamera");
 		tpvCameraArm = make_shared<GameObject>();
-		tpvCameraArm->SetName("TPVCameraArm");
-		tpvCameraArm->AddComponent(make_shared<TPVCamera>());
-		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+		tpvCameraArm->SetName("CameraArm");
+		tpvCameraArm->GetTransform()->SetParent(tpvCamera->GetTransform());
+
+		auto tpvCameraScript = make_shared<TPVCamera>();
+		tpvCameraScript->armTransform = tpvCameraArm->GetTransform();
 		tpvCameraScript->cameraTransform = camera->GetTransform();
 		tpvCameraScript->targetTransform = player->GetTransform();
 		tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
 		tpvCameraScript->isCameraControllOn = false;
-		gameObjects.push_back(tpvCameraArm);
+
+		tpvCamera->AddComponent(tpvCameraScript);
+		gameObjects.push_back(tpvCamera);
 	}
 
 	{
@@ -100,7 +106,7 @@ void DungeonScene::Update()
 	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
 	{
 		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
-		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
+		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCamera->GetComponent<Script>());
 		tpvCameraScript->isCameraControllOn = !tpvCameraScript->isCameraControllOn;
 	}
 }

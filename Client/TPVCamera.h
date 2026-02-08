@@ -9,16 +9,19 @@ public:
 	void Update() override;
 
 public:
+	shared_ptr<Transform> armTransform;
 	shared_ptr<Transform> cameraTransform;
 	shared_ptr<Transform> targetTransform;
 	float distance = 8.0f;
-	Vector3 offset;
+	Vector3 offset = { 0.0f, 0.0f, 0.0f };
 	float sensitivity = 1.0f;
+	Vector2 pitchLimit = { 80.0f, -80.0f };
 
 	// 카메라 움직임 제어 여부
 	bool isCameraControllOn = true;
 
 private:
+	shared_ptr<Transform> _transform;
 	float _pitch = 0.0f;
 };
 

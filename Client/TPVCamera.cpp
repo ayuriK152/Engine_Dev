@@ -3,19 +3,25 @@
 
 void TPVCamera::Init()
 {
-	if (cameraTransform == nullptr)
-	{
+	if (cameraTransform == nullptr) {
+		DEBUG->ErrorLog("Camera Transform was nullptr!");
+		return;
+	}
+	if (armTransform == nullptr) {
+		DEBUG->ErrorLog("Camera arm Transform was nullptr!");
 		return;
 	}
 
-	if (cameraTransform->GetParent() != GetTransform())
-	{
-		cameraTransform->SetParent(GetTransform());
+	_transform = GetTransform();
+	armTransform->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
+
+	if (cameraTransform->GetParent() != _transform) {
+		cameraTransform->SetParent(armTransform);
 		cameraTransform->SetLocalPosition(Vector3(0.0f, 0.0f, -distance));
 	}
-	if (targetTransform != nullptr)
-	{
-		GetTransform()->SetPosition(targetTransform->GetPosition() + offset);
+
+	if (targetTransform != nullptr) {
+		_transform->SetPosition(targetTransform->GetPosition() + offset);
 		cameraTransform->LookAtWithNoRoll(targetTransform->GetPosition());
 	}
 }
@@ -26,39 +32,21 @@ void TPVCamera::Update()
 		return;
 
 	if (targetTransform->GetGameObject()->GetFramesDirty() > 0)
-		GetTransform()->SetPosition(targetTransform->GetPosition() + offset);
+		_transform->SetPosition(targetTransform->GetPosition() + offset);
 
 	if (!isCameraControllOn || cameraTransform == nullptr)
 		return;
 
 	float deltaX = INPUTM->GetMouseDelta().x * sensitivity * TIME->DeltaTime();
 	float deltaY = INPUTM->GetMouseDelta().y * sensitivity * TIME->DeltaTime();
-	_pitch += deltaY;
-	float clampedPitch = clamp(_pitch, XMConvertToRadians(-80.0f), XMConvertToRadians(80.0f));
-	// 오차 조금 있을듯. 작동에는 별 문제가 없지만 가능하면 수정 요함.
-	if (_pitch != clampedPitch)
-	{
-		deltaY = 0;
-		_pitch = clampedPitch;
+
+	if (abs(deltaX) > 0.0f)
+		_transform->Rotate(Vector3(0.0f, deltaX, 0.0f));
+	if (abs(deltaY) > 0.0f) {
+		_pitch += deltaY * 50.0f;
+		_pitch = clamp(_pitch, pitchLimit.y, pitchLimit.x);
+		armTransform->SetLocalRotation(Vector3(_pitch, 0.0f, 0.0f));
 	}
-
-	XMVECTOR qy = XMQuaternionRotationAxis(
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), deltaX);
-
-	Vector3 right = GetTransform()->GetRight();
-	right.y = 0.0f;
-	right = right.Normalize();
-	XMVECTOR qx = XMQuaternionRotationAxis(XMLoadFloat3(&right), deltaY);
-
-	XMVECTOR currentQuat = XMLoadFloat4(&GetTransform()->GetLocalQuaternion());
-	XMVECTOR newQuat = XMQuaternionNormalize(
-		XMQuaternionMultiply(currentQuat, XMQuaternionMultiply(qy, qx)));
-
-	GetTransform()->SetLocalQuaternion(newQuat);
-
-	//Vector3 rotation(INPUTM->GetMouseDelta().y, INPUTM->GetMouseDelta().x, 0.0f);
-	//rotation = rotation * sensitivity * TIME->DeltaTime();
-	//GetTransform()->Rotate(rotation);
 
 	cameraTransform->LookAtWithNoRoll(targetTransform->GetPosition());
 }

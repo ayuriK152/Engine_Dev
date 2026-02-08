@@ -10,6 +10,7 @@ public:
 	shared_ptr<GameObject> skybox;
 
 	shared_ptr<GameObject> camera;
+	shared_ptr<GameObject> tpvCamera;
 	shared_ptr<GameObject> tpvCameraArm;
 
 	shared_ptr<GameObject> globalLight;

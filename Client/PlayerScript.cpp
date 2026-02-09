@@ -25,6 +25,7 @@ void PlayerScript::Init()
 	_states.push_back(new RunState());
 	_states.push_back(new SlashState());
 	_states.push_back(new RollState());
+	_states.push_back(new StrafeState());
 }
 
 void PlayerScript::Update()
@@ -103,8 +104,13 @@ void PlayerScript::Move()
 
 	if (INPUTM->IsKeyPress(KeyValue::SHIFT))
 		SetState(PlayerMovementState::RUN);
-	else
-		SetState(PlayerMovementState::WALK);
+	else {
+		if (_lockOnTarget) {
+			SetState(PlayerMovementState::STRAFE);
+		}
+		else
+			SetState(PlayerMovementState::WALK);
+	}
 }
 
 void PlayerScript::LockOn()
@@ -205,4 +211,16 @@ void PlayerScript::RollState::StateUpdate(PlayerScript* owner)
 {
 	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() - owner->_movingDirection);
 	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 3.0f);
+}
+
+void PlayerScript::StrafeState::StateStart(PlayerScript* owner)
+{
+	owner->_animator->SetCurrentAnimation("walk_sword_forward");
+	owner->_animator->SetLoop(true);
+}
+
+void PlayerScript::StrafeState::StateUpdate(PlayerScript* owner)
+{
+	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() - (owner->_lockOnTarget->GetTransform()->GetPosition() - owner->_transform->GetPosition()));
+	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed);
 }

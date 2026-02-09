@@ -8,11 +8,17 @@ enum class PlayerMovementState
 	WALK,
 	RUN,
 	SLASH,
-	ROLL
+	ROLL,
+	STRAFE
+	//STRAFE_FORWARD,
+	//STRAFE_BACK,
+	//STRAFE_RIGHT,
+	//STRAFE_LEFT
 };
 
 class PlayerScript : public Script
 {
+#pragma region Player State Class
 	class IdleState : public BaseState<PlayerScript> {
 	public:
 		void StateStart(PlayerScript* owner) override;
@@ -42,6 +48,13 @@ class PlayerScript : public Script
 		void StateStart(PlayerScript* owner) override;
 		void StateUpdate(PlayerScript* owner) override;
 	};
+
+	class StrafeState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+#pragma endregion
 
 public:
 	void Init() override;
@@ -76,8 +89,6 @@ private:
 	bool _isLockOn = false;
 
 	Vector3 _movingDirection;
-	Vector3 _cameraForward;
-	Vector3 _cameraRight;
 
 	vector<BaseState<PlayerScript>*> _states;
 };

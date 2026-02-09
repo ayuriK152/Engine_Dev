@@ -6,6 +6,8 @@ void EnemyScript::Init()
 	_gameObject = GetGameObject();
 	_gameObject->SetTag("Enemy");
 
+	_transform = _gameObject->GetTransform();
+
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->SetLoop(true);
 
@@ -37,7 +39,7 @@ void EnemyScript::Update()
 		}
 
 		else {
-			_targetVec = target->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
+			_targetVec = target->GetTransform()->GetPosition() - _transform->GetPosition();
 			_targetDistance = _targetVec.Length();
 			if (_targetDistance >= 2.0f && _currentState != EnemyMovementState::WALK) {
 				SetState(EnemyMovementState::WALK);
@@ -78,7 +80,7 @@ void EnemyScript::IdleState::StateStart(EnemyScript* owner)
 
 void EnemyScript::IdleState::StateUpdate(EnemyScript* owner)
 {
-	owner->_gameObject->GetTransform()->LookAtWithNoRoll(-owner->_targetVec + owner->_gameObject->GetTransform()->GetPosition());
+	owner->_transform->LookAtWithNoRoll(-owner->_targetVec + owner->_transform->GetPosition());
 }
 
 void EnemyScript::TrackWalkState::StateStart(EnemyScript* owner)
@@ -88,7 +90,7 @@ void EnemyScript::TrackWalkState::StateStart(EnemyScript* owner)
 
 void EnemyScript::TrackWalkState::StateUpdate(EnemyScript* owner)
 {
-	owner->_gameObject->GetTransform()->LookAtWithNoRoll(-owner->_targetVec + owner->_gameObject->GetTransform()->GetPosition());
+	owner->_transform->LookAtWithNoRoll(-owner->_targetVec + owner->_transform->GetPosition());
 	owner->_controller->SetVelocity(owner->_targetVec.Normalize() * 1.1f);
 }
 

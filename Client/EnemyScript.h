@@ -49,6 +49,7 @@ public:
 
 private:
 	shared_ptr<GameObject> _gameObject;
+	shared_ptr<Transform> _transform;
 	shared_ptr<Animator> _animator;
 	shared_ptr<CharacterController> _controller;
 	shared_ptr<Rigidbody> _hitbox;

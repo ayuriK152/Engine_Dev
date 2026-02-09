@@ -81,7 +81,7 @@ void Rigidbody::OnDestroy()
 
 void Rigidbody::SetColliderExtents(const Vector3& extents)
 {
-	_colliderExtents = extents;
+	_extents = extents;
 
 	if (_colliderShape == ColliderShape::Box)
 		UpdateShapeData();
@@ -96,11 +96,19 @@ void Rigidbody::SetColliderTrigger(bool value)
 	// Trigger는 런타임 중에 값이 바뀌면 body를 다시 만들어줘야함. 이부분 일단 구현 안해뒀으니까 나중에 해야함.
 }
 
+void Rigidbody::SetColliderHalfHeight(float height)
+{
+	_height = height;
+
+	if (_colliderShape == ColliderShape::Capsule)
+		UpdateShapeData();
+}
+
 void Rigidbody::SetColliderRadius(float radius)
 {
-	_colliderRadius = radius;
+	_radius = radius;
 
-	if (_colliderShape == ColliderShape::Shpere)
+	if (_colliderShape == ColliderShape::Sphere)
 		UpdateShapeData();
 }
 
@@ -128,12 +136,18 @@ void Rigidbody::CreateShape()
 	}
 
 	if (_colliderShape == ColliderShape::Box) {
-		JPH::BoxShapeSettings boxShapeSetting(JPH::Vec3(_colliderExtents.x, _colliderExtents.y, _colliderExtents.z));
+		JPH::BoxShapeSettings boxShapeSetting(JPH::Vec3(_extents.x, _extents.y, _extents.z));
 		_shapeResult = boxShapeSetting.Create();
 	}
-	else if (_colliderShape == ColliderShape::Shpere) {
-		JPH::SphereShapeSettings sphereShapeSetting(_colliderRadius);
+	else if (_colliderShape == ColliderShape::Sphere) {
+		JPH::SphereShapeSettings sphereShapeSetting(_radius);
 		_shapeResult = sphereShapeSetting.Create();
+	}
+	else if (_colliderShape == ColliderShape::Capsule) {
+		JPH::CapsuleShapeSettings capsuleShapeSetting;
+		capsuleShapeSetting.mHalfHeightOfCylinder = _height;
+		capsuleShapeSetting.mRadius = _radius;
+		_shapeResult = capsuleShapeSetting.Create();
 	}
 }
 
@@ -182,8 +196,8 @@ JPH::ShapeSettings::ShapeResult Rigidbody::FitOnMesh()
 		if (maxZ < vertex.z) maxZ = vertex.z;
 	}
 
-	_colliderExtents = Vector3((maxX - minX) / 2, (maxY - minY) / 2, (maxZ - minZ) / 2);
+	_extents = Vector3((maxX - minX) / 2, (maxY - minY) / 2, (maxZ - minZ) / 2);
 
-	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(_colliderExtents.x, _colliderExtents.y, _colliderExtents.z));
+	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(_extents.x, _extents.y, _extents.z));
 	return shapeSettings.Create();
 }

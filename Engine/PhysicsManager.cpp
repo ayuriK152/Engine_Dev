@@ -120,3 +120,42 @@ void PhysicsManager::DeleteRigidbody(shared_ptr<Rigidbody> rbd)
 		}
 	}
 }
+
+vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Vector3 position, float radius, string tag)
+{
+	vector<shared_ptr<GameObject>> results;
+
+	JPH::SphereShape sphere(radius);
+	JPH::Vec3 spherePos(position.x, position.y, position.z);
+
+	// 필요한 경우 세팅부분 추가
+	JPH::CollideShapeSettings settings;
+
+	JPH::AllHitCollisionCollector<JPH::CollideShapeCollector> collector;
+
+	_physicsSystem->GetNarrowPhaseQuery().CollideShape(
+		&sphere,
+		JPH::Vec3::sReplicate(1.0f),
+		JPH::Mat44::sTranslation(spherePos),
+		settings,
+		spherePos,
+		collector
+	);
+
+	for (const JPH::CollideShapeResult& hit : collector.mHits) {
+
+		JPH::BodyLockRead lock(_physicsSystem->GetBodyLockInterface(), hit.mBodyID2);
+		
+		if (lock.Succeeded()) {
+			// if (lock.GetBody().IsSensor()) continue;
+
+			shared_ptr<GameObject> go = reinterpret_cast<GameObject*>(lock.GetBody().GetUserData())->shared_from_this();
+			if (go->GetTag() == tag || tag == "") {
+				results.push_back(go);
+			}
+		}
+	}
+
+	DEBUG->Log(to_string(results.size()));
+	return results;
+}

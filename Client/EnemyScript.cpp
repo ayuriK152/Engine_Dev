@@ -9,11 +9,20 @@ void EnemyScript::Init()
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->SetLoop(true);
 
-	controller = make_shared<CharacterController>();
-	controller->SetHalfHeight(0.6f);
-	controller->SetRadius(0.3f);
-	controller->SetOffset(Vector3(0.0f, 0.9f, 0.0f));
-	_gameObject->AddComponent(controller);
+	_controller = make_shared<CharacterController>();
+	_controller->SetHalfHeight(0.6f);
+	_controller->SetRadius(0.3f);
+	_controller->SetOffset(Vector3(0.0f, 0.9f, 0.0f));
+	_gameObject->AddComponent(_controller);
+
+	_hitbox = make_shared<Rigidbody>();
+	_hitbox->SetColliderShape(ColliderShape::Capsule);
+	_hitbox->SetColliderHalfHeight(0.6f);
+	_hitbox->SetColliderRadius(0.3f);
+	_hitbox->SetColliderOffset(Vector3(0.0f, 0.9f, 0.0f));
+	_hitbox->SetColliderTrigger(true);
+	_hitbox->isGravity = false;
+	_gameObject->AddComponent(_hitbox);
 
 	_patterns.push_back(new IdleState());
 	_patterns.push_back(new TrackWalkState());
@@ -80,7 +89,7 @@ void EnemyScript::TrackWalkState::StateStart(EnemyScript* owner)
 void EnemyScript::TrackWalkState::StateUpdate(EnemyScript* owner)
 {
 	owner->_gameObject->GetTransform()->LookAtWithNoRoll(-owner->_targetVec + owner->_gameObject->GetTransform()->GetPosition());
-	owner->controller->SetVelocity(owner->_targetVec.Normalize() * 1.1f);
+	owner->_controller->SetVelocity(owner->_targetVec.Normalize() * 1.1f);
 }
 
 void EnemyScript::DeathState::StateStart(EnemyScript* owner)

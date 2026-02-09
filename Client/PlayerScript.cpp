@@ -109,13 +109,13 @@ void PlayerScript::Move()
 
 void PlayerScript::LockOn()
 {
+	PHYSICS->OverlapSphere(_transform->GetPosition(), 20.0f, "Enemy");
+
 	if (_isLockOn) {
 		_isLockOn = false;
 		_lockOnTarget = nullptr;
 		return;
 	}
-
-
 }
 
 void PlayerScript::IdleState::StateStart(PlayerScript* owner)

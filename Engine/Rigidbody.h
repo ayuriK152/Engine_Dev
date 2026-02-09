@@ -6,7 +6,7 @@
 enum class ColliderShape
 {
 	Box,
-	Shpere,
+	Sphere,
 	Capsule
 };
 
@@ -24,10 +24,15 @@ public:
 	void OnDestroy() override;
 
 public:
+	// Box Only
 	void SetColliderExtents(const Vector3& size);
 
 	void SetColliderTrigger(bool value);
 
+	// Capsule Only
+	void SetColliderHalfHeight(float height);
+
+	// Sphere, Capsule Only
 	void SetColliderRadius(float radius);
 
 	void SetColliderOffset(const Vector3& offset);
@@ -52,8 +57,10 @@ public:
 private:
 	Vector3 _velocity;			// ¼Óµµ
 	bool _isTrigger = false;
-	Vector3 _colliderExtents = { 0.5f, 0.5f, 0.5f };
-	float _colliderRadius = 0.5f;
+
+	Vector3 _extents = { 0.5f, 0.5f, 0.5f };
+	float _height = 0.5f;
+	float _radius = 0.5f;
 	Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };
 
 	ColliderShape _colliderShape = ColliderShape::Box;

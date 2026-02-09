@@ -50,7 +50,8 @@ public:
 private:
 	shared_ptr<GameObject> _gameObject;
 	shared_ptr<Animator> _animator;
-	shared_ptr<CharacterController> controller;
+	shared_ptr<CharacterController> _controller;
+	shared_ptr<Rigidbody> _hitbox;
 
     int _health = 100;
     EnemyMovementState _currentState = EnemyMovementState::IDLE;

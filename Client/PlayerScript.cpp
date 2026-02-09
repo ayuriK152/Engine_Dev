@@ -109,12 +109,43 @@ void PlayerScript::Move()
 
 void PlayerScript::LockOn()
 {
-	PHYSICS->OverlapSphere(_transform->GetPosition(), 20.0f, "Enemy");
-
 	if (_isLockOn) {
 		_isLockOn = false;
 		_lockOnTarget = nullptr;
+		DEBUG->Log("Locked On Target Released");
 		return;
+	}
+
+	vector<shared_ptr<GameObject>> enemies = PHYSICS->OverlapSphere(_transform->GetPosition(), 20.0f, "Enemy"); float minDistance = FLT_MAX;
+	shared_ptr<GameObject> bestTarget = nullptr;
+
+	Vector3 camPos = Camera::GetCurrentCamera()->GetTransform()->GetPosition();
+	Vector3 camLook = Camera::GetCurrentCamera()->GetTransform()->GetLook();
+
+	for (auto& enemy : enemies) {
+		Vector3 enemyPos = enemy->GetTransform()->GetPosition();
+		Vector3 dirToEnemy = (enemyPos - camPos).Normalize();
+
+		// 시야각 체크 (내적)
+		float dot = camLook.Dot(dirToEnemy);
+		if (dot < 0.5f) continue; // 실제 사용중인 pov값 받아오도록 바꿔야함.
+
+		// 레이캐스트 장애물 체크
+		//RaycastHit hit;
+		//if (PHYSICS->Raycast(camPos, dirToEnemy, 15.0f, Layer::Wall)) continue;
+
+		// 가장 가까운 거리 비교
+		float dist = (_transform->GetPosition() - enemyPos).Length();
+		if (dist < minDistance) {
+			minDistance = dist;
+			bestTarget = enemy;
+		}
+	}
+
+	if (bestTarget) {
+		_lockOnTarget = bestTarget;
+		_isLockOn = true;
+		DEBUG->Log("Locked On - " + _lockOnTarget->GetName());
 	}
 }
 

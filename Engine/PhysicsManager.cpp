@@ -147,8 +147,6 @@ vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Vector3 position, f
 		JPH::BodyLockRead lock(_physicsSystem->GetBodyLockInterface(), hit.mBodyID2);
 		
 		if (lock.Succeeded()) {
-			// if (lock.GetBody().IsSensor()) continue;
-
 			shared_ptr<GameObject> go = reinterpret_cast<GameObject*>(lock.GetBody().GetUserData())->shared_from_this();
 			if (go->GetTag() == tag || tag == "") {
 				results.push_back(go);
@@ -156,6 +154,5 @@ vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Vector3 position, f
 		}
 	}
 
-	DEBUG->Log(to_string(results.size()));
 	return results;
 }

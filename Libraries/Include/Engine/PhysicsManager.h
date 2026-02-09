@@ -98,15 +98,10 @@ public:
 	JPH::PhysicsSystem* GetPhysicsSystem() { return _physicsSystem; }
 	JPH::TempAllocator* GetTempAllocator() { return _tempAlloc; }
 
-	// Legacy, 삭제 고려
-	void AddCollider(shared_ptr<Collider> collider) { _colliders.push_back(collider); }
-	void DeleteCollider(shared_ptr<Collider> collider);
-
 	void AddRigidbody(shared_ptr<Rigidbody> rbd) { _rigidbodies.push_back(rbd); }
 	void DeleteRigidbody(shared_ptr<Rigidbody> rbd);
 
 private:
-	vector<shared_ptr<Collider>> _colliders;
 	vector<shared_ptr<Rigidbody>> _rigidbodies;
 
 	JPH::PhysicsSystem* _physicsSystem = nullptr;

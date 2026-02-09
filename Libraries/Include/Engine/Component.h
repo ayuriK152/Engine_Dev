@@ -4,7 +4,6 @@
 class GameObject;
 class Transform;
 class Camera;
-class Collider;
 #pragma endregion
 
 class Component : public enable_shared_from_this<Component>

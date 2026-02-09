@@ -109,18 +109,6 @@ void PhysicsManager::OnContactRemoved(const SubShapeIDPair& inSubShapePair)
 
 }
 
-void PhysicsManager::DeleteCollider(shared_ptr<Collider> collider)
-{
-	for (int i = 0; i < _colliders.size(); i++)
-	{
-		if (_colliders[i] == collider)
-		{
-			_colliders.erase(_colliders.begin() + i);
-			break;
-		}
-	}
-}
-
 void PhysicsManager::DeleteRigidbody(shared_ptr<Rigidbody> rbd)
 {
 	for (int i = 0; i < _rigidbodies.size(); i++)

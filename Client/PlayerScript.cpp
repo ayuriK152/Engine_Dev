@@ -29,6 +29,9 @@ void PlayerScript::Init()
 
 void PlayerScript::Update()
 {
+	if (INPUTM->IsKeyDown(KeyValue::Q))
+		LockOn();
+
 	Roll();
 	Attack();
 
@@ -63,17 +66,18 @@ void PlayerScript::OnCollisionEnter(shared_ptr<GameObject> other)
 
 void PlayerScript::Roll()
 {
-	if (INPUTM->IsKeyDown(KeyValue::SPACE) && !_animator->IsTransitionBlocked() && _playerMovementState != PlayerMovementState::IDLE)
-	{
+	if (INPUTM->IsKeyDown(KeyValue::SPACE) && 
+		!_animator->IsTransitionBlocked() && 
+		_playerMovementState != PlayerMovementState::IDLE) {
 		SetState(PlayerMovementState::ROLL);
 	}
 }
 
 void PlayerScript::Attack()
 {
-
-	if (INPUTM->IsMouseLeftButtonDown() && _playerMovementState != PlayerMovementState::SLASH && !_animator->IsTransitionBlocked())
-	{
+	if (INPUTM->IsMouseLeftButtonDown() && 
+		!_animator->IsTransitionBlocked() && 
+		_playerMovementState != PlayerMovementState::SLASH) {
 		SetState(PlayerMovementState::SLASH);
 	}
 }
@@ -101,6 +105,17 @@ void PlayerScript::Move()
 		SetState(PlayerMovementState::RUN);
 	else
 		SetState(PlayerMovementState::WALK);
+}
+
+void PlayerScript::LockOn()
+{
+	if (_isLockOn) {
+		_isLockOn = false;
+		_lockOnTarget = nullptr;
+		return;
+	}
+
+
 }
 
 void PlayerScript::IdleState::StateStart(PlayerScript* owner)

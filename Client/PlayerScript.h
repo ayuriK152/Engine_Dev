@@ -53,6 +53,7 @@ public:
 	void Roll();
 	void Attack();
 	void Move();
+	void LockOn();
 
 private:
 	void SetState(PlayerMovementState state) {
@@ -70,6 +71,9 @@ private:
 
 	PlayerMovementState _playerMovementState = PlayerMovementState::IDLE;
 	bool _isStateChanged = false;
+
+	shared_ptr<GameObject> _lockOnTarget;
+	bool _isLockOn = false;
 
 	Vector3 _movingDirection;
 	Vector3 _cameraForward;

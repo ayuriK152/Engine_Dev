@@ -61,7 +61,7 @@ void TestScene::Init()
 		tpvCameraArm->AddComponent(make_shared<TPVCamera>());
 		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCameraArm->GetComponent<Script>());
 		tpvCameraScript->cameraTransform = camera->GetTransform();
-		tpvCameraScript->targetTransform = player->GetTransform();
+		tpvCameraScript->onwerTransform = player->GetTransform();
 		tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
 		tpvCameraScript->isCameraControllOn = false;
 		gameObjects.push_back(tpvCameraArm);

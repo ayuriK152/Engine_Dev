@@ -119,6 +119,7 @@ public:
 
 	void LookAt(const Vector3& targetPos);
 	void LookAtWithNoRoll(const Vector3& targetPos);
+	void LookAtOnlyYaw(const Vector3& targetPos);
 
 	void SetLocalMatrix(XMMATRIX mat);
 

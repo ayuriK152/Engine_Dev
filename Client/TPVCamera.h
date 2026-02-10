@@ -11,17 +11,21 @@ public:
 public:
 	shared_ptr<Transform> armTransform;
 	shared_ptr<Transform> cameraTransform;
-	shared_ptr<Transform> targetTransform;
-	float distance = 8.0f;
+	shared_ptr<Transform> onwerTransform;
+	shared_ptr<Transform> lockOnTargetTransform;
+
+	float distance = 5.0f;
 	Vector3 offset = { 0.0f, 0.0f, 0.0f };
 	float sensitivity = 1.0f;
 	Vector2 pitchLimit = { 80.0f, -80.0f };
 
 	// 카메라 움직임 제어 여부
 	bool isCameraControllOn = true;
+	bool isLockOn = false;
 
 private:
 	shared_ptr<Transform> _transform;
+	Vector3 _pivotPosition;
 	float _pitch = 0.0f;
 };
 

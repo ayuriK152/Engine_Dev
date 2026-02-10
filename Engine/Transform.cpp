@@ -357,6 +357,20 @@ void Transform::LookAtWithNoRoll(const Vector3& targetPos)
 	SetDirtyFlag();
 }
 
+void Transform::LookAtOnlyYaw(const Vector3& targetPos)
+{
+	Vector3 dir = targetPos - GetPosition();
+	dir = dir.Normalize();
+
+	float yaw = atan2(dir.x, dir.z);
+
+	XMVECTOR quatYaw = XMQuaternionNormalize(XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw));
+
+	SetLocalQuaternion(quatYaw);
+
+	SetDirtyFlag();
+}
+
 void Transform::SetLocalMatrix(XMFLOAT4X4 mat)
 {
 	_matLocal = mat;

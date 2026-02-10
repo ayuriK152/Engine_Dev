@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "PlayerScript.h"
-#include "EnemyScript.h"
+#include "TPVCamera.h"
 
 void PlayerScript::Init()
 {
 	_gameObject = GetGameObject();
+
 	_transform = _gameObject->GetTransform();
+
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->LoadAnimationEvents("..\\Resources\\Animations\\Paladin WProp J Nordstrom\\AnimationEvents.xml");
 
@@ -118,6 +120,13 @@ void PlayerScript::LockOn()
 	if (_isLockOn) {
 		_isLockOn = false;
 		_lockOnTarget = nullptr;
+
+		if (tpvCameraScript == nullptr)
+			DEBUG->ErrorLog("Can't Find TPVCamera Component!");
+		else {
+			tpvCameraScript->isLockOn = false;
+			tpvCameraScript->lockOnTargetTransform = nullptr;
+		}
 		DEBUG->Log("Locked On Target Released");
 		return;
 	}
@@ -151,6 +160,14 @@ void PlayerScript::LockOn()
 	if (bestTarget) {
 		_lockOnTarget = bestTarget;
 		_isLockOn = true;
+
+		if (tpvCameraScript == nullptr)
+			DEBUG->ErrorLog("Can't Find TPVCamera Component!");
+		else {
+			tpvCameraScript->isLockOn = true;
+			tpvCameraScript->lockOnTargetTransform = _lockOnTarget->GetTransform();
+		}
+
 		DEBUG->Log("Locked On - " + _lockOnTarget->GetName());
 	}
 }
@@ -221,6 +238,6 @@ void PlayerScript::StrafeState::StateStart(PlayerScript* owner)
 
 void PlayerScript::StrafeState::StateUpdate(PlayerScript* owner)
 {
-	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() - (owner->_lockOnTarget->GetTransform()->GetPosition() - owner->_transform->GetPosition()));
+	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() * 2 - owner->_lockOnTarget->GetTransform()->GetPosition());
 	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed);
 }

@@ -2,6 +2,8 @@
 #include "Script.h"
 #include "BaseState.h"
 
+class TPVCamera;
+
 enum class PlayerMovementState
 {
 	IDLE,
@@ -74,6 +76,9 @@ private:
 		_playerMovementState = state;
 		_isStateChanged = true;
 	}
+
+public:
+	shared_ptr<TPVCamera> tpvCameraScript;
 
 private:
 	shared_ptr<GameObject> _gameObject;

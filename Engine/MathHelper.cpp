@@ -2,7 +2,7 @@
 #include "MathHelper.h"
 
 const float MathHelper::Infinity = FLT_MAX;
-const float MathHelper::Pi = 3.1415926535f;
+const float MathHelper::Pi = 3.14159265358979323846f;
 
 XMFLOAT4X4 MathHelper::Identity4x4()
 {

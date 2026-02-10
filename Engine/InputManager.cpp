@@ -82,9 +82,14 @@ void InputManager::OnMouseMove(int x, int y)
 
 	if (_isMouseCenterFixed)
 	{
-		_mousePosition = GRAPHIC->GetScreenCenter();
-		//SetCursorPos(centerX + rectWindow.left, centerY + rectWindow.top);
-		SetCursorPos(_mousePosition.x, _mousePosition.y);
+		RECT rect;
+		GetClientRect(GRAPHIC->GetMainWnd(), &rect);
+		POINT center = { (rect.right - rect.left) / 2, (rect.bottom - rect.top) / 2 };
+		ClientToScreen(GRAPHIC->GetMainWnd(), &center);
+		_mousePosition.x = center.x;
+		_mousePosition.y = center.y;
+		SetCursorPos(center.x, center.y);
+		//SetCursorPos(_mousePosition.x, _mousePosition.y);
 	}
 }
 

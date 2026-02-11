@@ -92,9 +92,6 @@
     <ClInclude Include="Light.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="EngineGUIManager.h">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClInclude>
     <ClInclude Include="..\Libraries\Include\ImGUI\imconfig.h">
       <Filter>99. ExtLibraries\imgui</Filter>
     </ClInclude>
@@ -146,9 +143,6 @@
     <ClInclude Include="Script.h">
       <Filter>02. GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="DebugManager.h">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicsManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
@@ -180,6 +174,12 @@
     </ClInclude>
     <ClInclude Include="CharacterController.h">
       <Filter>02. GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugManager.h">
+      <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineGUIManager.h">
+      <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +230,9 @@
     </Filter>
     <Filter Include="99. ExtLibraries\stb">
       <UniqueIdentifier>{3174e8b7-93dc-47b2-9db7-2aa7c0b743e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. EngineComponents\01. Managers\01. Only Editor">
+      <UniqueIdentifier>{c503f597-1493-4bf1-b757-602179e87a0d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -306,9 +309,6 @@
     <ClCompile Include="Light.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="EngineGUIManager.cpp">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClCompile>
     <ClCompile Include="..\Libraries\Include\ImGUI\imgui.cpp">
       <Filter>99. ExtLibraries\imgui</Filter>
     </ClCompile>
@@ -357,9 +357,6 @@
     <ClCompile Include="Script.cpp">
       <Filter>02. GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="DebugManager.cpp">
-      <Filter>01. EngineComponents\01. Managers</Filter>
-    </ClCompile>
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
@@ -385,6 +382,12 @@
     </ClCompile>
     <ClCompile Include="CharacterController.cpp">
       <Filter>02. GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugManager.cpp">
+      <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineGUIManager.cpp">
+      <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

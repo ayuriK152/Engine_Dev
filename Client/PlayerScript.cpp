@@ -11,6 +11,12 @@ void PlayerScript::Init()
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->LoadAnimationEvents("..\\Resources\\Animations\\Paladin WProp J Nordstrom\\AnimationEvents.xml");
 
+	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\walk_sword_back"));
+	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\strafe_sword_left"));
+	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\strafe_sword_left_run"));
+	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\strafe_sword_right"));
+	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\strafe_sword_right_run"));
+
 	_playerMovementState = PlayerMovementState::IDLE;
 	_isStateChanged = true;
 
@@ -27,7 +33,10 @@ void PlayerScript::Init()
 	_states.push_back(new RunState());
 	_states.push_back(new SlashState());
 	_states.push_back(new RollState());
-	_states.push_back(new StrafeState());
+	_states.push_back(new StrafeForwardState());
+	_states.push_back(new StrafeBackState());
+	_states.push_back(new StrafeRightState());
+	_states.push_back(new StrafeLeftState());
 }
 
 void PlayerScript::Update()
@@ -108,7 +117,14 @@ void PlayerScript::Move()
 		SetState(PlayerMovementState::RUN);
 	else {
 		if (_lockOnTarget) {
-			SetState(PlayerMovementState::STRAFE);
+			if (moveX == 1)
+				SetState(PlayerMovementState::STRAFE_RIGHT);
+			else if (moveX == -1)
+				SetState(PlayerMovementState::STRAFE_LEFT);
+			else if (moveZ == 1)
+				SetState(PlayerMovementState::STRAFE_FORWARD);
+			else if (moveZ == -1)
+				SetState(PlayerMovementState::STRAFE_BACK);
 		}
 		else
 			SetState(PlayerMovementState::WALK);
@@ -227,17 +243,53 @@ void PlayerScript::RollState::StateStart(PlayerScript* owner)
 void PlayerScript::RollState::StateUpdate(PlayerScript* owner)
 {
 	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() - owner->_movingDirection);
-	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 3.0f);
+	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 4.0f);
 }
 
-void PlayerScript::StrafeState::StateStart(PlayerScript* owner)
+void PlayerScript::StrafeForwardState::StateStart(PlayerScript* owner)
 {
 	owner->_animator->SetCurrentAnimation("walk_sword_forward");
 	owner->_animator->SetLoop(true);
 }
 
-void PlayerScript::StrafeState::StateUpdate(PlayerScript* owner)
+void PlayerScript::StrafeForwardState::StateUpdate(PlayerScript* owner)
 {
 	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() * 2 - owner->_lockOnTarget->GetTransform()->GetPosition());
 	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed);
+}
+
+void PlayerScript::StrafeBackState::StateStart(PlayerScript* owner)
+{
+	owner->_animator->SetCurrentAnimation("walk_sword_back");
+	owner->_animator->SetLoop(true);
+}
+
+void PlayerScript::StrafeBackState::StateUpdate(PlayerScript* owner)
+{
+	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() * 2 - owner->_lockOnTarget->GetTransform()->GetPosition());
+	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 0.8f);
+}
+
+void PlayerScript::StrafeRightState::StateStart(PlayerScript* owner)
+{
+	owner->_animator->SetCurrentAnimation("strafe_sword_right");
+	owner->_animator->SetLoop(true);
+}
+
+void PlayerScript::StrafeRightState::StateUpdate(PlayerScript* owner)
+{
+	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() * 2 - owner->_lockOnTarget->GetTransform()->GetPosition());
+	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 0.8f);
+}
+
+void PlayerScript::StrafeLeftState::StateStart(PlayerScript* owner)
+{
+	owner->_animator->SetCurrentAnimation("strafe_sword_left");
+	owner->_animator->SetLoop(true);
+}
+
+void PlayerScript::StrafeLeftState::StateUpdate(PlayerScript* owner)
+{
+	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() * 2 - owner->_lockOnTarget->GetTransform()->GetPosition());
+	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 0.8f);
 }

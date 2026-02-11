@@ -11,11 +11,10 @@ enum class PlayerMovementState
 	RUN,
 	SLASH,
 	ROLL,
-	STRAFE
-	//STRAFE_FORWARD,
-	//STRAFE_BACK,
-	//STRAFE_RIGHT,
-	//STRAFE_LEFT
+	STRAFE_FORWARD,
+	STRAFE_BACK,
+	STRAFE_RIGHT,
+	STRAFE_LEFT
 };
 
 class PlayerScript : public Script
@@ -51,7 +50,25 @@ class PlayerScript : public Script
 		void StateUpdate(PlayerScript* owner) override;
 	};
 
-	class StrafeState : public BaseState<PlayerScript> {
+	class StrafeForwardState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class StrafeBackState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class StrafeRightState : public BaseState<PlayerScript> {
+	public:
+		void StateStart(PlayerScript* owner) override;
+		void StateUpdate(PlayerScript* owner) override;
+	};
+
+	class StrafeLeftState : public BaseState<PlayerScript> {
 	public:
 		void StateStart(PlayerScript* owner) override;
 		void StateUpdate(PlayerScript* owner) override;

@@ -25,6 +25,16 @@ void TPVCamera::Init()
 		_transform->SetPosition(_pivotPosition);
 		cameraTransform->LookAtWithNoRoll(_pivotPosition);
 	}
+
+	if (rotationSharpness < 0.1f || rotationSharpness > 1.0f) {
+		DEBUG->WarnLog("[TPVCamera] - Rotation sharpness value should be between 0.1 to 1.0! Value has been clamped automatically.");
+		rotationSharpness = clamp(rotationSharpness, 0.1f, 1.0f);
+	}
+
+	if (pivotMovementSharpness < 1.0f || pivotMovementSharpness > 10.0f) {
+		DEBUG->WarnLog("[TPVCamera] - Pivot movement sharpness value should be between 1.0 to 10.0! Value has been clamped automatically.");
+		pivotMovementSharpness = clamp(pivotMovementSharpness, 1.0f, 10.0f);
+	}
 }
 
 void TPVCamera::Update()
@@ -33,7 +43,11 @@ void TPVCamera::Update()
 		return;
 
 	if (onwerTransform->GetGameObject()->GetFramesDirty() > 0) {
-		_pivotPosition = onwerTransform->GetPosition() + offset;
+		_targetPivotPosition = onwerTransform->GetPosition() + offset;
+	}
+
+	if ((_targetPivotPosition - _pivotPosition).Length() > 0.000001f) {
+		_pivotPosition = _pivotPosition + (_targetPivotPosition - _pivotPosition) * pivotMovementSharpness * TIME->DeltaTime();
 		_transform->SetPosition(_pivotPosition);
 	}
 
@@ -53,17 +67,16 @@ void TPVCamera::Update()
 	}
 	else if (lockOnTargetTransform != nullptr) {
 		Vector3 targetPosition = lockOnTargetTransform->GetPosition();
-		_transform->LookAtOnlyYaw(targetPosition);	// y축 회전
+		_transform->LookAtOnlyYaw(targetPosition, pow(rotationSharpness, 2.0f));	// y축 회전
 
-		Vector3 pivotToTargetVec = (targetPosition - _pivotPosition).Normalize();
-		Vector3 pivotToCameraVec = (cameraTransform->GetPosition() - _pivotPosition).Normalize();
-		float pitchDelta = acos(pivotToCameraVec.Dot(-pivotToTargetVec) / (pivotToCameraVec.Length() * pivotToTargetVec.Length())) * 180.0f / MathHelper::Pi;
-		if (pitchDelta > 0.0f) {
-			_pitch = pivotToTargetVec.y > -pivotToCameraVec.y ? _pitch - pitchDelta : _pitch + pitchDelta;
-			_pitch = clamp(_pitch, pitchLimit.y, pitchLimit.x);
+		Vector3 relTargetPos = targetPosition - _pivotPosition;
+		float horizontalDist = Vector2(relTargetPos.x, relTargetPos.z).Length();
+		float targetPitch = -atan2(relTargetPos.y, horizontalDist) * (180.0f / MathHelper::Pi);
+		if (targetPitch > 0.0f) {
+			_pitch = lerp(_pitch, clamp(targetPitch, pitchLimit.y, pitchLimit.x), pow(rotationSharpness, 2.0f));
 			armTransform->SetLocalRotation(Vector3(_pitch, 0.0f, 0.0f));
 		}
 		
-		cameraTransform->LookAtWithNoRoll(lockOnTargetTransform->GetPosition());
+		cameraTransform->LookAtWithNoRoll(_pivotPosition);
 	}
 }

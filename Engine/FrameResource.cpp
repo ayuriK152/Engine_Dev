@@ -140,7 +140,7 @@ void FrameResource::UpdateLightSB()
 
 void FrameResource::UpdateCameraCB()
 {
-	if (Camera::GetFramesDirty() > 0) {
+	//if (Camera::GetFramesDirty() > 0) {
 		CameraConstants cameraConstants;
 		XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
 		XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
@@ -161,7 +161,7 @@ void FrameResource::UpdateCameraCB()
 		cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
 
 		cameraCB->CopyData(0, cameraConstants);
-	}
+	//}
 }
 
 void FrameResource::BuildInstanceBufferSRV()

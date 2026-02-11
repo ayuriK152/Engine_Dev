@@ -118,8 +118,8 @@ public:
 	void Rotate(const XMVECTOR& angle);
 
 	void LookAt(const Vector3& targetPos);
-	void LookAtWithNoRoll(const Vector3& targetPos);
-	void LookAtOnlyYaw(const Vector3& targetPos);
+	void LookAtWithNoRoll(const Vector3& targetPos, float blendAlpha = 1.0f);
+	void LookAtOnlyYaw(const Vector3& targetPos, float blendAlpha = 1.0f);
 
 	void SetLocalMatrix(XMMATRIX mat);
 

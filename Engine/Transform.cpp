@@ -340,10 +340,13 @@ void Transform::LookAt(const Vector3& targetPos)
 	SetDirtyFlag();
 }
 
-void Transform::LookAtWithNoRoll(const Vector3& targetPos)
+void Transform::LookAtWithNoRoll(const Vector3& targetPos, float blendAlpha)
 {
 	Vector3 dir = targetPos - GetPosition();
 	dir = dir.Normalize();
+
+	if (blendAlpha < 1.0f)
+		dir = (dir * blendAlpha + GetLook() * (1.0f - blendAlpha)).Normalize();
 
 	float pitch = -asin(dir.y);
 	float yaw = atan2(dir.x, dir.z);
@@ -357,10 +360,13 @@ void Transform::LookAtWithNoRoll(const Vector3& targetPos)
 	SetDirtyFlag();
 }
 
-void Transform::LookAtOnlyYaw(const Vector3& targetPos)
+void Transform::LookAtOnlyYaw(const Vector3& targetPos, float blendAlpha)
 {
 	Vector3 dir = targetPos - GetPosition();
 	dir = dir.Normalize();
+
+	if (blendAlpha < 1.0f)
+		dir = (dir * blendAlpha + GetLook() * (1.0f - blendAlpha)).Normalize();
 
 	float yaw = atan2(dir.x, dir.z);
 

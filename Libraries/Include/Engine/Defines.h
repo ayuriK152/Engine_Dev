@@ -30,6 +30,7 @@ public:									\
 #define SKELETON	GET_SINGLE(SkeletonManager)
 #define THREAD		GET_SINGLE(ThreadManager)
 #define ANIMATION	GET_SINGLE(AnimationManager)
+#define UI			GET_SINGLE(UIManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 

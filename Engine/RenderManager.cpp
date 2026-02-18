@@ -20,90 +20,13 @@ void RenderManager::Init()
 	BuildRootSignature();
 	BuildInputLayout();
 	BuildSRVDescriptorHeap();
+
+	ENGINEGUI->Init();
 	RESOURCE->CreateDefaultResources();
 
-	{
-		auto opaqueSolid = CreatePSODesc(_solidInputLayout, L"standardVS", L"opaquePS");
-		auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, L"skinnedVS", L"opaquePS");
-		
-		auto opaqueWireframe = opaqueSkinned;
-		opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-		
-		auto skybox = CreatePSODesc(_solidInputLayout, L"skyboxVS", L"skyboxPS");
-		skybox.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-		auto debug = CreatePSODesc(_colliderDebugInputLayout, L"debugVS", L"debugPS");
-		{
-			debug.DepthStencilState.DepthEnable = false;
-			debug.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-			debug.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-			debug.DepthStencilState.StencilEnable = false;
-			debug.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-			debug.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-		}
-
-		auto shadow = CreatePSODesc(_solidInputLayout, L"shadowVS", L"shadowPS");
-		{
-			shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ���̸�
-			shadow.NumRenderTargets = 0;
-			shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-			shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-			shadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-			shadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-			shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
-		}
-
-		auto skinnedShadow = CreatePSODesc(_skinnedInputLayout, L"skinnedShadowVS", L"shadowPS");
-		{
-			skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
-			skinnedShadow.NumRenderTargets = 0;
-			skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-			skinnedShadow.RasterizerState = shadow.RasterizerState;;
-		}
-
-		auto particleUpdate = CreateCSPSODesc(L"particleCS");
-		auto particleRender = CreatePSODesc(L"particleVS", L"particlePS", L"", L"", L"particleGS");
-		{
-			particleRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-
-			D3D12_BLEND_DESC blendDesc = {};
-			blendDesc.AlphaToCoverageEnable = FALSE;
-			blendDesc.IndependentBlendEnable = FALSE;
-			auto& blendRt = blendDesc.RenderTarget[0];
-			blendRt.BlendEnable = TRUE;
-			blendRt.LogicOpEnable = FALSE;
-			blendRt.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-			blendRt.DestBlend = D3D12_BLEND_ONE;
-			blendRt.BlendOp = D3D12_BLEND_OP_ADD;
-			blendRt.SrcBlendAlpha = D3D12_BLEND_ONE;
-			blendRt.DestBlendAlpha = D3D12_BLEND_ZERO;
-			blendRt.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-			blendRt.LogicOp = D3D12_LOGIC_OP_NOOP;
-			blendRt.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-			D3D12_DEPTH_STENCIL_DESC depthDesc = {};
-			depthDesc.DepthEnable = TRUE;
-			depthDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-			depthDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-			particleRender.BlendState = blendDesc;
-			particleRender.DepthStencilState = depthDesc;
-		}
-
-		BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
-		BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
-		BuildPSO(PSO_WIREFRAME, opaqueWireframe);
-		BuildPSO(PSO_SKYBOX, skybox);
-		BuildPSO(PSO_SHADOWMAP, shadow);
-		BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
-		BuildPSO(PSO_DEBUG_PHYSICS, debug);
-		BuildPSO(PSO_PARTICLE_UPDATE, particleUpdate);
-		BuildPSO(PSO_PARTICLE_RENDER, particleRender);
-		SetDefaultPSO();
-	}
+	BuildPSOs();
 	
-	_shadowMap = make_unique<ShadowMap>(2048, 2048);
+	_shadowMap = make_unique<ShadowMap>(8192, 8192);
 	_shadowMap->BuildDescriptors();
 
 	for (auto& o : _objects)
@@ -238,6 +161,10 @@ void RenderManager::Render()
 	_mainCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	PARTICLE->Render(_mainCmdList);
+
+	_mainCmdList->SetPipelineState(_PSOs[PSO_UI].Get());
+	_mainCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	UI->Render(_mainCmdList);
 
 	ENGINEGUI->Render(_mainCmdList);
 
@@ -491,8 +418,12 @@ void RenderManager::BuildRootSignature()
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, REGISTER_NUM_BONE_SB, 1);
 
+	// space3 (UI)
+	CD3DX12_DESCRIPTOR_RANGE uiTable;
+	uiTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 3);
+
 	// Slot Root Parameter
-	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT + 1];
 
 	slotRootParameter[ROOT_PARAM_INSTCANCE_SB].InitAsDescriptorTable(1, &instanceTable);
 	slotRootParameter[ROOT_PARAM_MATERIAL_SB].InitAsDescriptorTable(1, &matTable);
@@ -511,9 +442,11 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 2);
 	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterSetting) / 4, REGISTER_NUM_EMITTER_CB, 2);
 
+	slotRootParameter[13].InitAsDescriptorTable(1, &uiTable);
+
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT + 1, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -559,6 +492,12 @@ void RenderManager::BuildInputLayout()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
+
+	_uiInputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
 }
 
 void RenderManager::BuildSRVDescriptorHeap()
@@ -568,6 +507,115 @@ void RenderManager::BuildSRVDescriptorHeap()
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	ThrowIfFailed(GRAPHIC->GetDevice()->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&_srvHeap)));
+}
+
+void RenderManager::BuildPSOs()
+{
+	// Default Layout
+	auto opaqueSolid = CreatePSODesc(_solidInputLayout, L"standardVS", L"opaquePS");
+	auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, L"skinnedVS", L"opaquePS");
+
+	// Wireframe Layout
+	auto opaqueWireframe = opaqueSkinned;
+	opaqueWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+
+	// Skybow Layout
+	auto skybox = CreatePSODesc(_solidInputLayout, L"skyboxVS", L"skyboxPS");
+	skybox.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	skybox.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+	// Debug Layout
+	auto debug = CreatePSODesc(_colliderDebugInputLayout, L"debugVS", L"debugPS");
+	{
+		debug.DepthStencilState.DepthEnable = false;
+		debug.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		debug.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		debug.DepthStencilState.StencilEnable = false;
+		debug.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		debug.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+	}
+
+	// Shadowmap Layout
+	auto shadow = CreatePSODesc(_solidInputLayout, L"shadowVS", L"shadowPS");
+	{
+		shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ���̸�
+		shadow.NumRenderTargets = 0;
+		shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		shadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		shadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		shadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
+	}
+
+	// Shadowmap skinned mesh Layout
+	auto skinnedShadow = CreatePSODesc(_skinnedInputLayout, L"skinnedShadowVS", L"shadowPS");
+	{
+		skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+		skinnedShadow.NumRenderTargets = 0;
+		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		skinnedShadow.RasterizerState = shadow.RasterizerState;;
+	}
+
+	// Particle Layout
+	auto particleUpdate = CreateCSPSODesc(L"particleCS");
+	auto particleRender = CreatePSODesc(L"particleVS", L"particlePS", L"", L"", L"particleGS");
+	{
+		particleRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+
+		D3D12_BLEND_DESC blendDesc = {};
+		blendDesc.AlphaToCoverageEnable = FALSE;
+		blendDesc.IndependentBlendEnable = FALSE;
+		auto& blendRt = blendDesc.RenderTarget[0];
+		blendRt.BlendEnable = TRUE;
+		blendRt.LogicOpEnable = FALSE;
+		blendRt.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendRt.DestBlend = D3D12_BLEND_ONE;
+		blendRt.BlendOp = D3D12_BLEND_OP_ADD;
+		blendRt.SrcBlendAlpha = D3D12_BLEND_ONE;
+		blendRt.DestBlendAlpha = D3D12_BLEND_ZERO;
+		blendRt.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		blendRt.LogicOp = D3D12_LOGIC_OP_NOOP;
+		blendRt.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+		D3D12_DEPTH_STENCIL_DESC depthDesc = {};
+		depthDesc.DepthEnable = TRUE;
+		depthDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		depthDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+		particleRender.BlendState = blendDesc;
+		particleRender.DepthStencilState = depthDesc;
+	}
+
+	// UI Layout
+	auto clientUI = CreatePSODesc(_solidInputLayout, L"uiVS", L"uiPS");
+	{
+		clientUI.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
+		clientUI.DepthStencilState.DepthEnable = FALSE;
+		clientUI.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+
+		clientUI.BlendState.RenderTarget[0].BlendEnable = TRUE;
+		clientUI.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		clientUI.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		clientUI.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		clientUI.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		clientUI.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+		clientUI.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		clientUI.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	}
+
+	BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
+	BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
+	BuildPSO(PSO_WIREFRAME, opaqueWireframe);
+	BuildPSO(PSO_SKYBOX, skybox);
+	BuildPSO(PSO_SHADOWMAP, shadow);
+	BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
+	BuildPSO(PSO_DEBUG_PHYSICS, debug);
+	BuildPSO(PSO_PARTICLE_UPDATE, particleUpdate);
+	BuildPSO(PSO_PARTICLE_RENDER, particleRender);
+	BuildPSO(PSO_UI, clientUI);
+
+	SetDefaultPSO();
 }
 
 void RenderManager::SetCommonState(ID3D12GraphicsCommandList* cmdList)
@@ -585,6 +633,10 @@ void RenderManager::SetCommonState(ID3D12GraphicsCommandList* cmdList)
 	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	instance.Offset(_currFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE uiInstances(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	uiInstances.Offset(UI->GetUIBufferSRVIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+	cmdList->SetGraphicsRootDescriptorTable(13, uiInstances);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());

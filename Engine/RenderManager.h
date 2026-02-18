@@ -12,6 +12,7 @@
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
 #define		PSO_PARTICLE_UPDATE		"particle_update"
 #define		PSO_PARTICLE_RENDER		"particle_render"
+#define		PSO_UI					"ui"
 
 #define		PSO_IDX_OPAQUE_SOLID		0
 #define		PSO_IDX_OPAQUE_SKINNED		1
@@ -23,6 +24,7 @@
 #define		PSO_IDX_DEBUG_SHADOW		7
 #define		PSO_IDX_PARTICLE_UPDATE		8
 #define		PSO_IDX_PARTICLE_RENDER		9
+#define		PSO_IDX_UI					10
 
 #pragma region Root_Parameters
 #define		ROOT_PARAMETER_COUNT		13
@@ -145,9 +147,11 @@ public:
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildPSO(string name, D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc);
+
 	void BuildRootSignature();
 	void BuildInputLayout();
 	void BuildSRVDescriptorHeap();
+	void BuildPSOs();
 
 	void SetCommonState(ID3D12GraphicsCommandList* cmdList);
 
@@ -166,6 +170,7 @@ private:
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skyInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _colliderDebugInputLayout;
+	vector<D3D12_INPUT_ELEMENT_DESC> _uiInputLayout;
 
 	bool _isPSOFixed = false;
 	// Refactoring on plan

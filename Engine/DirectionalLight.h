@@ -20,5 +20,8 @@ public:
 
 public:
 	Vector3 direction;
+
+private:
+	shared_ptr<Transform> _transform;
 };
 

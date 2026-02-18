@@ -26,13 +26,13 @@ bool Graphic::Init()
 	OnResize();
 
 	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
-
 	THREAD->Init();
 	RENDER->Init();
 	FILEIO->Init();
+	UI->Init();
+	//ENGINEGUI->Init();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
-	ENGINEGUI->Init();
 	PHYSICS->Init();
 	DEBUG->Init();
 

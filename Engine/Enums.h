@@ -15,3 +15,10 @@ enum class ComponentType
 	ParticleEmitter		 = 1 << 8,
 	CharacterController	 = 1 << 9
 };
+
+enum class UIType
+{
+	Panel = 0,
+	Button = 1 << 0,
+	Slider = 1 << 1
+};

@@ -181,6 +181,13 @@
     <ClInclude Include="EngineGUIManager.h">
       <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
     </ClInclude>
+    <ClInclude Include="UIElement.h">
+      <Filter>06. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIPanel.h">
+      <Filter>06. UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -210,8 +217,17 @@
     <Filter Include="03. Resources">
       <UniqueIdentifier>{38dbe0b3-50ad-4805-ae19-483510901584}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98. Utils">
-      <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Components\MeshRenderer">
+      <UniqueIdentifier>{a16cbda6-39ad-49f4-891c-365318c88ded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Components\Physics">
+      <UniqueIdentifier>{465baf47-2de3-44fb-961d-91a5fa577afb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. EngineComponents\01. Managers\01. Only Editor">
+      <UniqueIdentifier>{c503f597-1493-4bf1-b757-602179e87a0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. UI">
+      <UniqueIdentifier>{3b83a606-7088-4e24-a201-e64a251aff3e}</UniqueIdentifier>
     </Filter>
     <Filter Include="99. ExtLibraries">
       <UniqueIdentifier>{11dfefeb-d5b6-4043-93ac-cd663cc29962}</UniqueIdentifier>
@@ -222,17 +238,11 @@
     <Filter Include="99. ExtLibraries\tinyxml2">
       <UniqueIdentifier>{91de3027-70a4-498d-a84a-0c72b4580e38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Components\MeshRenderer">
-      <UniqueIdentifier>{a16cbda6-39ad-49f4-891c-365318c88ded}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Components\Physics">
-      <UniqueIdentifier>{465baf47-2de3-44fb-961d-91a5fa577afb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. ExtLibraries\stb">
       <UniqueIdentifier>{3174e8b7-93dc-47b2-9db7-2aa7c0b743e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. EngineComponents\01. Managers\01. Only Editor">
-      <UniqueIdentifier>{c503f597-1493-4bf1-b757-602179e87a0d}</UniqueIdentifier>
+    <Filter Include="98. Utils">
+      <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -388,6 +398,13 @@
     </ClCompile>
     <ClCompile Include="EngineGUIManager.cpp">
       <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="UIElement.cpp">
+      <Filter>06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIPanel.cpp">
+      <Filter>06. UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,9 @@
 #include "Structs.hlsl"
 
+/******************************/
+/* Refactoring Required!!!!!! */
+/******************************/
+
 /************/
 /* Samplers */
 /************/
@@ -39,6 +43,7 @@ cbuffer cbCamera : register(b2) {
     float4x4 ProjInv;
     float4x4 ViewProj;
     float4x4 ViewProjInv;
+    float4x4 Ortho;
     float2 RenderTargetSize;
     float2 InvRenderTargetSize;
 };
@@ -61,6 +66,9 @@ cbuffer cbParticleEmitterInfo : register(b0, space2) {
     float2  ParticleSize;
     uint    TextureIdx;
 };
+
+// UI
+StructuredBuffer<UIInstance> UIInstances     : register(t0, space3);
 
 /*************/
 /* Functions */

@@ -1,0 +1,8 @@
+#include "Common.hlsl"
+
+struct UIVertexOut {
+    float4 Pos : SV_POSITION;
+    float2 UV : TEXCOORD;
+    float4 Color : COLOR;
+    uint TextureIdx : TEXINDEX;
+};

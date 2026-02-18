@@ -43,4 +43,7 @@ void Camera::Update()
 		XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, 1.0f, 1000.0f);
 		XMStoreFloat4x4(&_matProj, P);
 	}
+
+	XMMATRIX O = XMMatrixOrthographicLH(1920, 1080, 0.0f, 1.0f);
+	XMStoreFloat4x4(&_matOrtho, O);
 }

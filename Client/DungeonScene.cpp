@@ -103,6 +103,7 @@ void DungeonScene::Init()
 	}
 
 	INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
+	UI->CreateTestUI();
 }
 
 void DungeonScene::Update()

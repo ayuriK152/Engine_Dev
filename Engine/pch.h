@@ -157,6 +157,9 @@ using namespace JPH::literals;
 #include "FrameResource.h"
 #include "ShadowMap.h"
 
+#include "UIElement.h"
+#include "UIPanel.h"
+
 /*******/
 /* ETC */
 /*******/
@@ -177,6 +180,7 @@ using namespace JPH::literals;
 #include "SkeletonManager.h"
 #include "ThreadManager.h"
 #include "AnimationManager.h"
+#include "UIManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

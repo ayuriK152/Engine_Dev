@@ -9,6 +9,7 @@ public:
 	~UIManager();
 
 	void Init();
+	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 
 public:

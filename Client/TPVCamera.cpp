@@ -35,6 +35,13 @@ void TPVCamera::Init()
 		DEBUG->WarnLog("[TPVCamera] - Pivot movement sharpness value should be between 1.0 to 10.0! Value has been clamped automatically.");
 		pivotMovementSharpness = clamp(pivotMovementSharpness, 1.0f, 10.0f);
 	}
+
+	_lockOnMarker = make_shared<UIPanel>();
+	_lockOnMarker->SetTexture(L"LockOnMarker");
+	_lockOnMarker->SetSize(Vector2(30.0f, 30.0f));
+	_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 0.0f));
+
+	UI->AddUI(_lockOnMarker);
 }
 
 void TPVCamera::Update()
@@ -55,6 +62,8 @@ void TPVCamera::Update()
 		float deltaX = INPUTM->GetMouseDelta().x * sensitivity * TIME->DeltaTime();
 		float deltaY = INPUTM->GetMouseDelta().y * sensitivity * TIME->DeltaTime();
 
+		_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 0.0f));
+
 		if (abs(deltaX) > 0.0f)
 			_transform->Rotate(Vector3(0.0f, deltaX, 0.0f));
 		if (abs(deltaY) > 0.0f) {
@@ -68,6 +77,9 @@ void TPVCamera::Update()
 	else if (lockOnTargetTransform != nullptr) {
 		Vector3 targetPosition = lockOnTargetTransform->GetPosition();
 		_transform->LookAtOnlyYaw(targetPosition, pow(rotationSharpness, 2.0f));	// yÃà È¸Àü
+
+		_lockOnMarker->SetLocalPosition(targetPosition);
+		_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
 
 		Vector3 relTargetPos = targetPosition - _pivotPosition;
 		float horizontalDist = Vector2(relTargetPos.x, relTargetPos.z).Length();

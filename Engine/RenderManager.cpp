@@ -164,6 +164,7 @@ void RenderManager::Render()
 
 	_mainCmdList->SetPipelineState(_PSOs[PSO_UI].Get());
 	_mainCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	UI->Update();
 	UI->Render(_mainCmdList);
 
 	ENGINEGUI->Render(_mainCmdList);

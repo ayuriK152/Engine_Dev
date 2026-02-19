@@ -48,8 +48,8 @@ void DirectionalLight::Update()
 		// projMat 갱신 부분 추가해야함
 		auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
 		XMMATRIX matProj = XMMatrixOrthographicLH(
-			80.0f,
-			80.0f,
+			50.0f,
+			50.0f,
 			-50.0f,
 			50.0f
 		);

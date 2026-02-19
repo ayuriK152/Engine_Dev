@@ -27,7 +27,7 @@
 #define		PSO_IDX_UI					10
 
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT		13
+#define		ROOT_PARAMETER_COUNT		14
 
 #define		ROOT_PARAM_INSTCANCE_SB		0
 #define		ROOT_PARAM_MATERIAL_SB		1
@@ -45,6 +45,8 @@
 
 #define		ROOT_PARAM_PARTICLES_RW		11
 #define		ROOT_PARAM_EMITTER_CB		12
+
+#define		ROOT_PARAM_UI_SB			13
 #pragma endregion
 
 #pragma region Register_Numbers
@@ -170,7 +172,6 @@ private:
 	vector<D3D12_INPUT_ELEMENT_DESC> _skinnedInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _skyInputLayout;
 	vector<D3D12_INPUT_ELEMENT_DESC> _colliderDebugInputLayout;
-	vector<D3D12_INPUT_ELEMENT_DESC> _uiInputLayout;
 
 	bool _isPSOFixed = false;
 	// Refactoring on plan

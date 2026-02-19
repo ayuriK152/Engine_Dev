@@ -26,7 +26,7 @@ void RenderManager::Init()
 
 	BuildPSOs();
 	
-	_shadowMap = make_unique<ShadowMap>(8192, 8192);
+	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
 
 	for (auto& o : _objects)
@@ -423,7 +423,7 @@ void RenderManager::BuildRootSignature()
 	uiTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 3);
 
 	// Slot Root Parameter
-	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT + 1];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT];
 
 	slotRootParameter[ROOT_PARAM_INSTCANCE_SB].InitAsDescriptorTable(1, &instanceTable);
 	slotRootParameter[ROOT_PARAM_MATERIAL_SB].InitAsDescriptorTable(1, &matTable);
@@ -442,11 +442,11 @@ void RenderManager::BuildRootSignature()
 	slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 2);
 	slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterSetting) / 4, REGISTER_NUM_EMITTER_CB, 2);
 
-	slotRootParameter[13].InitAsDescriptorTable(1, &uiTable);
+	slotRootParameter[ROOT_PARAM_UI_SB].InitAsDescriptorTable(1, &uiTable);
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT + 1, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
@@ -491,12 +491,6 @@ void RenderManager::BuildInputLayout()
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-
-	_uiInputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
 

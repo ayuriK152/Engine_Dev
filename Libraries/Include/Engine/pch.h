@@ -157,8 +157,11 @@ using namespace JPH::literals;
 #include "FrameResource.h"
 #include "ShadowMap.h"
 
+
+// UI
 #include "UIElement.h"
 #include "UIPanel.h"
+#include "UISlider.h"
 
 /*******/
 /* ETC */

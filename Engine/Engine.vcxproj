@@ -81,6 +81,7 @@
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
+    <ClInclude Include="UISlider.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="DataStructures.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIPanel.cpp" />
+    <ClCompile Include="UISlider.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>

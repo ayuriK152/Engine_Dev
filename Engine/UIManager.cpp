@@ -27,7 +27,7 @@ void UIManager::Update()
 		Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
 
 		UIInstanceConstants constants;
-		constants.CenterPos = { ((ndc.x) * 0.5f * 1920.0f) + width, ((-ndc.y) * 0.5f * 1080.0f) + height};
+		constants.CenterPos = { ((ndc.x) * 0.5f * 1920.0f) + width, ((-ndc.y) * 0.5f * 1080.0f) + height };	// 해상도 원하는대로 설정하도록
 		constants.Color = ui->_color;
 		constants.Depth = 0.5f;
 		constants.TextureIndex = ui->_textureSrvHeapIndex;
@@ -78,6 +78,16 @@ void UIManager::AddUI(const shared_ptr<UIElement>& ui)
 {
 	++_uiCount;
 	_uiArray.push_back(ui);
+}
+
+void UIManager::DeleteUI(const shared_ptr<UIElement>& ui)
+{
+	for (int i = 0; i < _uiCount; ++i) {
+		if (_uiArray[i] == ui) {
+			--_uiCount;
+			_uiArray.erase(_uiArray.begin() + i);
+		}
+	}
 }
 
 void UIManager::CreateTestUI()

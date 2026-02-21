@@ -17,6 +17,7 @@ public:
 
 	void CreateBuffer();
 	void AddUI(const shared_ptr<UIElement>& ui);
+	void DeleteUI(const shared_ptr<UIElement>& ui);
 
 	void CreateTestUI();
 

@@ -44,6 +44,8 @@ void PlayerScript::Update()
 	if (INPUTM->IsKeyDown(KeyValue::Q))
 		LockOn();
 
+	RecoveryStemina();
+
 	Roll();
 	Attack();
 
@@ -113,7 +115,8 @@ void PlayerScript::Move()
 
 	_movingDirection = (look * moveZ + right * moveX).Normalize();
 
-	if (INPUTM->IsKeyPress(KeyValue::SHIFT))
+	if ((INPUTM->IsKeyDown(KeyValue::SHIFT) || _playerMovementState == PlayerMovementState::RUN) && 
+		stemina > 0.0f)
 		SetState(PlayerMovementState::RUN);
 	else {
 		if (_lockOnTarget) {
@@ -188,6 +191,36 @@ void PlayerScript::LockOn()
 	}
 }
 
+void PlayerScript::RecoveryStemina()
+{
+	if (!_isRecoveryPossible)
+		_recoverySteminaDelayedTime -= TIME->DeltaTime();
+	else if (stemina < 100.0f) {
+		stemina += 10.0f * TIME->DeltaTime();
+		if (stemina > 100.0f) stemina = 100.0f;
+	}
+
+	if (_recoverySteminaDelayedTime < 0.0f) {
+		_recoverySteminaDelayedTime = 0.0f;
+		_isRecoveryPossible = true;
+	}
+}
+
+void PlayerScript::DecreaseStemina(float value, bool instantChange)
+{
+	if (instantChange) {
+		stemina -= value;
+	}
+	else {
+		stemina -= value * TIME->DeltaTime();
+	}
+
+	if (stemina < 0.0f) stemina = 0.0f;
+
+	_recoverySteminaDelayedTime = 2.0f;
+	_isRecoveryPossible = false;
+}
+
 void PlayerScript::IdleState::StateStart(PlayerScript* owner)
 {
 	owner->_animator->SetCurrentAnimation("idle_sword_4");
@@ -221,6 +254,7 @@ void PlayerScript::RunState::StateUpdate(PlayerScript* owner)
 {
 	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() - owner->_movingDirection);
 	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 3.0f);
+	owner->DecreaseStemina(10.0f, false);
 }
 
 void PlayerScript::SlashState::StateStart(PlayerScript* owner)

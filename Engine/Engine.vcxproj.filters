@@ -184,8 +184,13 @@
     <ClInclude Include="UIElement.h">
       <Filter>06. UI</Filter>
     </ClInclude>
-    <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h">
+      <Filter>06. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="UISlider.h">
       <Filter>06. UI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -402,8 +407,13 @@
     <ClCompile Include="UIElement.cpp">
       <Filter>06. UI</Filter>
     </ClCompile>
-    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIPanel.cpp">
+      <Filter>06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="UISlider.cpp">
       <Filter>06. UI</Filter>
     </ClCompile>
   </ItemGroup>

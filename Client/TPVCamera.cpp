@@ -37,8 +37,9 @@ void TPVCamera::Init()
 	}
 
 	_lockOnMarker = UI->CreateUI<UIPanel>();
+	_lockOnMarker->SetDynamicPosition(true);
 	_lockOnMarker->SetTexture(L"LockOnMarker");
-	_lockOnMarker->SetSize(Vector2(30.0f, 30.0f));
+	_lockOnMarker->SetSize(Vector2(60.0f, 60.0f));
 	_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 0.0f));
 
 }

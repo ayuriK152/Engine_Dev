@@ -4,6 +4,7 @@
 UIPanel::UIPanel() : UIElement(UIType::Panel)
 {
 	_name = "UIPanel";
+	SetTexture(L"Tex_Default");
 }
 
 UIPanel::~UIPanel()

@@ -17,19 +17,30 @@ void UIManager::Init()
 // dirty flag를 넣던가 해서 최적화 작업 필요
 void UIManager::Update()
 {
+	for (auto& ui : _elements) {
+		ui->Update();
+	}
+
 	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewMatrix()) * XMLoadFloat4x4(&Camera::GetProjMatrix());
 
 	_uiConstants.clear();
 	for (auto& ui : _panels) {
-		float width = ui->_size.x * (0.5f - ui->_pivot.x);
-		float height = ui->_size.y * (0.5f - ui->_pivot.y);
-		Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&ui->_localPosition), viewProj));
-		Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
-
 		UIInstanceConstants constants;
-		constants.CenterPos = { ((ndc.x) * 0.5f * 1920.0f) + width, ((-ndc.y) * 0.5f * 1080.0f) + height };	// 해상도 원하는대로 설정하도록
+		float width = ui->_size.x * (0.5f - ui->_pivot.x);
+		float height = ui->_size.y * (ui->_pivot.y - 0.5f);
+		if (ui->_isDynamicPosition) {
+			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&ui->_localPosition), viewProj));
+			Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
+
+			constants.CenterPos = { ((ndc.x) * 0.5f * 1920.0f) + width, ((-ndc.y) * 0.5f * 1080.0f) + height };	// 해상도 원하는대로 설정하도록
+		}
+
+		else {
+			constants.CenterPos = { ui->_localPosition.x + width, ui->_localPosition.y + height };
+		}
+
 		constants.Color = ui->_color;
-		constants.Depth = 0.5f;
+		constants.Depth = ui->_depth;
 		constants.TextureIndex = ui->_textureSrvHeapIndex;
 		constants.Size = ui->_size;
 
@@ -41,7 +52,7 @@ void UIManager::Update()
 
 void UIManager::Render(ID3D12GraphicsCommandList* cmdList)
 {
-	if (_uiCount <= 0) return;
+	if (_panelCount <= 0) return;
 
 	cmdList->IASetVertexBuffers(0, 1, &_quadMesh->vertexBufferView);
 	cmdList->IASetIndexBuffer(&_quadMesh->indexBufferView);
@@ -76,18 +87,19 @@ void UIManager::CreateBuffer()
 
 void UIManager::AddUI(const shared_ptr<UIElement>& ui)
 {
-	++_uiCount;
+	++_elementCount;
 	_elements.push_back(ui);
 	if (ui->_type == UIType::Panel) {
+		++_panelCount;
 		_panels.push_back(static_pointer_cast<UIPanel>(ui));
 	}
 }
 
 void UIManager::DeleteUI(const shared_ptr<UIElement>& ui)
 {
-	for (int i = 0; i < _uiCount; ++i) {
+	for (int i = 0; i < _elementCount; ++i) {
 		if (_elements[i] == ui) {
-			--_uiCount;
+			--_elementCount;
 			_elements.erase(_elements.begin() + i);
 		}
 	}

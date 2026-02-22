@@ -110,6 +110,9 @@ private:
 	shared_ptr<Transform> _transform;
 	shared_ptr<Animator> _animator;
 	shared_ptr<CharacterController> _controller;
+	shared_ptr<UISlider> _hpBar;
+	shared_ptr<UISlider> _steminaBar;
+
 	float _speed = 1.55f;
 
 	PlayerMovementState _playerMovementState = PlayerMovementState::IDLE;
@@ -124,4 +127,5 @@ private:
 
 	float _recoverySteminaDelayedTime = 0.0f;
 	bool _isRecoveryPossible = true;
+
 };

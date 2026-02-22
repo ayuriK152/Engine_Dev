@@ -21,11 +21,15 @@ public:
 	void AddUI(const shared_ptr<UIElement>& ui);
 	void DeleteUI(const shared_ptr<UIElement>& ui);
 
+	Vector2 GetUIResolution() { return _uiResolution; }
+
 private:
 	void CreateBuffer();
 
 private:
-	int _uiCount = 0;
+	Vector2 _uiResolution = { 1920.0f, 1080.0f };
+	int _elementCount = 0;
+	int _panelCount = 0;
 
 	shared_ptr<Mesh> _quadMesh;
 
@@ -46,6 +50,7 @@ shared_ptr<T> UIManager::CreateUI(string name)
 	}
 
 	shared_ptr<T> element = make_shared<T>();
+	element->Init();
 	AddUI(element);
 
 	return element;

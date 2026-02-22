@@ -20,7 +20,7 @@ void UIManager::Update()
 	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewMatrix()) * XMLoadFloat4x4(&Camera::GetProjMatrix());
 
 	_uiConstants.clear();
-	for (auto& ui : _uiArray) {
+	for (auto& ui : _panels) {
 		float width = ui->_size.x * (0.5f - ui->_pivot.x);
 		float height = ui->_size.y * (0.5f - ui->_pivot.y);
 		Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&ui->_localPosition), viewProj));
@@ -36,7 +36,7 @@ void UIManager::Update()
 		_uiConstants.push_back(constants);
 	}
 
-	_uploadBuffer->CopyData(_uiConstants.data(), _uiArray.size());
+	_uploadBuffer->CopyData(_uiConstants.data(), _elements.size());
 }
 
 void UIManager::Render(ID3D12GraphicsCommandList* cmdList)
@@ -47,7 +47,7 @@ void UIManager::Render(ID3D12GraphicsCommandList* cmdList)
 	cmdList->IASetIndexBuffer(&_quadMesh->indexBufferView);
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	cmdList->DrawIndexedInstanced(_quadMesh->GetIndexCount(), _uiCount, 0, 0, 0);
+	cmdList->DrawIndexedInstanced(_quadMesh->GetIndexCount(), _panels.size(), 0, 0, 0);
 }
 
 void UIManager::CreateBuffer()
@@ -77,29 +77,26 @@ void UIManager::CreateBuffer()
 void UIManager::AddUI(const shared_ptr<UIElement>& ui)
 {
 	++_uiCount;
-	_uiArray.push_back(ui);
+	_elements.push_back(ui);
+	if (ui->_type == UIType::Panel) {
+		_panels.push_back(static_pointer_cast<UIPanel>(ui));
+	}
 }
 
 void UIManager::DeleteUI(const shared_ptr<UIElement>& ui)
 {
 	for (int i = 0; i < _uiCount; ++i) {
-		if (_uiArray[i] == ui) {
+		if (_elements[i] == ui) {
 			--_uiCount;
-			_uiArray.erase(_uiArray.begin() + i);
+			_elements.erase(_elements.begin() + i);
 		}
 	}
-}
 
-void UIManager::CreateTestUI()
-{
-	++_uiCount;
-	UIInstanceConstants uiConstant;
-	uiConstant.CenterPos = { 0.0f, 0.0f };
-	uiConstant.Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	uiConstant.Depth = 0.0f;
-	uiConstant.Size = { 30.0f, 30.0f };
-	uiConstant.TextureIndex = RESOURCE->Get<Texture>(L"LockOnMarker")->GetSRVHeapIndex();
-	_uiConstants.push_back(uiConstant);
-
-	_uploadBuffer->CopyData(_uiConstants.data(), 1);
+	if (ui->_type == UIType::Panel) {
+		for (int i = 0; i < _panels.size(); ++i) {
+			if (_panels[i] == ui) {
+				_panels.erase(_panels.begin() + i);
+			}
+		}
+	}
 }

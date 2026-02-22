@@ -36,12 +36,11 @@ void TPVCamera::Init()
 		pivotMovementSharpness = clamp(pivotMovementSharpness, 1.0f, 10.0f);
 	}
 
-	_lockOnMarker = make_shared<UIPanel>();
+	_lockOnMarker = UI->CreateUI<UIPanel>();
 	_lockOnMarker->SetTexture(L"LockOnMarker");
 	_lockOnMarker->SetSize(Vector2(30.0f, 30.0f));
 	_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 0.0f));
 
-	UI->AddUI(_lockOnMarker);
 }
 
 void TPVCamera::Update()

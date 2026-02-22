@@ -31,6 +31,6 @@ private:
 	Vector3 _targetPivotPosition;
 	float _pitch = 0.0f;
 
-	shared_ptr<UIPanel> _lockOnMarker;
+	shared_ptr<UIPanel> _lockOnMarker = nullptr;
 };
 

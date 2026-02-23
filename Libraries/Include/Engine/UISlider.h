@@ -14,8 +14,6 @@ public:
 	shared_ptr<UIPanel> background;
 	shared_ptr<UIPanel> fill;
 
-	void SetLocalPosition(const Vector3 position);
-
 	void SetValue(float value) {
 		_value = value;
 		_isDirty = true;

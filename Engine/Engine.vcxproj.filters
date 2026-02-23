@@ -193,6 +193,9 @@
     <ClInclude Include="UISlider.h">
       <Filter>06. UI</Filter>
     </ClInclude>
+    <ClInclude Include="UITransform.h">
+      <Filter>06. UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -414,6 +417,9 @@
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
     <ClCompile Include="UISlider.cpp">
+      <Filter>06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UITransform.cpp">
       <Filter>06. UI</Filter>
     </ClCompile>
   </ItemGroup>

@@ -29,15 +29,15 @@ void PlayerScript::Init()
 	_gameObject->AddComponent(_controller);
 
 	_hpBar = UI->CreateUI<UISlider>();
-	_hpBar->SetLocalPosition({ -800.0f, 450.0f, 0.0f });
+	_hpBar->GetTransform()->SetPosition({ -800.0f, 450.0f, 0.0f });
 	_hpBar->SetFillColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 	_hpBar->SetValue(10.0f);
 
 	_steminaBar = UI->CreateUI<UISlider>();
-	_steminaBar->SetLocalPosition({ -800.0f, 420.0f, 0.0f });
+	_steminaBar->GetTransform()->SetPosition({ -800.0f, 420.0f, 0.0f });
 	_steminaBar->SetFillColor({ 0.0f, 1.0f, 0.0f, 1.0f });
-	_steminaBar->SetValueMaxLimit(60.0f);
-	_steminaBar->SetValue(60.0f);
+	_steminaBar->SetValueMaxLimit(steminaMax);
+	_steminaBar->SetValue(stemina);
 
 	_states.push_back(new IdleState());
 	_states.push_back(new WalkState());
@@ -207,9 +207,9 @@ void PlayerScript::RecoveryStemina()
 	_steminaBar->SetValue(stemina);
 	if (!_isRecoveryPossible)
 		_recoverySteminaDelayedTime -= TIME->DeltaTime();
-	else if (stemina < 60.0f) {
+	else if (stemina < steminaMax) {
 		stemina += 10.0f * TIME->DeltaTime();
-		if (stemina > 60.0f) stemina = 60.0f;
+		if (stemina > steminaMax) stemina = steminaMax;
 	}
 
 	if (_recoverySteminaDelayedTime < 0.0f) {

@@ -50,6 +50,7 @@ shared_ptr<T> UIManager::CreateUI(string name)
 	}
 
 	shared_ptr<T> element = make_shared<T>();
+	element->_transform = make_shared<UITransform>(element);
 	element->Init();
 	AddUI(element);
 

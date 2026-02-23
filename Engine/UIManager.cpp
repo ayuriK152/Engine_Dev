@@ -26,21 +26,24 @@ void UIManager::Update()
 	_uiConstants.clear();
 	for (auto& ui : _panels) {
 		UIInstanceConstants constants;
-		float width = ui->_size.x * (0.5f - ui->_pivot.x);
-		float height = ui->_size.y * (ui->_pivot.y - 0.5f);
-		if (ui->_isDynamicPosition) {
-			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&ui->_localPosition), viewProj));
+		shared_ptr<UITransform> transform = ui->GetTransform();
+		Vector3 position = transform->GetPosition();
+		Vector2 pivot = transform->GetPivot();
+		float width = ui->_size.x * (0.5f - pivot.x);
+		float height = ui->_size.y * (pivot.y - 0.5f);
+		if (transform->IsDynamicPosition()) {
+			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&position), viewProj));
 			Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
 
 			constants.CenterPos = { ((ndc.x) * 0.5f * 1920.0f) + width, ((-ndc.y) * 0.5f * 1080.0f) + height };	// 해상도 원하는대로 설정하도록
 		}
 
 		else {
-			constants.CenterPos = { ui->_localPosition.x + width, ui->_localPosition.y + height };
+			constants.CenterPos = { position.x + width, position.y + height };
 		}
 
 		constants.Color = ui->_color;
-		constants.Depth = ui->_depth;
+		constants.Depth = transform->GetDepth();
 		constants.TextureIndex = ui->_textureSrvHeapIndex;
 		constants.Size = ui->_size;
 

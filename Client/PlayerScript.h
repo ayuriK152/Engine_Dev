@@ -103,6 +103,7 @@ public:
 	shared_ptr<TPVCamera> tpvCameraScript;
 
 	float health = 100.0f;
+	float steminaMax = 60.0f;
 	float stemina = 60.0f;
 
 private:

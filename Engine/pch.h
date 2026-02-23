@@ -159,6 +159,7 @@ using namespace JPH::literals;
 
 
 // UI
+#include "UITransform.h"
 #include "UIElement.h"
 #include "UIPanel.h"
 #include "UISlider.h"

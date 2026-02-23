@@ -5,7 +5,6 @@ UISlider::UISlider() : UIElement(UIType::Slider)
 {
 	_name = "UISlider";
 
-	SetPivot({ 0.0f, 1.0f });
 	_size = { 200.0f, 20.0f };
 
 	background = UI->CreateUI<UIPanel>();
@@ -19,14 +18,16 @@ UISlider::~UISlider()
 
 void UISlider::Init()
 {
-	background->SetParent(shared_from_this());
+	_transform->SetPivot({ 0.0f, 1.0f });
+
+	background->GetTransform()->SetParent(_transform);
 	background->SetColor({ 0.7f, 0.7f, 0.7f, 1.0f });
 	background->SetSize(_size);
-	background->SetDepth(_depth + 1.0f);
+	background->GetTransform()->SetDepth(_transform->GetDepth() + 1.0f);
 
-	fill->SetParent(shared_from_this());
-	fill->SetPivot({ 0.0f, 0.5f });
-	fill->SetLocalPosition({ -100.0f, 0.0f, 0.0f });
+	fill->GetTransform()->SetParent(_transform);
+	fill->GetTransform()->SetPivot({ 0.0f, 0.5f });
+	fill->GetTransform()->SetLocalPosition({ -100.0f, 0.0f, 0.0f });
 	fill->SetSize(_size);
 }
 
@@ -41,11 +42,4 @@ void UISlider::Update()
 
 		_isDirty = false;
 	}
-}
-
-void UISlider::SetLocalPosition(const Vector3 position)
-{
-	_localPosition = position;
-	background->SetLocalPosition(position);
-	fill->SetLocalPosition({ position.x - 100.0f, position.y, position.z });
 }

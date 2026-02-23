@@ -37,7 +37,7 @@ void TPVCamera::Init()
 	}
 
 	_lockOnMarker = UI->CreateUI<UIPanel>();
-	_lockOnMarker->SetDynamicPosition(true);
+	_lockOnMarker->GetTransform()->SetDynamicPosition(true);
 	_lockOnMarker->SetTexture(L"LockOnMarker");
 	_lockOnMarker->SetSize(Vector2(60.0f, 60.0f));
 	_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 0.0f));
@@ -78,7 +78,7 @@ void TPVCamera::Update()
 		Vector3 targetPosition = lockOnTargetTransform->GetPosition();
 		_transform->LookAtOnlyYaw(targetPosition, pow(rotationSharpness, 2.0f));	// yÃà È¸Àü
 
-		_lockOnMarker->SetLocalPosition(targetPosition);
+		_lockOnMarker->GetTransform()->SetPosition(targetPosition);
 		_lockOnMarker->SetColor(ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
 
 		Vector3 relTargetPos = targetPosition - _pivotPosition;

@@ -168,6 +168,11 @@ private:
 
 	ID3D12CommandAllocator* _mainCmdListAlloc;
 	ID3D12GraphicsCommandList* _mainCmdList;
+	ID3D12CommandAllocator* _subCmdListAlloc;
+	ID3D12GraphicsCommandList* _subCmdList;
+
+	//ID3D12CommandAllocator* _cmdListAllocs[3];
+	//ID3D12GraphicsCommandList* _cmdLists[3];
 
 	ComPtr<ID3D12RootSignature> _rootSignatureDefault;
 	ComPtr<ID3D12RootSignature> _rootSignatureParticle;
@@ -205,6 +210,6 @@ private:
 
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
 
-	array<future<void>, 4> _futures;
+	array<future<void>, 2> _futures;
 };
 

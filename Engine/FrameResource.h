@@ -34,7 +34,7 @@ private:
 	void BuildLightBufferSRV();
 
 public:
-	ID3D12CommandAllocator* cmdListAlloc;
+	ID3D12CommandAllocator* cmdListAlloc[2];
 
 	unique_ptr<UploadBuffer<InstanceConstants>> instanceSB = nullptr;
 	unique_ptr<UploadBuffer<MaterialConstants>> materialSB = nullptr;

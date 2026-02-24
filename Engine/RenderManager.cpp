@@ -16,6 +16,19 @@ void RenderManager::Init()
 
 	ThrowIfFailed(_mainCmdList->Close());
 
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(&_subCmdListAlloc)));
+
+	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		_subCmdListAlloc,
+		nullptr,
+		IID_PPV_ARGS(&_subCmdList)));
+
+	ThrowIfFailed(_subCmdList->Close());
+
 	BuildFrameResources();
 	BuildRootSignature();
 	BuildInputLayout();
@@ -60,67 +73,64 @@ void RenderManager::Update()
 
 void RenderManager::Render()
 {
-	auto cmdListAlloc = _currFrameResource->cmdListAlloc;
-
-	ThrowIfFailed(cmdListAlloc->Reset());
-	ThrowIfFailed(_mainCmdList->Reset(cmdListAlloc, RENDER->GetCurrPSO().Get()));
+	ThrowIfFailed(_currFrameResource->cmdListAlloc[0]->Reset());
+	ThrowIfFailed(_mainCmdList->Reset(_currFrameResource->cmdListAlloc[0], nullptr));
+	ThrowIfFailed(_currFrameResource->cmdListAlloc[1]->Reset());
+	ThrowIfFailed(_subCmdList->Reset(_currFrameResource->cmdListAlloc[1], nullptr));
 
 	// Default Object Render
-	SetStateDefault(_mainCmdList);
+	_futures[0] = THREAD->EnqueueJob([this] {
+		SetStateDefault(_mainCmdList);
 
-	// ShadowMap Pass
-	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
-		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+		// ShadowMap Pass
+		_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
-	_mainCmdList->RSSetViewports(1, &_shadowMap->GetViewport());
-	_mainCmdList->RSSetScissorRects(1, &_shadowMap->GetScissorRect());
+		_mainCmdList->RSSetViewports(1, &_shadowMap->GetViewport());
+		_mainCmdList->RSSetScissorRects(1, &_shadowMap->GetScissorRect());
 
-	_mainCmdList->ClearDepthStencilView(_shadowMap->GetDsv(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	_mainCmdList->OMSetRenderTargets(0, nullptr, false, &_shadowMap->GetDsv());
+		_mainCmdList->ClearDepthStencilView(_shadowMap->GetDsv(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		_mainCmdList->OMSetRenderTargets(0, nullptr, false, &_shadowMap->GetDsv());
 
-	// Shadow Map Solid
-	_mainCmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
+		// Shadow Map Solid
+		_mainCmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP].Get());
 
-	for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
-		o->Render(_mainCmdList);
-	}
-
-	// Shadow Map Skinned
-	_mainCmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
-
-	for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
-		o->Render(_mainCmdList);
-	}
-
-	RefreshMeshRenderCheckMap();
-
-	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
-		D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
-
-	// Main Pass
-	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-	_mainCmdList->RSSetViewports(1, &GRAPHIC->GetViewport());
-	_mainCmdList->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
-
-	_mainCmdList->ClearRenderTargetView(GRAPHIC->GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	_mainCmdList->ClearDepthStencilView(GRAPHIC->GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-	_mainCmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
-
-	// Skybox
-	if (_objectsSortedPSO[PSO_IDX_SKYBOX].size() > 0) {
-		_mainCmdList->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
-		for (auto& o : _objectsSortedPSO[PSO_IDX_SKYBOX]) {
+		for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
 			o->Render(_mainCmdList);
 		}
-	}
 
-	// Check PSO Fixed
-	// 이부분 굳이 필요한가 싶음
-	// 디버그용 파이프라인 변경에 대한 별도의 기능을 따로 구현하는 편이 좋을듯
-	if (!_isPSOFixed) {
+		// Shadow Map Skinned
+		_mainCmdList->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
+
+		for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
+			o->Render(_mainCmdList);
+		}
+
+		RefreshMeshRenderCheckMap();
+
+		_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
+			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
+
+		// Main Pass
+		_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
+			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		_mainCmdList->RSSetViewports(1, &GRAPHIC->GetViewport());
+		_mainCmdList->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
+
+		_mainCmdList->ClearRenderTargetView(GRAPHIC->GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+		_mainCmdList->ClearDepthStencilView(GRAPHIC->GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+		_mainCmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
+
+		// Skybox
+		if (_objectsSortedPSO[PSO_IDX_SKYBOX].size() > 0) {
+			_mainCmdList->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
+			for (auto& o : _objectsSortedPSO[PSO_IDX_SKYBOX]) {
+				o->Render(_mainCmdList);
+			}
+		}
+
 		// Opaque Solid
 		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SOLID].size() > 0) {
 			_mainCmdList->SetPipelineState(_PSOs[PSO_OPAQUE_SOLID].Get());
@@ -136,51 +146,53 @@ void RenderManager::Render()
 				o->Render(_mainCmdList);
 			}
 		}
-	}
-	else {
-		_mainCmdList->SetPipelineState(_currPSO.Get());
-		for (int i = 0; i < PSO_COUNT; i++) {
-			if (i != PSO_IDX_SKYBOX) {
-				for (auto& o : _objectsSortedPSO[i])
-					o->Render(_mainCmdList);
-			}
+
+		RefreshMeshRenderCheckMap();
+
+		if (_isPhysicsDebugRenderEnabled)
+		{
+			_mainCmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
+			DEBUG->Render(_mainCmdList);
 		}
-	}
 
-	RefreshMeshRenderCheckMap();
-
-	if (_isPhysicsDebugRenderEnabled)
-	{
-		_mainCmdList->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
-		DEBUG->Render(_mainCmdList);
-	}
+		ThrowIfFailed(_mainCmdList->Close());
+	});
 
 	// Particle System Update / Render
-	SetStateParticle(_mainCmdList);
+	{
+		SetStateParticle(_subCmdList);
 
-	PARTICLE->Update(_mainCmdList);
+		PARTICLE->Update(_subCmdList);
 
-	_mainCmdList->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
-	_mainCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		_subCmdList->RSSetViewports(1, &GRAPHIC->GetViewport());
+		_subCmdList->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
 
-	PARTICLE->Render(_mainCmdList);
+		_subCmdList->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
 
-	// UI
-	SetStateUI(_mainCmdList);
+		_subCmdList->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
+		_subCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	_mainCmdList->SetPipelineState(_PSOs[PSO_UI].Get());
-	_mainCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	UI->Update();
-	UI->Render(_mainCmdList);
+		PARTICLE->Render(_subCmdList);
 
-	ENGINEGUI->Render(_mainCmdList);
+		// UI
+		SetStateUI(_subCmdList);
 
-	_mainCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+		_subCmdList->SetPipelineState(_PSOs[PSO_UI].Get());
+		_subCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		UI->Update();
+		UI->Render(_subCmdList);
 
-	ThrowIfFailed(_mainCmdList->Close());
+		ENGINEGUI->Render(_subCmdList);
 
-	ID3D12CommandList* cmdsLists[] = { _mainCmdList };
+		_subCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+		ThrowIfFailed(_subCmdList->Close());
+	}
+
+	_futures[0].get();
+
+	ID3D12CommandList* cmdsLists[] = { _mainCmdList, _subCmdList };
 
 	auto commaneQueue = GRAPHIC->GetCommandQueue();
 	commaneQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);

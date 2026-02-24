@@ -29,13 +29,14 @@ void UIManager::Update()
 		shared_ptr<UITransform> transform = ui->GetTransform();
 		Vector3 position = transform->GetPosition();
 		Vector2 pivot = transform->GetPivot();
+
 		float width = ui->_size.x * (0.5f - pivot.x);
 		float height = ui->_size.y * (pivot.y - 0.5f);
 		if (transform->IsDynamicPosition()) {
 			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&position), viewProj));
 			Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
 
-			constants.CenterPos = { ((ndc.x) * 0.5f * 1920.0f) + width, ((-ndc.y) * 0.5f * 1080.0f) + height };	// 해상도 원하는대로 설정하도록
+			constants.CenterPos = { (ndc.x * 0.5f * _uiResolution.x) + width, (-ndc.y * 0.5f * _uiResolution.y) + height };	// 해상도 원하는대로 설정하도록
 		}
 
 		else {

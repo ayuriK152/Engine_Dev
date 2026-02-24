@@ -1,4 +1,3 @@
-#include "Common.hlsl"
 #include "Particle.hlsl"
 
 float4 PS(GS_OUT input) : SV_Target {

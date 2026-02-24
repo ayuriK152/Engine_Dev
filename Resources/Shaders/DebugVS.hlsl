@@ -1,4 +1,4 @@
-#include "Common.hlsl"
+#include "Default.hlsl"
 
 VertexPosColorOut VS(VertexPosColorIn vin) {
     VertexPosColorOut vout;

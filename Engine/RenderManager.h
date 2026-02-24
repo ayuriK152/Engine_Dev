@@ -27,45 +27,48 @@
 #define		PSO_IDX_UI					10
 
 #pragma region Root_Parameters
-#define		ROOT_PARAMETER_COUNT		14
+#define		ROOT_PARAMETER_COUNT_BASE			9
+#define		ROOT_PARAMETER_COUNT_DEFAULT		11
+#define		ROOT_PARAMETER_COUNT_PARTICLE		11
+#define		ROOT_PARAMETER_COUNT_UI				10
 
-#define		ROOT_PARAM_INSTCANCE_SB		0
-#define		ROOT_PARAM_MATERIAL_SB		1
-#define		ROOT_PARAM_LIGHT_SB			2
-#define		ROOT_PARAM_SKYBOX_SR		3
-#define		ROOT_PARAM_SHADOWMAP_SR		4
-#define		ROOT_PARAM_TEXTURE_ARR		5
+#define		ROOT_PARAM_MATERIAL_SB		0
+#define		ROOT_PARAM_LIGHT_SB			1
+#define		ROOT_PARAM_SKYBOX_SR		2
+#define		ROOT_PARAM_SHADOWMAP_SR		3
+#define		ROOT_PARAM_TEXTURE_ARR		4
+#define		ROOT_PARAM_CLIENTINFO_C		5
+#define		ROOT_PARAM_LIGHTINFO_C		6
+#define		ROOT_PARAM_CAMERA_CB		7
+#define		ROOT_PARAM_MESHINFO_C		8
 
-#define		ROOT_PARAM_CLIENTINFO_C		6
-#define		ROOT_PARAM_LIGHTINFO_C		7
-#define		ROOT_PARAM_CAMERA_CB		8
-#define		ROOT_PARAM_MESHINFO_C		9
-
+#define		ROOT_PARAM_INSTCANCE_SB		9
 #define		ROOT_PARAM_BONE_SB			10
 
-#define		ROOT_PARAM_PARTICLES_RW		11
-#define		ROOT_PARAM_EMITTER_CB		12
+#define		ROOT_PARAM_PARTICLES_RW		9
+#define		ROOT_PARAM_EMITTER_CB		10
 
-#define		ROOT_PARAM_UI_SB			13
+#define		ROOT_PARAM_UI_SB			9
 #pragma endregion
 
 #pragma region Register_Numbers
-#define		REGISTER_NUM_INSTANCE_SB	0
-#define		REGISTER_NUM_MAT_SB			1
-#define		REGISTER_NUM_LIGHT_SB		2
-#define		REGISTER_NUM_SKYBOX_SR		3
-#define		REGISTER_NUM_SHADOWMAP_SR	4
-#define		REGISTER_NUM_TEXTURE_ARR	5
+#define		REGISTER_NUM_MAT_SB				0
+#define		REGISTER_NUM_LIGHT_SB			1
+#define		REGISTER_NUM_SKYBOX_SR			2
+#define		REGISTER_NUM_SHADOWMAP_SR		3
+#define		REGISTER_NUM_TEXTURE_ARR		4
+#define		REGISTER_NUM_CLIENTINFO_C		0
+#define		REGISTER_NUM_LIGHTINFO_C		1
+#define		REGISTER_NUM_CAMERA_CB			2
+#define		REGISTER_NUM_MESHINFO_C			3
 
-#define		REGISTER_NUM_CLIENTINFO_C	0
-#define		REGISTER_NUM_LIGHTINFO_C	1
-#define		REGISTER_NUM_CAMERA_CB		2
-#define		REGISTER_NUM_MESHINFO_C		3
+#define		REGISTER_NUM_INSTANCE_SB		0
+#define		REGISTER_NUM_BONE_SB			1
 
-#define		REGISTER_NUM_BONE_SB		0
+#define		REGISTER_NUM_PARTICLES_RW		0
+#define		REGISTER_NUM_EMITTER_CB			0
 
-#define		REGISTER_NUM_PARTICLES_RW	0
-#define		REGISTER_NUM_EMITTER_CB		0
+#define		REGISTER_NUM_UIINSTANCE_SB		0
 #pragma endregion
 
 #define		DESCRIPTOR_HEAP_SIZE			512
@@ -93,14 +96,13 @@ public:
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
-	const ComPtr<ID3D12RootSignature>& GetRootSignature() { return _rootSignature; }
 
 	// Create PSO Descriptor
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, ID3D12RootSignature* rootSignature, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	// Create PSO Descriptor without InputLayout
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(ID3D12RootSignature* rootSignature, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
 	// Create PSO Descriptor for Compute Shader
-	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(wstring csName);
+	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(ID3D12RootSignature* rootSignature, wstring csName);
 	// GetPSO with PSO name string. Refactoring on plan
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
 	void SetCurrPSO(string name);
@@ -155,7 +157,9 @@ private:
 	void BuildSRVDescriptorHeap();
 	void BuildPSOs();
 
-	void SetCommonState(ID3D12GraphicsCommandList* cmdList);
+	void SetStateDefault(ID3D12GraphicsCommandList* cmdList);
+	void SetStateParticle(ID3D12GraphicsCommandList* cmdList);
+	void SetStateUI(ID3D12GraphicsCommandList* cmdList);
 
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
@@ -165,7 +169,9 @@ private:
 	ID3D12CommandAllocator* _mainCmdListAlloc;
 	ID3D12GraphicsCommandList* _mainCmdList;
 
-	ComPtr<ID3D12RootSignature> _rootSignature;
+	ComPtr<ID3D12RootSignature> _rootSignatureDefault;
+	ComPtr<ID3D12RootSignature> _rootSignatureParticle;
+	ComPtr<ID3D12RootSignature> _rootSignatureUI;
 
 	// Input Layout
 	vector<D3D12_INPUT_ELEMENT_DESC> _solidInputLayout;

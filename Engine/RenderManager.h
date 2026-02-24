@@ -26,6 +26,10 @@
 #define		PSO_IDX_PARTICLE_RENDER		9
 #define		PSO_IDX_UI					10
 
+#define		RENDERSTATE_MAIN		0
+#define		RENDERSTATE_SHADOWMAP	1
+#define		RENDERSTATE_SUB			2
+
 #pragma region Root_Parameters
 #define		ROOT_PARAMETER_COUNT_BASE			9
 #define		ROOT_PARAMETER_COUNT_DEFAULT		11
@@ -131,19 +135,24 @@ public:
 	void AddMeshInfo(int id) {
 		while (_meshInstanceStartIndex.size() <= id)
 			_meshInstanceStartIndex.push_back(0);
-		while (_meshRenderCheckMap.size() <= id)
+		while (_meshRenderCheckMap.size() <= id) {
 			_meshRenderCheckMap.push_back(false);
+			_meshShadowRenderCheckMap.push_back(false);
+		}
 	}
 
 	void UpdateMeshInstanceStartIndices();
 	UINT GetMeshInstanceStartIndex(const shared_ptr<Mesh>& mesh) { return _meshInstanceStartIndex[mesh->GetID()]; }
 
 	void RefreshMeshRenderCheckMap();
+	void RefreshMeshShadowRenderCheckMap();
 
 	// Returns whether mesh rendered or not
-	bool CheckMeshRender(const shared_ptr<Mesh>& mesh) { return _meshRenderCheckMap[mesh->GetID()] == 1; }
+	bool CheckMeshRender(const shared_ptr<Mesh>& mesh) { return _meshRenderCheckMap[mesh->GetID()]; }
+	bool CheckMeshShadowRender(const shared_ptr<Mesh>& mesh) { return _meshShadowRenderCheckMap[mesh->GetID()]; }
 
-	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()]++; }
+	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()] = true; }
+	void SetMeshShadowRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshShadowRenderCheckMap[mesh->GetID()] = true; }
 
 	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
@@ -166,13 +175,8 @@ private:
 private:
 	bool _isPhysicsDebugRenderEnabled = false;
 
-	ID3D12CommandAllocator* _mainCmdListAlloc;
-	ID3D12GraphicsCommandList* _mainCmdList;
-	ID3D12CommandAllocator* _subCmdListAlloc;
-	ID3D12GraphicsCommandList* _subCmdList;
-
-	//ID3D12CommandAllocator* _cmdListAllocs[3];
-	//ID3D12GraphicsCommandList* _cmdLists[3];
+	ID3D12CommandAllocator* _cmdListAllocs[3];
+	ID3D12GraphicsCommandList* _cmdLists[3];
 
 	ComPtr<ID3D12RootSignature> _rootSignatureDefault;
 	ComPtr<ID3D12RootSignature> _rootSignatureParticle;
@@ -197,7 +201,8 @@ private:
 	vector<shared_ptr<GameObject>> _objects;
 	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _objectsSortedPSO;
 	vector<UINT> _meshInstanceStartIndex;
-	vector<UINT> _meshRenderCheckMap;
+	vector<bool> _meshRenderCheckMap;
+	vector<bool> _meshShadowRenderCheckMap;
 
 	vector<Light*> _lights;
 

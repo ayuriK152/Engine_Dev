@@ -15,7 +15,7 @@ public:
 	virtual void Init() { }
 	virtual void PreUpdate() { }
 	virtual void Update() { }
-	virtual void Render(ID3D12GraphicsCommandList* cmdList) { }
+	virtual void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) { }
 
 	virtual void OnDestroy() { }
 

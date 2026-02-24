@@ -24,7 +24,7 @@ public:
 	void Init();
 	void PreUpdate();
 	void Update();
-	void Render(ID3D12GraphicsCommandList* cmdList);
+	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState = 0);
 
 	void OnCollisionEnter(shared_ptr<GameObject> other);
 	void OnCollision(shared_ptr<GameObject> other);

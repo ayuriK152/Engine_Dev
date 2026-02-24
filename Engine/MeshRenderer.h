@@ -9,7 +9,7 @@ public:
 	MeshRenderer();
 	virtual ~MeshRenderer();
 
-	void Render(ID3D12GraphicsCommandList* cmdList) override;
+	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) override;
 
 protected:
 	MeshRenderer(ComponentType type);

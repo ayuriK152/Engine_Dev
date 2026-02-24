@@ -3,13 +3,11 @@
 
 FrameResource::FrameResource()
 {
-	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(&cmdListAlloc[0])));
-
-	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(&cmdListAlloc[1])));
+	for (int i = 0; i < 3; i++) {
+		ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			IID_PPV_ARGS(&cmdListAlloc[i])));
+	}
 
 
 	// ¾êµµ InitÀ¸·Î ¿Å°Ü¾ßµÊ

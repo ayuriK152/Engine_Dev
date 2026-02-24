@@ -20,10 +20,10 @@ void ParticleManager::Update(ID3D12GraphicsCommandList* cmdList)
 	}
 }
 
-void ParticleManager::Render(ID3D12GraphicsCommandList* cmdList)
+void ParticleManager::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
 	for (auto& emitter : _particleEmitters) {
-		emitter.second->Render(cmdList);
+		emitter.second->Render(cmdList, renderState);
 	}
 }
 

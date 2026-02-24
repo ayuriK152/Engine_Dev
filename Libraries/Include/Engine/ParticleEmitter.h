@@ -27,7 +27,7 @@ public:
 
 	void Init() override;
 	void Update(ID3D12GraphicsCommandList* cmdList);	// 일반적인 Update와 다르게 CS를 위한 명령어 리스트를 필요로 함. override X
-	void Render(ID3D12GraphicsCommandList* cmdList) override;
+	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) override;
 
 public:
 	bool IsPlaying() { return _isPlaying; }

@@ -9,7 +9,7 @@ public:
 public:
 	void Init();
 	void Update(ID3D12GraphicsCommandList* cmdList);
-	void Render(ID3D12GraphicsCommandList* cmdList);
+	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState);
 
 public:
 	void AddParticleEmitter(shared_ptr<ParticleEmitter> particleEmitter);

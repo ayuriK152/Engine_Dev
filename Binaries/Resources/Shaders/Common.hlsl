@@ -1,8 +1,5 @@
 #include "Structs.hlsl"
 
-/******************************/
-/* Refactoring Required!!!!!! */
-/******************************/
 
 /************/
 /* Samplers */
@@ -15,17 +12,16 @@ SamplerState samLinearClamp      : register(s3);
 SamplerState samAnisotropicWrap  : register(s4);
 SamplerState samAnisotropicClamp : register(s5);
 
+
 /***********/
 /* Buffers */
 /***********/
 
-// Common
-StructuredBuffer<Instance> Instances    : register(t0);
-StructuredBuffer<Material> Materials    : register(t1);
-StructuredBuffer<Light> Lights          : register(t2);
-TextureCube CubeMap                     : register(t3);
-Texture2D   ShadowMap                   : register(t4);
-Texture2D   TextureMaps[100]             : register(t5);
+StructuredBuffer<Material> Materials    : register(t0);
+StructuredBuffer<Light> Lights          : register(t1);
+TextureCube CubeMap                     : register(t2);
+Texture2D   ShadowMap                   : register(t3);
+Texture2D   TextureMaps[100]             : register(t4);
 
 cbuffer ClientInfo : register(b0) {
     float   DeltaTime;
@@ -52,23 +48,6 @@ cbuffer MeshInfo : register(b3) {
     uint InstanceStartIndex;
 };
 
-// Skinned Mesh
-StructuredBuffer<float4x4> BoneTransforms       : register(t0, space1);
-
-// Particle
-RWStructuredBuffer<Particle> particles : register(u0, space2);
-
-cbuffer cbParticleEmitterInfo : register(b0, space2) {
-    float3  EmitterPos;
-    float   SpawnRate;
-    float   ParticleInitVelocity;
-    float   ParticleLifeTime;
-    float2  ParticleSize;
-    uint    TextureIdx;
-};
-
-// UI
-StructuredBuffer<UIInstance> UIInstances     : register(t0, space3);
 
 /*************/
 /* Functions */

@@ -32,9 +32,16 @@ public:
 	void SetAppDesc(AppDesc appDesc) { _appDesc = appDesc; }
 
 	ID3D12Device* GetDevice() const { return _device.Get(); }
+	ID3D11Device* GetDevice11() const { return _d3d11Device.Get(); }
+	ID3D11On12Device* GetDevice11On12() const { return _d3d11On12Device.Get(); }
+
+	ID3D11DeviceContext* GetDeviceContextD11() const { return _d3d11DeviceContext.Get(); }
+	ID2D1DeviceContext2* GetDeviceContextD2D() const { return _d2dContext.Get(); }
+
 	ID3D12GraphicsCommandList* GetCommandList() const { return _graphicsCmdList; }
 	ID3D12CommandQueue* GetCommandQueue() const { return _commandQueue.Get(); }
 	IDXGISwapChain* GetSwapChain() const { return _swapChain.Get(); }
+	IDWriteFactory* GetWriteFactory() const { return _dWriteFactory.Get(); }
 
 	ComPtr<ID3D12DescriptorHeap> GetConstantBufferHeap()const { return _cbvHeap; }
 
@@ -69,6 +76,8 @@ public:
 	void WaitForFence(UINT64 fenceValue);
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+	void CreateWrappedResource(ID3D12Resource* d12Res, ID3D11Resource** d11ResOut);
+
 private:
 	void OnResize();
 	void Update();
@@ -76,6 +85,7 @@ private:
 private:
 	bool InitMainWindow();
 	bool InitDirect3D();
+	void Init11On12();
 
 	void BuildCommandObjects();
 	void BuildSwapChain();
@@ -86,9 +96,24 @@ private:
 private:
 	HWND      _hMainWnd = nullptr;
 
+	// DX12
+	ComPtr<ID3D12Device> _device;
+
+	// DX11
+	ComPtr<ID3D11Device> _d3d11Device;
+	ComPtr<ID3D11DeviceContext> _d3d11DeviceContext;
+	ComPtr<ID3D11On12Device> _d3d11On12Device;
+
+	// DX2D
+	ComPtr<ID2D1Factory3> _d2dFactory;
+	ComPtr<ID2D1Device2> _d2dDevice;
+	ComPtr<ID2D1DeviceContext2> _d2dContext;
+
+	// DirectWrite
+	ComPtr<IDWriteFactory> _dWriteFactory;
+
 	ComPtr<IDXGIFactory4> _dxgiFactory;
 	ComPtr<IDXGISwapChain> _swapChain;
-	ComPtr<ID3D12Device> _device;
 
 	ComPtr<ID3D12Fence> _fence;
 	UINT64 _currentFence = 0;

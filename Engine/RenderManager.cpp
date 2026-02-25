@@ -71,11 +71,10 @@ void RenderManager::Render()
 		ThrowIfFailed(_cmdLists[2]->Reset(_currFrameResource->cmdListAlloc[2], nullptr));
 	}
 
-	// Default Object Render
+	// ShadowMap Pass
 	_futures[0] = THREAD->EnqueueJob([this] {
 		SetStateDefault(_cmdLists[0]);
 
-		// ShadowMap Pass
 		_cmdLists[0]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
 			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
@@ -107,10 +106,10 @@ void RenderManager::Render()
 		ThrowIfFailed(_cmdLists[0]->Close());
 	});
 
+	// Main Pass
 	_futures[1] = THREAD->EnqueueJob([this] {
 		SetStateDefault(_cmdLists[1]);
 
-		// Main Pass
 		_cmdLists[1]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 

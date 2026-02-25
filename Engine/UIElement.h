@@ -5,6 +5,7 @@ class UIElement : public enable_shared_from_this<UIElement>
 	friend class UIManager;
 protected:
 	UIElement(UIType type);
+	UIElement(UINT type);
 	virtual ~UIElement();
 
 public:
@@ -23,7 +24,7 @@ public:
 
 protected:
 	string _name;
-	UIType _type;
+	UINT _type;
 
 	Vector2 _size = { 100.0f, 100.0f };
 

@@ -196,6 +196,9 @@
     <ClInclude Include="UITransform.h">
       <Filter>06. UI</Filter>
     </ClInclude>
+    <ClInclude Include="UIText.h">
+      <Filter>06. UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -420,6 +423,9 @@
       <Filter>06. UI</Filter>
     </ClCompile>
     <ClCompile Include="UITransform.cpp">
+      <Filter>06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIText.cpp">
       <Filter>06. UI</Filter>
     </ClCompile>
   </ItemGroup>

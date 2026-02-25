@@ -103,6 +103,11 @@ void DungeonScene::Init()
 
 	INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
 	ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
+
+	auto testText = UI->CreateUI<UIText>();
+	testText->SetSize({ 300.0f, 300.0f });
+	testText->SetFontSize(36.0f);
+	testText->SetText(L"Å×½ºÆ® Test");
 }
 
 void DungeonScene::Update()

@@ -7,6 +7,11 @@ UIPanel::UIPanel() : UIElement(UIType::Panel)
 	SetTexture(L"Tex_Default");
 }
 
+UIPanel::UIPanel(UIType type) : UIElement((UINT)UIType::Panel | (UINT)type)
+{
+
+}
+
 UIPanel::~UIPanel()
 {
 

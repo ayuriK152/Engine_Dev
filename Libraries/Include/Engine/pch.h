@@ -39,8 +39,11 @@
 using namespace std;
 
 // DX
-#include "d3dx12/d3dx12.h"
-#include "d3d12.h"
+#include <d3dx12/d3dx12.h>
+#include <d3d12.h>
+#include <d3d11on12.h>
+#include <d2d1_3.h>
+#include <dwrite.h>
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
@@ -100,6 +103,9 @@ using namespace JPH::literals;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 #pragma comment(lib, "dxgi.lib")
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTK/Debug/DirectXTK12.lib")
@@ -163,6 +169,7 @@ using namespace JPH::literals;
 #include "UIElement.h"
 #include "UIPanel.h"
 #include "UISlider.h"
+#include "UIText.h"
 
 /*******/
 /* ETC */

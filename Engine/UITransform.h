@@ -37,6 +37,8 @@ public:
 
 	shared_ptr<UIElement> GetUIElement() { return _element.lock(); }
 
+	bool IsDirty() { return _isDirty; }
+
 private:
 	void SetDirtyFlag();
 

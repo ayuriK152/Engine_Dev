@@ -93,7 +93,7 @@ void UIManager::AddUI(const shared_ptr<UIElement>& ui)
 {
 	++_elementCount;
 	_elements.push_back(ui);
-	if (ui->_type == UIType::Panel) {
+	if (ui->_type & (UINT)UIType::Panel) {
 		++_panelCount;
 		_panels.push_back(static_pointer_cast<UIPanel>(ui));
 	}
@@ -108,7 +108,7 @@ void UIManager::DeleteUI(const shared_ptr<UIElement>& ui)
 		}
 	}
 
-	if (ui->_type == UIType::Panel) {
+	if (ui->_type & (UINT)UIType::Panel) {
 		for (int i = 0; i < _panels.size(); ++i) {
 			if (_panels[i] == ui) {
 				_panels.erase(_panels.begin() + i);

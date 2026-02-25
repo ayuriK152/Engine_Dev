@@ -78,6 +78,12 @@
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UIElement.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIPanel.h" />
+    <ClInclude Include="UISlider.h" />
+    <ClInclude Include="UIText.h" />
+    <ClInclude Include="UITransform.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="DataStructures.h" />
@@ -165,6 +171,12 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIPanel.cpp" />
+    <ClCompile Include="UISlider.cpp" />
+    <ClCompile Include="UIText.cpp" />
+    <ClCompile Include="UITransform.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -28,6 +28,17 @@ void PlayerScript::Init()
 	_controller->SetOffset(Vector3(0.0f, 0.8f, 0.0f));
 	_gameObject->AddComponent(_controller);
 
+	_hpBar = UI->CreateUI<UISlider>();
+	_hpBar->GetTransform()->SetPosition({ -800.0f, 450.0f, 0.0f });
+	_hpBar->SetFillColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+	_hpBar->SetValue(10.0f);
+
+	_steminaBar = UI->CreateUI<UISlider>();
+	_steminaBar->GetTransform()->SetPosition({ -800.0f, 420.0f, 0.0f });
+	_steminaBar->SetFillColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+	_steminaBar->SetValueMaxLimit(steminaMax);
+	_steminaBar->SetValue(stemina);
+
 	_states.push_back(new IdleState());
 	_states.push_back(new WalkState());
 	_states.push_back(new RunState());
@@ -43,6 +54,8 @@ void PlayerScript::Update()
 {
 	if (INPUTM->IsKeyDown(KeyValue::Q))
 		LockOn();
+
+	RecoveryStemina();
 
 	Roll();
 	Attack();
@@ -113,7 +126,8 @@ void PlayerScript::Move()
 
 	_movingDirection = (look * moveZ + right * moveX).Normalize();
 
-	if (INPUTM->IsKeyPress(KeyValue::SHIFT))
+	if ((INPUTM->IsKeyDown(KeyValue::SHIFT) || _playerMovementState == PlayerMovementState::RUN) && 
+		stemina > 0.0f)
 		SetState(PlayerMovementState::RUN);
 	else {
 		if (_lockOnTarget) {
@@ -188,6 +202,37 @@ void PlayerScript::LockOn()
 	}
 }
 
+void PlayerScript::RecoveryStemina()
+{
+	_steminaBar->SetValue(stemina);
+	if (!_isRecoveryPossible)
+		_recoverySteminaDelayedTime -= TIME->DeltaTime();
+	else if (stemina < steminaMax) {
+		stemina += 10.0f * TIME->DeltaTime();
+		if (stemina > steminaMax) stemina = steminaMax;
+	}
+
+	if (_recoverySteminaDelayedTime < 0.0f) {
+		_recoverySteminaDelayedTime = 0.0f;
+		_isRecoveryPossible = true;
+	}
+}
+
+void PlayerScript::DecreaseStemina(float value, bool instantChange)
+{
+	if (instantChange) {
+		stemina -= value;
+	}
+	else {
+		stemina -= value * TIME->DeltaTime();
+	}
+
+	if (stemina < 0.0f) stemina = 0.0f;
+
+	_recoverySteminaDelayedTime = 2.0f;
+	_isRecoveryPossible = false;
+}
+
 void PlayerScript::IdleState::StateStart(PlayerScript* owner)
 {
 	owner->_animator->SetCurrentAnimation("idle_sword_4");
@@ -221,6 +266,7 @@ void PlayerScript::RunState::StateUpdate(PlayerScript* owner)
 {
 	owner->_transform->LookAtWithNoRoll(owner->_transform->GetPosition() - owner->_movingDirection);
 	owner->_controller->SetVelocity(owner->_movingDirection * owner->_speed * 3.0f);
+	owner->DecreaseStemina(10.0f, false);
 }
 
 void PlayerScript::SlashState::StateStart(PlayerScript* owner)

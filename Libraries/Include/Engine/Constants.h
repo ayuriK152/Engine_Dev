@@ -38,6 +38,7 @@ struct CameraConstants
 	XMFLOAT4X4 InvProj = MathHelper::Identity4x4();
 	XMFLOAT4X4 ViewProj = MathHelper::Identity4x4();
 	XMFLOAT4X4 InvViewProj = MathHelper::Identity4x4();
+	XMFLOAT4X4 Ortho = MathHelper::Identity4x4();
 	XMFLOAT2 RenderTargetSize = { 0.0f, 0.0f };
 	XMFLOAT2 InvRenderTargetSize = { 0.0f, 0.0f };
 };
@@ -90,4 +91,13 @@ struct ParticleEmitterConstants
 {
 	UINT TextureIndex;
 	XMFLOAT2 Size = { 1.0f, 1.0f };
+};
+
+struct UIInstanceConstants
+{
+	XMFLOAT2 CenterPos;
+	XMFLOAT2 Size;
+	float Depth;
+	UINT TextureIndex;
+	XMFLOAT4 Color;
 };

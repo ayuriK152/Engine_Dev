@@ -1,4 +1,3 @@
-#include "Common.hlsl"
 #include "Particle.hlsl"
 
 [maxvertexcount(4)]

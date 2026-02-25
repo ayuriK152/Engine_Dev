@@ -11,7 +11,7 @@ public:
 	virtual ~SkinnedMeshRenderer();
 
 	void Init() override;
-	void Render(ID3D12GraphicsCommandList* cmdList) override;
+	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) override;
 
 public:
 	void SetBoneData(const string& boneFileName) { _boneFileName = boneFileName; }

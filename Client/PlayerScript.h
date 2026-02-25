@@ -94,14 +94,26 @@ private:
 		_isStateChanged = true;
 	}
 
+	void RecoveryStemina();
+
+	// Decrease stemina per second
+	void DecreaseStemina(float value, bool instantChange = true);
+
 public:
 	shared_ptr<TPVCamera> tpvCameraScript;
+
+	float health = 100.0f;
+	float steminaMax = 60.0f;
+	float stemina = 60.0f;
 
 private:
 	shared_ptr<GameObject> _gameObject;
 	shared_ptr<Transform> _transform;
 	shared_ptr<Animator> _animator;
 	shared_ptr<CharacterController> _controller;
+	shared_ptr<UISlider> _hpBar;
+	shared_ptr<UISlider> _steminaBar;
+
 	float _speed = 1.55f;
 
 	PlayerMovementState _playerMovementState = PlayerMovementState::IDLE;
@@ -113,4 +125,8 @@ private:
 	Vector3 _movingDirection;
 
 	vector<BaseState<PlayerScript>*> _states;
+
+	float _recoverySteminaDelayedTime = 0.0f;
+	bool _isRecoveryPossible = true;
+
 };

@@ -83,7 +83,7 @@ void GameObject::Update()
 	}
 }
 
-void GameObject::Render(ID3D12GraphicsCommandList* cmdList)
+void GameObject::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
@@ -91,7 +91,7 @@ void GameObject::Render(ID3D12GraphicsCommandList* cmdList)
 		for (auto& c : componentVec) {
 			if ((UINT32)c->type & (UINT32)ComponentType::ParticleEmitter)
 				continue;
-			c->Render(cmdList);
+			c->Render(cmdList, renderState);
 		}
 	}
 }

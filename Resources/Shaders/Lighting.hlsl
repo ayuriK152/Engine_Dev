@@ -1,5 +1,6 @@
 #include "Common.hlsl"
 
+
 float4 ProcessAmbient(float4 ambient, float4 albedo) {
     return ambient * albedo;
 }

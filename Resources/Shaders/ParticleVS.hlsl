@@ -1,4 +1,3 @@
-#include "Common.hlsl"
 #include "Particle.hlsl"
 
 VS_OUT VS(uint id : SV_VertexID) {

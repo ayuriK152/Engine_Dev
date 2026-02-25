@@ -24,7 +24,8 @@ void DirectionalLight::Init()
 {
 	_matProj = MathHelper::Identity4x4();
 
-	direction = GetTransform()->GetLook();
+	_transform = GetTransform();
+	direction = _transform->GetLook();
 
 	RENDER->AddLight(this);
 }
@@ -33,11 +34,13 @@ void DirectionalLight::Update()
 {
 	if (GetGameObject()->GetFramesDirty() > 0)
 	{
-		direction = GetTransform()->GetLook();
+		direction = _transform->GetLook();
 
-		XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
+		_transform->LookAtWithNoRoll(_transform->GetPosition() + direction);
+
+		XMVECTOR eyePos = XMLoadFloat3(&_transform->GetPosition());
 		XMVECTOR targetPos = eyePos + XMLoadFloat3(&direction);
-		XMVECTOR upVec = XMLoadFloat3(&GetTransform()->GetUp());
+		XMVECTOR upVec = XMLoadFloat3(&_transform->GetUp());
 
 		XMMATRIX matView = XMMatrixLookAtLH(eyePos, targetPos, upVec);
 		XMStoreFloat4x4(&_matView, XMMatrixTranspose(matView));
@@ -45,8 +48,8 @@ void DirectionalLight::Update()
 		// projMat 갱신 부분 추가해야함
 		auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
 		XMMATRIX matProj = XMMatrixOrthographicLH(
-			80.0f,
-			80.0f,
+			50.0f,
+			50.0f,
 			-50.0f,
 			50.0f
 		);

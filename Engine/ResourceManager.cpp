@@ -52,9 +52,15 @@ void ResourceManager::CreateDefaultResources()
 	auto particlePS = make_shared<Shader>(L"ParticlePS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"particlePS", particlePS);
 
+	// ui shaders
+	auto uiVS = make_shared<Shader>(L"UIVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"uiVS", uiVS);
+	auto uiPS = make_shared<Shader>(L"UIPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"uiPS", uiPS);
+
 
 	//==========Texture==========
-	auto defaultTex = make_shared<Texture>(L"white1x1.dds", true);
+	auto defaultTex = make_shared<Texture>(L"white64x64.png", true);
 	Add<Texture>(L"Tex_Default", defaultTex);
 
 	auto skyboxTex = make_shared<Texture>(L"Skybox_Daylight.dds", TextureType::Skybox, true);
@@ -72,15 +78,15 @@ void ResourceManager::CreateDefaultResources()
 	//==========Mesh==========
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
 	boxMesh->SetName("BasicBox");
-	Add<Mesh>(L"Mesh_BasicBox", boxMesh);
+	Add<Mesh>(DEFAULT_MESH_BOX, boxMesh);
 
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 3));
 	sphereMesh->SetName("BasicSphere");
-	Add<Mesh>(L"Mesh_BasicSphere", sphereMesh);
+	Add<Mesh>(DEFAULT_MESH_SPHERE, sphereMesh);
 
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
 	quadMesh->SetName("BasicQuad");
-	Add<Mesh>(L"Mesh_BasicQuad", quadMesh);
+	Add<Mesh>(DEFAULT_MESH_QUAD, quadMesh);
 
 	shared_ptr<Mesh> skyboxSphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 1));
 	skyboxSphereMesh->SetName("SkyboxSphere");

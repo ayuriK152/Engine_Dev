@@ -38,7 +38,7 @@ void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 	cmdList->Dispatch((_particleMount + 255) / 256, 1, 1);
 }
 
-void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList)
+void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
 	if (!_isPlaying) return;
 

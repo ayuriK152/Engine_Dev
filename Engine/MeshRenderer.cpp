@@ -16,11 +16,19 @@ MeshRenderer::~MeshRenderer()
 
 }
 
-void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList)
+void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
-	if (RENDER->CheckMeshRender(_mesh))
-		return;
-	RENDER->SetMeshRenderCheckValue(_mesh);
+	switch (renderState) {
+	case RENDERSTATE_MAIN:
+		if (RENDER->CheckMeshRender(_mesh)) return;
+		RENDER->SetMeshRenderCheckValue(_mesh);
+		break;
+
+	case RENDERSTATE_SHADOWMAP:
+		if (RENDER->CheckMeshShadowRender(_mesh)) return;
+		RENDER->SetMeshShadowRenderCheckValue(_mesh);
+		break;
+	}
 
 	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
 	cmdList->IASetVertexBuffers(0, 1, &_mesh->vertexBufferView);

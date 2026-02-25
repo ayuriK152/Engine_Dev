@@ -34,6 +34,7 @@ void EngineGUIManager::Init()
 	init_info.NumFramesInFlight = RENDER->GetNumFrameResources();
 	init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
+	RENDER->GetAndIncreaseSRVHeapIndex();
 	init_info.SrvDescriptorHeap = RENDER->GetCommonSRVHeap().Get();
 	init_info.SrvDescriptorAllocFn = [](
 		ImGui_ImplDX12_InitInfo*,

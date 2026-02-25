@@ -57,7 +57,7 @@ void Material::SetDiffuse(shared_ptr<Texture> texture)
 	}
 
 	diffuseSrvHeapIndex = texture->GetSRVHeapIndex();
-	diffuseTextureName = Utils::ToString(texture->GetNameW());
+	diffuseTextureName = texture->GetName();
 }
 
 void Material::SetDiffuse(wstring textureName)
@@ -76,7 +76,7 @@ void Material::SetNormal(shared_ptr<Texture> texture)
 	}
 
 	normalSrvHeapIndex = texture->GetSRVHeapIndex();
-	normalTextureName = Utils::ToString(texture->GetNameW());
+	normalTextureName = texture->GetName();
 }
 
 void Material::SetNormal(wstring textureName)

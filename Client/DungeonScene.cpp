@@ -65,7 +65,6 @@ void DungeonScene::Init()
 		tpvCameraScript->cameraTransform = camera->GetTransform();
 		tpvCameraScript->onwerTransform = player->GetTransform();
 		tpvCameraScript->offset = Vector3(0.0f, 1.5f, 0.0f);
-		// tpvCameraScript->isCameraControllOn = false;
 
 		static_pointer_cast<PlayerScript>(player->GetComponent<Script>())->tpvCameraScript = tpvCameraScript;
 
@@ -103,6 +102,12 @@ void DungeonScene::Init()
 	}
 
 	INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
+	ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
+
+	auto testText = UI->CreateUI<UIText>();
+	testText->SetSize({ 300.0f, 300.0f });
+	testText->SetFontSize(36.0f);
+	testText->SetText(L"Å×½ºÆ® Test");
 }
 
 void DungeonScene::Update()
@@ -110,6 +115,7 @@ void DungeonScene::Update()
 	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
 	{
 		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
+		ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
 		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCamera->GetComponent<Script>());
 		tpvCameraScript->isCameraControllOn = !tpvCameraScript->isCameraControllOn;
 	}

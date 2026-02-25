@@ -1,4 +1,4 @@
-#include "Common.hlsl"
+#include "Particle.hlsl"
 
 float Hash(uint n)
 {

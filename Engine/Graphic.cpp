@@ -26,13 +26,13 @@ bool Graphic::Init()
 	OnResize();
 
 	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
-
 	THREAD->Init();
 	RENDER->Init();
 	FILEIO->Init();
+	UI->Init();
+	//ENGINEGUI->Init();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
-	ENGINEGUI->Init();
 	PHYSICS->Init();
 	DEBUG->Init();
 
@@ -302,6 +302,17 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
+void Graphic::CreateWrappedResource(ID3D12Resource* d12Res, ID3D11Resource** d11ResOut)
+{
+	D3D11_RESOURCE_FLAGS d11Flags = { D3D11_BIND_RENDER_TARGET };
+	ThrowIfFailed(_d3d11On12Device->CreateWrappedResource(
+		d12Res, &d11Flags,
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		IID_PPV_ARGS(d11ResOut)
+	));
+}
+
 // 윈도우 초기화
 bool Graphic::InitMainWindow()
 {
@@ -408,7 +419,50 @@ bool Graphic::InitDirect3D()
 	BuildSwapChain();
 	BuildDescriptorHeaps();
 
+	Init11On12();
+
 	return true;
+}
+
+void Graphic::Init11On12()
+{
+	UINT d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT; 
+#if defined(DEBUG) || defined(_DEBUG)
+		d3d11DeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+	HRESULT hardwareResult = D3D11On12CreateDevice(
+		_device.Get(),
+		d3d11DeviceFlags,
+		nullptr,
+		0,
+		reinterpret_cast<IUnknown**>(_commandQueue.GetAddressOf()),
+		1,
+		0,
+		&_d3d11Device,
+		&_d3d11DeviceContext,
+		nullptr
+	);
+
+	ThrowIfFailed(_d3d11Device.As(&_d3d11On12Device));
+
+	// Direct2D 팩토리 생성
+	D2D1_FACTORY_OPTIONS options = {};
+#if defined(DEBUG) || defined(_DEBUG)
+	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+#endif
+	ThrowIfFailed(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &options, &_d2dFactory));
+
+	//  DXGI 디바이스 획득 (D3D11 디바이스로부터)
+	ComPtr<IDXGIDevice> dxgiDevice;
+	ThrowIfFailed(_d3d11On12Device.As(&dxgiDevice));
+
+	// D2D 디바이스 및 컨텍스트 생성
+	ThrowIfFailed(_d2dFactory->CreateDevice(dxgiDevice.Get(), &_d2dDevice));
+	ThrowIfFailed(_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &_d2dContext));
+
+	// DirectWrite 팩토리 생성
+	ThrowIfFailed(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &_dWriteFactory));
 }
 
 void Graphic::BuildCommandObjects()

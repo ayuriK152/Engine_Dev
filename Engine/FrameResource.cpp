@@ -3,9 +3,11 @@
 
 FrameResource::FrameResource()
 {
-	ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(&cmdListAlloc)));
+	for (int i = 0; i < 3; i++) {
+		ThrowIfFailed(GRAPHIC->GetDevice()->CreateCommandAllocator(
+			D3D12_COMMAND_LIST_TYPE_DIRECT,
+			IID_PPV_ARGS(&cmdListAlloc[i])));
+	}
 
 
 	// ¾êµµ InitÀ¸·Î ¿Å°Ü¾ßµÊ
@@ -150,12 +152,15 @@ void FrameResource::UpdateCameraCB()
 		XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
 		XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
 
+		XMMATRIX ortho = XMLoadFloat4x4(&Camera::GetOrthoMatrix());
+
 		XMStoreFloat4x4(&cameraConstants.View, XMMatrixTranspose(view));
 		XMStoreFloat4x4(&cameraConstants.InvView, XMMatrixTranspose(invView));
 		XMStoreFloat4x4(&cameraConstants.Proj, XMMatrixTranspose(proj));
 		XMStoreFloat4x4(&cameraConstants.InvProj, XMMatrixTranspose(invProj));
 		XMStoreFloat4x4(&cameraConstants.ViewProj, XMMatrixTranspose(viewProj));
 		XMStoreFloat4x4(&cameraConstants.InvViewProj, XMMatrixTranspose(invViewProj));
+		XMStoreFloat4x4(&cameraConstants.Ortho, XMMatrixTranspose(ortho));
 
 		cameraConstants.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
 		cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);

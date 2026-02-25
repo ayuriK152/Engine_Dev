@@ -25,7 +25,7 @@ void SkinnedMeshRenderer::Init()
 }
 
 // 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.
-void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList)
+void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
 	if (_rootBone != nullptr)
 	{

@@ -67,6 +67,14 @@ struct Particle {
     float4  Color;
 };
 
+struct UIInstance {
+    float2  CenterPos;
+    float2  Size;
+    float   Depth;
+    uint    TextureIndex;
+    float4  Color;
+};
+
 /**********/
 /* Vertex */
 /**********/

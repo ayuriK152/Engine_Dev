@@ -1,6 +1,10 @@
 #pragma once
 #include "Resource.h"
 
+#define DEFAULT_MESH_BOX	L"Mesh_BasicBox"
+#define DEFAULT_MESH_SPHERE	L"Mesh_BasicSphere"
+#define DEFAULT_MESH_QUAD	L"Mesh_BasicQuad"
+
 class Mesh;
 
 class ResourceManager

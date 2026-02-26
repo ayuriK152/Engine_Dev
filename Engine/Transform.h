@@ -8,6 +8,8 @@ public:
 	Transform();
 	virtual ~Transform();
 
+	void OnDestroy() override;
+
 public:
 	void ForceUpdateTransform();
 

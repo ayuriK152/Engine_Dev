@@ -8,7 +8,7 @@ CharacterController::CharacterController() : Component(ComponentType::CharacterC
 
 CharacterController::~CharacterController()
 {
-
+	cout << "Released - CharacterController:" << _id << "\n";
 }
 
 void CharacterController::Init()
@@ -66,4 +66,9 @@ void CharacterController::PreUpdate()
 
 
 	_desiredVelocity = { 0.0f, 0.0f, 0.0f };
+}
+
+void CharacterController::OnDestroy()
+{
+	cout << "OnDestroy - CharacterController:" << _id << "\n";
 }

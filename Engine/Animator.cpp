@@ -16,7 +16,7 @@ Animator::Animator() : Component(ComponentType::Animator)
 
 Animator::~Animator()
 {
-
+	cout << "Released - Component:Animator:" << _id << "\n";
 }
 
 void Animator::Init()
@@ -95,6 +95,21 @@ void Animator::Update()
 			_isCurrentAnimationEnd = false;
 		}
 	}
+}
+
+void Animator::OnDestroy()
+{
+	cout << "OnDestroy - Animator:" << _id << "\n";
+
+	for (auto anim : _animations)
+		anim.second.reset();
+
+	if (_rootBone != nullptr)
+		_rootBone.reset();
+	if (_skeleton != nullptr)
+		_skeleton.reset();
+	if (_previewAnimation != nullptr)
+		_previewAnimation.reset();
 }
 
 void Animator::PlayAnimation()

@@ -9,8 +9,10 @@ public:
 	Light(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular);
 	virtual ~Light();
 
-	virtual void Init() = 0;
-	virtual void Update() = 0;
+	virtual void Init() override = 0;
+	virtual void Update() override = 0;
+
+	virtual void OnDestroy() override = 0;
 
 public:
 	void SetFramesDirty();

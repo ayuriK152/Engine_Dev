@@ -13,7 +13,7 @@ MeshRenderer::MeshRenderer(ComponentType type) : Super(type)
 
 MeshRenderer::~MeshRenderer()
 {
-
+	cout << "Released - MeshRenderer:" << _id << "\n";
 }
 
 void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
@@ -39,6 +39,16 @@ void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, startIndex, 0);
 
 	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), _mesh->GetInstanceCount(), 0, 0, 0);
+}
+
+void MeshRenderer::OnDestroy()
+{
+	cout << "OnDestroy - MeshRenderer:" << _id << "\n";
+
+	if (_mesh != nullptr)
+		_mesh.reset();
+	if (_material != nullptr)
+		_material.reset();
 }
 
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)

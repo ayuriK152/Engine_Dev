@@ -29,10 +29,14 @@ class EnemyScript : public Script
 	};
 
 public:
+	~EnemyScript();
+
     void Init() override;
 	void Update() override;
 
 	void OnCollisionEnter(shared_ptr<GameObject> other) override;
+
+	void OnDestroy() override;
 
 public:
     void TakeDamage(int damage);

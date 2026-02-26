@@ -11,6 +11,8 @@ public:
 
 	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) override;
 
+	void OnDestroy() override;
+
 protected:
 	MeshRenderer(ComponentType type);
 

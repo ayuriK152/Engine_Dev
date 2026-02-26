@@ -8,7 +8,7 @@ UITransform::UITransform(shared_ptr<UIElement> element)
 
 UITransform::~UITransform()
 {
-
+	cout << "Released - UITransform\n";
 }
 
 void UITransform::UpdateTransform()

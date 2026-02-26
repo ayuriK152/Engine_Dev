@@ -10,6 +10,8 @@ public:
 	void Init() override;
 	void PreUpdate() override;
 
+	void OnDestroy() override;
+
 public:
 	void SetHalfHeight(float height) { _height = height; }
 	void SetRadius(float radius) { _radius = radius; }

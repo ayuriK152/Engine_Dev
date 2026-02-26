@@ -30,6 +30,8 @@ public:
 	void OnCollision(shared_ptr<GameObject> other);
 	void OnCollisionExit(shared_ptr<GameObject> other);
 
+	void OnDestroy();
+
 public:
 	void AddComponent(shared_ptr<Component> component);
 	shared_ptr<Transform> GetTransform();

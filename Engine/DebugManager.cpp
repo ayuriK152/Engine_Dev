@@ -3,6 +3,7 @@
 
 DebugManager::~DebugManager()
 {
+	cout << "Released - DebugManager\n";
 
 }
 

@@ -8,7 +8,7 @@ UIText::UIText() : UIPanel(UIType::Text)
 
 UIText::~UIText()
 {
-
+	cout << "Released - UIText\n";
 }
 
 void UIText::Init()

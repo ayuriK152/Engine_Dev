@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "TPVCamera.h"
 
+TPVCamera::~TPVCamera()
+{
+	cout << "asdf";
+}
+
 void TPVCamera::Init()
 {
 	if (cameraTransform == nullptr) {
@@ -46,6 +51,14 @@ void TPVCamera::Init()
 
 void TPVCamera::Update()
 {
+	// DEBUG
+	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
+	{
+		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
+		ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
+		isCameraControllOn = !isCameraControllOn;
+	}
+
 	if (!isCameraControllOn || cameraTransform == nullptr || onwerTransform == nullptr)
 		return;
 
@@ -94,4 +107,12 @@ void TPVCamera::Update()
 		
 		cameraTransform->LookAtWithNoRoll(_pivotPosition);
 	}
+}
+
+void TPVCamera::OnDestroy()
+{
+	cout << "OnDestroy - TPVCamera:" << _id << "\n";
+
+	_transform.reset();
+	_lockOnMarker.reset();
 }

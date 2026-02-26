@@ -13,7 +13,7 @@ UISlider::UISlider() : UIElement(UIType::Slider)
 
 UISlider::~UISlider()
 {
-
+	cout << "Released - UISlider\n";
 }
 
 void UISlider::Init()

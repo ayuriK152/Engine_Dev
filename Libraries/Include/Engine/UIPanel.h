@@ -6,7 +6,7 @@ class UIPanel :  public UIElement
 public:
 	UIPanel();
 	UIPanel(UIType type);
-	~UIPanel();
+	virtual ~UIPanel();
 
 public:
 	void Render(ID3D12GraphicsCommandList* cmdList) override;

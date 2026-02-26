@@ -5,8 +5,12 @@
 class TPVCamera : public Script
 {
 public:
+	~TPVCamera();
+
 	void Init() override;
 	void Update() override;
+
+	void OnDestroy() override;
 
 public:
 	shared_ptr<Transform> armTransform;

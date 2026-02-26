@@ -11,6 +11,8 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void OnDestroy() override;
+
 public:
 	static Camera* GetCurrentCamera() { return _currentCamera; }
 	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }

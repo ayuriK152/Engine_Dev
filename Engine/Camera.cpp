@@ -15,7 +15,7 @@ Camera::Camera() : Super(ComponentType::Camera)
 
 Camera::~Camera()
 {
-
+	cout << "Released - Camera:" << _id << "\n";
 }
 
 void Camera::Init()
@@ -46,4 +46,11 @@ void Camera::Update()
 
 	XMMATRIX O = XMMatrixOrthographicLH(1920, 1080, 0.0f, 1000.0f);
 	XMStoreFloat4x4(&_matOrtho, O);
+}
+
+void Camera::OnDestroy()
+{
+	cout << "OnDestroy - Camera:" << _id << "\n";
+
+	_currentCamera = nullptr;
 }

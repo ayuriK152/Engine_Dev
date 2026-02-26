@@ -14,7 +14,7 @@ UIPanel::UIPanel(UIType type) : UIElement((UINT)UIType::Panel | (UINT)type)
 
 UIPanel::~UIPanel()
 {
-
+	cout << "Released - UIPanel\n";
 }
 
 void UIPanel::Render(ID3D12GraphicsCommandList* cmdList)

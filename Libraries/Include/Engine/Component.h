@@ -17,7 +17,7 @@ public:
 	virtual void Update() { }
 	virtual void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) { }
 
-	virtual void OnDestroy() { }
+	virtual void OnDestroy() = 0;
 
 	virtual void OnCollisionEnter(shared_ptr<GameObject> other) { }
 	virtual void OnCollision(shared_ptr<GameObject> other) { }

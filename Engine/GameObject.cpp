@@ -19,13 +19,9 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	for (auto& componentVec : _components) {
-		if (componentVec.size() == 0) continue;
+	cout << "Released - GameObject:" << _id << "\n";
 
-		for (auto& c : componentVec)
-			c->OnDestroy();
-		componentVec.clear();
-	}
+	OnDestroy();
 }
 
 void GameObject::Init()
@@ -126,6 +122,22 @@ void GameObject::OnCollisionExit(shared_ptr<GameObject> other)
 		for (auto& c : componentVec) {
 			c->OnCollisionExit(other);
 		}
+	}
+}
+
+void GameObject::OnDestroy()
+{
+	for (auto& componentVec : _components) {
+		if (componentVec.size() == 0) continue;
+
+		for (auto& c : componentVec) {
+			if (c == nullptr) continue;		// Already released by RenderManager
+
+			c->OnDestroy();
+			c.reset();
+		}
+
+		componentVec.clear();
 	}
 }
 

@@ -3,7 +3,10 @@
 
 PhysicsManager::~PhysicsManager()
 {
+	cout << "Released - PhysicsManager\n";
 
+	for (shared_ptr<Rigidbody> rb : _rigidbodies)
+		rb.reset();
 }
 
 void PhysicsManager::Init()

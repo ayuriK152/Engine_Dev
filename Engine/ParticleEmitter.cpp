@@ -8,7 +8,7 @@ ParticleEmitter::ParticleEmitter() : Component(ComponentType::ParticleEmitter)
 
 ParticleEmitter::~ParticleEmitter()
 {
-
+	cout << "Released - ParticleEmitter:" << _id << "\n";
 }
 
 void ParticleEmitter::Init()
@@ -44,6 +44,11 @@ void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList, UINT renderStat
 
 	cmdList->SetGraphicsRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
 	cmdList->DrawInstanced(_particleMount, 1, 0, 0);
+}
+
+void ParticleEmitter::OnDestroy()
+{
+	cout << "OnDestroy - ParticleEmitter:" << _id << "\n";
 }
 
 void ParticleEmitter::SetParticleTexture(string textureName)

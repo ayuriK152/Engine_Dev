@@ -3,7 +3,10 @@
 
 ParticleManager::~ParticleManager()
 {
+	cout << "Released - ParticleManager\n";
 
+	for (auto pe : _particleEmitters)
+		pe.second.reset();
 }
 
 void ParticleManager::Init()

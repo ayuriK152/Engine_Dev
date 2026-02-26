@@ -6,5 +6,7 @@ class Script : public Component
 public:
 	Script();
 	virtual ~Script();
+
+	virtual void OnDestroy() override = 0;
 };
 

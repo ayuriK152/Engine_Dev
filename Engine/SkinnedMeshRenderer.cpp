@@ -8,7 +8,7 @@ SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRen
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
 {
-
+	cout << "Released - SkinnedMeshRenderer:" << _id << "\n";
 }
 
 void SkinnedMeshRenderer::Init()
@@ -44,6 +44,20 @@ void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT render
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, startIndex, 0);
 
 	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
+}
+
+void SkinnedMeshRenderer::OnDestroy()
+{
+	cout << "OnDestroy - SkinnedMeshRenderer:" << _id << "\n";
+
+	if (_rootBone != nullptr)
+		_rootBone.reset();
+	if (_skeleton != nullptr)
+		_skeleton.reset();
+	if (_mesh != nullptr)
+		_mesh.reset();
+	if (_material != nullptr)
+		_material.reset();
 }
 
 void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)

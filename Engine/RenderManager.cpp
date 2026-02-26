@@ -1,6 +1,23 @@
 #include "pch.h"
 #include "RenderManager.h"
 
+RenderManager::~RenderManager()
+{
+	cout << "Released - RenderManager\n";
+
+	_lights.clear();
+
+	for (shared_ptr<GameObject> go : _objects) {
+		go->OnDestroy();
+		go.reset();
+	}
+
+	for (vector<shared_ptr<GameObject>> gos : _objectsSortedPSO) {
+		for (shared_ptr<GameObject> go : gos)
+			go.reset();
+	}
+}
+
 void RenderManager::Init()
 {
 	for (int i = 0; i < 3; i++) {

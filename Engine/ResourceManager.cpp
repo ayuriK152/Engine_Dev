@@ -1,6 +1,17 @@
 #include "pch.h"
 #include "ResourceManager.h"
 
+ResourceManager::~ResourceManager()
+{
+	cout << "Released - ResourceManager\n";
+
+	for (KeyObjMap m : _resources) {
+		for (auto r : m) {
+			r.second.reset();
+		}
+	}
+}
+
 bool ResourceManager::CheckResourceExists(const string& filePath)
 {
 	return _resourcePaths.find(filePath) != _resourcePaths.end();

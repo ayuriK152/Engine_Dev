@@ -22,7 +22,7 @@ Light::Light(
 
 Light::~Light()
 {
-
+	cout << "Released - Light:" << _id << "\n";
 }
 
 void Light::SetFramesDirty()

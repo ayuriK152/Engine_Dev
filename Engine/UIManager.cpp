@@ -3,7 +3,10 @@
 
 UIManager::~UIManager()
 {
+	cout << "Released - UIManager\n";
 
+	_elements.clear();
+	_panels.clear();
 }
 
 void UIManager::Init()

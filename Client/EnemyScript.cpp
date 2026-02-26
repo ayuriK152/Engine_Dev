@@ -1,6 +1,13 @@
 #include "pch.h"
 #include "EnemyScript.h"
 
+EnemyScript::~EnemyScript()
+{
+	for (auto pattern : _patterns) {
+		delete pattern;
+	}
+}
+
 void EnemyScript::Init()
 {
 	_gameObject = GetGameObject();
@@ -74,6 +81,19 @@ void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
 			TakeDamage(10);
 		}
 	}
+}
+
+void EnemyScript::OnDestroy()
+{
+	cout << "OnDestroy - EnemyScript:" << _id << "\n";
+
+	target.reset();
+	_gameObject.reset();
+	_transform.reset();
+	_animator.reset();
+	_controller.reset();
+	_hitbox.reset();
+	_damageText.reset();
 }
 
 void EnemyScript::TakeDamage(int damage)

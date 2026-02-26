@@ -3,7 +3,10 @@
 
 AnimationManager::~AnimationManager()
 {
+	cout << "Released - AnimationManager\n";
 
+	for (shared_ptr<Animator> a : _animators)
+		a.reset();
 }
 
 void AnimationManager::Update()

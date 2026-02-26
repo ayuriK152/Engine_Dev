@@ -2,6 +2,14 @@
 #include "PlayerScript.h"
 #include "TPVCamera.h"
 
+PlayerScript::~PlayerScript()
+{
+	cout << "p";
+
+	for (auto state : _states)
+		delete state;
+}
+
 void PlayerScript::Init()
 {
 	_gameObject = GetGameObject();
@@ -87,6 +95,20 @@ void PlayerScript::OnCollisionEnter(shared_ptr<GameObject> other)
 	{
 		DEBUG->Log("Got Attack");
 	}
+}
+
+void PlayerScript::OnDestroy()
+{
+	cout << "OnDestroy - PlayerScript:" << _id << "\n";
+
+	tpvCameraScript.reset();
+	_gameObject.reset();
+	_transform.reset();
+	_animator.reset();
+	_controller.reset();
+	_hpBar.reset();
+	_steminaBar.reset();
+	_lockOnTarget.reset();
 }
 
 void PlayerScript::Roll()

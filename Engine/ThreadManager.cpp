@@ -3,6 +3,8 @@
 
 ThreadManager::~ThreadManager()
 {
+	cout << "Released - ThreadManager\n";
+
 	{
 		unique_lock<mutex> lock(_queueMutex);
 		_stop = true;

@@ -20,7 +20,12 @@ Transform::Transform() : Super(ComponentType::Transform)
 
 Transform::~Transform()
 {
+	cout << "Released - Transfrom:" << _id << "\n";
+}
 
+void Transform::OnDestroy()
+{
+	cout << "OnDestroy - Transfrom:" << _id << "\n";
 }
 
 void Transform::ForceUpdateTransform()

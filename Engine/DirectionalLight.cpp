@@ -17,7 +17,7 @@ DirectionalLight::DirectionalLight(
 
 DirectionalLight::~DirectionalLight()
 {
-
+	cout << "Released - DirectionalLight:" << _id << "\n";
 }
 
 void DirectionalLight::Init()
@@ -57,6 +57,13 @@ void DirectionalLight::Update()
 
 		SetFramesDirty();
 	}
+}
+
+void DirectionalLight::OnDestroy()
+{
+	cout << "OnDestroy - DirectionalLight:" << _id << "\n";
+
+	_transform.reset();
 }
 
 LightConstants DirectionalLight::GetLightConstants()

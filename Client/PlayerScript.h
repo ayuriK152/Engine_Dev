@@ -76,10 +76,14 @@ class PlayerScript : public Script
 #pragma endregion
 
 public:
+	~PlayerScript();
+
 	void Init() override;
 	void Update() override;
 
 	void OnCollisionEnter(shared_ptr<GameObject> other) override;
+
+	void OnDestroy() override;
 
 public:
 	void Roll();

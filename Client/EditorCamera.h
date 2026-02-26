@@ -3,8 +3,12 @@
 class EditorCamera : public Script
 {
 public:
+	~EditorCamera();
+
 	void Init() override;
 	void Update() override;
+
+	void OnDestroy() override;
 
 private:
 	shared_ptr<Transform> _transform;

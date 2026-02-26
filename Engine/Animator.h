@@ -34,6 +34,8 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void OnDestroy() override;
+
 public:
 	float GetCurrentTick() { return _currentTick; }
 

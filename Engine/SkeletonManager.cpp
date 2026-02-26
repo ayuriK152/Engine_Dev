@@ -1,6 +1,14 @@
 #include "pch.h"
 #include "SkeletonManager.h"
 
+SkeletonManager::~SkeletonManager()
+{
+	cout << "Released - SkeletonManager\n";
+
+	for (shared_ptr<Skeleton> s : _instancedSkeletons)
+		s.reset();
+}
+
 shared_ptr<Skeleton> SkeletonManager::LoadSkeleton(string fileName, shared_ptr<Transform> rootTransform)
 {
 	shared_ptr<Skeleton> skeleton = make_shared<Skeleton>();

@@ -13,5 +13,5 @@ UIElement::UIElement(UINT type) : _type(type)
 
 UIElement::~UIElement()
 {
-
+	cout << "Released - UIElement\n";
 }

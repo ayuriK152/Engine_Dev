@@ -4,10 +4,21 @@
 #include "EnemyScript.h"
 #include "TPVCamera.h"
 
+DungeonScene::~DungeonScene()
+{
+	camera.reset();
+	tpvCamera.reset();
+	tpvCameraArm.reset();
+	player.reset();
+	
+	for (shared_ptr<GameObject> go : gameObjects)
+		go.reset();
+}
+
 void DungeonScene::Init()
 {
 	{
-		skybox = make_shared<GameObject>();
+		auto skybox = make_shared<GameObject>();
 		skybox->SetName("skybox");
 		skybox->AddComponent(make_shared<MeshRenderer>());
 		skybox->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Mesh_SkyboxSphere"));
@@ -25,7 +36,7 @@ void DungeonScene::Init()
 	}
 
 	{
-		globalLight = make_shared<GameObject>();
+		auto globalLight = make_shared<GameObject>();
 		globalLight->SetName("GlobalLight");
 		XMFLOAT4 ambient = { 0.8f, 0.8f, 0.8f, 1.0f };
 		XMFLOAT4 diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -101,17 +112,18 @@ void DungeonScene::Init()
 		gameObjects.erase(gameObjects.begin());
 	}
 
+	camera.reset();
+	tpvCamera.reset();
+	tpvCameraArm.reset();
+	player.reset();
+	gameObjects.clear();
+
+
 	INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
 	ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
 }
 
 void DungeonScene::Update()
 {
-	if (INPUTM->IsKeyDown(KeyValue::NUM_1))
-	{
-		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
-		ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
-		auto tpvCameraScript = static_pointer_cast<TPVCamera>(tpvCamera->GetComponent<Script>());
-		tpvCameraScript->isCameraControllOn = !tpvCameraScript->isCameraControllOn;
-	}
+
 }

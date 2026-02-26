@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "EditorCamera.h"
 
+EditorCamera::~EditorCamera()
+{
+
+}
+
 void EditorCamera::Init()
 {
 	_transform = GetTransform();
@@ -30,4 +35,9 @@ void EditorCamera::Update()
 		if (INPUTM->IsKeyPress(KeyValue::A))
 			_transform->Translate(_transform->GetRight() * TIME->DeltaTime() * -5.0f);
 	}
+}
+
+void EditorCamera::OnDestroy()
+{
+	_transform.reset();
 }

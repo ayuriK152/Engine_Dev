@@ -13,6 +13,8 @@ public:
 	void Init() override;
 	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState) override;
 
+	void OnDestroy() override;
+
 public:
 	void SetBoneData(const string& boneFileName) { _boneFileName = boneFileName; }
 	void SetRootBone(const shared_ptr<Transform> rootBone);

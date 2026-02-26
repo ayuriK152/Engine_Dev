@@ -87,7 +87,7 @@ class RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
 public:
-	~RenderManager() = default;
+	~RenderManager();
 
 public:
 	void Init();
@@ -204,7 +204,7 @@ private:
 	vector<bool> _meshRenderCheckMap;
 	vector<bool> _meshShadowRenderCheckMap;
 
-	vector<Light*> _lights;
+	vector<Light*> _lights;		// Refactoring Required
 
 	// SRV Heap
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;

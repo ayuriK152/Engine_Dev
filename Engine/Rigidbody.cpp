@@ -10,7 +10,7 @@ Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 
 Rigidbody::~Rigidbody()
 {
-
+	cout << "Released - Rigidbody:" << _id << "\n";
 }
 
 void Rigidbody::Init()
@@ -73,6 +73,8 @@ void Rigidbody::Update()
 
 void Rigidbody::OnDestroy()
 {
+	cout << "OnDestroy - Rigidbody:" << _id << "\n";
+
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	bodyInterface.RemoveBody(_bodyID);
 	// bodyInterface.DestroyBody(_bodyID);

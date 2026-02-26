@@ -44,6 +44,9 @@ private:
 		_isStateChanged = true;
 	}
 
+	void SetDamageText(int damage);
+	void UpdateDamageText();
+
 public:
 	shared_ptr<GameObject> target;
 
@@ -60,6 +63,10 @@ private:
 
     vector<BaseState<EnemyScript>*> _patterns;
     Vector3 _targetVec;
+
+	shared_ptr<UIText> _damageText;
+	float _damageTextTime = 0.0f;
+	int _cumulativeDamage = 0;
 
     float _targetDistance;
 };

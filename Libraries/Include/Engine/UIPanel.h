@@ -18,10 +18,15 @@ public:
 	void SetColor(const ColorRGBA color) { _color = color; }
 	ColorRGBA GetColor() { return _color; }
 
+	void SetRenderActive(bool value) { _renderActive = value; }
+	bool IsRenderActive() { return _renderActive; }
+
 protected:
 	ColorRGBA _color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	string _textureName;
 	int _textureSrvHeapIndex;
+
+	bool _renderActive = true;
 };
 

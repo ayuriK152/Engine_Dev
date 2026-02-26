@@ -43,7 +43,7 @@ void UIManager::Update()
 			constants.CenterPos = { position.x + width, position.y + height };
 		}
 
-		constants.Color = ui->_color;
+		constants.Color = ui->_renderActive ? ui->_color : XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 		constants.Depth = transform->GetDepth();
 		constants.TextureIndex = ui->_textureSrvHeapIndex;
 		constants.Size = ui->_size;

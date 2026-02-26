@@ -43,19 +43,6 @@ void TestScene::Init()
 	}
 
 	{
-		//test = make_shared<GameObject>();
-		//test->SetName("test");
-		//test->AddComponent(make_shared<MeshRenderer>());
-		//test->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->LoadMesh("Dungeon assets\\Tiles4x4"));
-		//test->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
-		//test->AddComponent(make_shared<BoxCollider>());
-		//test->GetTransform()->SetPosition({ 3, 1, 0 });
-		//test->GetTransform()->SetRotation({ -90, 0, 0 });
-		//
-		//gameObjects.push_back(test);
-	}
-
-	{
 		tpvCameraArm = make_shared<GameObject>();
 		tpvCameraArm->SetName("TPVCameraArm");
 		tpvCameraArm->AddComponent(make_shared<TPVCamera>());

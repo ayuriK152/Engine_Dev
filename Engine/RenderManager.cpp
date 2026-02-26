@@ -630,6 +630,7 @@ void RenderManager::BuildPSOs()
 	{
 		shadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ���̸�
 		shadow.NumRenderTargets = 0;
+		shadow.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 		shadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		shadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		shadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
@@ -642,6 +643,7 @@ void RenderManager::BuildPSOs()
 	{
 		skinnedShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
 		skinnedShadow.NumRenderTargets = 0;
+		skinnedShadow.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 		skinnedShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		skinnedShadow.RasterizerState = shadow.RasterizerState;;
 	}

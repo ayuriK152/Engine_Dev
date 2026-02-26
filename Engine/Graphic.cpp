@@ -23,6 +23,7 @@ bool Graphic::Init()
 	if (!InitDirect3D())
 		return false;
 
+	GetAndIncreaseDSVHeapIndex();
 	OnResize();
 
 	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
@@ -94,7 +95,7 @@ void Graphic::OnResize()
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
 
-	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	depthStencilDesc.Format = _depthStencilFormat;
 
 	depthStencilDesc.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
 	depthStencilDesc.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
@@ -120,8 +121,7 @@ void Graphic::OnResize()
 	dsvDesc.Texture2D.MipSlice = 0;
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDsv(GetDSVHandle());
-	hDsv.Offset(GetAndIncreaseDSVHeapIndex(), _dsvDescriptorSize);
-	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, GetDSVHandle());
+	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, hDsv);
 
 	_graphicsCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_depthStencilBuffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));

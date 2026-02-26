@@ -29,10 +29,17 @@ void EnemyScript::Init()
 	_patterns.push_back(new IdleState());
 	_patterns.push_back(new TrackWalkState());
 	_patterns.push_back(new DeathState());
+
+	_damageText = UI->CreateUI<UIText>();
+	_damageText->GetTransform()->SetDynamicPosition(true);
+	_damageText->SetText(L"0");
+	_damageText->SetRenderActive(false);
 }
 
 void EnemyScript::Update()
 {
+	UpdateDamageText();
+
 	if (_currentState != EnemyMovementState::DEATH) {
 		if (_health <= 0) {
 			SetState(EnemyMovementState::DEATH);
@@ -56,6 +63,8 @@ void EnemyScript::Update()
 	}
 
 	_patterns[static_cast<int>(_currentState)]->StateUpdate(this);
+
+	_damageText->GetTransform()->SetPosition(_transform->GetPosition());
 }
 
 void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
@@ -71,6 +80,28 @@ void EnemyScript::TakeDamage(int damage)
 {
 	_health -= damage;
 	DEBUG->Log("Take" + to_string(damage) + "damage. Remain Health - " + to_string(_health));
+	SetDamageText(damage);
+}
+
+void EnemyScript::SetDamageText(int damage)
+{
+	_damageTextTime = 2.0f;
+	_cumulativeDamage += damage;
+	_damageText->SetText(to_wstring(_cumulativeDamage));
+	_damageText->SetRenderActive(true);
+}
+
+void EnemyScript::UpdateDamageText()
+{
+	if (_damageTextTime > 0.0f) {
+		_damageTextTime -= TIME->DeltaTime();
+	}
+	else {
+		_damageTextTime = 0.0f;
+		_cumulativeDamage = 0;
+		if (_damageText->IsRenderActive())
+			_damageText->SetRenderActive(false);
+	}
 }
 
 void EnemyScript::IdleState::StateStart(EnemyScript* owner)

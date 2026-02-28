@@ -24,6 +24,7 @@ void UIManager::Update()
 		ui->Update();
 	}
 
+	D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
 	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewMatrix()) * XMLoadFloat4x4(&Camera::GetProjMatrix());
 
 	_uiConstants.clear();
@@ -38,8 +39,7 @@ void UIManager::Update()
 		if (transform->IsDynamicPosition()) {
 			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&position), viewProj));
 			Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
-
-			constants.CenterPos = { (ndc.x * 0.5f * _uiResolution.x) + width, (-ndc.y * 0.5f * _uiResolution.y) + height };	// 해상도 원하는대로 설정하도록
+			constants.CenterPos = { (ndc.x * 0.5f * viewport.Width) + width, (ndc.y * 0.5f * viewport.Height) + height };	// 해상도 원하는대로 설정하도록
 		}
 
 		else {

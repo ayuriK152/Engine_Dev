@@ -24,7 +24,7 @@ public:
 	void SetTextColor(const ColorRGBA& color);
 
 	void SetSize(const Vector2 size) { 
-		_size = size; 
+		_transform->SetSize(size); 
 		_isDirty = true;
 	}
 

@@ -68,6 +68,7 @@ private:
     vector<BaseState<EnemyScript>*> _patterns;
     Vector3 _targetVec;
 
+	shared_ptr<UIElement> _enemyStateUI;
 	shared_ptr<UIText> _damageText;
 	float _damageTextTime = 0.0f;
 	int _cumulativeDamage = 0;

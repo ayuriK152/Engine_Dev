@@ -18,6 +18,7 @@ public:
 	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }
 	static XMFLOAT4X4& GetViewMatrix() { return _currentCamera->_matView; }
 	static XMFLOAT4X4& GetProjMatrix() { return _currentCamera->_matProj; }
+	static XMFLOAT4X4& GetViewProjMatrix() { return _currentCamera->_matViewProj; }
 	static XMFLOAT4X4& GetOrthoMatrix() { return _currentCamera->_matOrtho; }
 	static int GetFramesDirty() { return _currentCamera->GetGameObject()->GetFramesDirty(); }
 	
@@ -27,8 +28,10 @@ public:
 private:
 	XMFLOAT4X4 _matView;
 	XMFLOAT4X4 _matProj;
+	XMFLOAT4X4 _matViewProj;
 	XMFLOAT4X4 _matOrtho;
 	float _aspectRatio;
+	Vector2 _viewportSize;
 
 	static Camera* _currentCamera;
 	static UINT _cameraCount;

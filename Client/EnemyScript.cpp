@@ -37,8 +37,11 @@ void EnemyScript::Init()
 	_patterns.push_back(new TrackWalkState());
 	_patterns.push_back(new DeathState());
 
+	//_enemyStateUI = UI->CreateUI<UIElement>();
+	//_enemyStateUI->GetTransform()->SetDynamicPosition(true);
+
 	_damageText = UI->CreateUI<UIText>();
-	_damageText->GetTransform()->SetDynamicPosition(true);
+	_damageText->SetFont(L"KoPubBatang");
 	_damageText->SetText(L"0");
 	_damageText->SetRenderActive(false);
 }

@@ -32,9 +32,8 @@ void UITransform::SetPivot(const Vector2& pivot)
 {
 	_pivot = pivot;
 
-	Vector2 size = _element.lock()->GetSize();
-	float width = size.x * (_pivot.x - 0.5f);
-	float height = size.y * (0.5f - _pivot.y);
+	float width = _size.x * (_pivot.x - 0.5f);
+	float height = _size.y * (_pivot.y - 0.5f);
 
 	_localPosition.x = _localPosition.x + width;
 	_localPosition.y = _localPosition.y + height;
@@ -65,6 +64,14 @@ void UITransform::SetLocalPosition(const Vector3& position)
 	}
 
 	SetDirtyFlag();
+}
+
+Vector3 UITransform::GetPosition()
+{
+	if (_isDirty) UpdateTransform();
+	float width = _size.x * (0.5f - _pivot.x);
+	float height = _size.y * (0.5f - _pivot.y);
+	return { _position.x + width, _position.y + height, _position.z };
 }
 
 void UITransform::SetParent(shared_ptr<UITransform> parent)

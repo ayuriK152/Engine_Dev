@@ -5,30 +5,34 @@ UISlider::UISlider() : UIElement(UIType::Slider)
 {
 	_name = "UISlider";
 
-	_size = { 200.0f, 20.0f };
-
-	background = UI->CreateUI<UIPanel>();
-	fill = UI->CreateUI<UIPanel>();
+	_background = UI->CreateUI<UIPanel>();
+	_fill = UI->CreateUI<UIPanel>();
 }
 
 UISlider::~UISlider()
 {
 	cout << "Released - UISlider\n";
+
+	_background.reset();
+	_fill.reset();
 }
 
 void UISlider::Init()
 {
+	_transform->SetSize({ 200.0f, 20.0f });
 	_transform->SetPivot({ 0.0f, 1.0f });
 
-	background->GetTransform()->SetParent(_transform);
-	background->SetColor({ 0.7f, 0.7f, 0.7f, 1.0f });
-	background->SetSize(_size);
-	background->GetTransform()->SetDepth(_transform->GetDepth() + 1.0f);
+	_transformBg = _background->GetTransform();
+	_transformBg->SetParent(_transform);
+	_transformBg->SetSize(_transform->GetSize());
+	_transformBg->SetDepth(_transform->GetDepth() + 1.0f);
+	_background->SetColor({ 0.7f, 0.7f, 0.7f, 1.0f });
 
-	fill->GetTransform()->SetParent(_transform);
-	fill->GetTransform()->SetPivot({ 0.0f, 0.5f });
-	fill->GetTransform()->SetLocalPosition({ -100.0f, 0.0f, 0.0f });
-	fill->SetSize(_size);
+	_transformFill = _fill->GetTransform();
+	_transformFill->SetParent(_transform);
+	_transformFill->SetPivot({ 0.0f, 0.5f });
+	_transformFill->SetLocalPosition({ -100.0f, 0.0f, 0.0f });
+	_transformFill->SetSize(_transform->GetSize());
 }
 
 void UISlider::Update()
@@ -38,7 +42,7 @@ void UISlider::Update()
 		if (_max < _min) _min = _max;
 		_value = clamp(_value, _min, _max);
 
-		fill->SetSize({ _size.x * _value / (_max - _min), _size.y });
+		_transformFill->SetWidth({ _transform->GetWidth() * _value / (_max - _min) });
 
 		_isDirty = false;
 	}

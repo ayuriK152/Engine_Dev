@@ -11,9 +11,6 @@ public:
 	void Update() override;
 
 public:
-	shared_ptr<UIPanel> background;
-	shared_ptr<UIPanel> fill;
-
 	void SetValue(float value) {
 		_value = value;
 		_isDirty = true;
@@ -29,10 +26,16 @@ public:
 		_isDirty = true;
 	}
 
-	void SetBackgroundColor(const ColorRGBA color) { background->SetColor(color); }
-	void SetFillColor(const ColorRGBA color) { fill->SetColor(color); }
+	void SetBackgroundColor(const ColorRGBA color) { _background->SetColor(color); }
+	void SetFillColor(const ColorRGBA color) { _fill->SetColor(color); }
 
 private:
+	shared_ptr<UIPanel> _background;
+	shared_ptr<UIPanel> _fill;
+
+	shared_ptr<UITransform> _transformBg;
+	shared_ptr<UITransform> _transformFill;
+
 	bool _isDirty = true;
 
 	float _value = 5.0f;

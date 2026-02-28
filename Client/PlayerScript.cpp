@@ -37,11 +37,13 @@ void PlayerScript::Init()
 	_gameObject->AddComponent(_controller);
 
 	_hpBar = UI->CreateUI<UISlider>();
+	_hpBar->GetTransform()->SetPivot({ 0.0f, 1.0f });
 	_hpBar->GetTransform()->SetPosition({ -800.0f, 450.0f, 0.0f });
 	_hpBar->SetFillColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 	_hpBar->SetValue(10.0f);
 
 	_steminaBar = UI->CreateUI<UISlider>();
+	_steminaBar->GetTransform()->SetPivot({ 0.0f, 1.0f });
 	_steminaBar->GetTransform()->SetPosition({ -800.0f, 420.0f, 0.0f });
 	_steminaBar->SetFillColor({ 0.0f, 1.0f, 0.0f, 1.0f });
 	_steminaBar->SetValueMaxLimit(steminaMax);
@@ -226,7 +228,6 @@ void PlayerScript::LockOn()
 
 void PlayerScript::RecoveryStemina()
 {
-	_steminaBar->SetValue(stemina);
 	if (!_isRecoveryPossible)
 		_recoverySteminaDelayedTime -= TIME->DeltaTime();
 	else if (stemina < steminaMax) {
@@ -238,6 +239,8 @@ void PlayerScript::RecoveryStemina()
 		_recoverySteminaDelayedTime = 0.0f;
 		_isRecoveryPossible = true;
 	}
+
+	_steminaBar->SetValue(stemina);
 }
 
 void PlayerScript::DecreaseStemina(float value, bool instantChange)

@@ -25,31 +25,30 @@ void UIManager::Update()
 	}
 
 	D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
-	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewMatrix()) * XMLoadFloat4x4(&Camera::GetProjMatrix());
+	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewProjMatrix());
 
 	_uiConstants.clear();
 	for (auto& ui : _panels) {
 		UIInstanceConstants constants;
 		shared_ptr<UITransform> transform = ui->GetTransform();
 		Vector3 position = transform->GetPosition();
+		Vector2 size = transform->GetSize();
 		Vector2 pivot = transform->GetPivot();
 
-		float width = ui->_size.x * (0.5f - pivot.x);
-		float height = ui->_size.y * (pivot.y - 0.5f);
 		if (transform->IsDynamicPosition()) {
 			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&position), viewProj));
 			Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
-			constants.CenterPos = { (ndc.x * 0.5f * viewport.Width) + width, (ndc.y * 0.5f * viewport.Height) + height };	// 해상도 원하는대로 설정하도록
+			constants.CenterPos = { ndc.x * 0.5f * viewport.Width, ndc.y * 0.5f * viewport.Height };	// 해상도 원하는대로 설정하도록
 		}
 
 		else {
-			constants.CenterPos = { position.x + width, position.y + height };
+			constants.CenterPos = { position.x, position.y };
 		}
 
 		constants.Color = ui->_renderActive ? ui->_color : XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 		constants.Depth = transform->GetDepth();
 		constants.TextureIndex = ui->_textureSrvHeapIndex;
-		constants.Size = ui->_size;
+		constants.Size = size;
 
 		_uiConstants.push_back(constants);
 	}

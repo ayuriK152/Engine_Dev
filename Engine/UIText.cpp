@@ -84,7 +84,7 @@ void UIText::BuildDescriptors()
 void UIText::BuildResource()
 {
 	D3D12_RESOURCE_DESC texDesc =
-		CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_B8G8R8A8_UNORM, _size.x, _size.y);
+		CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_B8G8R8A8_UNORM, _transform->GetWidth(), _transform->GetHeight());
 	texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	texDesc.MipLevels = 1;
 
@@ -158,7 +158,7 @@ void UIText::UpdateTextLayout()
 	// Using transform size for size limit
 	ThrowIfFailed(GRAPHIC->GetWriteFactory()->CreateTextLayout(
 		_text.c_str(), _text.length(),
-		_textFormat.Get(), _size.x, _size.y, &_textLayout));
+		_textFormat.Get(), _transform->GetWidth(), _transform->GetHeight(), &_textLayout));
 
 	_textLayout->GetMetrics(&_metrics);
 }

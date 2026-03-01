@@ -35,17 +35,9 @@ void UIManager::Update()
 		Vector2 size = transform->GetSize();
 		Vector2 pivot = transform->GetPivot();
 
-		if (transform->IsDynamicPosition()) {
-			Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&position), viewProj));
-			Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
-			constants.CenterPos = { ndc.x * 0.5f * viewport.Width, ndc.y * 0.5f * viewport.Height };	// 해상도 원하는대로 설정하도록
-		}
+		constants.CenterPos = { position.x, position.y };
 
-		else {
-			constants.CenterPos = { position.x, position.y };
-		}
-
-		constants.Color = ui->_renderActive ? ui->_color : XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		constants.Color = ui->IsRenderActive() ? ui->_color : XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 		constants.Depth = transform->GetDepth();
 		constants.TextureIndex = ui->_textureSrvHeapIndex;
 		constants.Size = size;

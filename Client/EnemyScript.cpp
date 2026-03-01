@@ -37,13 +37,31 @@ void EnemyScript::Init()
 	_patterns.push_back(new TrackWalkState());
 	_patterns.push_back(new DeathState());
 
-	//_enemyStateUI = UI->CreateUI<UIElement>();
-	//_enemyStateUI->GetTransform()->SetDynamicPosition(true);
+	_enemyStateUI = UI->CreateUI<UIFrame>();
+	_enemyStateUI->GetTransform()->SetDynamicPosition(true);
+	_enemyStateUI->GetTransform()->SetSize({ 200.0f, 30.0f });
 
 	_damageText = UI->CreateUI<UIText>();
+	_damageText->GetTransform()->SetParent(_enemyStateUI->GetTransform());
+	_damageText->GetTransform()->SetSize({ 200.0f, 20.0f });
+	_damageText->GetTransform()->SetPivot({ 0.5f, 0.0f });
+	_damageText->GetTransform()->SetLocalPosition({ 0.0f, -5.0f, 0.0f });
 	_damageText->SetFont(L"KoPubBatang");
 	_damageText->SetText(L"0");
-	_damageText->SetRenderActive(false);
+	_damageText->SetFontSize(22);
+	_damageText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+
+	_healthBarUI = UI->CreateUI<UISlider>();
+	_healthBarUI->GetTransform()->SetParent(_enemyStateUI->GetTransform());
+	_healthBarUI->SetEntireSize({ 200.0f, 10.0f });
+	_healthBarUI->GetTransform()->SetPivot({ 0.5f, 1.0f });
+	_healthBarUI->GetTransform()->SetLocalPosition({ 0.0f, -5.0f, 0.0f });
+	_healthBarUI->SetFillColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+	_healthBarUI->SetValueMaxLimit(100.0f);
+	_healthBarUI->SetValueMinLimit(0.0f);
+	_healthBarUI->SetValue(_health);
+
+	_enemyStateUI->SetRenderActive(false);
 }
 
 void EnemyScript::Update()
@@ -74,7 +92,8 @@ void EnemyScript::Update()
 
 	_patterns[static_cast<int>(_currentState)]->StateUpdate(this);
 
-	_damageText->GetTransform()->SetPosition(_transform->GetPosition());
+	Vector3 pos = _transform->GetPosition();
+	_enemyStateUI->GetTransform()->SetPosition({ pos.x, pos.y + 2.2f, pos.z });
 }
 
 void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
@@ -104,6 +123,7 @@ void EnemyScript::TakeDamage(int damage)
 	_health -= damage;
 	DEBUG->Log("Take" + to_string(damage) + "damage. Remain Health - " + to_string(_health));
 	SetDamageText(damage);
+	_healthBarUI->SetValue(_health);
 }
 
 void EnemyScript::SetDamageText(int damage)
@@ -111,7 +131,9 @@ void EnemyScript::SetDamageText(int damage)
 	_damageTextTime = 2.0f;
 	_cumulativeDamage += damage;
 	_damageText->SetText(to_wstring(_cumulativeDamage));
-	_damageText->SetRenderActive(true);
+
+	if (!_enemyStateUI->IsRenderActive())
+		_enemyStateUI->SetRenderActive(true);
 }
 
 void EnemyScript::UpdateDamageText()
@@ -122,8 +144,8 @@ void EnemyScript::UpdateDamageText()
 	else {
 		_damageTextTime = 0.0f;
 		_cumulativeDamage = 0;
-		if (_damageText->IsRenderActive())
-			_damageText->SetRenderActive(false);
+		if (_enemyStateUI->IsRenderActive())
+			_enemyStateUI->SetRenderActive(false);
 	}
 }
 

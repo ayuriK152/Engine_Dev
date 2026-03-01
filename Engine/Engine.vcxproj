@@ -79,6 +79,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UIElement.h" />
+    <ClInclude Include="UIFrame.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIPanel.h" />
     <ClInclude Include="UISlider.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIFrame.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIPanel.cpp" />
     <ClCompile Include="UISlider.cpp" />

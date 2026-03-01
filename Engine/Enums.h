@@ -18,8 +18,9 @@ enum class ComponentType
 
 enum class UIType
 {
-	Panel = 1 << 0,
-	Button = 1 << 1,
-	Slider = 1 << 2,
-	Text = 1 << 3
+	Frame = 1 << 0,
+	Panel = 1 << 1,
+	Button = 1 << 2,
+	Slider = 1 << 3,
+	Text = 1 << 4
 };

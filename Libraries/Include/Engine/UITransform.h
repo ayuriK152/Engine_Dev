@@ -47,6 +47,8 @@ public:
 	void SetParent(shared_ptr<UITransform> parent);
 	void AddChild(shared_ptr<UITransform> child);
 
+	const vector<shared_ptr<UITransform>>& GetChilds() { return _childs; }
+
 	shared_ptr<UIElement> GetUIElement() { return _element.lock(); }
 
 	bool IsDirty() { return _isDirty; }

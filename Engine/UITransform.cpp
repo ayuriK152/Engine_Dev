@@ -71,7 +71,15 @@ Vector3 UITransform::GetPosition()
 	if (_isDirty) UpdateTransform();
 	float width = _size.x * (0.5f - _pivot.x);
 	float height = _size.y * (0.5f - _pivot.y);
-	return { _position.x + width, _position.y + height, _position.z };
+
+	if (_isDynamicPosition) {
+		Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&_position), XMLoadFloat4x4(&Camera::GetViewProjMatrix())));
+		Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
+		D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
+		return { ndc.x * 0.5f * viewport.Width, ndc.y * 0.5f * viewport.Height, _position.z };
+	}
+	else
+		return { _position.x + width, _position.y + height, _position.z };
 }
 
 void UITransform::SetParent(shared_ptr<UITransform> parent)

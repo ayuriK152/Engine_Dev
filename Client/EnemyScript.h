@@ -70,6 +70,7 @@ private:
 
 	shared_ptr<UIElement> _enemyStateUI;
 	shared_ptr<UIText> _damageText;
+	shared_ptr<UISlider> _healthBarUI;
 	float _damageTextTime = 0.0f;
 	int _cumulativeDamage = 0;
 

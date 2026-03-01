@@ -11,6 +11,12 @@ public:
 	void Update() override;
 
 public:
+	void SetEntireSize(Vector2 size) {
+		_transform->SetSize(size);
+		_transformBg->SetSize(size);
+		_transformFill->SetSize(size);
+	}
+
 	void SetValue(float value) {
 		_value = value;
 		_isDirty = true;

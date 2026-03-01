@@ -19,9 +19,15 @@ public:
 
 	shared_ptr<UITransform> GetTransform() { return _transform; }
 
+	// Counter method, Avoid duplicate use
+	void SetRenderActive(bool value);
+	bool IsRenderActive() { return _renderActive == 0; }
+
 protected:
 	string _name;
 	UINT _type;
 
 	shared_ptr<UITransform> _transform;
+
+	UINT _renderActive = 0;
 };

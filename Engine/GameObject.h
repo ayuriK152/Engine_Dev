@@ -111,23 +111,23 @@ shared_ptr<T> GameObject::GetComponent()
 template<typename T>
 ComponentType GameObject::GetComponentType()
 {
-	if (is_same_v<T, MeshRenderer>)
+	if (is_base_of_v<T, MeshRenderer>)
 		return ComponentType::MeshRenderer;
-	if (is_same_v<T, SkinnedMeshRenderer>)
+	if (is_base_of_v<T, SkinnedMeshRenderer>)
 		return ComponentType::SkinnedMeshRenderer;
-	if (is_same_v<T, Transform>)
+	if (is_base_of_v<T, Transform>)
 		return ComponentType::Transform;
-	if (is_same_v<T, Camera>)
+	if (is_base_of_v<T, Camera>)
 		return ComponentType::Camera;
-	if (is_same_v<T, Rigidbody>)
+	if (is_base_of_v<T, Rigidbody>)
 		return ComponentType::Rigidbody;
-	if (is_same_v<T, Animator>)
+	if (is_base_of_v<T, Animator>)
 		return ComponentType::Animator;
-	if (is_same_v<T, Script>)
+	if (is_base_of_v<T, Script>)
 		return ComponentType::Script;
-	if (is_same_v<T, ParticleEmitter>)
+	if (is_base_of_v<T, ParticleEmitter>)
 		return ComponentType::ParticleEmitter;
-	if (is_same_v<T, CharacterController>)
+	if (is_base_of_v<T, CharacterController>)
 		return ComponentType::CharacterController;
 
 	return ComponentType::Undefined;

@@ -452,6 +452,23 @@ void Transform::SetParent(shared_ptr<Transform> parent)
 	SetLocalMatrix(_matLocal);
 }
 
+shared_ptr<Transform> Transform::GetChild(const string& name)
+{
+	queue<shared_ptr<Transform>> childs;
+	childs.push(static_pointer_cast<Transform>(shared_from_this()));
+	while (!childs.empty()) {
+		shared_ptr<Transform> current = childs.front();
+		childs.pop();
+
+		if (current->GetGameObject()->GetName() == name)
+			return current;
+
+		vector<shared_ptr<Transform>> subChilds = current->GetChilds();
+		for (shared_ptr<Transform> c : subChilds)
+			childs.push(c);
+	}
+}
+
 void Transform::AddChild(shared_ptr<Transform> child)
 {
 	_childs.push_back(child);

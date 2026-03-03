@@ -135,6 +135,7 @@ public:
 	void SetParent(shared_ptr<Transform> parent);
 
 	const vector<shared_ptr<Transform>>& GetChilds() { return _childs; }
+	shared_ptr<Transform> GetChild(const string& name);
 	void AddChild(shared_ptr<Transform> child);
 
 	bool HasParent() { return _parent != nullptr; }

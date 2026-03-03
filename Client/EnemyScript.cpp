@@ -14,6 +14,7 @@ void EnemyScript::Init()
 	_gameObject->SetTag("Enemy");
 
 	_transform = _gameObject->GetTransform();
+	_centerTransform = _transform->GetChild("mixamorig:Hips");	// Mixamo Default Rig Name
 
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->SetLoop(true);

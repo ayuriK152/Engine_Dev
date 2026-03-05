@@ -52,7 +52,8 @@ struct Material {
     float4   Specular;
     float4   Emissive;
     float2   Tilling;
-    float    Shiness;
+    float    Metallic;
+    float    Roughness;
     uint     DiffuseMapIndex;
     uint     NormalMapIndex;
 };

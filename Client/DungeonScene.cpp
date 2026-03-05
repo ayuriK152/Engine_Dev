@@ -38,8 +38,8 @@ void DungeonScene::Init()
 	{
 		auto globalLight = make_shared<GameObject>();
 		globalLight->SetName("GlobalLight");
-		XMFLOAT4 ambient = { 0.8f, 0.8f, 0.8f, 1.0f };
-		XMFLOAT4 diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
+		XMFLOAT4 ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+		XMFLOAT4 diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 		XMFLOAT4 specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 		globalLight->AddComponent(make_shared<DirectionalLight>(ambient, diffuse, specular));
 		globalLight->GetTransform()->LookAt(Vector3(1.0f, -2.0f, 1.0f));

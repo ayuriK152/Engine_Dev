@@ -52,6 +52,14 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 	element->SetAttribute("a", material->emissive.w);
 	node->InsertEndChild(element);
 
+	element = doc.NewElement("Metallic");
+	element->SetAttribute("value", material->metallic);
+	node->InsertEndChild(element);
+
+	element = doc.NewElement("Roughness");
+	element->SetAttribute("value", material->roughness);
+	node->InsertEndChild(element);
+
 	element = doc.NewElement("DiffuseTexture");
 	element->SetText(material->diffuseTextureName.c_str());
 	node->InsertEndChild(element);
@@ -138,11 +146,19 @@ void FileIOUtil::LoadMaterials()
 		emissive.z = element->FloatAttribute("b");
 		emissive.w = element->FloatAttribute("a");
 
+		element = node->FirstChildElement("Metallic");
+		float metallic = element->FloatAttribute("value", 0.5f);
+
+		element = node->FirstChildElement("Roughness");
+		float roughness = element->FloatAttribute("value", 0.5f);
+
 		shared_ptr<Material> mat = make_shared<Material>(name);
 		mat->ambient = ambient;
 		mat->diffuse = diffuse;
 		mat->specular = specular;
 		mat->emissive = emissive;
+		mat->metallic = metallic;
+		mat->roughness = roughness;
 
 		string textureName = "";
 		element = node->FirstChildElement("DiffuseTexture");

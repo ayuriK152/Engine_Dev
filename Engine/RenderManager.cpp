@@ -61,7 +61,6 @@ void RenderManager::PreUpdate()
 void RenderManager::Update()
 {
 	// Frame Resource Update
-	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
 	_currFrameResource = _frameResources[_currFrameResourceIndex].get();
 
 	GRAPHIC->WaitForFence(_currFrameResource->fence);
@@ -216,6 +215,8 @@ void RenderManager::Render()
 	ThrowIfFailed(GRAPHIC->GetSwapChain()->Present(0, 0));
 
 	GRAPHIC->RenderEnd(_currFrameResource);
+
+	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, ID3D12RootSignature* rootSignature, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)

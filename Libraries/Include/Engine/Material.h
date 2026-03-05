@@ -36,7 +36,8 @@ public:
 	ColorRGBA specular;
 	ColorRGBA emissive;
 	Vector2 tilling;
-	float shiness;
+	float metallic;
+	float roughness;
 
 private:
 	static int _count;

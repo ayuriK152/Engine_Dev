@@ -58,7 +58,8 @@ void FrameResource::UpdateObjectSB()
 		int instanceIndex = 0;
 
 		shared_ptr<MeshRenderer> meshRenderer = o->GetComponent<MeshRenderer>();
-		if (meshRenderer == nullptr) meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
+		if (meshRenderer == nullptr) 
+			meshRenderer = o->GetComponent<SkinnedMeshRenderer>();
 
 		if (meshRenderer != nullptr) {
 			shared_ptr<Mesh> mesh = meshRenderer->GetMesh();
@@ -113,7 +114,8 @@ void FrameResource::UpdateMaterialSB()
 			matConstants.Specular = mat->specular;
 			matConstants.Emissive = mat->emissive;
 			matConstants.Tilling = mat->tilling;
-			matConstants.Shiness = mat->shiness;
+			matConstants.Metallic = mat->metallic;
+			matConstants.Roughness = mat->roughness;
 			matConstants.DiffuseMapIndex = mat->diffuseSrvHeapIndex;
 			matConstants.NormalMapIndex = mat->normalSrvHeapIndex;
 

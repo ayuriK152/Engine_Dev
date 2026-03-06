@@ -25,7 +25,8 @@ struct MaterialConstants
 	ColorRGBA Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
 	ColorRGBA Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT2 Tilling = { 1.0f, 1.0f };
-	float Shiness = 0.25f;
+	float Metallic = 0.5f;
+	float Roughness = 0.5f;
 	UINT DiffuseMapIndex;
 	UINT NormalMapIndex;
 };

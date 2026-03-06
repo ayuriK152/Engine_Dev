@@ -16,7 +16,8 @@ Material::Material() : Super(ResourceType::Material)
 	specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 	emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	tilling = { 1.0f, 1.0f };
-	shiness = 0.25f;
+	metallic = 0.0f;
+	roughness = 1.0f;
 	matTransform = MathHelper::Identity4x4();
 }
 
@@ -37,7 +38,8 @@ Material::Material(string name, wstring textureName) : Super(ResourceType::Mater
 	specular = { 1.0f, 1.0f, 1.0f, 1.0f };
 	emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	tilling = { 1.0f, 1.0f };
-	shiness = 0.25f;
+	metallic = 0.0f;
+	roughness = 1.0f;
 	matTransform = MathHelper::Identity4x4();
 
 	SetDiffuse(RESOURCE->Get<Texture>(textureName));

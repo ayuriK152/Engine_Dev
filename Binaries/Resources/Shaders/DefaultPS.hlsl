@@ -10,7 +10,7 @@ float4 PS(VertexOut pin) : SV_TARGET {
 
     if (mat.NormalMapIndex != 0) {
         float3 normalMapSample = TextureMaps[mat.NormalMapIndex].Sample(samAnisotropicWrap, pin.TexUV * mat.Tilling).rgb;
-        float3 normalT = 2.0f * normalMapSample - 1.0f;
+        float3 normalT = 2.0 * normalMapSample - 1.0;
 
         float3 N = pin.Normal;
         float3 T = normalize(pin.Tangent - dot(pin.Tangent, N) * N);
@@ -20,12 +20,13 @@ float4 PS(VertexOut pin) : SV_TARGET {
         pin.Normal = mul(normalT, TBN);
     }
 
-    float4 lighting = ComputeLight(mat, albedo, pin.Normal, eyeDir);
+    //float4 lighting = ComputeLight(mat, albedo, pin.Normal, eyeDir);
+    float4 lighting = BRDFLighting(mat, albedo, pin.Normal, eyeDir);
 
     float2 shadowMapTex;
-    float bias = 0.001f;
-    shadowMapTex.x = pin.ShadowPos.x / pin.ShadowPos.w / 2.0f + 0.5f;
-    shadowMapTex.y = -pin.ShadowPos.y / pin.ShadowPos.w / 2.0f + 0.5f;
+    float bias = 0.001;
+    shadowMapTex.x = pin.ShadowPos.x / pin.ShadowPos.w / 2.0 + 0.5;
+    shadowMapTex.y = -pin.ShadowPos.y / pin.ShadowPos.w / 2.0 + 0.5;
 
     float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex).r;
     float lightDepthValue = pin.ShadowPos.z / pin.ShadowPos.w;
@@ -35,6 +36,6 @@ float4 PS(VertexOut pin) : SV_TARGET {
         return lighting;
     }
     else {
-        return lighting * 0.7f;
+        return lighting;
     }
 }

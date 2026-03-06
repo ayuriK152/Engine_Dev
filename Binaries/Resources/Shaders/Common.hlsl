@@ -1,6 +1,5 @@
 #include "Structs.hlsl"
 
-
 /************/
 /* Samplers */
 /************/

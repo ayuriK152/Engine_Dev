@@ -4,8 +4,8 @@
     <Diffuse r="0.18044709" g="0.18044709" b="0.18044709" a="1"/>
     <Specular r="0.20300603" g="0.20300603" b="0.20300603" a="1"/>
     <Emissive r="0" g="0" b="0" a="1"/>
-    <Metallic value="0.5"/>
-    <Roughness value="0.5"/>
+    <Metallic value="0.0"/>
+    <Roughness value="0.8"/>
     <DiffuseTexture>axe_DIF2.png</DiffuseTexture>
     <NormalTexture></NormalTexture>
 </Material>

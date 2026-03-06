@@ -22,7 +22,6 @@ float4 PS(VertexOut pin) : SV_TARGET {
 
     //float4 lighting = ComputeLight(mat, albedo, pin.Normal, eyeDir);
     float4 lighting = BRDFLighting(mat, albedo, pin.Normal, eyeDir);
-    lighting = pow(lighting, 1.0 / 2.2);
 
     float2 shadowMapTex;
     float bias = 0.001;
@@ -37,6 +36,6 @@ float4 PS(VertexOut pin) : SV_TARGET {
         return lighting;
     }
     else {
-        return lighting * 0.35;
+        return lighting;
     }
 }

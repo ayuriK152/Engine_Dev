@@ -69,6 +69,7 @@ bool GameApplication::Initialize()
 
 void GameApplication::PreUpdate()
 {
+	DEBUG->PreUpdate();
 	RENDER->PreUpdate();
 }
 
@@ -79,12 +80,13 @@ void GameApplication::Update()
 		INPUTM->Update();
 		GRAPHIC->Update();
 		PHYSICS->Update();
-		//PARTICLE->Update();
+		// PARTICLE->Update();
 		RENDER->Update();
 		ANIMATION->Update();
-		// DEBUG->Update();
 		ENGINESTAT->Update();
+		UI->Update();
 		ENGINEGUI->Update();
+		DEBUG->Update();
 
 		PHYSICS->LateUpdate();
 

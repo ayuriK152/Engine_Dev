@@ -71,6 +71,8 @@ void TPVCamera::Update()
 		_transform->SetPosition(_pivotPosition);
 	}
 
+	DEBUG->DrawLine(_pivotPosition, _pivotPosition + Vector3(1.0f, 0.0f, 0.0f), ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f));
+
 	if (!isLockOn) {
 		float deltaX = INPUTM->GetMouseDelta().x * sensitivity * TIME->DeltaTime();
 		float deltaY = INPUTM->GetMouseDelta().y * sensitivity * TIME->DeltaTime();

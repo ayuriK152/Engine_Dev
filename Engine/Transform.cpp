@@ -240,7 +240,7 @@ Vector3 Transform::GetRight()
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(_matLocal._11, _matLocal._21, -_matLocal._31);
+	return Vector3(_matWorld._11, _matWorld._12, _matWorld._13).Normalize();
 }
 
 Vector3 Transform::GetLeft()
@@ -248,7 +248,7 @@ Vector3 Transform::GetLeft()
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(-_matLocal._11, -_matLocal._21, _matLocal._31);
+	return Vector3(-_matWorld._11, -_matWorld._12, -_matWorld._13).Normalize();
 }
 
 Vector3 Transform::GetUp()
@@ -256,7 +256,7 @@ Vector3 Transform::GetUp()
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(_matLocal._12, _matLocal._22, -_matLocal._32);
+	return Vector3(_matWorld._21, _matWorld._22, _matWorld._23).Normalize();
 }
 
 Vector3 Transform::GetDown()
@@ -264,7 +264,7 @@ Vector3 Transform::GetDown()
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(-_matLocal._12, -_matLocal._22, _matLocal._32);
+	return Vector3(-_matWorld._21, -_matWorld._22, -_matWorld._23).Normalize();
 }
 
 Vector3 Transform::GetLook()
@@ -272,7 +272,7 @@ Vector3 Transform::GetLook()
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(-_matLocal._13, -_matLocal._23, _matLocal._33);
+	return Vector3(_matWorld._31, _matWorld._32, _matWorld._33).Normalize();
 }
 
 Vector3 Transform::GetBack()
@@ -280,7 +280,7 @@ Vector3 Transform::GetBack()
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(_matLocal._13, _matLocal._23, -_matLocal._33);
+	return Vector3(-_matWorld._31, -_matWorld._32, -_matWorld._33).Normalize();
 }
 
 void Transform::Translate(const Vector3& moveVec)
@@ -340,7 +340,7 @@ void Transform::LookAt(const Vector3& targetPos)
 	Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
 	Vector4 quatVec;
 	XMStoreFloat4(&quatVec, quat);
-	SetLocalQuaternion(quatVec);
+	SetQuaternion(quatVec);
 
 	SetDirtyFlag();
 }
@@ -358,9 +358,11 @@ void Transform::LookAtWithNoRoll(const Vector3& targetPos, float blendAlpha)
 
 	XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), pitch);
 	XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw);
-	XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
+	XMQuaternionRotationRollPitchYaw(pitch, yaw, 0.0f);
+	//XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
+	XMVECTOR quatFinal = XMQuaternionRotationRollPitchYaw(pitch, yaw, 0.0f);
 
-	SetLocalQuaternion(quatFinal);
+	SetQuaternion(quatFinal);
 
 	SetDirtyFlag();
 }
@@ -377,7 +379,7 @@ void Transform::LookAtOnlyYaw(const Vector3& targetPos, float blendAlpha)
 
 	XMVECTOR quatYaw = XMQuaternionNormalize(XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw));
 
-	SetLocalQuaternion(quatYaw);
+	SetQuaternion(quatYaw);
 
 	SetDirtyFlag();
 }

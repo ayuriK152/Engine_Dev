@@ -70,6 +70,13 @@ void EngineGUIManager::FixedUpdate()
 void EngineGUIManager::Update()
 {
 	ToggleWindows();
+	if (_selectedObj != nullptr) {
+		shared_ptr<Transform> transform = _selectedObj->GetTransform();
+		Vector3 pos = transform->GetPosition();
+		DEBUG->DrawLine(pos, pos + transform->GetRight().Normalize(), { 1.0f, 0.0f, 0.0f, 1.0f });
+		DEBUG->DrawLine(pos, pos + transform->GetUp().Normalize(), { 0.0f, 1.0f, 0.0f, 1.0f });
+		DEBUG->DrawLine(pos, pos + transform->GetBack().Normalize(), { 0.0f, 0.0f, 1.0f, 1.0f });
+	}
 }
 
 void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)

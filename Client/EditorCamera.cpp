@@ -20,11 +20,18 @@ void EditorCamera::Update()
 		_yaw += mouseDelta.x * 0.003f;
 		_pitch += mouseDelta.y * 0.003f;
 
-		XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), _pitch);
-		XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), _yaw);
-		XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
+		Vector3 right = _transform->GetRight();
+		Vector3 up = _transform->GetUp();
 
-		_transform->SetLocalQuaternion(quatFinal);
+		//XMVECTOR quatPitch = XMQuaternionRotationAxis(XMQuaternionNormalize(XMVectorSet(right.x, right.y, right.z, 0.0f)), _pitch);
+		XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), _pitch);
+		//XMVECTOR quatYaw = XMQuaternionRotationAxis(XMQuaternionNormalize(XMVectorSet(up.x, up.y, up.z, 0.0f)), _yaw);
+		XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), _yaw);
+		//XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
+
+		XMVECTOR quatFinal = XMQuaternionRotationRollPitchYaw(_pitch, _yaw, 0.0f);
+
+		_transform->SetQuaternion(quatFinal);
 
 		if (INPUTM->IsKeyPress(KeyValue::W))
 			_transform->Translate(_transform->GetLook() * TIME->DeltaTime() * 5.0f);

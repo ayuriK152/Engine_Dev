@@ -72,7 +72,7 @@ void RenderManager::Update()
 		o->Update();
 	}
 
-	DEBUG->Update();
+	//DEBUG->Update();
 	_currFrameResource->Update();
 }
 
@@ -193,7 +193,6 @@ void RenderManager::Render()
 
 		_cmdLists[2]->SetPipelineState(_PSOs[PSO_UI].Get());
 		_cmdLists[2]->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		UI->Update();
 		UI->Render(_cmdLists[2]);
 
 		ENGINEGUI->Render(_cmdLists[2]);

@@ -49,6 +49,7 @@ public:
 	~DebugManager();
 
 	void Init();
+	void PreUpdate();
 	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 

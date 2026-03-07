@@ -27,11 +27,14 @@ void DebugManager::Init()
 	Initialize();
 }
 
-void DebugManager::Update()
+void DebugManager::PreUpdate()
 {
 	_vertices.clear();
 	_indices.clear();
+}
 
+void DebugManager::Update()
+{
 	JPH::BodyManager::DrawSettings drawSettings;
 	drawSettings.mDrawShape = true;
 	drawSettings.mDrawShapeWireframe = true;

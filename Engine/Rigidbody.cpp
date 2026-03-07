@@ -6,6 +6,7 @@ Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 	isGravity = true;
 
 	_velocity = { 0.0f, 0.0f, 0.0f };
+	XMStoreFloat4(&_rotationOffsetQuaternion, XMQuaternionIdentity());
 }
 
 Rigidbody::~Rigidbody()
@@ -60,12 +61,14 @@ void Rigidbody::Update()
 		auto pos = transform->GetPosition();
 		auto rot = transform->GetQuaternion();
 
-		pos = pos + XMVector3Rotate(XMLoadFloat3(&_colliderOffset), XMLoadFloat4(&rot));
+		XMVECTOR finalQuat = XMQuaternionMultiply(XMLoadFloat4(&_rotationOffsetQuaternion), XMLoadFloat4(&rot));
+
+		pos = pos + XMVector3Rotate(XMLoadFloat3(&_colliderOffset), finalQuat);
 
 		PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetPositionAndRotation(
 			_bodyID,
 			JPH::RVec3(pos.x, pos.y, pos.z),
-			JPH::Quat(rot.x, rot.y, rot.z, rot.w),
+			JPH::Quat(finalQuat),
 			JPH::EActivation::Activate
 		);
 	}
@@ -117,6 +120,16 @@ void Rigidbody::SetColliderRadius(float radius)
 void Rigidbody::SetColliderOffset(const Vector3& offset)
 {
 	_colliderOffset = offset;
+}
+
+void Rigidbody::SetColliderRotationOffset(const Vector3& angle)
+{
+	_colliderRotationOffset = angle;
+	Vector3 radian = MathHelper::DegreeToRadian(_colliderRotationOffset);
+	XMStoreFloat4(
+		&_rotationOffsetQuaternion, 
+		XMQuaternionRotationRollPitchYaw(radian.x, radian.y, radian.z)
+	);
 }
 
 void Rigidbody::SetColliderShape(ColliderShape colliderShape)

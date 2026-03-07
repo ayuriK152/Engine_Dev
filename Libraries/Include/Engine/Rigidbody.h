@@ -37,6 +37,8 @@ public:
 
 	void SetColliderOffset(const Vector3& offset);
 
+	void SetColliderRotationOffset(const Vector3& angle);
+
 	Vector3 GetColliderOffset() { return _colliderOffset; }
 
 	void SetColliderShape(ColliderShape colliderShape);
@@ -62,6 +64,8 @@ private:
 	float _height = 0.5f;
 	float _radius = 0.5f;
 	Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };
+	Vector3 _colliderRotationOffset = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT4 _rotationOffsetQuaternion;
 
 	ColliderShape _colliderShape = ColliderShape::Box;
 

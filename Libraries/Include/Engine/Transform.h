@@ -47,7 +47,7 @@ public:
 		if (_isDirty)
 			UpdateTransform();
 
-		return _localQuaternion;
+		return _quaternion;
 	}
 	void SetQuaternion(const Vector4& quaternion);
 	void SetQuaternion(const XMVECTOR& quaternion);
@@ -56,7 +56,7 @@ public:
 		if (_isDirty)
 			UpdateTransform();
 
-		return _quaternion;
+		return _localQuaternion;
 	}
 	void SetLocalQuaternion(const Vector4& quaternion);
 	void SetLocalQuaternion(const XMVECTOR& quaternion);

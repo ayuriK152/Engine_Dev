@@ -17,6 +17,15 @@ void PlayerScript::Init()
 
 	_transform = _gameObject->GetTransform();
 
+	auto swordObj = _transform->GetChild("mixamorig:Sword_joint")->GetGameObject();
+	shared_ptr<Rigidbody> swordRb = make_shared<Rigidbody>();
+	swordRb->isGravity = false;
+	swordRb->SetColliderTrigger(true);
+	swordRb->SetColliderExtents({ 0.035f, 0.02f, 0.37f });
+	swordRb->SetColliderOffset({ 0.0f, 0.0f, -0.46f });
+	swordRb->SetColliderRotationOffset({ -4.0f, 15.0f, 0.0f });
+	swordObj->AddComponent(swordRb);
+
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->LoadAnimationEvents("..\\Resources\\Animations\\Paladin WProp J Nordstrom\\AnimationEvents.xml");
 

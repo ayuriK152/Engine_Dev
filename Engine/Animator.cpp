@@ -247,9 +247,10 @@ void Animator::UpdateAnimationEvent()
 					_currentAnimationSpeed = currentEvent.datas[0].x;
 				}
 				if (currentEvent.type == AnimationEventTypes::Attack) {
-					Vector3 offset(currentEvent.datas[0].x, currentEvent.datas[0].y, currentEvent.datas[0].z);
-					Vector3 scale(currentEvent.datas[1].x, currentEvent.datas[1].y, currentEvent.datas[1].z);
-					Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1);
+					animationEvent.Execute(currentEvent);
+					//Vector3 offset(currentEvent.datas[0].x, currentEvent.datas[0].y, currentEvent.datas[0].z);
+					//Vector3 scale(currentEvent.datas[1].x, currentEvent.datas[1].y, currentEvent.datas[1].z);
+					//Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1);
 				}
 				if (currentEvent.type == AnimationEventTypes::End) {
 					_isCurrentAnimationEnd = true;
@@ -269,7 +270,7 @@ void Animator::UpdateAnimationEvent()
 		_isTransitionBlocked = false;
 	}
 
-	// Next Animation Event
+	// Next Animation Event (On Transition)
 	if (_animationEvents.contains(_nextAnimation))
 	{
 		if (_nextAnimationEventIndex < _animationEvents[_nextAnimation].size()) {
@@ -279,9 +280,10 @@ void Animator::UpdateAnimationEvent()
 					_nextAnimationSpeed = nextEvent.datas[0].x;
 				}
 				if (nextEvent.type == AnimationEventTypes::Attack) {
-					Vector3 offset(nextEvent.datas[0].x, nextEvent.datas[0].y, nextEvent.datas[0].z);
-					Vector3 scale(nextEvent.datas[1].x, nextEvent.datas[1].y, nextEvent.datas[1].z);
-					Attack(offset, scale, nextEvent.datas[0].w, nextEvent.datas[1].w == 1 ? true : false);
+					animationEvent.Execute(nextEvent);
+					//Vector3 offset(nextEvent.datas[0].x, nextEvent.datas[0].y, nextEvent.datas[0].z);
+					//Vector3 scale(nextEvent.datas[1].x, nextEvent.datas[1].y, nextEvent.datas[1].z);
+					//Attack(offset, scale, nextEvent.datas[0].w, nextEvent.datas[1].w == 1 ? true : false);
 				}
 
 				_nextAnimationEventIndex++;
@@ -333,6 +335,8 @@ void Animator::LoadAnimationEvents(const string& path)
 				animEvent.datas[1].y = event->FloatAttribute("ScaleY", 1.0f);
 				animEvent.datas[1].z = event->FloatAttribute("ScaleZ", 1.0f);
 				animEvent.datas[1].w = event->BoolAttribute("IsHostile") ? 1 : 0;
+
+				animEvent.datas[2].x = event->BoolAttribute("MeleeWeaponActivation", true) ? 1 : 0;
 			}
 			if (eventName == "End") {
 				animEvent.type = AnimationEventTypes::End;

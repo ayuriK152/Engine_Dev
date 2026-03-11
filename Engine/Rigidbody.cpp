@@ -41,6 +41,9 @@ void Rigidbody::Init()
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 
+	if (!_isPhysicsActive)
+		bodyInterface.RemoveBody(_bodyID);
+
 	if (_shapeDataDirtyFlag) {
 		_shapeDataDirtyFlag = false;
 		UpdateShapeData();
@@ -56,6 +59,8 @@ void Rigidbody::PreUpdate()
 
 void Rigidbody::Update()
 {
+	if (!_isPhysicsActive) return;
+
 	if (_gameObject.lock()->GetFramesDirty() > 0) {
 		auto transform = _gameObject.lock()->GetTransform();
 		auto pos = transform->GetPosition();
@@ -143,6 +148,19 @@ void Rigidbody::SetColliderShape(ColliderShape colliderShape)
 	UpdateShapeData();
 }
 
+void Rigidbody::SetPhysicsActive(bool value)
+{
+	if (value == _isPhysicsActive) return;
+	_isPhysicsActive = value;
+
+	if (!isInitialized) return;
+
+	if (_isPhysicsActive)
+		PHYSICS->GetPhysicsSystem()->GetBodyInterface().AddBody(_bodyID, EActivation::Activate);
+	else
+		PHYSICS->GetPhysicsSystem()->GetBodyInterface().RemoveBody(_bodyID);
+}
+
 void Rigidbody::CreateShape()
 {
 	if (!isInitialized) {
@@ -174,7 +192,12 @@ void Rigidbody::UpdateShapeData()
 	}
 
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
-	bodyInterface.SetShape(_bodyID, _shapeResult.Get(), true, JPH::EActivation::Activate);
+	bodyInterface.SetShape(
+		_bodyID, 
+		_shapeResult.Get(), 
+		true, 
+		_isPhysicsActive ? JPH::EActivation::Activate : JPH::EActivation::DontActivate
+	);
 }
 
 JPH::ShapeSettings::ShapeResult Rigidbody::FitOnMesh()

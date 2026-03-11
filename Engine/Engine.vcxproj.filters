@@ -202,6 +202,7 @@
     <ClInclude Include="UIFrame.h">
       <Filter>06. UI</Filter>
     </ClInclude>
+    <ClInclude Include="Event.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -434,6 +435,7 @@
     <ClCompile Include="UIFrame.cpp">
       <Filter>06. UI</Filter>
     </ClCompile>
+    <ClCompile Include="Event.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

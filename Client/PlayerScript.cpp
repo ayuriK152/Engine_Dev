@@ -18,16 +18,21 @@ void PlayerScript::Init()
 	_transform = _gameObject->GetTransform();
 
 	auto swordObj = _transform->GetChild("mixamorig:Sword_joint")->GetGameObject();
-	shared_ptr<Rigidbody> swordRb = make_shared<Rigidbody>();
-	swordRb->isGravity = false;
-	swordRb->SetColliderTrigger(true);
-	swordRb->SetColliderExtents({ 0.035f, 0.02f, 0.37f });
-	swordRb->SetColliderOffset({ 0.0f, 0.0f, -0.46f });
-	swordRb->SetColliderRotationOffset({ -4.0f, 15.0f, 0.0f });
-	swordObj->AddComponent(swordRb);
+	swordObj->SetTag("AttackAlly");
+	_swordRb = make_shared<Rigidbody>();
+	_swordRb->isGravity = false;
+	_swordRb->SetColliderTrigger(true);
+	_swordRb->SetColliderExtents({ 0.035f, 0.02f, 0.37f });
+	_swordRb->SetColliderOffset({ 0.0f, 0.0f, -0.46f });
+	_swordRb->SetColliderRotationOffset({ -4.0f, 15.0f, 0.0f });
+	_swordRb->SetPhysicsActive(false);
+	swordObj->AddComponent(_swordRb);
 
 	_animator = _gameObject->GetComponent<Animator>();
 	_animator->LoadAnimationEvents("..\\Resources\\Animations\\Paladin WProp J Nordstrom\\AnimationEvents.xml");
+	_animator->animationEvent += [this](AnimationEvent e) {
+		this->AnimationEventListener(e);
+	};
 
 	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\walk_sword_back"));
 	_animator->AddAnimation(RESOURCE->LoadAnimation("Paladin WProp J Nordstrom\\strafe_sword_left"));
@@ -267,6 +272,14 @@ void PlayerScript::DecreaseStemina(float value, bool instantChange)
 
 	_recoverySteminaDelayedTime = 2.0f;
 	_isRecoveryPossible = false;
+}
+
+void PlayerScript::AnimationEventListener(AnimationEvent event)
+{
+	if (event.type == AnimationEventTypes::Attack) {
+		_swordRb->SetPhysicsActive(event.datas[2].x == 1);
+		_swordRb->customData = event.datas[0].w;
+	}
 }
 
 void PlayerScript::IdleState::StateStart(PlayerScript* owner)

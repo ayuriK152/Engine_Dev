@@ -46,6 +46,9 @@ public:
 	Vector3 GetVelocity() { return _velocity; }
 	void SetVelocity(Vector3& veclocity) { _velocity = veclocity; }
 
+	bool IsPhysicsActive() { return _isPhysicsActive; }
+	void SetPhysicsActive(bool value);
+
 	BodyID GetBodyID() { return _bodyID; }
 
 private:
@@ -55,10 +58,13 @@ private:
 
 public:
 	bool isGravity;				// 중력 여부
+	float customData;
 
 private:
+
 	Vector3 _velocity;			// 속도
 	bool _isTrigger = false;
+	bool _isPhysicsActive = true;
 
 	Vector3 _extents = { 0.5f, 0.5f, 0.5f };
 	float _height = 0.5f;

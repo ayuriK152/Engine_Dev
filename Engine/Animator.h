@@ -1,4 +1,5 @@
 #pragma once
+#include "Event.h"
 #define MAX_BONE_COUNT		250
 #define MAX_KEYFRAME_COUNT	    300
 #define EMPTY_ANIMATION		"empty"
@@ -21,7 +22,7 @@ struct AnimationEvent
 {
 	AnimationEventTypes type;
 	float Tick;
-	Vector4 datas[2];
+	Vector4 datas[3];
 };
 
 class Animator : public Component
@@ -98,6 +99,9 @@ private:
 	void UpdateBoneTransformPreviewMode(int boneIdx);
 
 	void Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile);
+
+public:
+	Event<AnimationEvent> animationEvent;
 
 private:
 	bool _isPlayOnInit;

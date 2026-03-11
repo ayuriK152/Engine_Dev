@@ -103,6 +103,8 @@ private:
 	// Decrease stemina per second
 	void DecreaseStemina(float value, bool instantChange = true);
 
+	void AnimationEventListener(AnimationEvent event);
+
 public:
 	shared_ptr<TPVCamera> tpvCameraScript;
 
@@ -117,6 +119,7 @@ private:
 	shared_ptr<CharacterController> _controller;
 	shared_ptr<UISlider> _hpBar;
 	shared_ptr<UISlider> _steminaBar;
+	shared_ptr<Rigidbody> _swordRb;
 
 	float _speed = 1.55f;
 

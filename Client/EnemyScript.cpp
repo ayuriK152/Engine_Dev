@@ -101,7 +101,7 @@ void EnemyScript::OnCollisionEnter(shared_ptr<GameObject> other)
 {
 	if (other->GetTag() == "AttackAlly") {
 		if (_health > 0) {
-			TakeDamage(10);
+			TakeDamage(other->GetComponent<Rigidbody>()->customData);
 		}
 	}
 }

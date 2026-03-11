@@ -176,6 +176,7 @@ using namespace JPH::literals;
 /* ETC */
 /*******/
 #include "Skeleton.h"
+#include "Event.h"
 
 /************/
 /* Managers */

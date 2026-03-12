@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SkinnedMeshRenderer.h"
 
+REGISTER_COMPONENT(SkinnedMeshRenderer);
+
 SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRenderer)
 {
 

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "MeshRenderer.h"
 
+REGISTER_COMPONENT(MeshRenderer);
+
 MeshRenderer::MeshRenderer() : Super(ComponentType::MeshRenderer)
 {
 

@@ -1,7 +1,5 @@
 #pragma once
 
-class Script;
-
 template <typename T>
 class BaseState
 {

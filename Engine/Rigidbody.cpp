@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Rigidbody.h"
 
+REGISTER_COMPONENT(Rigidbody);
+
 Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 {
 	isGravity = true;

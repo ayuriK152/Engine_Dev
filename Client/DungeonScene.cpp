@@ -51,14 +51,14 @@ void DungeonScene::Init()
 		player = loadedObjects[0];
 		player->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
-		player->AddComponent(make_shared<PlayerScript>());
+		player->AddComponent(ComponentFactory::Create("PlayerScript"));
 		player->GetTransform()->SetPosition(Vector3(0.0f, 0.0f, 3.0f));
 	}
 
 	{
 		auto brute = RESOURCE->LoadPrefabObject("Brute");
 		brute[0]->GetComponent<Animator>()->SetBone("Brute");
-		shared_ptr<EnemyScript> enemyScript = make_shared<EnemyScript>();
+		shared_ptr<EnemyScript> enemyScript = static_pointer_cast<EnemyScript>(ComponentFactory::Create("EnemyScript"));
 		enemyScript->target = player;
 		brute[0]->AddComponent(enemyScript);
 		gameObjects.insert(gameObjects.end(), brute.begin(), brute.end());
@@ -71,7 +71,7 @@ void DungeonScene::Init()
 		tpvCameraArm->SetName("CameraArm");
 		tpvCameraArm->GetTransform()->SetParent(tpvCamera->GetTransform());
 
-		auto tpvCameraScript = make_shared<TPVCamera>();
+		auto tpvCameraScript = static_pointer_cast<TPVCamera>(ComponentFactory::Create("TPVCamera"));
 		tpvCameraScript->armTransform = tpvCameraArm->GetTransform();
 		tpvCameraScript->cameraTransform = camera->GetTransform();
 		tpvCameraScript->onwerTransform = player->GetTransform();

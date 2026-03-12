@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Animator.h"
 
+REGISTER_COMPONENT(Animator);
+
 Animator::Animator() : Component(ComponentType::Animator)
 {
 	_isPlayOnInit = true;
@@ -248,9 +250,6 @@ void Animator::UpdateAnimationEvent()
 				}
 				if (currentEvent.type == AnimationEventTypes::Attack) {
 					animationEvent.Execute(currentEvent);
-					//Vector3 offset(currentEvent.datas[0].x, currentEvent.datas[0].y, currentEvent.datas[0].z);
-					//Vector3 scale(currentEvent.datas[1].x, currentEvent.datas[1].y, currentEvent.datas[1].z);
-					//Attack(offset, scale, currentEvent.datas[0].w, currentEvent.datas[1].w == 1);
 				}
 				if (currentEvent.type == AnimationEventTypes::End) {
 					_isCurrentAnimationEnd = true;
@@ -281,9 +280,6 @@ void Animator::UpdateAnimationEvent()
 				}
 				if (nextEvent.type == AnimationEventTypes::Attack) {
 					animationEvent.Execute(nextEvent);
-					//Vector3 offset(nextEvent.datas[0].x, nextEvent.datas[0].y, nextEvent.datas[0].z);
-					//Vector3 scale(nextEvent.datas[1].x, nextEvent.datas[1].y, nextEvent.datas[1].z);
-					//Attack(offset, scale, nextEvent.datas[0].w, nextEvent.datas[1].w == 1 ? true : false);
 				}
 
 				_nextAnimationEventIndex++;

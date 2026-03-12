@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EditorCamera.h"
 
+REGISTER_COMPONENT(EditorCamera)
+
 EditorCamera::~EditorCamera()
 {
 

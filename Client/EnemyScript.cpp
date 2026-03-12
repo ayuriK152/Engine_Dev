@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EnemyScript.h"
 
+REGISTER_COMPONENT(EnemyScript)
+
 EnemyScript::~EnemyScript()
 {
 	for (auto pattern : _patterns) {

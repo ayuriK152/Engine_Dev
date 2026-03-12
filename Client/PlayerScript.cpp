@@ -3,6 +3,8 @@
 #include "TPVCamera.h"
 #include "EnemyScript.h"
 
+REGISTER_COMPONENT(PlayerScript)
+
 PlayerScript::~PlayerScript()
 {
 	cout << "p";

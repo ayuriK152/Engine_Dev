@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Transform.h"
 
+REGISTER_COMPONENT(Transform);
+
 Transform::Transform() : Super(ComponentType::Transform)
 {
 	_localPosition = { 0.0f, 0.0f, 0.0f };

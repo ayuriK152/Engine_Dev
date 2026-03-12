@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "DirectionalLight.h"
 
+REGISTER_COMPONENT(DirectionalLight);
+
 DirectionalLight::DirectionalLight() : Super()
 {
 	direction = GetTransform()->GetLook();

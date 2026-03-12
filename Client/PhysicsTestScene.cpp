@@ -18,18 +18,18 @@ void PhysicsTestScene::Init()
 	auto camera = make_shared<GameObject>();
 	camera->SetName("camera");
 	camera->AddComponent(make_shared<Camera>());
-	camera->AddComponent(make_shared<EditorCamera>());
+	camera->AddComponent(ComponentFactory::Create("EditorCamera"));
 	camera->GetTransform()->SetPosition(Vector3(0.0f, 3.0f, -10.0f));
 	gameObjects.push_back(camera);
-
+	
 	auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
 	loadedObjects[0]->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
-	loadedObjects[0]->AddComponent(make_shared<PlayerScript>());
+	loadedObjects[0]->AddComponent(ComponentFactory::Create("PlayerScript"));
 	gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
 
 	auto brute = RESOURCE->LoadPrefabObject("Brute");
 	brute[0]->GetComponent<Animator>()->SetBone("Brute");
-	shared_ptr<EnemyScript> enemyScript = make_shared<EnemyScript>();
+	shared_ptr<EnemyScript> enemyScript = static_pointer_cast<EnemyScript>(ComponentFactory::Create("EnemyScript"));
 	enemyScript->target = loadedObjects[0];
 	brute[0]->AddComponent(enemyScript);
 	gameObjects.insert(gameObjects.end(), brute.begin(), brute.end());

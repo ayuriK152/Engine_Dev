@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "TPVCamera.h"
 
+REGISTER_COMPONENT(TPVCamera)
+
 TPVCamera::~TPVCamera()
 {
 	cout << "asdf";

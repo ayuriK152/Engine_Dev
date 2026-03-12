@@ -24,9 +24,6 @@
     <ClInclude Include="TPVCamera.h">
       <Filter>Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>Scenes\Tests</Filter>
-    </ClInclude>
     <ClInclude Include="BaseState.h">
       <Filter>Scripts</Filter>
     </ClInclude>
@@ -54,9 +51,6 @@
     </ClCompile>
     <ClCompile Include="TPVCamera.cpp">
       <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>Scenes\Tests</Filter>
     </ClCompile>
     <ClCompile Include="BaseState.cpp">
       <Filter>Scripts</Filter>

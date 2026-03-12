@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Camera.h"
 
+REGISTER_COMPONENT(Camera);
+
 Camera* Camera::_currentCamera = nullptr;
 UINT Camera::_cameraCount = 0;
 

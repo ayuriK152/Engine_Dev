@@ -35,6 +35,7 @@
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="ComponentFactory.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="ParticleEmitter.h" />
@@ -131,6 +132,7 @@
     <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="CharacterController.cpp" />
+    <ClCompile Include="ComponentFactory.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />

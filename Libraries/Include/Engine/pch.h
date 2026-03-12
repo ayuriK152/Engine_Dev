@@ -177,6 +177,7 @@ using namespace JPH::literals;
 /*******/
 #include "Skeleton.h"
 #include "Event.h"
+#include "ComponentFactory.h"
 
 /************/
 /* Managers */

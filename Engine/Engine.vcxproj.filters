@@ -203,6 +203,7 @@
       <Filter>06. UI</Filter>
     </ClInclude>
     <ClInclude Include="Event.h" />
+    <ClInclude Include="ComponentFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -436,6 +437,7 @@
       <Filter>06. UI</Filter>
     </ClCompile>
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="ComponentFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

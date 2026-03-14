@@ -53,6 +53,11 @@ void ParticleEmitter::OnDestroy()
 	cout << "OnDestroy - ParticleEmitter:" << _id << "\n";
 }
 
+void ParticleEmitter::LoadXML(XMLElement* compElem)
+{
+
+}
+
 void ParticleEmitter::SetParticleTexture(string textureName)
 {
 	SetParticleTexture(Utils::ToWString(textureName));

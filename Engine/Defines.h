@@ -31,6 +31,7 @@ public:									\
 #define THREAD		GET_SINGLE(ThreadManager)
 #define ANIMATION	GET_SINGLE(AnimationManager)
 #define UI			GET_SINGLE(UIManager)
+#define SCENE		GET_SINGLE(SceneManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 
@@ -71,3 +72,5 @@ public:									\
 #define RESOURCE_PATH_PREFABW			L"..\\Resources\\Prefabs\\"
 #define RESOURCE_PATH_ASSET				"..\\Resources\\Assets\\"
 #define RESOURCE_PATH_ASSETW			L"..\\Resources\\Assets\\"
+#define RESOURCE_PATH_SCENE				"..\\Resources\\Scenes\\"
+#define RESOURCE_PATH_SCENEW			L"..\\Resources\\Scenes\\"

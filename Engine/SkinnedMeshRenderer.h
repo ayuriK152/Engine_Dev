@@ -15,6 +15,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	void SetBoneData(const string& boneFileName) { _boneFileName = boneFileName; }
 	void SetRootBone(const shared_ptr<Transform> rootBone);

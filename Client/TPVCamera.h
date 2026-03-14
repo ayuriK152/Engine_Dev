@@ -12,6 +12,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	shared_ptr<Transform> armTransform;
 	shared_ptr<Transform> cameraTransform;

@@ -91,6 +91,11 @@ void Rigidbody::OnDestroy()
 	PHYSICS->DeleteRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
 }
 
+void Rigidbody::LoadXML(XMLElement* compElem)
+{
+
+}
+
 void Rigidbody::SetColliderExtents(const Vector3& extents)
 {
 	_extents = extents;

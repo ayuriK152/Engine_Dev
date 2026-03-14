@@ -31,6 +31,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	bool IsPlaying() { return _isPlaying; }
 

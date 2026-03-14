@@ -44,6 +44,9 @@ void RenderManager::Init()
 	RESOURCE->CreateDefaultResources();
 
 	BuildPSOs();
+
+	if (_skyboxTexSrvHeapIndex == -1)
+		SetSkyboxTexture(RESOURCE->Get<Texture>(L"Tex_DefaultSkybox"));
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
@@ -407,6 +410,11 @@ void RenderManager::UpdateMeshInstanceStartIndices()
 		shared_ptr<Mesh> mesh = static_pointer_cast<Mesh>(meshPair.second);
 		_meshInstanceStartIndex[mesh->GetID()] = indexStack;
 		indexStack += mesh->GetInstanceCount();
+	}
+
+	// temp
+	for (auto& go : _objects) {
+		go->SetFramesDirty();
 	}
 }
 

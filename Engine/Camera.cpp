@@ -68,3 +68,8 @@ void Camera::OnDestroy()
 
 	_currentCamera = nullptr;
 }
+
+void Camera::LoadXML(XMLElement* compElem)
+{
+
+}

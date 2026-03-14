@@ -8,5 +8,7 @@ public:
 	virtual ~Script();
 
 	virtual void OnDestroy() override = 0;
+
+	virtual void LoadXML(XMLElement* compElem) override = 0;
 };
 

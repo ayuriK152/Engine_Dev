@@ -14,6 +14,8 @@ public:
 
 	virtual void OnDestroy() override = 0;
 
+	virtual void LoadXML(XMLElement* compElem) override = 0;
+
 public:
 	void SetFramesDirty();
 	int GetFramesDirty() { return _numFramesDirty; }

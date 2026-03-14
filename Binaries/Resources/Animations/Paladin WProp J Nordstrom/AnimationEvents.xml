@@ -4,8 +4,9 @@
         <Speed Tick="0.0" Speed="1.7"/>
         <Speed Tick="10.4" Speed="1.0"/>
         <Speed Tick="14.9" Speed="1.9"/>
-        <Attack Tick="17.2" Damage="5.0" OffsetY="0.5" OffsetZ="-1.0"/>
+        <Attack Tick="17.2" Damage="8.0" MeleeWeaponActivation="true"/>
         <Speed Tick="20.7" Speed="1.2"/>
+        <Attack Tick="22.2" MeleeWeaponActivation="false"/>
         <BlockTransition Tick="22.2" Flag="false"/>
         <Speed Tick="28.2" Speed="0.5"/>
         <Speed Tick="30.0" Speed="1.3"/>

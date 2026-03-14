@@ -13,6 +13,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 protected:
 	MeshRenderer(ComponentType type);
 

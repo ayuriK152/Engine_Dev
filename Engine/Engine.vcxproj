@@ -37,6 +37,7 @@
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="ComponentFactory.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Camera.h" />
@@ -134,6 +135,7 @@
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="ComponentFactory.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="Camera.cpp" />

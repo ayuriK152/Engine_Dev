@@ -38,6 +38,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
     void TakeDamage(int damage);
 	shared_ptr<Transform> GetCenterTransform() { return _centerTransform; }

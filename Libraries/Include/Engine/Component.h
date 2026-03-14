@@ -23,6 +23,8 @@ public:
 	virtual void OnCollision(shared_ptr<GameObject> other) { }
 	virtual void OnCollisionExit(shared_ptr<GameObject> other) { }
 
+	virtual void LoadXML(XMLElement* compElem) = 0;
+
 public:
 	shared_ptr<GameObject> GetGameObject();
 	shared_ptr<Transform> GetTransform();

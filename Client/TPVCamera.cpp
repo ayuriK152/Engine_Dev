@@ -118,3 +118,8 @@ void TPVCamera::OnDestroy()
 	_transform.reset();
 	_lockOnMarker.reset();
 }
+
+void TPVCamera::LoadXML(XMLElement* compElem)
+{
+
+}

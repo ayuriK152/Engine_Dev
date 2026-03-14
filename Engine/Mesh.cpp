@@ -6,7 +6,8 @@ UINT Mesh::_totalMeshCount = 0;
 Mesh::Mesh(shared_ptr<Geometry> geometry) : Super(ResourceType::Mesh), _geometry(geometry)
 {
 	_material = RESOURCE->Get<Material>(L"Mat_Default");
-	_id = _totalMeshCount++;
+	_id = _totalMeshCount;
+	++_totalMeshCount;
 	RENDER->AddMeshInfo(_id);
 }
 

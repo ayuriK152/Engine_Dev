@@ -434,10 +434,12 @@ void EngineGUIManager::ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer)
 	if (ImGui::CollapsingHeader("MeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::SeparatorText("Mesh");
-		ImGui::Text(Utils::ToChar(meshRenderer->GetMesh()->GetNameW()));
+		shared_ptr<Mesh> mesh = meshRenderer->GetMesh();
+		ImGui::Text(mesh != nullptr ? Utils::ToChar(meshRenderer->GetMesh()->GetNameW()) : "null");
 
 		ImGui::SeparatorText("Material");
-		ImGui::Text(Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()));
+		shared_ptr<Material> mat = meshRenderer->GetMaterial();
+		ImGui::Text(mat != nullptr ? Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()) : "null");
 	}
 }
 

@@ -204,6 +204,9 @@
     </ClInclude>
     <ClInclude Include="Event.h" />
     <ClInclude Include="ComponentFactory.h" />
+    <ClInclude Include="SceneManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -438,6 +441,9 @@
     </ClCompile>
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="ComponentFactory.cpp" />
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

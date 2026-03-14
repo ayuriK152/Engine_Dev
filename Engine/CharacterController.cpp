@@ -74,3 +74,8 @@ void CharacterController::OnDestroy()
 {
 	cout << "OnDestroy - CharacterController:" << _id << "\n";
 }
+
+void CharacterController::LoadXML(XMLElement* compElem)
+{
+
+}

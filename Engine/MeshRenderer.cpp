@@ -20,6 +20,8 @@ MeshRenderer::~MeshRenderer()
 
 void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
+	if (_mesh == nullptr) return;
+
 	switch (renderState) {
 	case RENDERSTATE_MAIN:
 		if (RENDER->CheckMeshRender(_mesh)) return;
@@ -53,8 +55,23 @@ void MeshRenderer::OnDestroy()
 		_material.reset();
 }
 
+void MeshRenderer::LoadXML(XMLElement* compElem)
+{
+	string meshName = compElem->FirstChildElement("MeshName")->GetText();
+	SetMesh(RESOURCE->Get<Mesh>(Utils::ToWString(meshName)));
+
+	XMLElement* matNameElem = compElem->FirstChildElement("Material");
+	if (matNameElem) {
+		string materialName = matNameElem->GetText();
+		SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
+	}
+}
+
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 {
+	if (mesh == nullptr)
+		return;
+
 	if (_mesh != nullptr) _mesh->DecreaseInstanceCount();
 
 	_mesh = mesh;

@@ -37,6 +37,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	float GetCurrentTick() { return _currentTick; }
 

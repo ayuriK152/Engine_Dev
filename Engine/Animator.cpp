@@ -114,6 +114,11 @@ void Animator::OnDestroy()
 		_previewAnimation.reset();
 }
 
+void Animator::LoadXML(XMLElement* compElem)
+{
+
+}
+
 void Animator::PlayAnimation()
 {
 	if (_currentAnimation == EMPTY_ANIMATION)

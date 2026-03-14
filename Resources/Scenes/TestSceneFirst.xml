@@ -1,0 +1,53 @@
+<Scene name="TestSceneFirst">
+    <GameObjects>
+        <GameObject>
+            <Name>skybox</Name>
+            <PSO>skybox</PSO>
+            <Components>
+                <Component>
+                    <ComponentType>MeshRenderer</ComponentType>
+                    <MeshName>Mesh_SkyboxSphere</MeshName>
+                    <Material>Mat_DefaultSkybox</Material>
+                </Component>
+            </Components>
+        </GameObject>
+
+        <GameObject>
+            <Name>EditorCamera</Name>
+            <Components>
+                <Component>
+                    <ComponentType>Camera</ComponentType>
+                </Component>
+                <Component>
+                    <ComponentType>EditorCamera</ComponentType>
+                </Component>
+            </Components>
+        </GameObject>
+
+        <GameObject>
+            <Name>GlobalLight</Name>
+            <Components>
+                <Component>
+                    <ComponentType>Transform</ComponentType>
+                    <LookAt x="1.0" y="-2.0" z="1.0"/>
+                </Component>
+                <Component>
+                    <ComponentType>DirectionalLight</ComponentType>
+                    <Ambient r="0.8" g="0.8" b="0.8" a="1.0"/>
+                    <Diffuse r="0.8" g="0.8" b="0.8" a="1.0"/>
+                    <Specular r="1.0" g="1.0" b="1.0" a="1.0"/>
+                </Component>
+            </Components>
+        </GameObject>
+
+        <GameObject>
+            <Name>Box</Name>
+            <Components>
+                <Component>
+                    <ComponentType>MeshRenderer</ComponentType>
+                    <MeshName>Mesh_BasicBox</MeshName>
+                </Component>
+            </Components>
+        </GameObject>
+    </GameObjects>
+</Scene>

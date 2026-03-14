@@ -5,7 +5,7 @@ REGISTER_COMPONENT(DirectionalLight);
 
 DirectionalLight::DirectionalLight() : Super()
 {
-	direction = GetTransform()->GetLook();
+	//direction = GetTransform()->GetLook();
 }
 
 DirectionalLight::DirectionalLight(
@@ -66,6 +66,39 @@ void DirectionalLight::OnDestroy()
 	cout << "OnDestroy - DirectionalLight:" << _id << "\n";
 
 	_transform.reset();
+}
+
+void DirectionalLight::LoadXML(XMLElement* compElem)
+{
+	XMLElement* ambientElem = compElem->FirstChildElement("Ambient");
+	if (ambientElem) {
+		ColorRGBA color;
+		color.x = ambientElem->FloatAttribute("r");
+		color.y = ambientElem->FloatAttribute("g");
+		color.z = ambientElem->FloatAttribute("b");
+		color.w = ambientElem->FloatAttribute("a");
+		ambient = color;
+	}
+
+	XMLElement* diffuseElem = compElem->FirstChildElement("Diffuse");
+	if (diffuseElem) {
+		ColorRGBA color;
+		color.x = diffuseElem->FloatAttribute("r");
+		color.y = diffuseElem->FloatAttribute("g");
+		color.z = diffuseElem->FloatAttribute("b");
+		color.w = diffuseElem->FloatAttribute("a");
+		diffuse = color;
+	}
+
+	XMLElement* specularElem = compElem->FirstChildElement("Specular");
+	if (specularElem) {
+		ColorRGBA color;
+		color.x = specularElem->FloatAttribute("r");
+		color.y = specularElem->FloatAttribute("g");
+		color.z = specularElem->FloatAttribute("b");
+		color.w = specularElem->FloatAttribute("a");
+		specular = color;
+	}
 }
 
 LightConstants DirectionalLight::GetLightConstants()

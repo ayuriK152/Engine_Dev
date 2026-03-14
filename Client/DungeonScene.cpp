@@ -125,5 +125,13 @@ void DungeonScene::Init()
 
 void DungeonScene::Update()
 {
-
+	if (INPUTM->IsKeyDown(V)) {
+		shared_ptr<GameObject> go = make_shared<GameObject>();
+		shared_ptr<MeshRenderer> mr = make_shared<MeshRenderer>();
+		go->AddComponent(mr);
+		mr->SetMesh(RESOURCE->Get<Mesh>(DEFAULT_MESH_SPHERE));
+		mr->SetMaterial(RESOURCE->Get<Material>(L"Mat_Default"));
+		go->GetTransform()->SetPosition({ 0.0f, 0.0f, 5.0f });
+		RENDER->AddGameObject(go);
+	}
 }

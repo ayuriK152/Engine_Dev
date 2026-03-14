@@ -12,6 +12,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	void SetHalfHeight(float height) { _height = height; }
 	void SetRadius(float radius) { _radius = radius; }

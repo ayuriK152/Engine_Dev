@@ -31,9 +31,9 @@ bool Graphic::Init()
 	RENDER->Init();
 	FILEIO->Init();
 	UI->Init();
-	//ENGINEGUI->Init();
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Init();
+	SCENE->Init();
 	PHYSICS->Init();
 	DEBUG->Init();
 
@@ -44,6 +44,21 @@ bool Graphic::Init()
 	FlushCommandQueue();
 
 	return true;
+}
+
+
+void Graphic::Update()
+{
+	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
+
+	if (_appDesc.app != nullptr)
+		_appDesc.app->Update();
+
+	ThrowIfFailed(_graphicsCmdList->Close());
+	ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };
+	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	FlushCommandQueue();
 }
 
 
@@ -143,13 +158,6 @@ void Graphic::OnResize()
 	_center = { _appDesc.clientWidth / 2.0f, _appDesc.clientHeight / 2.0f };
 
 	ENGINESTAT->ResetValues();
-}
-
-
-void Graphic::Update()
-{
-	if (_appDesc.app != nullptr)
-		_appDesc.app->Update();
 }
 
 

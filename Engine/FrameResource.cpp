@@ -63,16 +63,18 @@ void FrameResource::UpdateObjectSB()
 
 		if (meshRenderer != nullptr) {
 			shared_ptr<Mesh> mesh = meshRenderer->GetMesh();
-			instanceIndex = RENDER->GetMeshInstanceStartIndex(mesh);
+			if (mesh != nullptr) {
+				instanceIndex = RENDER->GetMeshInstanceStartIndex(mesh);
 
-			UINT meshId = mesh->GetID();
-			if (_instanceIndices.size() > meshId) {
-				instanceIndex += _instanceIndices[meshId];
-				++_instanceIndices[meshId];
-			}
-			else {
-				_instanceIndices.insert(_instanceIndices.end(), meshId - _instanceIndices.size() + 1, 0);
-				_instanceIndices[meshId] = 1;
+				UINT meshId = mesh->GetID();
+				if (_instanceIndices.size() > meshId) {
+					instanceIndex += _instanceIndices[meshId];
+					++_instanceIndices[meshId];
+				}
+				else {
+					_instanceIndices.insert(_instanceIndices.end(), meshId - _instanceIndices.size() + 1, 0);
+					_instanceIndices[meshId] = 1;
+				}
 			}
 		}
 
@@ -81,15 +83,18 @@ void FrameResource::UpdateObjectSB()
 			o->ReleaseFramesDirty();
 
 			if (meshRenderer != nullptr) {
-				InstanceConstants instanceConstants;
+				shared_ptr<Material> mat = meshRenderer->GetMaterial();
+				if (mat != nullptr) {
+					InstanceConstants instanceConstants;
 
-				instanceConstants.MaterialIndex = meshRenderer->GetMaterial()->matSBIndex;
+					instanceConstants.MaterialIndex = mat->matSBIndex;
 
-				XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
-				XMStoreFloat4x4(&instanceConstants.World, XMMatrixTranspose(world));
-				XMStoreFloat4x4(&instanceConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
+					XMMATRIX world = XMLoadFloat4x4(&o->GetTransform()->GetWorldMatrix());
+					XMStoreFloat4x4(&instanceConstants.World, XMMatrixTranspose(world));
+					XMStoreFloat4x4(&instanceConstants.WorldInv, XMMatrixTranspose(XMMatrixInverse(nullptr, world)));
 
-				instanceSB->CopyData(instanceIndex, instanceConstants);
+					instanceSB->CopyData(instanceIndex, instanceConstants);
+				}
 			}
 		}
 	}

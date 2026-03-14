@@ -13,6 +13,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	static Camera* GetCurrentCamera() { return _currentCamera; }
 	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }

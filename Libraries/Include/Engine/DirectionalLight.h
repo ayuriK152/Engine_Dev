@@ -17,11 +17,13 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	LightConstants GetLightConstants() override;
 
 public:
-	Vector3 direction;
+	Vector3 direction = { 0.0f, 1.0f, 0.0f };
 
 private:
 	shared_ptr<Transform> _transform;

@@ -50,3 +50,8 @@ void EditorCamera::OnDestroy()
 {
 	_transform.reset();
 }
+
+void EditorCamera::LoadXML(XMLElement* compElem)
+{
+
+}

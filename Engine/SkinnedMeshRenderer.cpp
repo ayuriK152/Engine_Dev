@@ -62,6 +62,11 @@ void SkinnedMeshRenderer::OnDestroy()
 		_material.reset();
 }
 
+void SkinnedMeshRenderer::LoadXML(XMLElement* compElem)
+{
+
+}
+
 void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
 {
 	_rootBone = rootBone;

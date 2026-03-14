@@ -23,6 +23,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 public:
 	// Box Only
 	void SetColliderExtents(const Vector3& size);

@@ -10,6 +10,8 @@ public:
 
 	void OnDestroy() override;
 
+	void LoadXML(XMLElement* compElem) override;
+
 private:
 	shared_ptr<Transform> _transform;
 	float _yaw = 0.0f;

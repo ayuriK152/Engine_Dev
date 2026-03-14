@@ -130,6 +130,11 @@ void PlayerScript::OnDestroy()
 	_lockOnTarget.reset();
 }
 
+void PlayerScript::LoadXML(XMLElement* compElem)
+{
+
+}
+
 void PlayerScript::Roll()
 {
 	if (INPUTM->IsKeyDown(KeyValue::SPACE) && 

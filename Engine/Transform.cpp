@@ -30,6 +30,17 @@ void Transform::OnDestroy()
 	cout << "OnDestroy - Transfrom:" << _id << "\n";
 }
 
+void Transform::LoadXML(XMLElement* compElem)
+{
+	XMLElement* lookAtElem = compElem->FirstChildElement("LookAt");
+	if (lookAtElem) {
+		float x = lookAtElem->FloatAttribute("x");
+		float y = lookAtElem->FloatAttribute("y");
+		float z = lookAtElem->FloatAttribute("z");
+		LookAt(Vector3(x, y, z));
+	}
+}
+
 void Transform::ForceUpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);

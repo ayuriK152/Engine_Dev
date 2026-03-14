@@ -121,6 +121,11 @@ void EnemyScript::OnDestroy()
 	_damageText.reset();
 }
 
+void EnemyScript::LoadXML(XMLElement* compElem)
+{
+
+}
+
 void EnemyScript::TakeDamage(int damage)
 {
 	_health -= damage;

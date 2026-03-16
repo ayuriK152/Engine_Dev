@@ -5,7 +5,7 @@ REGISTER_COMPONENT(Rigidbody);
 
 Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 {
-	isGravity = true;
+	_isGravity = true;
 
 	_velocity = { 0.0f, 0.0f, 0.0f };
 	XMStoreFloat4(&_rotationOffsetQuaternion, XMQuaternionIdentity());
@@ -94,6 +94,7 @@ void Rigidbody::OnDestroy()
 void Rigidbody::LoadXML(XMLElement* compElem)
 {
 	SetStatic(compElem->BoolAttribute("Static", false));
+	SetGravity(compElem->BoolAttribute("Gravity", true));
 	SetColliderTrigger(compElem->BoolAttribute("Trigger", false));
 	SetPhysicsActive(compElem->BoolAttribute("PhysicsActive", true));
 
@@ -186,10 +187,10 @@ void Rigidbody::SetColliderShape(ColliderShape colliderShape)
 
 void Rigidbody::SetGravity(bool value)
 {
-	if (value == isGravity) return;
-	isGravity = value;
+	if (value == _isGravity) return;
+	_isGravity = value;
 
-	// 구현해야함
+	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetGravityFactor(_bodyID, _isGravity ? 1.0f : 0.0f);
 }
 
 void Rigidbody::SetStatic(bool value)

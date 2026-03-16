@@ -578,7 +578,7 @@ void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 {
 	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Checkbox("Gravity", &rigidbody->isGravity);
+		ImGui::Checkbox("Gravity", &rigidbody->_isGravity);
 	}
 }
 

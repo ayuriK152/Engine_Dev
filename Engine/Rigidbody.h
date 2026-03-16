@@ -12,6 +12,7 @@ enum class ColliderShape
 
 class Rigidbody : public Component
 {
+	friend class EngineGUIManager;
 	using Super = Component;
 public:
 	Rigidbody();
@@ -45,6 +46,7 @@ public:
 
 	void SetColliderShape(ColliderShape colliderShape);
 
+	bool IsGravity() { return _isGravity; }
 	void SetGravity(bool value);
 
 	bool IsStatic() { return _isStatic; }
@@ -64,11 +66,10 @@ private:
 	JPH::ShapeSettings::ShapeResult FitOnMesh();
 
 public:
-	bool isGravity;				// 중력 여부
 	float customData;
 
 private:
-
+	bool _isGravity;				// 중력 여부
 	Vector3 _velocity;			// 속도
 	bool _isStatic = false;
 	bool _isTrigger = false;

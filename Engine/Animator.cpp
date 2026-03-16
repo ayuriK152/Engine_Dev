@@ -420,7 +420,7 @@ void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostil
 	attackCollider->SetColliderExtents(scale / 2);
 	attackCollider->SetColliderOffset(offset);
 	attackCollider->SetColliderTrigger(true);
-	attackCollider->isGravity = false;
+	attackCollider->SetGravity(false);
 	attackColliderObj->AddComponent(attackCollider);
 
 	attackColliderObj->Delete(1.0f);

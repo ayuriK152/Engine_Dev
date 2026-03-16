@@ -55,7 +55,7 @@ void PhysicsTestScene::Init()
 	ground->GetTransform()->SetScale(Vector3(100.0f, 1.0f, 100.0f));
 	ground->GetTransform()->SetRotation(Vector3(0.0f, 0.0f, 0.0f));
 	ground->AddComponent(make_shared<Rigidbody>());
-	ground->GetComponent<Rigidbody>()->isGravity = false;
+	ground->GetComponent<Rigidbody>()->SetGravity(false);
 	gameObjects.push_back(ground);
 
 	auto cube1 = make_shared<GameObject>();

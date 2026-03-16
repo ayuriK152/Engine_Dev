@@ -39,6 +39,9 @@
             <Components>
                 <Component ComponentType="Transform" PosY="3"/>
                 <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicSphere" Material="000"/>
+                <Component ComponentType="Rigidbody">
+                    <Collider Shape="Sphere"/>
+                </Component>
             </Components>
         </GameObject>
     </GameObjects>

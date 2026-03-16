@@ -93,6 +93,7 @@ void DungeonScene::Init()
 				floorTile->GetComponent<MeshRenderer>()->SetMesh(RESOURCE->Get<Mesh>(L"Tiles4x4"));
 				floorTile->GetComponent<MeshRenderer>()->SetMaterial(RESOURCE->Get<Material>(L"Stone wall"));
 				floorTile->AddComponent(make_shared<Rigidbody>());
+				floorTile->GetComponent<Rigidbody>()->SetStatic(true);
 				floorTile->GetComponent<Rigidbody>()->SetGravity(false);
 				floorTile->GetTransform()->SetPosition({ 4.0f * x, 0, 4.0f * z });
 				floorTile->GetTransform()->SetRotation({ -90, 0, 0 });

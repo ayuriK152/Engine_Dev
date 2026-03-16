@@ -62,11 +62,6 @@ void EngineGUIManager::Init()
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = false; 
 }
 
-void EngineGUIManager::FixedUpdate()
-{
-
-}
-
 void EngineGUIManager::Update()
 {
 	ToggleWindows();
@@ -162,7 +157,8 @@ void EngineGUIManager::ShowHierarchyView()
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoFocusOnAppearing;
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_HorizontalScrollbar;
 
 	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
 

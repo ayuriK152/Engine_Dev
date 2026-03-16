@@ -71,7 +71,6 @@ public:
 	~EngineGUIManager();
 
 	void Init();
-	void FixedUpdate();
 	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 

@@ -22,6 +22,7 @@ void PlayerScript::Init()
 	auto swordObj = _transform->GetChild("mixamorig:Sword_joint")->GetGameObject();
 	swordObj->SetTag("AttackAlly");
 	_swordRb = make_shared<Rigidbody>();
+	_swordRb->SetStatic(true);
 	_swordRb->SetGravity(false);
 	_swordRb->SetColliderTrigger(true);
 	_swordRb->SetColliderExtents({ 0.035f, 0.02f, 0.37f });

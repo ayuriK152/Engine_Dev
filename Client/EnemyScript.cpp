@@ -33,6 +33,7 @@ void EnemyScript::Init()
 	_hitbox->SetColliderRadius(0.3f);
 	_hitbox->SetColliderOffset(Vector3(0.0f, 0.9f, 0.0f));
 	_hitbox->SetColliderTrigger(true);
+	_hitbox->SetStatic(true);
 	_hitbox->SetGravity(false);
 	_gameObject->AddComponent(_hitbox);
 

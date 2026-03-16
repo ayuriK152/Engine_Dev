@@ -38,6 +38,7 @@ void Rigidbody::Init()
 
 	bodySettings.mIsSensor = _isTrigger;
 	bodySettings.mUserData = reinterpret_cast<JPH::uint64>(_gameObject.lock().get());
+	bodySettings.mGravityFactor = _isGravity ? 1.0f : 0.0f;
 
 	// 시스템 등록
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
@@ -137,10 +138,11 @@ void Rigidbody::SetColliderExtents(const Vector3& extents)
 void Rigidbody::SetColliderTrigger(bool value)
 {
 	if (value == _isTrigger) return;
-
 	_isTrigger = value;
 
-	// Trigger는 런타임 중에 값이 바뀌면 body를 다시 만들어줘야함. 이부분 일단 구현 안해뒀으니까 나중에 해야함.
+	if (!isInitialized) return;
+
+	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetIsSensor(_bodyID, _isTrigger);
 }
 
 void Rigidbody::SetColliderHalfHeight(float height)
@@ -190,6 +192,8 @@ void Rigidbody::SetGravity(bool value)
 	if (value == _isGravity) return;
 	_isGravity = value;
 
+	if (!isInitialized) return;
+
 	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetGravityFactor(_bodyID, _isGravity ? 1.0f : 0.0f);
 }
 
@@ -200,10 +204,10 @@ void Rigidbody::SetStatic(bool value)
 
 	if (!isInitialized) return;
 
-	JPH::BodyLockWrite lock(PHYSICS->GetPhysicsSystem()->GetBodyLockInterface(), _bodyID);
-	if (lock.Succeeded()) {
-		lock.GetBody().SetMotionType(_isStatic ? JPH::EMotionType::Static : JPH::EMotionType::Dynamic);
-	}
+	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetMotionType(
+		_bodyID,
+		_isStatic ? EMotionType::Static : EMotionType::Dynamic,
+		EActivation::Activate);
 }
 
 void Rigidbody::SetPhysicsActive(bool value)

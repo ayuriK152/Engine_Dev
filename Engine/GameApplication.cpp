@@ -69,18 +69,18 @@ bool GameApplication::Initialize()
 
 void GameApplication::PreUpdate()
 {
-	DEBUG->PreUpdate();
-	RENDER->PreUpdate();
+	if (!_appStatus.appPaused) {
+		DEBUG->PreUpdate();
+		RENDER->PreUpdate();
+	}
 }
 
 void GameApplication::Update()
 {
-	if (!_appStatus.appPaused)
-	{
+	if (!_appStatus.appPaused) {
 		INPUTM->Update();
 		GRAPHIC->Update();
 		PHYSICS->Update();
-		// PARTICLE->Update();
 		RENDER->Update();
 		ANIMATION->Update();
 		ENGINESTAT->Update();
@@ -88,6 +88,7 @@ void GameApplication::Update()
 		ENGINEGUI->Update();
 		DEBUG->Update();
 
+		GRAPHIC->LateUpdate();
 		PHYSICS->LateUpdate();
 
 		RENDER->Render();

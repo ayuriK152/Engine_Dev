@@ -40,20 +40,17 @@ void SceneManager::LoadScene(string sceneName)
 	while (objElem) {
 		shared_ptr<GameObject> go = make_shared<GameObject>();
 
-		string name = objElem->FirstChildElement("Name")->GetText();
+		string name = objElem->Attribute("Name");
 		go->SetName(name);
 
-		XMLElement* psoElem = objElem->FirstChildElement("PSO");
-		if (psoElem) {
-			string psoName = psoElem->GetText();
-			go->SetPSOName(psoName);
-		}
+		const char* psoName = objElem->Attribute("PSO");
+		if (psoName != 0) go->SetPSOName(psoName);
 
 		XMLElement* componentsElem = objElem->FirstChildElement("Components");
 		XMLElement* compElem = componentsElem->FirstChildElement("Component");
 		
 		while (compElem) {
-			string componentType = compElem->FirstChildElement("ComponentType")->GetText();
+			string componentType = compElem->Attribute("ComponentType");
 			shared_ptr<Component> component = ComponentFactory::Create(componentType);
 
 			go->AddComponent(component);

@@ -45,6 +45,11 @@ public:
 
 	void SetColliderShape(ColliderShape colliderShape);
 
+	void SetGravity(bool value);
+
+	bool IsStatic() { return _isStatic; }
+	void SetStatic(bool value);
+
 	Vector3 GetVelocity() { return _velocity; }
 	void SetVelocity(Vector3& veclocity) { _velocity = veclocity; }
 
@@ -65,17 +70,18 @@ public:
 private:
 
 	Vector3 _velocity;			// ¼Óµµ
+	bool _isStatic = false;
 	bool _isTrigger = false;
 	bool _isPhysicsActive = true;
 
+	// Collider
+	ColliderShape _colliderShape = ColliderShape::Box;
 	Vector3 _extents = { 0.5f, 0.5f, 0.5f };
 	float _height = 0.5f;
 	float _radius = 0.5f;
 	Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };
 	Vector3 _colliderRotationOffset = { 0.0f, 0.0f, 0.0f };
 	XMFLOAT4 _rotationOffsetQuaternion;
-
-	ColliderShape _colliderShape = ColliderShape::Box;
 
 	bool _shapeDataDirtyFlag = false;
 	bool _colliderOffsetDirtyFlag = false;

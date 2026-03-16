@@ -118,47 +118,73 @@ void FileIOUtil::LoadMaterials()
 		if (element->GetText())
 			name = string(element->GetText());
 
+		shared_ptr<Material> mat = make_shared<Material>(name);
+
 		element = node->FirstChildElement("Ambient");
-		ColorRGBA ambient;
-		ambient.x = element->FloatAttribute("r");
-		ambient.y = element->FloatAttribute("g");
-		ambient.z = element->FloatAttribute("b");
-		ambient.w = element->FloatAttribute("a");
+		if (element) {
+			ColorRGBA ambient;
+			ambient.x = element->FloatAttribute("r");
+			ambient.y = element->FloatAttribute("g");
+			ambient.z = element->FloatAttribute("b");
+			ambient.w = element->FloatAttribute("a");
+
+			mat->ambient = ambient;
+		}
 
 		element = node->FirstChildElement("Diffuse");
-		ColorRGBA diffuse;
-		diffuse.x = element->FloatAttribute("r");
-		diffuse.y = element->FloatAttribute("g");
-		diffuse.z = element->FloatAttribute("b");
-		diffuse.w = element->FloatAttribute("a");
+		if (element) {
+			ColorRGBA diffuse;
+			diffuse.x = element->FloatAttribute("r");
+			diffuse.y = element->FloatAttribute("g");
+			diffuse.z = element->FloatAttribute("b");
+			diffuse.w = element->FloatAttribute("a");
+
+			mat->diffuse = diffuse;
+		}
 
 		element = node->FirstChildElement("Specular");
-		ColorRGBA specular;
-		specular.x = element->FloatAttribute("r");
-		specular.y = element->FloatAttribute("g");
-		specular.z = element->FloatAttribute("b");
-		specular.w = element->FloatAttribute("a");
+		if (element) {
+			ColorRGBA specular;
+			specular.x = element->FloatAttribute("r");
+			specular.y = element->FloatAttribute("g");
+			specular.z = element->FloatAttribute("b");
+			specular.w = element->FloatAttribute("a");
+
+			mat->specular = specular;
+		}
 
 		element = node->FirstChildElement("Emissive");
-		ColorRGBA emissive;
-		emissive.x = element->FloatAttribute("r");
-		emissive.y = element->FloatAttribute("g");
-		emissive.z = element->FloatAttribute("b");
-		emissive.w = element->FloatAttribute("a");
+		if (element) {
+			ColorRGBA emissive;
+			emissive.x = element->FloatAttribute("r");
+			emissive.y = element->FloatAttribute("g");
+			emissive.z = element->FloatAttribute("b");
+			emissive.w = element->FloatAttribute("a");
+
+			mat->emissive = emissive;
+		}
 
 		element = node->FirstChildElement("Metallic");
-		float metallic = element->FloatAttribute("value", 0.5f);
+		if (element) {
+			float metallic = element->FloatAttribute("value", 0.5f);
+
+			mat->metallic = metallic;
+		}
 
 		element = node->FirstChildElement("Roughness");
-		float roughness = element->FloatAttribute("value", 0.5f);
+		if (element) {
+			float roughness = element->FloatAttribute("value", 0.5f);
 
-		shared_ptr<Material> mat = make_shared<Material>(name);
-		mat->ambient = ambient;
-		mat->diffuse = diffuse;
-		mat->specular = specular;
-		mat->emissive = emissive;
-		mat->metallic = metallic;
-		mat->roughness = roughness;
+			mat->roughness = roughness;
+		}
+
+		element = node->FirstChildElement("Tilling");
+		if (element) {
+			float x = element->FloatAttribute("x", 1.0f);
+			float y = element->FloatAttribute("y", 1.0f);
+
+			mat->tilling = { x, y };
+		}
 
 		string textureName = "";
 		element = node->FirstChildElement("DiffuseTexture");

@@ -57,6 +57,8 @@ void Mesh::CreateBuffer()
 	//ThrowIfFailed(D3DCreateBlob(ibByteSize, &this->indexBufferCPU));
 	//CopyMemory(this->indexBufferCPU->GetBufferPointer(), _indices.data(), ibByteSize);
 
+	GRAPHIC->UseGraphicsCommandList();
+
 	vertexBufferGPU = DXUtil::CreateDefaultBuffer(GRAPHIC->GetDevice(),
 		GRAPHIC->GetCommandList(), _geometry->GetVertexData(), vbByteSize, vertexBufferUploader);
 

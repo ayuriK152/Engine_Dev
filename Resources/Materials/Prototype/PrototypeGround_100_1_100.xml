@@ -1,0 +1,12 @@
+<Material>
+    <Name>PrototypeGround_100_1_100</Name>
+    <Ambient r="1" g="1" b="1" a="1"/>
+    <Diffuse r="1" g="1" b="1" a="1"/>
+    <Specular r="1" g="1" b="1" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <Metallic value="0.0"/>
+    <Roughness value="0.5"/>
+    <Tilling x="100" y="100"/>
+    <DiffuseTexture>prototype_dark1.dds</DiffuseTexture>
+    <NormalTexture></NormalTexture>
+</Material>

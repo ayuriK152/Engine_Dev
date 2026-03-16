@@ -146,7 +146,6 @@ vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Vector3 position, f
 	);
 
 	for (const JPH::CollideShapeResult& hit : collector.mHits) {
-
 		JPH::BodyLockRead lock(_physicsSystem->GetBodyLockInterface(), hit.mBodyID2);
 		
 		if (lock.Succeeded()) {

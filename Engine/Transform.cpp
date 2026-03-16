@@ -32,12 +32,13 @@ void Transform::OnDestroy()
 
 void Transform::LoadXML(XMLElement* compElem)
 {
+	SetPosition({ compElem->FloatAttribute("PosX"), compElem->FloatAttribute("PosY"), compElem->FloatAttribute("PosZ") });
+	SetScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
+	SetRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
+
 	XMLElement* lookAtElem = compElem->FirstChildElement("LookAt");
 	if (lookAtElem) {
-		float x = lookAtElem->FloatAttribute("x");
-		float y = lookAtElem->FloatAttribute("y");
-		float z = lookAtElem->FloatAttribute("z");
-		LookAt(Vector3(x, y, z));
+		LookAt({ lookAtElem->FloatAttribute("x"), lookAtElem->FloatAttribute("y"), lookAtElem->FloatAttribute("z") });
 	}
 }
 

@@ -9,6 +9,15 @@ private:
 	Graphic& operator=(const Graphic& rhs) = delete;
 	~Graphic();
 
+	bool Init();
+	void Update();
+	void LateUpdate();
+
+	void OnResize();
+
+public:
+	void RenderEnd(FrameResource* currentFrameResource);
+
 
 // Getter/Setter
 public:
@@ -70,17 +79,13 @@ public:
 	DXGI_FORMAT GetDepthStencilFormat()const { return _depthStencilFormat; }
 
 public:
-	bool Init();
-	void RenderEnd(FrameResource* currentFrameResource);
-
 	void WaitForFence(UINT64 fenceValue);
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	void CreateWrappedResource(ID3D12Resource* d12Res, ID3D11Resource** d11ResOut);
 
-private:
-	void OnResize();
-	void Update();
+	void UseGraphicsCommandList();
+	void ExecuteGraphicsCommandList();
 
 private:
 	bool InitMainWindow();
@@ -121,6 +126,7 @@ private:
 	ComPtr<ID3D12CommandQueue> _commandQueue;
 	ID3D12GraphicsCommandList* _graphicsCmdList;
 	ID3D12CommandAllocator* _graphicsCmdListAlloc;
+	bool _isCmdListUsed = false;
 
 	static const int _SwapChainBufferCount = 2;
 	int _currBackBuffer = 0;

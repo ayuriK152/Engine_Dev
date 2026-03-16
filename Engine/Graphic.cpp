@@ -26,7 +26,8 @@ bool Graphic::Init()
 	GetAndIncreaseDSVHeapIndex();
 	OnResize();
 
-	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
+	UseGraphicsCommandList();
+
 	THREAD->Init();
 	RENDER->Init();
 	FILEIO->Init();
@@ -37,11 +38,7 @@ bool Graphic::Init()
 	PHYSICS->Init();
 	DEBUG->Init();
 
-	ThrowIfFailed(_graphicsCmdList->Close());
-	ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };
-	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	FlushCommandQueue();
+	ExecuteGraphicsCommandList();
 
 	return true;
 }
@@ -49,18 +46,16 @@ bool Graphic::Init()
 
 void Graphic::Update()
 {
-	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
-
+	// Delete Soon
 	if (_appDesc.app != nullptr)
 		_appDesc.app->Update();
-
-	ThrowIfFailed(_graphicsCmdList->Close());
-	ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };
-	_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-	FlushCommandQueue();
 }
 
+
+void Graphic::LateUpdate()
+{
+	ExecuteGraphicsCommandList();
+}
 
 void Graphic::WaitForFence(UINT64 fenceValue)
 {
@@ -319,6 +314,29 @@ void Graphic::CreateWrappedResource(ID3D12Resource* d12Res, ID3D11Resource** d11
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		IID_PPV_ARGS(d11ResOut)
 	));
+}
+
+void Graphic::UseGraphicsCommandList()
+{
+	if (_isCmdListUsed) return;
+
+	_isCmdListUsed = true;
+
+	ThrowIfFailed(_graphicsCmdListAlloc->Reset());
+	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
+}
+
+void Graphic::ExecuteGraphicsCommandList()
+{
+	if (_isCmdListUsed) {
+		_isCmdListUsed = false;
+
+		ThrowIfFailed(_graphicsCmdList->Close());
+		ID3D12CommandList* cmdsLists[] = { _graphicsCmdList };
+		_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		FlushCommandQueue();
+	}
 }
 
 // 윈도우 초기화

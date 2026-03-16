@@ -57,14 +57,11 @@ void MeshRenderer::OnDestroy()
 
 void MeshRenderer::LoadXML(XMLElement* compElem)
 {
-	string meshName = compElem->FirstChildElement("MeshName")->GetText();
+	string meshName = compElem->Attribute("MeshName");
 	SetMesh(RESOURCE->Get<Mesh>(Utils::ToWString(meshName)));
 
-	XMLElement* matNameElem = compElem->FirstChildElement("Material");
-	if (matNameElem) {
-		string materialName = matNameElem->GetText();
-		SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
-	}
+	const char* materialName = compElem->Attribute("Material");
+	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
 }
 
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)

@@ -33,8 +33,8 @@ void Rigidbody::Init()
 	JPH::BodyCreationSettings bodySettings(_shapeResult.Get(),
 		JPH::RVec3(pos.x, pos.y, pos.z),
 		JPH::Quat(rot.x, rot.y, rot.z, rot.w),
-		isGravity ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static,
-		isGravity ? Layers::MOVING : Layers::NON_MOVING);
+		_isStatic ? JPH::EMotionType::Static : JPH::EMotionType::Dynamic,
+		_isStatic ? Layers::NON_MOVING : Layers::MOVING);
 
 	bodySettings.mIsSensor = _isTrigger;
 	bodySettings.mUserData = reinterpret_cast<JPH::uint64>(_gameObject.lock().get());
@@ -93,7 +93,36 @@ void Rigidbody::OnDestroy()
 
 void Rigidbody::LoadXML(XMLElement* compElem)
 {
+	SetStatic(compElem->BoolAttribute("Static", false));
+	SetColliderTrigger(compElem->BoolAttribute("Trigger", false));
+	SetPhysicsActive(compElem->BoolAttribute("PhysicsActive", true));
 
+	XMLElement* colliderElem = compElem->FirstChildElement("Collider");
+	if (colliderElem) {
+		const char* colliderShape = colliderElem->Attribute("Shape");
+		if (colliderShape != 0) {
+			if (colliderShape == "Box") SetColliderShape(ColliderShape::Box);
+			else if (colliderShape == "Sphere") SetColliderShape(ColliderShape::Sphere);
+			else if (colliderShape == "Capsule") SetColliderShape(ColliderShape::Capsule);
+		}
+
+		XMLElement* extentElem = colliderElem->FirstChildElement("Extent");
+		if (extentElem) {
+			SetColliderExtents({ extentElem->FloatAttribute("x", 0.5f), extentElem->FloatAttribute("y", 0.5f), extentElem->FloatAttribute("z", 0.5f) });
+		}
+		SetColliderHalfHeight(colliderElem->FloatAttribute("Height", 0.5f));
+		SetColliderRadius(colliderElem->FloatAttribute("Radius", 0.5f));
+
+		XMLElement* offsetElem = colliderElem->FirstChildElement("Offset");
+		if (offsetElem) {
+			SetColliderOffset({ offsetElem->FloatAttribute("x", 0.0f), offsetElem->FloatAttribute("y", 0.0f), offsetElem->FloatAttribute("z", 0.0f) });
+		}
+
+		XMLElement* rotOffsetElem = colliderElem->FirstChildElement("RotOffset");
+		if (rotOffsetElem) {
+			SetColliderRotationOffset({ rotOffsetElem->FloatAttribute("x", 0.0f), rotOffsetElem->FloatAttribute("y", 0.0f), rotOffsetElem->FloatAttribute("z", 0.0f) });
+		}
+	}
 }
 
 void Rigidbody::SetColliderExtents(const Vector3& extents)
@@ -153,6 +182,27 @@ void Rigidbody::SetColliderShape(ColliderShape colliderShape)
 	CreateShape();
 
 	UpdateShapeData();
+}
+
+void Rigidbody::SetGravity(bool value)
+{
+	if (value == isGravity) return;
+	isGravity = value;
+
+	// 구현해야함
+}
+
+void Rigidbody::SetStatic(bool value)
+{
+	if (value == _isStatic) return;
+	_isStatic = value;
+
+	if (!isInitialized) return;
+
+	JPH::BodyLockWrite lock(PHYSICS->GetPhysicsSystem()->GetBodyLockInterface(), _bodyID);
+	if (lock.Succeeded()) {
+		lock.GetBody().SetMotionType(_isStatic ? JPH::EMotionType::Static : JPH::EMotionType::Dynamic);
+	}
 }
 
 void Rigidbody::SetPhysicsActive(bool value)

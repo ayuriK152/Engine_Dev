@@ -203,9 +203,11 @@
       <Filter>06. UI</Filter>
     </ClInclude>
     <ClInclude Include="Event.h" />
-    <ClInclude Include="ComponentFactory.h" />
     <ClInclude Include="SceneManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentFactory.h">
+      <Filter>01. EngineComponents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -440,9 +442,11 @@
       <Filter>06. UI</Filter>
     </ClCompile>
     <ClCompile Include="Event.cpp" />
-    <ClCompile Include="ComponentFactory.cpp" />
     <ClCompile Include="SceneManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentFactory.cpp">
+      <Filter>01. EngineComponents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

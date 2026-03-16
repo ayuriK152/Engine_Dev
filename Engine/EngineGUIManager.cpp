@@ -175,6 +175,10 @@ void EngineGUIManager::ShowHierarchyView()
 	if (ImGui::Begin("Hierarchy View", nullptr, windowFlags))
 	{
 		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
+		if (ImGui::Button("Create Object")) {
+			DEBUG->Log("Create Object");
+			GameObject::Instantiate();
+		}
 		for (auto& o : RENDER->GetObjects())
 		{
 			if (o->GetTransform()->GetParent() != nullptr)
@@ -273,6 +277,22 @@ void EngineGUIManager::ShowInspectorView()
 						break;
 					}
 				}
+			}
+
+			if (ImGui::Button("Add Component"))
+				ImGui::OpenPopup("component_select_popup");
+
+			if (ImGui::BeginPopup("component_select_popup")) {
+				auto usableCompCount = magic_enum::enum_count<UsableComponentType>();
+				auto compTypeNames = magic_enum::enum_names<UsableComponentType>();
+
+				for (int i = 0; i < usableCompCount; ++i) {
+					if (ImGui::Selectable(compTypeNames[i].data())) {
+						_selectedObj->AddComponent(ComponentFactory::Create(compTypeNames[i].data()));
+					}
+				}
+
+				ImGui::EndPopup();
 			}
 		}
 	}
@@ -430,12 +450,44 @@ void EngineGUIManager::ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer)
 	if (ImGui::CollapsingHeader("MeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::SeparatorText("Mesh");
-		shared_ptr<Mesh> mesh = meshRenderer->GetMesh();
-		ImGui::Text(mesh != nullptr ? Utils::ToChar(meshRenderer->GetMesh()->GetNameW()) : "null");
+		{
+			if (ImGui::Button("Set Mesh"))
+				ImGui::OpenPopup("mesh_select_popup");
+
+			if (ImGui::BeginPopup("mesh_select_popup")) {
+				auto meshes = RESOURCE->GetByType<Mesh>();
+				for (auto& mesh : meshes) {
+					if (ImGui::Selectable(Utils::ToChar(mesh.first))) {
+						meshRenderer->SetMesh(static_pointer_cast<Mesh>(mesh.second));
+					}
+				}
+
+				ImGui::EndPopup();
+			}
+
+			shared_ptr<Mesh> mesh = meshRenderer->GetMesh();
+			ImGui::Text(mesh != nullptr ? Utils::ToChar(meshRenderer->GetMesh()->GetNameW()) : "null");
+		}
 
 		ImGui::SeparatorText("Material");
-		shared_ptr<Material> mat = meshRenderer->GetMaterial();
-		ImGui::Text(mat != nullptr ? Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()) : "null");
+		{
+			if (ImGui::Button("Set Material"))
+				ImGui::OpenPopup("material_select_popup");
+
+			if (ImGui::BeginPopup("material_select_popup")) {
+				auto mats = RESOURCE->GetByType<Material>();
+				for (auto& mat : mats) {
+					if (ImGui::Selectable(Utils::ToChar(mat.first))) {
+						meshRenderer->SetMaterial(static_pointer_cast<Material>(mat.second));
+					}
+				}
+
+				ImGui::EndPopup();
+			}
+
+			shared_ptr<Material> mat = meshRenderer->GetMaterial();
+			ImGui::Text(mat != nullptr ? Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()) : "null");
+		}
 	}
 }
 

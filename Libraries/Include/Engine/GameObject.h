@@ -33,11 +33,12 @@ public:
 	void OnDestroy();
 
 public:
-	void AddComponent(shared_ptr<Component> component);
-	shared_ptr<Transform> GetTransform();
+	static shared_ptr<GameObject> Instantiate();
 
+	void AddComponent(shared_ptr<Component> component);
 	template<typename T>
 	shared_ptr<T> GetComponent();
+	shared_ptr<Transform> GetTransform();
 
 	template<typename T>
 	const vector<shared_ptr<T>>& GetAllComponents();

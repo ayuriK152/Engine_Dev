@@ -16,6 +16,26 @@ enum class ComponentType
 	CharacterController	 = 1 << 9
 };
 
+// For runtime add feature
+enum class UsableComponentType {
+	MeshRenderer,
+	SkinnedMeshRenderer,
+	Camera,
+	Rigidbody,
+	DirectionalLight,
+	Animator,
+	ParticleEmitter,
+	CharacterController,
+	Script
+};
+
+template<>
+struct magic_enum::customize::enum_range<UsableComponentType> {
+	constexpr static auto prefix_length = sizeof("ComponentType_") - 1;
+	constexpr static int min = (int)UsableComponentType::MeshRenderer;
+	constexpr static int max = (int)UsableComponentType::Script;
+};
+
 enum class UIType
 {
 	Frame = 1 << 0,

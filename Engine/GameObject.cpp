@@ -141,6 +141,13 @@ void GameObject::OnDestroy()
 	}
 }
 
+shared_ptr<GameObject> GameObject::Instantiate()
+{
+	shared_ptr<GameObject> go = make_shared<GameObject>();
+	RENDER->AddGameObject(go);
+	return go;
+}
+
 void GameObject::AddComponent(shared_ptr<Component> component)
 {
 	int componentTypeIdx = GetComponentTypeIndex(component->type);

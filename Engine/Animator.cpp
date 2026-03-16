@@ -411,7 +411,7 @@ void Animator::UpdateBoneInstances()
 
 void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)
 {
-	shared_ptr<GameObject> attackColliderObj = make_shared<GameObject>();
+	shared_ptr<GameObject> attackColliderObj = GameObject::Instantiate();
 	attackColliderObj->GetTransform()->SetPosition(GetTransform()->GetPosition());
 	attackColliderObj->GetTransform()->SetQuaternion(GetTransform()->GetQuaternion());
 	attackColliderObj->SetTag("AttackAlly");
@@ -424,5 +424,4 @@ void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostil
 	attackColliderObj->AddComponent(attackCollider);
 
 	attackColliderObj->Delete(1.0f);
-	RENDER->AddGameObject(attackColliderObj);
 }

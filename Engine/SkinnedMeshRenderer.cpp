@@ -23,7 +23,7 @@ void SkinnedMeshRenderer::Init()
 			_skeleton = SKELETON->LoadSkeleton(_boneFileName, _rootBone);
 	}
 
-	GetGameObject()->SetPSONameIncludeChilds(PSO_OPAQUE_SKINNED);
+	GetGameObject()->SetPSOName(PSO_OPAQUE_SKINNED);
 }
 
 // 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.

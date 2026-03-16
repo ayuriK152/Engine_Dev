@@ -61,8 +61,7 @@ public:
 	void SetName(const string& name) { _name = name; }
 
 	string GetPSOName() { return _psoName; }
-	void SetPSOName(const string& name) { _psoName = name; }
-	void SetPSONameIncludeChilds(const string& name);
+	void SetPSOName(const string& name);
 
 	string GetTag() { return _tag; }
 	void SetTag(const string& tag) { _tag = tag; }

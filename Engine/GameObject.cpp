@@ -183,7 +183,7 @@ int GameObject::GetComponentTypeIndex(ComponentType type)
 	if (type == ComponentType::CharacterController) return 9;
 }
 
-void GameObject::SetPSONameIncludeChilds(const string& name)
+void GameObject::SetPSOName(const string& name)
 {
 	RENDER->UpdateObjectPSO(shared_from_this(), name);
 	_psoName = name;

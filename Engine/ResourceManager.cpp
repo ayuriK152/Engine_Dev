@@ -455,7 +455,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	FILEIO->ReadFileData(fileHandle, &objectCount, sizeof(UINT32));
 	for (int i = 0; i < objectCount; i++)
 	{
-		shared_ptr<GameObject> go = make_shared<GameObject>();
+		shared_ptr<GameObject> go = GameObject::Instantiate();
 		string name, psoName;
 		FILEIO->ReadFileData(fileHandle, name);
 		FILEIO->ReadFileData(fileHandle, psoName);

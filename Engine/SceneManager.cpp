@@ -38,7 +38,7 @@ void SceneManager::LoadScene(string sceneName)
 	XMLElement* objElem = gameObjectsElem->FirstChildElement("GameObject");
 	
 	while (objElem) {
-		shared_ptr<GameObject> go = make_shared<GameObject>();
+		shared_ptr<GameObject> go = GameObject::Instantiate();
 
 		string name = objElem->Attribute("Name");
 		go->SetName(name);
@@ -58,8 +58,6 @@ void SceneManager::LoadScene(string sceneName)
 
 			compElem = compElem->NextSiblingElement("Component");
 		}
-
-		RENDER->AddGameObject(go);
 
 		objElem = objElem->NextSiblingElement("GameObject");
 	}

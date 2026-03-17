@@ -166,11 +166,9 @@ void RenderManager::Render()
 
 		RefreshMeshRenderCheckMap();
 
-		if (_isPhysicsDebugRenderEnabled)
-		{
-			_cmdLists[1]->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
-			DEBUG->Render(_cmdLists[1]);
-		}
+		_cmdLists[1]->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
+		DEBUG->Render(_cmdLists[1]);
+
 
 		ThrowIfFailed(_cmdLists[1]->Close());
 	});

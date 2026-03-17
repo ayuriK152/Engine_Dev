@@ -97,6 +97,8 @@ private:
 	void ShowRigidbody(shared_ptr<Rigidbody> rigidbody);
 #pragma endregion
 
+	void DrawGizmo();
+
 public:
 	bool isShowDemoWindow = true;
 

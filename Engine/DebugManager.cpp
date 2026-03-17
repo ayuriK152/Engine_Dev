@@ -72,7 +72,7 @@ void DebugManager::DrawLine(Vector3 from, Vector3 to, ColorRGBA color)
 	_vertices.push_back(VertexPC(to, color));
 }
 
-void DebugManager::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow /*= ECastShadow::Off*/)
+void DebugManager::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow)
 {
 	DrawLine(inV1, inV2, inColor);
 	DrawLine(inV2, inV3, inColor);
@@ -92,6 +92,8 @@ JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Vertex* inVert
 // 박스만 렌더링 할 수 있도록 되있음. 개선 가능하면 개선하는 편이 좋을 듯.
 void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpaceBounds, float inLODScaleSq, ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode /*= ECullMode::CullBackFace*/, ECastShadow inCastShadow /*= ECastShadow::On*/, EDrawMode inDrawMode /*= EDrawMode::Solid*/)
 {
+	if (!_isPhysicsDebugRenderEnabled) return;
+
 	XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&inModelMatrix);
 
 	AABox localBox = inGeometry->mBounds;

@@ -65,13 +65,7 @@ void EngineGUIManager::Init()
 void EngineGUIManager::Update()
 {
 	ToggleWindows();
-	if (_selectedObj != nullptr) {
-		shared_ptr<Transform> transform = _selectedObj->GetTransform();
-		Vector3 pos = transform->GetPosition();
-		DEBUG->DrawLine(pos, pos + transform->GetRight().Normalize(), { 1.0f, 0.0f, 0.0f, 1.0f });
-		DEBUG->DrawLine(pos, pos + transform->GetUp().Normalize(), { 0.0f, 1.0f, 0.0f, 1.0f });
-		DEBUG->DrawLine(pos, pos + transform->GetBack().Normalize(), { 0.0f, 0.0f, 1.0f, 1.0f });
-	}
+	DrawGizmo();
 }
 
 void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)
@@ -144,9 +138,9 @@ void EngineGUIManager::ShowEngineSettings()
 
 	if (ImGui::Begin("Engine Settings", &_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS], windowFlags))
 	{
-		bool isPysicsDebugRenderEnabled = RENDER->IsPhysicsDebugRenderEnabled();
+		bool isPysicsDebugRenderEnabled = DEBUG->IsPhysicsDebugRenderEnabled();
 		if (ImGui::Checkbox("Pysics Debug Render", &isPysicsDebugRenderEnabled))
-			RENDER->SetPhysicsDebugRenderEnabled(isPysicsDebugRenderEnabled);
+			DEBUG->SetPhysicsDebugRenderEnabled(isPysicsDebugRenderEnabled);
 	}
 	ImGui::End();
 }
@@ -627,6 +621,17 @@ void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Checkbox("Gravity", &rigidbody->_isGravity);
+	}
+}
+
+void EngineGUIManager::DrawGizmo()
+{
+	if (_selectedObj != nullptr) {
+		shared_ptr<Transform> transform = _selectedObj->GetTransform();
+		Vector3 pos = transform->GetPosition();
+		DEBUG->DrawLine(pos, pos + transform->GetRight().Normalize(), { 1.0f, 0.0f, 0.0f, 1.0f });
+		DEBUG->DrawLine(pos, pos + transform->GetUp().Normalize(), { 0.0f, 1.0f, 0.0f, 1.0f });
+		DEBUG->DrawLine(pos, pos + transform->GetLook().Normalize(), { 0.0f, 0.0f, 1.0f, 1.0f });
 	}
 }
 

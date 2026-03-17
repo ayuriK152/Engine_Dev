@@ -68,6 +68,9 @@ public:
 	void DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor = Color::sWhite, float inHeight = 0.5f) override;
 
 public:
+	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
+	void SetPhysicsDebugRenderEnabled(bool value) { _isPhysicsDebugRenderEnabled = value; }
+
 	void Log(const string& message);
 	void WarnLog(const string& message);
 	void ErrorLog(const string& message);
@@ -75,6 +78,8 @@ public:
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
 
 private:
+	bool _isPhysicsDebugRenderEnabled = false;
+
 	vector<DebugLog> _debugLogs;
 
 	vector<VertexPC> _vertices;

@@ -154,9 +154,6 @@ public:
 	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()] = true; }
 	void SetMeshShadowRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshShadowRenderCheckMap[mesh->GetID()] = true; }
 
-	void SetPhysicsDebugRenderEnabled(bool enabled) { _isPhysicsDebugRenderEnabled = enabled; }
-	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
-
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
 	void BuildPSO(string name, D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc);
@@ -173,8 +170,6 @@ private:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
 private:
-	bool _isPhysicsDebugRenderEnabled = false;
-
 	ID3D12CommandAllocator* _cmdListAllocs[3];
 	ID3D12GraphicsCommandList* _cmdLists[3];
 

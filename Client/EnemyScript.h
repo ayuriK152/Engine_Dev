@@ -39,6 +39,7 @@ public:
 	void OnDestroy() override;
 
 	void LoadXML(XMLElement* compElem) override;
+	void SaveXML(XMLElement* compElem) override;
 
 public:
     void TakeDamage(int damage);

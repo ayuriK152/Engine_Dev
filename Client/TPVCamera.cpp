@@ -123,3 +123,8 @@ void TPVCamera::LoadXML(XMLElement* compElem)
 {
 
 }
+
+void TPVCamera::SaveXML(XMLElement* compElem)
+{
+
+}

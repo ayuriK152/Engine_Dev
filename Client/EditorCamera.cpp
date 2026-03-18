@@ -55,3 +55,8 @@ void EditorCamera::LoadXML(XMLElement* compElem)
 {
 
 }
+
+void EditorCamera::SaveXML(XMLElement* compElem)
+{
+
+}

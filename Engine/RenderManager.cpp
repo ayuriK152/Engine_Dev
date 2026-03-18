@@ -8,15 +8,18 @@ RenderManager::~RenderManager()
 	_isDestructorRunning = true;
 
 	_lights.clear();
+	_meshInstanceStartIndex.clear();
 
 	for (shared_ptr<GameObject> go : _objects) {
 		go->OnDestroy();
 		go.reset();
 	}
+	_objects.clear();
 
-	for (vector<shared_ptr<GameObject>> gos : _objectsSortedPSO) {
+	for (vector<shared_ptr<GameObject>>& gos : _objectsSortedPSO) {
 		for (shared_ptr<GameObject> go : gos)
 			go.reset();
+		gos.clear();
 	}
 }
 
@@ -227,8 +230,13 @@ void RenderManager::InitializeOnRuntime()
 		go->OnDestroy();
 		go.reset();
 	}
-
 	_objects.clear();
+
+	for (vector<shared_ptr<GameObject>>& gos : _objectsSortedPSO) {
+		for (shared_ptr<GameObject> go : gos)
+			go.reset();
+		gos.clear();
+	}
 }
 
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, ID3D12RootSignature* rootSignature, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)

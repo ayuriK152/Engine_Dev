@@ -11,6 +11,7 @@ public:
 	void OnDestroy() override;
 
 	void LoadXML(XMLElement* compElem) override;
+	void SaveXML(XMLElement* compElem) override;
 
 private:
 	shared_ptr<Transform> _transform;

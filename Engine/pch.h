@@ -1,7 +1,7 @@
 #pragma once
 
 // Debuging Console
-// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX

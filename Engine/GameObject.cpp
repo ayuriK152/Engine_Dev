@@ -127,6 +127,8 @@ void GameObject::OnCollisionExit(shared_ptr<GameObject> other)
 
 void GameObject::OnDestroy()
 {
+	cout << "OnDestroy - GameObject:" << _id << "\n";
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
@@ -135,6 +137,7 @@ void GameObject::OnDestroy()
 
 			c->OnDestroy();
 			c.reset();
+			--_componentCount;
 		}
 
 		componentVec.clear();

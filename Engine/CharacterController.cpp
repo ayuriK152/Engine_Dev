@@ -79,3 +79,8 @@ void CharacterController::LoadXML(XMLElement* compElem)
 {
 
 }
+
+void CharacterController::SaveXML(XMLElement* compElem)
+{
+
+}

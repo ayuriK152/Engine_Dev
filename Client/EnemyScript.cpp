@@ -127,6 +127,11 @@ void EnemyScript::LoadXML(XMLElement* compElem)
 
 }
 
+void EnemyScript::SaveXML(XMLElement* compElem)
+{
+
+}
+
 void EnemyScript::TakeDamage(int damage)
 {
 	_health -= damage;

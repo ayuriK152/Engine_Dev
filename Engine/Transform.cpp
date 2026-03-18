@@ -42,6 +42,11 @@ void Transform::LoadXML(XMLElement* compElem)
 	}
 }
 
+void Transform::SaveXML(XMLElement* compElem)
+{
+
+}
+
 void Transform::ForceUpdateTransform()
 {
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);

@@ -88,7 +88,7 @@ void Rigidbody::OnDestroy()
 
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	bodyInterface.RemoveBody(_bodyID);
-	// bodyInterface.DestroyBody(_bodyID);
+	bodyInterface.DestroyBody(_bodyID);
 	PHYSICS->DeleteRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
 }
 
@@ -125,6 +125,11 @@ void Rigidbody::LoadXML(XMLElement* compElem)
 			SetColliderRotationOffset({ rotOffsetElem->FloatAttribute("x", 0.0f), rotOffsetElem->FloatAttribute("y", 0.0f), rotOffsetElem->FloatAttribute("z", 0.0f) });
 		}
 	}
+}
+
+void Rigidbody::SaveXML(XMLElement* compElem)
+{
+
 }
 
 void Rigidbody::SetColliderExtents(const Vector3& extents)

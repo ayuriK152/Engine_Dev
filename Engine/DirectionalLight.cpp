@@ -103,6 +103,11 @@ void DirectionalLight::LoadXML(XMLElement* compElem)
 	}
 }
 
+void DirectionalLight::SaveXML(XMLElement* compElem)
+{
+
+}
+
 LightConstants DirectionalLight::GetLightConstants()
 {
 	LightConstants constants;

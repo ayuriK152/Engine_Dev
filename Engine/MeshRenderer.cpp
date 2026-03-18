@@ -66,6 +66,11 @@ void MeshRenderer::LoadXML(XMLElement* compElem)
 	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
 }
 
+void MeshRenderer::SaveXML(XMLElement* compElem)
+{
+
+}
+
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 {
 	if (mesh == nullptr)

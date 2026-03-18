@@ -58,6 +58,11 @@ void ParticleEmitter::LoadXML(XMLElement* compElem)
 
 }
 
+void ParticleEmitter::SaveXML(XMLElement* compElem)
+{
+
+}
+
 void ParticleEmitter::SetParticleTexture(string textureName)
 {
 	SetParticleTexture(Utils::ToWString(textureName));

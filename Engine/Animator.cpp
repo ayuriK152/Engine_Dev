@@ -119,6 +119,11 @@ void Animator::LoadXML(XMLElement* compElem)
 
 }
 
+void Animator::SaveXML(XMLElement* compElem)
+{
+
+}
+
 void Animator::PlayAnimation()
 {
 	if (_currentAnimation == EMPTY_ANIMATION)

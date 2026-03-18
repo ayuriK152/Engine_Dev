@@ -136,6 +136,11 @@ void PlayerScript::LoadXML(XMLElement* compElem)
 
 }
 
+void PlayerScript::SaveXML(XMLElement* compElem)
+{
+
+}
+
 void PlayerScript::Roll()
 {
 	if (INPUTM->IsKeyDown(KeyValue::SPACE) && 

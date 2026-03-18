@@ -14,6 +14,7 @@ public:
 	void OnDestroy() override;
 
 	void LoadXML(XMLElement* compElem) override;
+	void SaveXML(XMLElement* compElem) override;
 
 protected:
 	MeshRenderer(ComponentType type);

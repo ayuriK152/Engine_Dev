@@ -54,6 +54,7 @@ void EngineGUIManager::Init()
 	ImGui_ImplDX12_Init(&init_info);
 
 	_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW] = false;
+	_guiToggleValues[TOGGLEVALUE_GUI_PREFERENCES] = false;
 	_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE] = false;
 	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
@@ -75,6 +76,8 @@ void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)
 	ImGui::NewFrame();
 
 	{
+		ShowMainMenuBar();
+
 		if (_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW])
 			ImGui::ShowDemoWindow();
 
@@ -83,7 +86,7 @@ void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS])
 			ShowEngineStatus();
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS])
-			ShowEngineSettings();
+			ShowDebugSettings();
 
 		ShowHierarchyView();
 		ShowInspectorView();
@@ -105,7 +108,7 @@ void EngineGUIManager::ShowEngineStatus()
 		ImGuiWindowFlags_NoInputs;
 
 	const int padding = 10;
-	ImVec2 windowPos = ImVec2(0 + padding, 0 + padding);
+	ImVec2 windowPos = ImVec2(0 + padding, 0 + padding + 18.0f);
 	ImVec2 windowPivot = ImVec2(0.0f, 0.0f);
 
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
@@ -119,7 +122,7 @@ void EngineGUIManager::ShowEngineStatus()
 	ImGui::End();
 }
 
-void EngineGUIManager::ShowEngineSettings()
+void EngineGUIManager::ShowDebugSettings()
 {
 	ImGuiWindowFlags windowFlags =
 		ImGuiWindowFlags_NoMove |
@@ -156,7 +159,7 @@ void EngineGUIManager::ShowHierarchyView()
 
 	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
 
-	ImVec2 windowPos = ImVec2(mainViewport->Size.x - WIDTH_GUI_INSPECTOR, 0);
+	ImVec2 windowPos = ImVec2(mainViewport->Size.x - WIDTH_GUI_INSPECTOR, 18.0f);
 	ImVec2 windowPivot = ImVec2(1.0f, 0.0f);
 	ImVec2 windowSize = ImVec2(WIDTH_GUI_HIERARCHY, mainViewport->Size.y * 0.6f);
 
@@ -197,7 +200,7 @@ void EngineGUIManager::ShowInspectorView()
 
 	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
 
-	ImVec2 windowPos = ImVec2(mainViewport->Size.x, 0);
+	ImVec2 windowPos = ImVec2(mainViewport->Size.x, 18.0f);
 	ImVec2 windowPivot = ImVec2(1.0f, 0.0f);
 	ImVec2 windowSize = ImVec2(WIDTH_GUI_INSPECTOR, mainViewport->Size.y * 0.6f);
 
@@ -335,7 +338,11 @@ void EngineGUIManager::ShowResourceDirectory()
 
 void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 {
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
+	ImGuiTreeNodeFlags tree_flags = 
+		ImGuiTreeNodeFlags_OpenOnArrow | 
+		ImGuiTreeNodeFlags_OpenOnDoubleClick | 
+		ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
+
 	if (parent->GetChilds().size() == 0)
 		tree_flags |= ImGuiTreeNodeFlags_Leaf;
 	if (_selectedObj == parent->GetGameObject())
@@ -360,6 +367,29 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 			HierarchyObjectRecursion(child);
 		}
 		ImGui::TreePop();
+	}
+}
+
+void EngineGUIManager::ShowMainMenuBar()
+{
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			ShowMenuFile();
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+}
+
+void EngineGUIManager::ShowMenuFile()
+{
+	if (ImGui::MenuItem("Load Scene")) {
+		SCENE->LoadScene();
+	}
+
+	if (ImGui::MenuItem("Save Scene")) {
+		SCENE->SaveScene();
 	}
 }
 
@@ -637,36 +667,39 @@ void EngineGUIManager::DrawGizmo()
 
 void EngineGUIManager::ToggleWindows()
 {
-	if (INPUTM->IsKeyDown(KeyValue::F1))
-	{
+	if (INPUTM->IsKeyDown(KeyValue::ESC)) {
+		_guiToggleValues[TOGGLEVALUE_GUI_PREFERENCES] = !_guiToggleValues[TOGGLEVALUE_GUI_PREFERENCES];
+	}
+
+	if (INPUTM->IsKeyDown(KeyValue::F1)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE] = !_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE];
 	}
 
 	// FPS status view
-	if (INPUTM->IsKeyDown(KeyValue::F2))
-	{
+	if (INPUTM->IsKeyDown(KeyValue::F2)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS] = !_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS];
 	}
 
-	if (INPUTM->IsKeyDown(KeyValue::F3))
-	{
+	if (INPUTM->IsKeyDown(KeyValue::F3)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = !_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS];
 	}
 
-	if (INPUTM->IsKeyDown(KeyValue::F4))
-	{
+	if (INPUTM->IsKeyDown(KeyValue::F4)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = !_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY];
 	}
 	
-	if (INPUTM->IsKeyDown(KeyValue::F5))
-	{
+	if (INPUTM->IsKeyDown(KeyValue::F5)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = !_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR];
 	}
 
-	if (INPUTM->IsKeyDown(KeyValue::F6))
-	{
+	if (INPUTM->IsKeyDown(KeyValue::F6)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = !_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR];
 	}
+}
+
+void EngineGUIManager::ShowEnginePreferences()
+{
+
 }
 
 void EngineGUIManager::ShowConsole()

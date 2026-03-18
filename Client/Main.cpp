@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 {
 	AppDesc desc;
 	// desc.app = make_shared<DungeonScene>();
-	desc.mainWndCaption = L"GameApplication";
+	desc.mainWndCaption = L"Bulb Engine";
 	desc._4xMsaaState = false;
 	desc._4xMsaaQuality = 0;
 	desc.clientWidth = 1600;

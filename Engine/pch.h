@@ -29,6 +29,7 @@
 #include <assert.h>
 #include <comdef.h>
 #include <Shlwapi.h>
+#include <shobjidl.h>
 #include <thread>
 #include <future>
 #include <filesystem>

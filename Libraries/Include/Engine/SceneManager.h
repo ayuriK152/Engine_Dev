@@ -9,11 +9,14 @@ public:
 	void Init();
 
 public:
+	void LoadScene();
 	void LoadScene(string sceneName);
+	void SaveScene();
 
 private:
 	bool _isInitialized = false;
 
+	string _currentSceneName = "";
 	string _queuedSceneName = "";
 };
 

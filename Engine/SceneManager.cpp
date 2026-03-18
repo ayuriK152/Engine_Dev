@@ -61,4 +61,70 @@ void SceneManager::LoadScene(string sceneName)
 
 		objElem = objElem->NextSiblingElement("GameObject");
 	}
+
+	_currentSceneName = sceneName;
+
+	// 이 부분은 추후에 에디터에서만 적용되도록 변경해야함.
+	SetWindowText(GRAPHIC->GetMainWnd(), Utils::ToWString("Bulb Engine | " + _currentSceneName).c_str());
+}
+
+void SceneManager::LoadScene()
+{
+	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+
+	ComPtr<IFileOpenDialog> pFileOpen;
+	ThrowIfFailed(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen)));
+
+	COMDLG_FILTERSPEC fileTypes[] = {
+		{ L"Scene Files (*.xml)", L"*.xml"},
+		{ L"All Files (*.*)", L"*.*" }
+	};
+	pFileOpen->SetFileTypes(ARRAYSIZE(fileTypes), fileTypes);
+	ThrowIfFailed(pFileOpen->Show(GRAPHIC->GetMainWnd()));
+
+	ComPtr<IShellItem> pItem;
+	ThrowIfFailed(pFileOpen->GetResult(&pItem));
+
+	PWSTR pszFilePath;
+	ThrowIfFailed(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath));
+
+	wstring filePath = pszFilePath;
+	CoTaskMemFree(pszFilePath);
+
+	CoUninitialize();
+
+	DEBUG->Log(Utils::ToString(filePath));
+}
+
+void SceneManager::SaveScene()
+{
+	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+
+	ComPtr<IFileSaveDialog> pFileSave;
+	ThrowIfFailed(CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileSave)));
+
+	COMDLG_FILTERSPEC fileTypes[] = {
+		{ L"Scene Files (*.xml)", L"*.xml"},
+	};
+	pFileSave->SetFileTypes(ARRAYSIZE(fileTypes), fileTypes);
+	pFileSave->SetDefaultExtension(L"xml");
+
+	DWORD dwFlags;
+	pFileSave->GetOptions(&dwFlags);
+	pFileSave->SetOptions(dwFlags | FOS_OVERWRITEPROMPT | FOS_PATHMUSTEXIST);
+
+	ThrowIfFailed(pFileSave->Show(GRAPHIC->GetMainWnd()));
+
+	ComPtr<IShellItem> pItem;
+	ThrowIfFailed(pFileSave->GetResult(&pItem));
+
+	PWSTR pszFilePath;
+	ThrowIfFailed(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath));
+
+	wstring filePath = pszFilePath;
+	CoTaskMemFree(pszFilePath);
+
+	CoUninitialize();
+
+	DEBUG->Log(Utils::ToString(filePath));
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #define TOGGLEVALUE_GUI_DEMOWINDOW		"GUI_DemoWindow"
+#define TOGGLEVALUE_GUI_PREFERENCES		"GUI_Preferences"
 #define TOGGLEVALUE_GUI_CONSOLE			"GUI_Console"
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
 #define TOGGLEVALUE_GUI_ENGINESETTINGS	"GUI_EngineSettings"
@@ -77,14 +78,20 @@ public:
 private:
 	void ToggleWindows();
 
+	void ShowMainMenuBar();
+	void ShowEnginePreferences();
 	void ShowConsole();
 	void ShowEngineStatus();
-	void ShowEngineSettings();
+	void ShowDebugSettings();
 	void ShowHierarchyView();
 	void ShowInspectorView();
 	void ShowResourceDirectory();
 
 	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
+
+#pragma region MainMenus
+	void ShowMenuFile();
+#pragma endregion
 
 #pragma region Component
 	void ShowTransform();
@@ -105,7 +112,7 @@ public:
 private:
 	static DescriptorHeapAllocator _srvHeapDescAllocator;
 
-	map<string, bool> _guiToggleValues;
+	unordered_map<string, bool> _guiToggleValues;
 
 	shared_ptr<GameObject> _selectedObj = nullptr;
 	bool _isParentSelectMode = false;

@@ -5,6 +5,8 @@ RenderManager::~RenderManager()
 {
 	cout << "Released - RenderManager\n";
 
+	_isDestructorRunning = true;
+
 	_lights.clear();
 
 	for (shared_ptr<GameObject> go : _objects) {
@@ -219,6 +221,16 @@ void RenderManager::Render()
 	_currFrameResourceIndex = (_currFrameResourceIndex + 1) % _numFrameResources;
 }
 
+void RenderManager::InitializeOnRuntime()
+{
+	for (shared_ptr<GameObject> go : _objects) {
+		go->OnDestroy();
+		go.reset();
+	}
+
+	_objects.clear();
+}
+
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, ID3D12RootSignature* rootSignature, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = CreatePSODesc(rootSignature, vsName, psName, dsName, hsName, gsName);
@@ -394,6 +406,15 @@ void RenderManager::DeleteGameobject(shared_ptr<GameObject> obj)
 	for (int i = 0; i < _objectsSortedPSO[objPsoIdx].size(); i++) {
 		if (obj == _objectsSortedPSO[objPsoIdx][i]) {
 			_objectsSortedPSO[objPsoIdx].erase(_objectsSortedPSO[objPsoIdx].begin() + i);
+		}
+	}
+}
+
+void RenderManager::DeleteLight(shared_ptr<Light> light)
+{
+	for (int i = 0; i < _lights.size(); ++i) {
+		if (_lights[i] == light) {
+			_lights.erase(_lights.begin() + i);
 		}
 	}
 }

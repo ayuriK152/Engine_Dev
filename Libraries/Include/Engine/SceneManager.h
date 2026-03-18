@@ -10,8 +10,12 @@ public:
 
 public:
 	void LoadScene();
-	void LoadScene(string sceneName);
+	void LoadScene(string sceneName, bool isPath = false);
+
 	void SaveScene();
+
+private:
+	void InitializeScene();
 
 private:
 	bool _isInitialized = false;

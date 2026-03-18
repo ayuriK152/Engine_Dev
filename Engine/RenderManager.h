@@ -96,6 +96,8 @@ public:
 	void Render();
 
 public:
+	void InitializeOnRuntime();
+
 	ComPtr<ID3D12DescriptorHeap> GetCommonSRVHeap()const { return _srvHeap; }
 	
 	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
@@ -122,8 +124,9 @@ public:
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
 	void DeleteGameobject(shared_ptr<GameObject> obj);
 
-	vector<Light*>& GetLights() { return _lights; }
-	void AddLight(Light* light) { _lights.push_back(light); }
+	vector<shared_ptr<Light>>& GetLights() { return _lights; }
+	void AddLight(shared_ptr<Light> light) { _lights.push_back(light); }
+	void DeleteLight(shared_ptr<Light> light);
 
 	int GetSkyboxTexSRVHeapIndex() { return _skyboxTexSrvHeapIndex; }
 	void SetSkyboxTexture(shared_ptr<Texture> tex) {
@@ -153,6 +156,8 @@ public:
 
 	void SetMeshRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshRenderCheckMap[mesh->GetID()] = true; }
 	void SetMeshShadowRenderCheckValue(const shared_ptr<Mesh>& mesh) { _meshShadowRenderCheckMap[mesh->GetID()] = true; }
+
+	bool IsDestructorRunning() { return _isDestructorRunning; }
 
 private:
 	void BuildPSO(string name, D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc);
@@ -199,7 +204,7 @@ private:
 	vector<bool> _meshRenderCheckMap;
 	vector<bool> _meshShadowRenderCheckMap;
 
-	vector<Light*> _lights;		// Refactoring Required
+	vector<shared_ptr<Light>> _lights;
 
 	// SRV Heap
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;
@@ -211,5 +216,7 @@ private:
 	ComPtr<ID3D12Resource> _animationTransformBuffer = nullptr;
 
 	array<future<void>, 2> _futures;
+
+	bool _isDestructorRunning = false;
 };
 

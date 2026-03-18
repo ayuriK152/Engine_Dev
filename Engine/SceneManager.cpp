@@ -16,16 +16,20 @@ void SceneManager::Init()
 	}
 }
 
-void SceneManager::LoadScene(string sceneName)
+void SceneManager::LoadScene(string sceneName, bool isPath)
 {
 	if (!_isInitialized) {
 		_queuedSceneName = sceneName;
 		return;
 	}
 
-	string pathString = RESOURCE_PATH_SCENE + sceneName + ".xml";
+	string pathString = isPath ? sceneName : RESOURCE_PATH_SCENE + sceneName + ".xml";
 	if (!filesystem::exists(pathString))
 		return;
+
+	if (_currentSceneName != "") {
+		InitializeScene();
+	}
 
 	tinyxml2::XMLDocument doc;
 	XMLError e = doc.LoadFile(pathString.c_str());
@@ -93,7 +97,7 @@ void SceneManager::LoadScene()
 
 	CoUninitialize();
 
-	DEBUG->Log(Utils::ToString(filePath));
+	LoadScene(Utils::ToString(filePath), true);
 }
 
 void SceneManager::SaveScene()
@@ -127,4 +131,9 @@ void SceneManager::SaveScene()
 	CoUninitialize();
 
 	DEBUG->Log(Utils::ToString(filePath));
+}
+
+void SceneManager::InitializeScene()
+{
+	RENDER->InitializeOnRuntime();
 }

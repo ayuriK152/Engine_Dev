@@ -49,8 +49,10 @@ void MeshRenderer::OnDestroy()
 {
 	cout << "OnDestroy - MeshRenderer:" << _id << "\n";
 
-	if (_mesh != nullptr)
+	if (_mesh != nullptr) {
+		if (!RENDER->IsDestructorRunning()) _mesh->DecreaseInstanceCount();
 		_mesh.reset();
+	}
 	if (_material != nullptr)
 		_material.reset();
 }

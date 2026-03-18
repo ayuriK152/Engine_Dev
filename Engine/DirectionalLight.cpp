@@ -29,7 +29,7 @@ void DirectionalLight::Init()
 	_transform = GetTransform();
 	direction = _transform->GetLook();
 
-	RENDER->AddLight(this);
+	RENDER->AddLight(static_pointer_cast<Light>(shared_from_this()));
 }
 
 void DirectionalLight::Update()
@@ -64,6 +64,8 @@ void DirectionalLight::Update()
 void DirectionalLight::OnDestroy()
 {
 	cout << "OnDestroy - DirectionalLight:" << _id << "\n";
+
+	RENDER->DeleteLight(static_pointer_cast<Light>(shared_from_this()));
 
 	_transform.reset();
 }

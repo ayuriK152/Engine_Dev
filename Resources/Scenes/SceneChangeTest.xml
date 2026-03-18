@@ -1,0 +1,48 @@
+<Scene name="SceneChangeTest">
+    <GameObjects>
+        <GameObject Name="skybox" PSO="skybox">
+            <Components>
+                <Component ComponentType="MeshRenderer" MeshName="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
+            </Components>
+        </GameObject>
+
+        <GameObject Name="EditorCamera">
+            <Components>
+                <Component ComponentType="Transform" PosY="3"/>
+                <Component ComponentType="Camera"/>
+                <Component ComponentType="EditorCamera"/>
+            </Components>
+        </GameObject>
+
+        <GameObject Name="GlobalLight">
+            <Components>
+                <Component ComponentType="Transform">
+                    <LookAt x="1.0" y="-2.0" z="1.0"/>
+                </Component>
+                <Component ComponentType="DirectionalLight">
+                    <Ambient r="0.8" g="0.8" b="0.8" a="1.0"/>
+                    <Diffuse r="0.8" g="0.8" b="0.8" a="1.0"/>
+                    <Specular r="1.0" g="1.0" b="1.0" a="1.0"/>
+                </Component>
+            </Components>
+        </GameObject>
+
+        <GameObject Name="Ground">
+            <Components>
+                <Component ComponentType="Transform" PosY="-0.5" ScaleX="100" ScaleZ="100"/>
+                <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicBox" Material="PrototypeGround_100_1_100"/>
+                <Component ComponentType="Rigidbody" Static="true"/>
+            </Components>
+        </GameObject>
+        
+        <GameObject Name="Box">
+            <Components>
+                <Component ComponentType="Transform" PosY="3"/>
+                <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicBox" Material="000"/>
+                <Component ComponentType="Rigidbody">
+                    <Collider Shape="Box"/>
+                </Component>
+            </Components>
+        </GameObject>
+    </GameObjects>
+</Scene>

@@ -59,8 +59,8 @@ void MeshRenderer::OnDestroy()
 
 void MeshRenderer::LoadXML(XMLElement* compElem)
 {
-	string meshName = compElem->Attribute("MeshName");
-	SetMesh(RESOURCE->Get<Mesh>(Utils::ToWString(meshName)));
+	const char* meshName = compElem->Attribute("MeshName");
+	if (meshName != 0) SetMesh(RESOURCE->Get<Mesh>(Utils::ToWString(meshName)));
 
 	const char* materialName = compElem->Attribute("Material");
 	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
@@ -68,7 +68,9 @@ void MeshRenderer::LoadXML(XMLElement* compElem)
 
 void MeshRenderer::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "MeshRenderer");
+	if (_mesh != nullptr) compElem->SetAttribute("MeshName", _mesh->GetName().c_str());
+	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
 }
 
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)

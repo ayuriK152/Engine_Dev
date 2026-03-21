@@ -58,5 +58,5 @@ void EditorCamera::LoadXML(XMLElement* compElem)
 
 void EditorCamera::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "EditorCamera");
 }

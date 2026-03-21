@@ -121,7 +121,7 @@ void Animator::LoadXML(XMLElement* compElem)
 
 void Animator::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "Animator");
 }
 
 void Animator::PlayAnimation()

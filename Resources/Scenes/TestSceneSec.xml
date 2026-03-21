@@ -1,0 +1,53 @@
+<Scene Name="TestSceneSec">
+    <GameObjects>
+        <GameObject Name="skybox" PSO="skybox">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" RotX="-0" RotY="7.2627605e-05" RotZ="-0"/>
+                <Component ComponentType="MeshRenderer" MeshName="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
+            </Components>
+        </GameObject>
+        <GameObject Name="EditorCamera" PSO="opaque_solid">
+            <Components>
+                <Component ComponentType="Transform" PosX="3.6680241" PosY="5.660635" PosZ="-4.7876863" ScaleX="1" ScaleY="1" ScaleZ="1" RotX="37.299622" RotY="-33.689861" RotZ="0"/>
+                <Component ComponentType="Camera"/>
+                <Component ComponentType="EditorCamera"/>
+            </Components>
+        </GameObject>
+        <GameObject Name="GlobalLight" PSO="opaque_solid">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" RotX="54.73563" RotY="45.000084" RotZ="2.4148369e-06"/>
+                <Component ComponentType="DirectionalLight">
+                    <Ambient r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+                    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+                    <Specular r="1" g="1" b="1" a="1"/>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="Ground" PSO="opaque_solid">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="-0.5" PosZ="0" ScaleX="100" ScaleY="1" ScaleZ="100" RotX="-0" RotY="7.2627605e-05" RotZ="-0"/>
+                <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicBox" Material="PrototypeGround_100_1_100"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="true" Trigger="true" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="50" y="0.5" z="50"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="Sphere" PSO="opaque_solid">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0.49999994" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" RotX="-0" RotY="7.2627605e-05" RotZ="-0"/>
+                <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicSphere" Material="000"/>
+                <Component ComponentType="Rigidbody" Static="false" Gravity="false" Trigger="false" PhysicsActive="false">
+                    <Collider Shape="Sphere" Height="0.5" Radius="0.5">
+                        <Extent x="0.5" y="0.5" z="0.5"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+    </GameObjects>
+</Scene>

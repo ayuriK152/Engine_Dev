@@ -138,7 +138,7 @@ void PlayerScript::LoadXML(XMLElement* compElem)
 
 void PlayerScript::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "PlayerScript");
 }
 
 void PlayerScript::Roll()

@@ -391,6 +391,10 @@ void EngineGUIManager::ShowMenuFile()
 	if (ImGui::MenuItem("Save Scene")) {
 		SCENE->SaveScene();
 	}
+
+	if (ImGui::MenuItem("Save As..")) {
+		SCENE->SaveScene(true);
+	}
 }
 
 void EngineGUIManager::ShowTransform()

@@ -10,9 +10,12 @@ public:
 
 public:
 	void LoadScene();
-	void LoadScene(string sceneName, bool isPath = false);
+	void LoadScene(string sceneName, bool isFullPath = false);
 
-	void SaveScene();
+	void SaveScene(bool saveAs = false);
+	void SaveScene(string scenePath, bool isFullPath = false);
+
+	void WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> go);
 
 private:
 	void InitializeScene();
@@ -21,6 +24,8 @@ private:
 	bool _isInitialized = false;
 
 	string _currentSceneName = "";
-	string _queuedSceneName = "";
+
+	string _currentScenePath = "";
+	string _queuedScenePath = "";
 };
 

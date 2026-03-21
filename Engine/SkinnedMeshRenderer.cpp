@@ -69,7 +69,7 @@ void SkinnedMeshRenderer::LoadXML(XMLElement* compElem)
 
 void SkinnedMeshRenderer::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "SkinnedMeshRenderer");
 }
 
 void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)

@@ -126,5 +126,5 @@ void TPVCamera::LoadXML(XMLElement* compElem)
 
 void TPVCamera::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "TPVCamera");
 }

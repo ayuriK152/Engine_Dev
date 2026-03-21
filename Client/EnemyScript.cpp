@@ -129,7 +129,7 @@ void EnemyScript::LoadXML(XMLElement* compElem)
 
 void EnemyScript::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "EnemyScript");
 }
 
 void EnemyScript::TakeDamage(int damage)

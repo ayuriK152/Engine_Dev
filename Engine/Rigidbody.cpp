@@ -103,9 +103,10 @@ void Rigidbody::LoadXML(XMLElement* compElem)
 	if (colliderElem) {
 		const char* colliderShape = colliderElem->Attribute("Shape");
 		if (colliderShape != 0) {
-			if (colliderShape == "Box") SetColliderShape(ColliderShape::Box);
-			else if (colliderShape == "Sphere") SetColliderShape(ColliderShape::Sphere);
-			else if (colliderShape == "Capsule") SetColliderShape(ColliderShape::Capsule);
+			string shapeStr(colliderShape);
+			if (shapeStr == "Box") SetColliderShape(ColliderShape::Box);
+			else if (shapeStr == "Sphere") SetColliderShape(ColliderShape::Sphere);
+			else if (shapeStr == "Capsule") SetColliderShape(ColliderShape::Capsule);
 		}
 
 		XMLElement* extentElem = colliderElem->FirstChildElement("Extent");
@@ -129,7 +130,32 @@ void Rigidbody::LoadXML(XMLElement* compElem)
 
 void Rigidbody::SaveXML(XMLElement* compElem)
 {
+	compElem->SetAttribute("ComponentType", "Rigidbody");
 
+	compElem->SetAttribute("Static", _isStatic);
+	compElem->SetAttribute("Gravity", _isStatic);
+	compElem->SetAttribute("Trigger", _isStatic);
+	compElem->SetAttribute("PhysicsActive", _isStatic);
+
+	XMLElement* colliderElem = compElem->InsertNewChildElement("Collider");
+	colliderElem->SetAttribute("Shape", magic_enum::enum_name(_colliderShape).data());
+	colliderElem->SetAttribute("Height", _height);
+	colliderElem->SetAttribute("Radius", _radius);
+
+	XMLElement* extentElem = colliderElem->InsertNewChildElement("Extent");
+	extentElem->SetAttribute("x", _extents.x);
+	extentElem->SetAttribute("y", _extents.y);
+	extentElem->SetAttribute("z", _extents.z);
+
+	XMLElement* offsetElem = colliderElem->InsertNewChildElement("Offset");
+	offsetElem->SetAttribute("x", _colliderOffset.x);
+	offsetElem->SetAttribute("y", _colliderOffset.y);
+	offsetElem->SetAttribute("z", _colliderOffset.z);
+
+	XMLElement* rotOffsetElem = colliderElem->InsertNewChildElement("RotOffset");
+	rotOffsetElem->SetAttribute("x", _colliderRotationOffset.x);
+	rotOffsetElem->SetAttribute("y", _colliderRotationOffset.y);
+	rotOffsetElem->SetAttribute("z", _colliderRotationOffset.z);
 }
 
 void Rigidbody::SetColliderExtents(const Vector3& extents)

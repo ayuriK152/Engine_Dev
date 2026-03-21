@@ -36,6 +36,7 @@ void Transform::LoadXML(XMLElement* compElem)
 	SetScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
 	SetRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
 
+	// 수동으로 씬 작성하는게 아니면 굳이 필요할까 싶음
 	XMLElement* lookAtElem = compElem->FirstChildElement("LookAt");
 	if (lookAtElem) {
 		LookAt({ lookAtElem->FloatAttribute("x"), lookAtElem->FloatAttribute("y"), lookAtElem->FloatAttribute("z") });
@@ -44,7 +45,22 @@ void Transform::LoadXML(XMLElement* compElem)
 
 void Transform::SaveXML(XMLElement* compElem)
 {
+	compElem->SetAttribute("ComponentType", "Transform");
 
+	Vector3 pos = GetPosition();
+	compElem->SetAttribute("PosX", pos.x);
+	compElem->SetAttribute("PosY", pos.y);
+	compElem->SetAttribute("PosZ", pos.z);
+
+	Vector3 scl = GetScale();
+	compElem->SetAttribute("ScaleX", scl.x);
+	compElem->SetAttribute("ScaleY", scl.y);
+	compElem->SetAttribute("ScaleZ", scl.z);
+
+	Vector3 rot = GetRotation();
+	compElem->SetAttribute("RotX", rot.x);
+	compElem->SetAttribute("RotY", rot.y);
+	compElem->SetAttribute("RotZ", rot.z);
 }
 
 void Transform::ForceUpdateTransform()

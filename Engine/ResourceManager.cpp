@@ -79,28 +79,28 @@ void ResourceManager::CreateDefaultResources()
 
 
 	//==========Material==========
-	auto defaultMat = make_shared<Material>("Default");
+	auto defaultMat = make_shared<Material>("Mat_Default");
 	Add<Material>(L"Mat_Default", defaultMat);
 
-	auto defaultSkyboxMat = make_shared<Material>("DefaultSkybox", L"Tex_DefaultSkybox");
+	auto defaultSkyboxMat = make_shared<Material>("Mat_DefaultSkybox", L"Tex_DefaultSkybox");
 	Add<Material>(L"Mat_DefaultSkybox", defaultSkyboxMat);
 
 
 	//==========Mesh==========
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
-	boxMesh->SetName("BasicBox");
+	boxMesh->SetName(DEFAULT_MESH_BOX);
 	Add<Mesh>(DEFAULT_MESH_BOX, boxMesh);
 
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 3));
-	sphereMesh->SetName("BasicSphere");
+	sphereMesh->SetName(DEFAULT_MESH_SPHERE);
 	Add<Mesh>(DEFAULT_MESH_SPHERE, sphereMesh);
 
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
-	quadMesh->SetName("BasicQuad");
+	quadMesh->SetName(DEFAULT_MESH_QUAD);
 	Add<Mesh>(DEFAULT_MESH_QUAD, quadMesh);
 
 	shared_ptr<Mesh> skyboxSphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 1));
-	skyboxSphereMesh->SetName("SkyboxSphere");
+	skyboxSphereMesh->SetName(L"Mesh_SkyboxSphere");
 	Add<Mesh>(L"Mesh_SkyboxSphere", skyboxSphereMesh);
 }
 

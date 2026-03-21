@@ -76,5 +76,5 @@ void Camera::LoadXML(XMLElement* compElem)
 
 void Camera::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "Camera");
 }

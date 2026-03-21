@@ -105,7 +105,25 @@ void DirectionalLight::LoadXML(XMLElement* compElem)
 
 void DirectionalLight::SaveXML(XMLElement* compElem)
 {
+	compElem->SetAttribute("ComponentType", "DirectionalLight");
 
+	XMLElement* ambientElem = compElem->InsertNewChildElement("Ambient");
+	ambientElem->SetAttribute("r", ambient.x);
+	ambientElem->SetAttribute("g", ambient.y);
+	ambientElem->SetAttribute("b", ambient.z);
+	ambientElem->SetAttribute("a", ambient.w);
+
+	XMLElement* diffuseElem = compElem->InsertNewChildElement("Diffuse");
+	diffuseElem->SetAttribute("r", diffuse.x);
+	diffuseElem->SetAttribute("g", diffuse.y);
+	diffuseElem->SetAttribute("b", diffuse.z);
+	diffuseElem->SetAttribute("a", diffuse.w);
+
+	XMLElement* specularElem = compElem->InsertNewChildElement("Specular");
+	specularElem->SetAttribute("r", specular.x);
+	specularElem->SetAttribute("g", specular.y);
+	specularElem->SetAttribute("b", specular.z);
+	specularElem->SetAttribute("a", specular.w);
 }
 
 LightConstants DirectionalLight::GetLightConstants()

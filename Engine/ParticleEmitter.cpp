@@ -60,7 +60,7 @@ void ParticleEmitter::LoadXML(XMLElement* compElem)
 
 void ParticleEmitter::SaveXML(XMLElement* compElem)
 {
-
+	compElem->SetAttribute("ComponentType", "ParticleEmitter");
 }
 
 void ParticleEmitter::SetParticleTexture(string textureName)

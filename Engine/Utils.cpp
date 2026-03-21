@@ -53,3 +53,9 @@ int Utils::Random(int from, int to)
 	uniform_int_distribution<int> dis(from, to);
 	return dis(_gen);
 }
+
+string Utils::GetFileName(string path)
+{
+	size_t separateIdx = path.find_last_of('\\');
+	return path.erase(0, separateIdx == string::npos ? 0 : separateIdx).erase(path.find_last_of('.'), string::npos);
+}

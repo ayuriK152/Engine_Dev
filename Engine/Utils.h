@@ -12,6 +12,8 @@ public:
 
 	static int Random(int from, int to);
 
+	static string GetFileName(string path);
+
 private:
 	static mt19937 _gen;
 };

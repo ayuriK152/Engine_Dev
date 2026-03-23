@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "GameObject.h"
 
-int GameObject::_nextId = 0;
+int GameObject::_idCount = 0;
 
 GameObject::GameObject()
 {
 	primitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	_id = _nextId++;
+	_id = _idCount++;
 
 	_name = "GameObject";
 	_psoName = PSO_OPAQUE_SOLID;
@@ -201,4 +201,24 @@ void GameObject::Delete(float time)
 {
 	_isDeleteReserved = true;
 	_deleteTime = time;
+}
+
+GameObjectSnapshot GameObject::CaptureSnapshot()
+{
+	_isSnapshotCaptured = true;
+
+	GameObjectSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.name = _name;
+	snapshot.pso = _psoName;
+
+	return snapshot;
+}
+
+void GameObject::RestoreSnapshot(GameObjectSnapshot snapshot)
+{
+	_isSnapshotCaptured = false;
+	SetName(snapshot.name);
+	SetPSOName(snapshot.pso);
 }

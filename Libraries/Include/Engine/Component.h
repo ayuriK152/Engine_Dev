@@ -26,6 +26,9 @@ public:
 	virtual void LoadXML(XMLElement* compElem) = 0;
 	virtual void SaveXML(XMLElement* compElem) = 0;
 
+	virtual ComponentSnapshot CaptureSnapshot() = 0;
+	virtual void RestoreSnapshot(ComponentSnapshot snapshot) = 0;
+
 public:
 	shared_ptr<GameObject> GetGameObject();
 	shared_ptr<Transform> GetTransform();
@@ -48,6 +51,8 @@ private:
 	void SetGameObject(shared_ptr<GameObject> gameObject) { _gameObject = gameObject; }
 
 private:
-	static UINT _count;
+	static UINT _idCount;
+
+	bool _isSnapshotCaptured = false;
 };
 

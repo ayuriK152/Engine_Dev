@@ -73,6 +73,21 @@ void MeshRenderer::SaveXML(XMLElement* compElem)
 	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
 }
 
+ComponentSnapshot MeshRenderer::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "MeshRenderer";
+
+	return snapshot;
+}
+
+void MeshRenderer::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+
+}
+
 void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 {
 	if (mesh == nullptr)

@@ -27,6 +27,9 @@ public:
 	void LoadXML(XMLElement* compElem) override;
 	void SaveXML(XMLElement* compElem) override;
 
+	ComponentSnapshot CaptureSnapshot() override;
+	void RestoreSnapshot(ComponentSnapshot snapshot) override;
+
 public:
 	// Box Only
 	void SetColliderExtents(const Vector3& size);
@@ -53,8 +56,8 @@ public:
 	bool IsStatic() { return _isStatic; }
 	void SetStatic(bool value);
 
-	Vector3 GetVelocity() { return _velocity; }
-	void SetVelocity(Vector3& veclocity) { _velocity = veclocity; }
+	Vector3 GetVelocity();
+	void SetVelocity(Vector3& velocity);
 
 	bool IsPhysicsActive() { return _isPhysicsActive; }
 	void SetPhysicsActive(bool value);
@@ -71,7 +74,6 @@ public:
 
 private:
 	bool _isGravity;				// 중력 여부
-	Vector3 _velocity;			// 속도
 	bool _isStatic = false;
 	bool _isTrigger = false;
 	bool _isPhysicsActive = true;

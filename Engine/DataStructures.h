@@ -118,3 +118,17 @@ struct VertexPT
 	Vector3 Position;
 	Vector2 TexC;
 };
+
+struct ComponentSnapshot {
+	int id;
+	string componentType;
+	vector<float> datas;
+	vector<string> strDatas;
+};
+
+struct GameObjectSnapshot {
+	int id;
+	string name;
+	string pso;
+	vector<int> compSnapshotIndices;
+};

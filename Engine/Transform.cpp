@@ -47,6 +47,7 @@ void Transform::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "Transform");
 
+	// ForcedUpdateTransform() 쓰고 직접 접근하는건 문제가 없는지 검증 후 적용
 	Vector3 pos = GetPosition();
 	compElem->SetAttribute("PosX", pos.x);
 	compElem->SetAttribute("PosY", pos.y);
@@ -61,6 +62,34 @@ void Transform::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("RotX", rot.x);
 	compElem->SetAttribute("RotY", rot.y);
 	compElem->SetAttribute("RotZ", rot.z);
+}
+
+ComponentSnapshot Transform::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "Transform";
+
+	ForceUpdateTransform();
+	snapshot.datas.push_back(_position.x);
+	snapshot.datas.push_back(_position.y);
+	snapshot.datas.push_back(_position.z);
+	snapshot.datas.push_back(_scale.x);
+	snapshot.datas.push_back(_scale.y);
+	snapshot.datas.push_back(_scale.z);
+	snapshot.datas.push_back(_rotation.x);
+	snapshot.datas.push_back(_rotation.y);
+	snapshot.datas.push_back(_rotation.z);
+
+	return snapshot;
+}
+
+void Transform::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+	SetPosition({ snapshot.datas[0], snapshot.datas[1], snapshot.datas[2] });
+	SetScale({ snapshot.datas[3], snapshot.datas[4], snapshot.datas[5] });
+	SetRotationRadian({ snapshot.datas[6], snapshot.datas[7], snapshot.datas[8] });
 }
 
 void Transform::ForceUpdateTransform()

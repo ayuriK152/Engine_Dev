@@ -78,3 +78,21 @@ void Camera::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "Camera");
 }
+
+ComponentSnapshot Camera::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "Camera";
+
+	snapshot.datas.push_back(IsMainCamera() ? 1 : 0);
+
+	return snapshot;
+}
+
+void Camera::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+	if (snapshot.datas[0] == 1)
+		SetAsMainCamera();
+}

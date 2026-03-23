@@ -209,6 +209,9 @@
     <ClInclude Include="ComponentFactory.h">
       <Filter>01. EngineComponents</Filter>
     </ClInclude>
+    <ClInclude Include="EditorManager.h">
+      <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -447,6 +450,9 @@
     </ClCompile>
     <ClCompile Include="ComponentFactory.cpp">
       <Filter>01. EngineComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorManager.cpp">
+      <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

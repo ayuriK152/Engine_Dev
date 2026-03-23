@@ -72,6 +72,21 @@ void SkinnedMeshRenderer::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "SkinnedMeshRenderer");
 }
 
+ComponentSnapshot SkinnedMeshRenderer::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "SkinnedMeshRenderer";
+
+	return snapshot;
+}
+
+void SkinnedMeshRenderer::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+
+}
+
 void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
 {
 	_rootBone = rootBone;

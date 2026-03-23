@@ -197,6 +197,7 @@ using namespace JPH::literals;
 #include "AnimationManager.h"
 #include "UIManager.h"
 #include "SceneManager.h"
+#include "EditorManager.h"
 
 #include "GameTimer.h"
 #include "GameApplication.h"

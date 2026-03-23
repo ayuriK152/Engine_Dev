@@ -16,6 +16,9 @@ public:
 	void LoadXML(XMLElement* compElem) override;
 	void SaveXML(XMLElement* compElem) override;
 
+	ComponentSnapshot CaptureSnapshot() override;
+	void RestoreSnapshot(ComponentSnapshot snapshot) override;
+
 public:
 	static Camera* GetCurrentCamera() { return _currentCamera; }
 	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }
@@ -36,6 +39,7 @@ private:
 	float _aspectRatio;
 	Vector2 _viewportSize;
 
+	// 이거도 shared_ptr로 바꿔야함
 	static Camera* _currentCamera;
 	static UINT _cameraCount;
 };

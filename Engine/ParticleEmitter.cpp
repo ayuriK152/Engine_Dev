@@ -63,6 +63,21 @@ void ParticleEmitter::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "ParticleEmitter");
 }
 
+ComponentSnapshot ParticleEmitter::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "ParticleEmitter";
+
+	return snapshot;
+}
+
+void ParticleEmitter::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+
+}
+
 void ParticleEmitter::SetParticleTexture(string textureName)
 {
 	SetParticleTexture(Utils::ToWString(textureName));

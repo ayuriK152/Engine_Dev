@@ -11,5 +11,12 @@ public:
 
 	virtual void LoadXML(XMLElement* compElem) override = 0;
 	virtual void SaveXML(XMLElement* compElem) override = 0;
+
+	virtual ComponentSnapshot CaptureSnapshot() override { 
+		ComponentSnapshot snapshot;
+		snapshot.id = _id;
+		return snapshot;
+	};
+	virtual void RestoreSnapshot(ComponentSnapshot snapshot) override { };
 };
 

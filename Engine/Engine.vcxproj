@@ -36,6 +36,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="ComponentFactory.h" />
+    <ClInclude Include="EditorManager.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Skeleton.h" />
@@ -134,6 +135,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="ComponentFactory.cpp" />
+    <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Skeleton.cpp" />

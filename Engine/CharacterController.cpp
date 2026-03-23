@@ -46,15 +46,16 @@ void CharacterController::Init()
 
 void CharacterController::PreUpdate()
 {
-	// 중력 값을 상수로 정의하고 따로 받아오도록 리팩토링 필요함
-	_verticalVelocity -= (9.8f * TIME->DeltaTime());
+	// 1. 중력 값을 상수로 정의하고 따로 받아오도록 리팩토링 필요함
+	// 2. 중력이 두 번 적용되고 있는건 아닌지?
+	_verticalVelocity -=  GRAVITY_ACC * TIME->DeltaTime() * (_isGravity ? _gravityFactor : 0.0f);
 	_currentVelocity = _desiredVelocity;
 	_currentVelocity.y += _verticalVelocity;
 	JPH::Vec3 totalVelocity(_currentVelocity.x, _currentVelocity.y, _currentVelocity.z);
 	_character->SetLinearVelocity(totalVelocity);
 	_character->Update(
 		TIME->DeltaTime(),
-		-_character->GetUp() * 9.8f,
+		-_character->GetUp() * GRAVITY_ACC * (_isGravity ? _gravityFactor : 0.0f),
 		PHYSICS->GetPhysicsSystem()->GetDefaultBroadPhaseLayerFilter(Layers::MOVING),
 		PHYSICS->GetPhysicsSystem()->GetDefaultLayerFilter(Layers::MOVING),
 		{ }, {}, *PHYSICS->GetTempAllocator()
@@ -83,4 +84,25 @@ void CharacterController::LoadXML(XMLElement* compElem)
 void CharacterController::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "CharacterController");
+}
+
+ComponentSnapshot CharacterController::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "CharacterController";
+
+	snapshot.datas.push_back(_isGravity ? 1 : 0);
+
+	return snapshot;
+}
+
+void CharacterController::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+	SetGravity(snapshot.datas[0] == 1);
+
+	_currentVelocity = { 0.0f, 0.0f, 0.0f };
+	_desiredVelocity = { 0.0f, 0.0f, 0.0f };
+	_verticalVelocity = 0.0f;
 }

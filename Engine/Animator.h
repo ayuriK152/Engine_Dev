@@ -40,6 +40,9 @@ public:
 	void LoadXML(XMLElement* compElem) override;
 	void SaveXML(XMLElement* compElem) override;
 
+	ComponentSnapshot CaptureSnapshot() override;
+	void RestoreSnapshot(ComponentSnapshot snapshot) override;
+
 public:
 	float GetCurrentTick() { return _currentTick; }
 

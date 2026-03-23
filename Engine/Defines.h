@@ -32,6 +32,7 @@ public:									\
 #define ANIMATION	GET_SINGLE(AnimationManager)
 #define UI			GET_SINGLE(UIManager)
 #define SCENE		GET_SINGLE(SceneManager)
+#define EDITOR		GET_SINGLE(EditorManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 
@@ -74,3 +75,10 @@ public:									\
 #define RESOURCE_PATH_ASSETW			L"..\\Resources\\Assets\\"
 #define RESOURCE_PATH_SCENE				"..\\Resources\\Scenes\\"
 #define RESOURCE_PATH_SCENEW			L"..\\Resources\\Scenes\\"
+
+
+/**********/
+/* Values */
+/**********/
+
+#define GRAVITY_ACC		9.8f

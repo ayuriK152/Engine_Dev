@@ -17,6 +17,9 @@ public:
 	virtual void LoadXML(XMLElement* compElem) override = 0;
 	virtual void SaveXML(XMLElement* compElem) override = 0;
 
+	virtual ComponentSnapshot CaptureSnapshot() override = 0;
+	virtual void RestoreSnapshot(ComponentSnapshot snapshot) override = 0;
+
 public:
 	void SetFramesDirty();
 	int GetFramesDirty() { return _numFramesDirty; }

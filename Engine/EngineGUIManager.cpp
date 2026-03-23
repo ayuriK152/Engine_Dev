@@ -276,6 +276,8 @@ void EngineGUIManager::ShowInspectorView()
 				}
 			}
 
+			ImGui::Separator();
+
 			if (ImGui::Button("Add Component"))
 				ImGui::OpenPopup("component_select_popup");
 
@@ -378,6 +380,11 @@ void EngineGUIManager::ShowMainMenuBar()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Edit")) {
+			ShowMenuEdit();
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -394,6 +401,17 @@ void EngineGUIManager::ShowMenuFile()
 
 	if (ImGui::MenuItem("Save As..")) {
 		SCENE->SaveScene(true);
+	}
+}
+
+void EngineGUIManager::ShowMenuEdit()
+{
+	if (ImGui::MenuItem("Play", 0, nullptr, !EDITOR->IsOnPlay())) {
+		EDITOR->Play();
+	}
+
+	if (ImGui::MenuItem("Stop", 0, nullptr, EDITOR->IsOnPlay())) {
+		EDITOR->Stop();
 	}
 }
 

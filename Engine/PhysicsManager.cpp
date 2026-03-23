@@ -42,11 +42,13 @@ void PhysicsManager::Init()
 
 void PhysicsManager::PreUpdate()
 {
-
+	if (!EDITOR->IsOnPlay()) return;
 }
 
 void PhysicsManager::Update()
 {
+	if (!EDITOR->IsOnPlay()) return;
+
 	_physicsSystem->Update(TIME->DeltaTime(), 1, _tempAlloc, _jobSystem);
 
 	for (auto& rigidbody : _rigidbodies) {
@@ -68,7 +70,7 @@ void PhysicsManager::Update()
 
 void PhysicsManager::LateUpdate()
 {
-
+	if (!EDITOR->IsOnPlay()) return;
 }
 
 void PhysicsManager::OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings)

@@ -18,6 +18,9 @@ public:
 	void LoadXML(XMLElement* compElem) override;
 	void SaveXML(XMLElement* compElem) override;
 
+	ComponentSnapshot CaptureSnapshot() override;
+	void RestoreSnapshot(ComponentSnapshot snapshot) override;
+
 public:
 	void SetBoneData(const string& boneFileName) { _boneFileName = boneFileName; }
 	void SetRootBone(const shared_ptr<Transform> rootBone);

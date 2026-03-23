@@ -124,6 +124,42 @@ void Animator::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "Animator");
 }
 
+ComponentSnapshot Animator::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "Animator";
+
+	snapshot.datas.push_back(_isPlayOnInit ? 1 : 0);
+	snapshot.datas.push_back(_isLoop ? 1 : 0);
+	snapshot.datas.push_back(_isPreviewMode ? 1 : 0);
+	snapshot.datas.push_back(_isTransitionBlocked ? 1 : 0);
+
+	snapshot.datas.push_back(_currentTick);
+	snapshot.datas.push_back(_transitionTime);
+
+	snapshot.strDatas.push_back(_currentAnimation);
+
+	return snapshot;
+}
+
+void Animator::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+	_isPlayOnInit = snapshot.datas[0] == 1;
+	_isLoop = snapshot.datas[0] == 1;
+	_isPreviewMode = snapshot.datas[0] == 1;
+	_isTransitionBlocked = snapshot.datas[0] == 1;
+
+	_currentTick = snapshot.datas[0];
+	_transitionTime = snapshot.datas[0];
+
+	_currentAnimationEventIndex = 0;
+	_nextAnimationEventIndex = 0;
+
+	_currentAnimation = snapshot.strDatas[0];
+}
+
 void Animator::PlayAnimation()
 {
 	if (_currentAnimation == EMPTY_ANIMATION)

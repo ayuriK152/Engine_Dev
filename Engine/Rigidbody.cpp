@@ -7,7 +7,6 @@ Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 {
 	_isGravity = true;
 
-	_velocity = { 0.0f, 0.0f, 0.0f };
 	XMStoreFloat4(&_rotationOffsetQuaternion, XMQuaternionIdentity());
 }
 
@@ -158,6 +157,38 @@ void Rigidbody::SaveXML(XMLElement* compElem)
 	rotOffsetElem->SetAttribute("z", _colliderRotationOffset.z);
 }
 
+ComponentSnapshot Rigidbody::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "Rigidbody";
+
+	snapshot.datas.push_back(_isGravity ? 1 : 0);
+	snapshot.datas.push_back(_isStatic ? 1 : 0);
+	snapshot.datas.push_back(_isTrigger ? 1 : 0);
+	snapshot.datas.push_back(_isPhysicsActive ? 1 : 0);
+
+	snapshot.datas.push_back(_shapeDataDirtyFlag ? 1 : 0);
+	snapshot.datas.push_back(_colliderOffsetDirtyFlag ? 1 : 0);
+
+	return snapshot;
+}
+
+void Rigidbody::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+	SetGravity(snapshot.datas[0] == 1);
+	SetStatic(snapshot.datas[1] == 1);
+	SetColliderTrigger(snapshot.datas[2] == 1);
+	SetPhysicsActive(snapshot.datas[3] == 1);
+
+	_shapeDataDirtyFlag = snapshot.datas[4] == 1;
+	_colliderOffsetDirtyFlag = snapshot.datas[5] == 1;
+
+	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(_bodyID, { 0.0f, 0.0f, 0.0f });
+	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetAngularVelocity(_bodyID, { 0.0f, 0.0f, 0.0f });
+}
+
 void Rigidbody::SetColliderExtents(const Vector3& extents)
 {
 	_extents = extents;
@@ -239,6 +270,15 @@ void Rigidbody::SetStatic(bool value)
 		_bodyID,
 		_isStatic ? EMotionType::Static : EMotionType::Dynamic,
 		EActivation::Activate);
+}
+
+Vector3 Rigidbody::GetVelocity() {
+	JPH::Vec3 vel = PHYSICS->GetPhysicsSystem()->GetBodyInterface().GetLinearVelocity(_bodyID);
+	return Vector3(vel.mValue);
+}
+
+void Rigidbody::SetVelocity(Vector3& velocity) {
+	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(_bodyID, JPH::Vec3(velocity.x, velocity.y, velocity.z));
 }
 
 void Rigidbody::SetPhysicsActive(bool value)

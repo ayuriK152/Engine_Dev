@@ -72,6 +72,10 @@ public:
 
 	void Delete(float time);
 
+	GameObjectSnapshot CaptureSnapshot();
+	void RestoreSnapshot(GameObjectSnapshot snapshot);
+	bool IsSnapshotCaptured() { return _isSnapshotCaptured; }
+
 public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
@@ -80,7 +84,7 @@ public:
 	// unordered_map<ComponentType, shared_ptr<Component>> components;
 
 private:
-	static int _nextId;
+	static int _idCount;
 	int _id;
 	string _name;
 	string _psoName;
@@ -94,6 +98,8 @@ private:
 
 	int _componentCount = 0;
 	array<vector<shared_ptr<Component>>, COUNT_COMPONENTTYPE> _components;
+
+	bool _isSnapshotCaptured = false;
 };
 
 template<typename T>

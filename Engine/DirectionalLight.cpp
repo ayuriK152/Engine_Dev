@@ -126,6 +126,21 @@ void DirectionalLight::SaveXML(XMLElement* compElem)
 	specularElem->SetAttribute("a", specular.w);
 }
 
+ComponentSnapshot DirectionalLight::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "DirectionalLight";
+
+	return snapshot;
+}
+
+void DirectionalLight::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+
+}
+
 LightConstants DirectionalLight::GetLightConstants()
 {
 	LightConstants constants;

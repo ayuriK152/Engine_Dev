@@ -43,6 +43,14 @@
                     <Collider Shape="Sphere"/>
                 </Component>
             </Components>
+            <GameObjects>
+                <GameObject Name="Box">
+                    <Components>
+                        <Component ComponentType="Transform"/>
+                        <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicBox" Material="000"/>
+                    </Components>
+                </GameObject>
+            </GameObjects>
         </GameObject>
     </GameObjects>
 </Scene>

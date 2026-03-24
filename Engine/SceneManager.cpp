@@ -78,33 +78,9 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 
 	XMLNode* node = doc.FirstChild();
 
-	XMLElement* gameObjectsElem = node->FirstChildElement("GameObjects");
-	XMLElement* objElem = gameObjectsElem->FirstChildElement("GameObject");
+	XMLElement* objsElem = node->FirstChildElement("GameObjects");
 	
-	while (objElem) {
-		shared_ptr<GameObject> go = GameObject::Instantiate();
-
-		string name = objElem->Attribute("Name");
-		go->SetName(name);
-
-		const char* psoName = objElem->Attribute("PSO");
-		if (psoName != 0) go->SetPSOName(psoName);
-
-		XMLElement* componentsElem = objElem->FirstChildElement("Components");
-		XMLElement* compElem = componentsElem->FirstChildElement("Component");
-		
-		while (compElem) {
-			string componentType = compElem->Attribute("ComponentType");
-			shared_ptr<Component> component = ComponentFactory::Create(componentType);
-
-			go->AddComponent(component);
-			component->LoadXML(compElem);
-
-			compElem = compElem->NextSiblingElement("Component");
-		}
-
-		objElem = objElem->NextSiblingElement("GameObject");
-	}
+	ReadGameObjectData(objsElem, nullptr);
 
 	// 이 부분은 추후에 에디터에서만 적용되도록 변경해야함.
 	SetWindowText(GRAPHIC->GetMainWnd(), Utils::ToWString("Bulb Engine | " + _currentSceneName).c_str());
@@ -114,7 +90,7 @@ void SceneManager::SaveScene(bool saveAs)
 {
 	if (!saveAs && !_currentScenePath.empty() && filesystem::exists(_currentScenePath)) {
 		filesystem::path p(_currentScenePath);
-		SaveScene(_currentScenePath, p.is_absolute());	// 로드된 씬들은 이론적으로 다 상대경로긴 한데 혹시 몰라서 검증부분 넣어둠
+		SaveScene(_currentScenePath, p.is_relative());	// 로드된 씬들은 이론적으로 다 상대경로긴 한데 혹시 몰라서 검증부분 넣어둠
 		return;
 	}
 
@@ -173,10 +149,57 @@ void SceneManager::SaveScene(string scenePath, bool isFullPath)
 	XMLElement* objsElem = sceneElem->InsertNewChildElement("GameObjects");
 	auto& gameObjects = RENDER->GetObjects();
 	for (auto& go : gameObjects) {
-		WriteGameObjectData(objsElem, go);
+		if (go->GetTransform()->GetDepthLevel() == 0)
+			WriteGameObjectData(objsElem, go);
 	}
 
 	doc.SaveFile(path.c_str());
+}
+
+void SceneManager::InitializeScene()
+{
+	RENDER->InitializeOnRuntime();
+}
+
+void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> parent)
+{
+	XMLElement* objElem = objsElem->FirstChildElement("GameObject");
+
+	while (objElem) {
+		shared_ptr<GameObject> go = GameObject::Instantiate();
+
+		string name = objElem->Attribute("Name");
+		go->SetName(name);
+
+		const char* psoName = objElem->Attribute("PSO");
+		if (psoName != 0) go->SetPSOName(psoName);
+
+		// Component
+		XMLElement* componentsElem = objElem->FirstChildElement("Components");
+		XMLElement* compElem = componentsElem->FirstChildElement("Component");
+
+		while (compElem) {
+			string componentType = compElem->Attribute("ComponentType");
+			shared_ptr<Component> component = ComponentFactory::Create(componentType);
+
+			go->AddComponent(component);
+			component->LoadXML(compElem);
+
+			compElem = compElem->NextSiblingElement("Component");
+		}
+
+		// Child Objects
+		XMLElement* childsElem = objElem->FirstChildElement("GameObjects");
+		if (childsElem != nullptr) {
+			ReadGameObjectData(childsElem, go);
+		}
+
+		if (parent != nullptr) {
+			go->GetTransform()->SetParent(parent->GetTransform());
+		}
+
+		objElem = objElem->NextSiblingElement("GameObject");
+	}
 }
 
 void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> go)
@@ -194,10 +217,14 @@ void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObje
 		}
 	}
 
-	objsElem->InsertEndChild(objElem);
-}
+	shared_ptr<Transform> transform = go->GetTransform();
+	auto& childs = transform->GetChilds();
+	if (childs.size() > 0) {
+		XMLElement* childsElem = objElem->InsertNewChildElement("GameObjects");
+		for (int i = 0; i < childs.size(); ++i) {
+			WriteGameObjectData(childsElem, childs[i]->GetGameObject());
+		}
+	}
 
-void SceneManager::InitializeScene()
-{
-	RENDER->InitializeOnRuntime();
+	objsElem->InsertEndChild(objElem);
 }

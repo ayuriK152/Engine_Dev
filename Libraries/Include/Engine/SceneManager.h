@@ -15,10 +15,11 @@ public:
 	void SaveScene(bool saveAs = false);
 	void SaveScene(string scenePath, bool isFullPath = false);
 
-	void WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> go);
-
 private:
 	void InitializeScene();
+
+	void ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> parent);
+	void WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> go);
 
 private:
 	bool _isInitialized = false;

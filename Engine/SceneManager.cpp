@@ -149,8 +149,11 @@ void SceneManager::SaveScene(string scenePath, bool isFullPath)
 	XMLElement* objsElem = sceneElem->InsertNewChildElement("GameObjects");
 	auto& gameObjects = RENDER->GetObjects();
 	for (auto& go : gameObjects) {
-		if (go->GetTransform()->GetDepthLevel() == 0)
+		if (go->GetTransform()->GetDepthLevel() == 0) {
+			if (go->GetTag() == "EditorCamera")
+				continue;
 			WriteGameObjectData(objsElem, go);
+		}
 	}
 
 	doc.SaveFile(path.c_str());
@@ -181,6 +184,9 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 
 			const char* psoName = objElem->Attribute("PSO");
 			if (psoName != 0) go->SetPSOName(psoName);
+
+			const char* tag = objElem->Attribute("Tag");
+			if (tag != 0) go->SetTag(tag);
 		}
 
 		// Component
@@ -218,6 +224,7 @@ void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObje
 	XMLElement* objElem = objsElem->InsertNewChildElement("GameObject");
 	objElem->SetAttribute("Name", go->GetName().c_str());
 	objElem->SetAttribute("PSO", go->GetPSOName().c_str());
+	objElem->SetAttribute("Tag", go->GetTag().c_str());
 
 	XMLElement* compsElem = objElem->InsertNewChildElement("Components");
 	auto& componentsArr = go->GetAllComponents();

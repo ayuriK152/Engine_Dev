@@ -176,9 +176,12 @@ void EngineGUIManager::ShowHierarchyView()
 			DEBUG->Log("Create Object");
 			GameObject::Instantiate();
 		}
-		for (auto& o : RENDER->GetObjects())
+		auto& objects = RENDER->GetObjects();
+		for (auto& o : objects)
 		{
-			if (o->GetTransform()->GetParent() != nullptr)
+			if (o->GetTag() == "EditorCamera")
+				continue;
+			if (o->GetTransform()->GetDepthLevel() > 0)
 				continue;
 			HierarchyObjectRecursion(o->GetTransform());
 		}
@@ -219,6 +222,8 @@ void EngineGUIManager::ShowInspectorView()
 		else
 		{
 			ImGui::InputText("ObjName", &_selectedObj->GetName());
+			ImGui::Text(("PSO: " + _selectedObj->GetPSOName()).c_str());
+			ImGui::Text(("Tag: " + _selectedObj->GetTag()).c_str());
 			if (ImGui::Button("Save as Prefab"))
 			{
 				RESOURCE->SavePrefab(_selectedObj);

@@ -18,9 +18,6 @@
     <ClInclude Include="PlayerScript.h">
       <Filter>Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="EditorCamera.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="TPVCamera.h">
       <Filter>Scripts</Filter>
     </ClInclude>
@@ -44,9 +41,6 @@
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="PlayerScript.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="EditorCamera.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="TPVCamera.cpp">

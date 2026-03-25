@@ -6,11 +6,10 @@
             </Components>
         </GameObject>
 
-        <GameObject Name="EditorCamera">
+        <GameObject Name="MainCamera">
             <Components>
-                <Component ComponentType="Transform" PosY="3"/>
-                <Component ComponentType="Camera"/>
-                <Component ComponentType="EditorCamera"/>
+                <Component ComponentType="Transform" PosY="3" PosZ="-10"/>
+                <Component ComponentType="Camera" MainCamera="True"/>
             </Components>
         </GameObject>
 

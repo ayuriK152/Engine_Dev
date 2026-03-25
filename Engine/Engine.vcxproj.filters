@@ -212,6 +212,9 @@
     <ClInclude Include="EditorManager.h">
       <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
     </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>07. Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -267,6 +270,9 @@
     </Filter>
     <Filter Include="98. Utils">
       <UniqueIdentifier>{0dee92db-b9d9-49dd-be92-48b8841cebbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Scripts">
+      <UniqueIdentifier>{ee3426e1-da10-417f-a938-963255469342}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -453,6 +459,9 @@
     </ClCompile>
     <ClCompile Include="EditorManager.cpp">
       <Filter>01. EngineComponents\01. Managers\01. Only Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>07. Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

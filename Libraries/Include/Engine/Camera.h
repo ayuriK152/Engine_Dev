@@ -3,6 +3,7 @@
 
 class Camera : public Component
 {
+	friend class Camera;
 	using Super = Component;
 public:
 	Camera();
@@ -20,16 +21,22 @@ public:
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 public:
-	static Camera* GetCurrentCamera() { return _currentCamera; }
-	static XMFLOAT3& GetEyePos() { return _currentCamera->GetTransform()->GetPosition(); }
-	static XMFLOAT4X4& GetViewMatrix() { return _currentCamera->_matView; }
-	static XMFLOAT4X4& GetProjMatrix() { return _currentCamera->_matProj; }
-	static XMFLOAT4X4& GetViewProjMatrix() { return _currentCamera->_matViewProj; }
-	static XMFLOAT4X4& GetOrthoMatrix() { return _currentCamera->_matOrtho; }
-	static int GetFramesDirty() { return _currentCamera->GetGameObject()->GetFramesDirty(); }
+	static shared_ptr<Camera> GetCurrentCamera() { return _currentCamera; }
+
+	static XMFLOAT3& GetEyePos();
+
+	static XMFLOAT4X4& GetViewMatrix();
+
+	static XMFLOAT4X4& GetProjMatrix();
+
+	static XMFLOAT4X4& GetViewProjMatrix();
+
+	static XMFLOAT4X4& GetOrthoMatrix();
+
+	static int GetFramesDirty();
 	
-	void SetAsMainCamera() { _currentCamera = this; }
-	bool IsMainCamera() { return _currentCamera == this; }
+	void SetAsMainCamera();
+	bool IsMainCamera() { return _isMainCamera; }
 
 private:
 	XMFLOAT4X4 _matView;
@@ -39,8 +46,10 @@ private:
 	float _aspectRatio;
 	Vector2 _viewportSize;
 
-	// 이거도 shared_ptr로 바꿔야함
-	static Camera* _currentCamera;
+	bool _isMainCamera = false;
+	static shared_ptr<Camera> _currentCamera;
 	static UINT _cameraCount;
+
+	static shared_ptr<Camera> _editorCamera;
 };
 

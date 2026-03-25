@@ -157,7 +157,6 @@
     <ClInclude Include="AnimationTestScene.h" />
     <ClInclude Include="BaseState.h" />
     <ClInclude Include="DungeonScene.h" />
-    <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EnemyScript.h" />
     <ClInclude Include="PhysicsTestScene.h" />
     <ClInclude Include="PlayerScript.h" />
@@ -169,7 +168,6 @@
     <ClCompile Include="AnimationTestScene.cpp" />
     <ClCompile Include="BaseState.cpp" />
     <ClCompile Include="DungeonScene.cpp" />
-    <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EnemyScript.cpp" />
     <ClCompile Include="PhysicsTestScene.cpp" />
     <ClCompile Include="PlayerScript.cpp" />

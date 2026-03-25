@@ -3,16 +3,13 @@
 
 REGISTER_COMPONENT(Camera);
 
-Camera* Camera::_currentCamera = nullptr;
+shared_ptr<Camera> Camera::_currentCamera = nullptr;
+shared_ptr<Camera> Camera::_editorCamera = nullptr;
 UINT Camera::_cameraCount = 0;
 
 Camera::Camera() : Super(ComponentType::Camera)
 {
 	_cameraCount++;
-	if (_currentCamera == nullptr)
-	{
-		_currentCamera = this;
-	}
 }
 
 Camera::~Camera()
@@ -22,6 +19,12 @@ Camera::~Camera()
 
 void Camera::Init()
 {
+	if (GetGameObject()->GetTag() == "EditorCamera")
+		_editorCamera = static_pointer_cast<Camera>(shared_from_this());
+
+	if (_isMainCamera)
+		SetAsMainCamera();
+
 	_aspectRatio = GRAPHIC->GetAspectRatio();
 	_viewportSize = { GRAPHIC->GetViewport().Width, GRAPHIC->GetViewport().Height };
 
@@ -71,12 +74,13 @@ void Camera::OnDestroy()
 
 void Camera::LoadXML(XMLElement* compElem)
 {
-
+	_isMainCamera = compElem->BoolAttribute("MainCamera");
 }
 
 void Camera::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "Camera");
+	compElem->SetAttribute("MainCamera", _isMainCamera);
 }
 
 ComponentSnapshot Camera::CaptureSnapshot()
@@ -95,4 +99,59 @@ void Camera::RestoreSnapshot(ComponentSnapshot snapshot)
 {
 	if (snapshot.datas[0] == 1)
 		SetAsMainCamera();
+}
+
+XMFLOAT3& Camera::GetEyePos()
+{
+	if (EDITOR->IsOnPlay())
+		return _currentCamera->GetTransform()->GetPosition();
+	else
+		return _editorCamera->GetTransform()->GetPosition();
+}
+
+XMFLOAT4X4& Camera::GetViewMatrix()
+{
+	if (EDITOR->IsOnPlay())
+		return _currentCamera->_matView;
+	else
+		return _editorCamera->_matView;
+}
+
+XMFLOAT4X4& Camera::GetProjMatrix()
+{
+	if (EDITOR->IsOnPlay())
+		return _currentCamera->_matProj;
+	else
+		return _editorCamera->_matProj;
+}
+
+XMFLOAT4X4& Camera::GetViewProjMatrix()
+{
+	if (EDITOR->IsOnPlay())
+		return _currentCamera->_matViewProj;
+	else
+		return _editorCamera->_matViewProj;
+}
+
+XMFLOAT4X4& Camera::GetOrthoMatrix()
+{
+	if (EDITOR->IsOnPlay())
+		return _currentCamera->_matOrtho;
+	else
+		return _editorCamera->_matOrtho;
+}
+
+int Camera::GetFramesDirty()
+{
+	if (EDITOR->IsOnPlay())
+		return _currentCamera->GetGameObject()->GetFramesDirty();
+	else
+		return _editorCamera->GetGameObject()->GetFramesDirty();
+}
+
+void Camera::SetAsMainCamera()
+{
+	_isMainCamera = true;
+	if (_currentCamera != nullptr) _currentCamera->_isMainCamera = false;
+	_currentCamera = static_pointer_cast<Camera>(shared_from_this());
 }

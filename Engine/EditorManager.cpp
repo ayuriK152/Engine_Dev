@@ -6,6 +6,16 @@ EditorManager::~EditorManager()
 
 }
 
+void EditorManager::Init()
+{
+	shared_ptr<GameObject> cameraObj = GameObject::Instantiate();
+	cameraObj->SetName("EditorCamera");
+	cameraObj->SetTag("EditorCamera");
+	cameraObj->GetTransform()->SetPosition({ 0, 3, 0 });
+	cameraObj->AddComponent(ComponentFactory::Create("Camera"));
+	cameraObj->AddComponent(ComponentFactory::Create("EditorCamera"));
+}
+
 void EditorManager::Play()
 {
 	auto objects = RENDER->GetObjects();

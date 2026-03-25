@@ -37,6 +37,7 @@ bool Graphic::Init()
 	SCENE->Init();
 	PHYSICS->Init();
 	DEBUG->Init();
+	EDITOR->Init();
 
 	ExecuteGraphicsCommandList();
 

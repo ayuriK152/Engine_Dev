@@ -173,6 +173,9 @@ using namespace JPH::literals;
 #include "UISlider.h"
 #include "UIText.h"
 
+
+#include "EditorCamera.h"
+
 /*******/
 /* ETC */
 /*******/

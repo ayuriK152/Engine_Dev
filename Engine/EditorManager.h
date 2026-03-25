@@ -6,6 +6,8 @@ class EditorManager
 public:
 	~EditorManager();
 
+	void Init();
+
 public:
 	void Play();
 	void Stop();

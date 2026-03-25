@@ -391,15 +391,15 @@ void EngineGUIManager::ShowMainMenuBar()
 
 void EngineGUIManager::ShowMenuFile()
 {
-	if (ImGui::MenuItem("Load Scene")) {
+	if (ImGui::MenuItem("Load Scene", 0, nullptr, !EDITOR->IsOnPlay())) {
 		SCENE->LoadScene();
 	}
 
-	if (ImGui::MenuItem("Save Scene")) {
+	if (ImGui::MenuItem("Save Scene", 0, nullptr, !EDITOR->IsOnPlay())) {
 		SCENE->SaveScene();
 	}
 
-	if (ImGui::MenuItem("Save As..")) {
+	if (ImGui::MenuItem("Save As..", 0, nullptr, !EDITOR->IsOnPlay())) {
 		SCENE->SaveScene(true);
 	}
 }

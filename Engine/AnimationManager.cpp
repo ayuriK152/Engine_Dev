@@ -20,3 +20,8 @@ void AnimationManager::Update()
 	for (auto& f : _futures)
 		f.get();
 }
+
+void AnimationManager::InitializeOnRuntime()
+{
+	_animators.clear();
+}

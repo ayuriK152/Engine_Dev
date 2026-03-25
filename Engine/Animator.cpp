@@ -30,6 +30,8 @@ void Animator::Init()
 
 void Animator::Update()
 {
+	if (!EDITOR->IsOnPlay()) return;
+
 	if (_isPreviewMode)
 	{
 		if (_previewAnimation == nullptr || !_isPreviewPlaying)
@@ -147,12 +149,12 @@ ComponentSnapshot Animator::CaptureSnapshot()
 void Animator::RestoreSnapshot(ComponentSnapshot snapshot)
 {
 	_isPlayOnInit = snapshot.datas[0] == 1;
-	_isLoop = snapshot.datas[0] == 1;
-	_isPreviewMode = snapshot.datas[0] == 1;
-	_isTransitionBlocked = snapshot.datas[0] == 1;
+	_isLoop = snapshot.datas[1] == 1;
+	_isPreviewMode = snapshot.datas[2] == 1;
+	_isTransitionBlocked = snapshot.datas[3] == 1;
 
-	_currentTick = snapshot.datas[0];
-	_transitionTime = snapshot.datas[0];
+	_currentTick = snapshot.datas[4];
+	_transitionTime = snapshot.datas[5];
 
 	_currentAnimationEventIndex = 0;
 	_nextAnimationEventIndex = 0;

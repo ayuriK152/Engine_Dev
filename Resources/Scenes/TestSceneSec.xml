@@ -49,5 +49,7 @@
                 </Component>
             </Components>
         </GameObject>
+        <GameObject PrefabPath="Paladin WProp J Nordstrom">
+        </GameObject>
     </GameObjects>
 </Scene>

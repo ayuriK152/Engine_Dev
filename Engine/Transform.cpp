@@ -32,9 +32,9 @@ void Transform::OnDestroy()
 
 void Transform::LoadXML(XMLElement* compElem)
 {
-	SetPosition({ compElem->FloatAttribute("PosX"), compElem->FloatAttribute("PosY"), compElem->FloatAttribute("PosZ") });
-	SetScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
-	SetRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
+	SetLocalPosition({ compElem->FloatAttribute("PosX"), compElem->FloatAttribute("PosY"), compElem->FloatAttribute("PosZ") });
+	SetLocalScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
+	SetLocalRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
 
 	// 수동으로 씬 작성하는게 아니면 굳이 필요할까 싶음
 	XMLElement* lookAtElem = compElem->FirstChildElement("LookAt");
@@ -48,17 +48,17 @@ void Transform::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "Transform");
 
 	// ForcedUpdateTransform() 쓰고 직접 접근하는건 문제가 없는지 검증 후 적용
-	Vector3 pos = GetPosition();
+	Vector3 pos = GetLocalPosition();
 	compElem->SetAttribute("PosX", pos.x);
 	compElem->SetAttribute("PosY", pos.y);
 	compElem->SetAttribute("PosZ", pos.z);
 
-	Vector3 scl = GetScale();
+	Vector3 scl = GetLocalScale();
 	compElem->SetAttribute("ScaleX", scl.x);
 	compElem->SetAttribute("ScaleY", scl.y);
 	compElem->SetAttribute("ScaleZ", scl.z);
 
-	Vector3 rot = GetRotation();
+	Vector3 rot = GetLocalRotation();
 	compElem->SetAttribute("RotX", rot.x);
 	compElem->SetAttribute("RotY", rot.y);
 	compElem->SetAttribute("RotZ", rot.z);
@@ -72,24 +72,30 @@ ComponentSnapshot Transform::CaptureSnapshot()
 	snapshot.componentType = "Transform";
 
 	ForceUpdateTransform();
-	snapshot.datas.push_back(_position.x);
-	snapshot.datas.push_back(_position.y);
-	snapshot.datas.push_back(_position.z);
-	snapshot.datas.push_back(_scale.x);
-	snapshot.datas.push_back(_scale.y);
-	snapshot.datas.push_back(_scale.z);
-	snapshot.datas.push_back(_rotation.x);
-	snapshot.datas.push_back(_rotation.y);
-	snapshot.datas.push_back(_rotation.z);
+	Vector3 pos = GetLocalPosition();
+	snapshot.datas.push_back(pos.x);
+	snapshot.datas.push_back(pos.y);
+	snapshot.datas.push_back(pos.z);
+
+	Vector3 scl = GetLocalScale();
+	snapshot.datas.push_back(scl.x);
+	snapshot.datas.push_back(scl.y);
+	snapshot.datas.push_back(scl.z);
+
+	Vector4 quat = GetLocalQuaternion();
+	snapshot.datas.push_back(quat.x);
+	snapshot.datas.push_back(quat.y);
+	snapshot.datas.push_back(quat.z);
+	snapshot.datas.push_back(quat.w);
 
 	return snapshot;
 }
 
 void Transform::RestoreSnapshot(ComponentSnapshot snapshot)
 {
-	SetPosition({ snapshot.datas[0], snapshot.datas[1], snapshot.datas[2] });
-	SetScale({ snapshot.datas[3], snapshot.datas[4], snapshot.datas[5] });
-	SetRotationRadian({ snapshot.datas[6], snapshot.datas[7], snapshot.datas[8] });
+	SetLocalPosition({ snapshot.datas[0], snapshot.datas[1], snapshot.datas[2] });
+	SetLocalScale({ snapshot.datas[3], snapshot.datas[4], snapshot.datas[5] });
+	SetLocalQuaternion(Vector4(snapshot.datas[6], snapshot.datas[7], snapshot.datas[8], snapshot.datas[9]));
 }
 
 void Transform::ForceUpdateTransform()

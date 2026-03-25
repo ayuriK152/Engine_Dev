@@ -159,6 +159,7 @@ void SceneManager::SaveScene(string scenePath, bool isFullPath)
 void SceneManager::InitializeScene()
 {
 	RENDER->InitializeOnRuntime();
+	ANIMATION->InitializeOnRuntime();
 }
 
 void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> parent)
@@ -166,26 +167,36 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 	XMLElement* objElem = objsElem->FirstChildElement("GameObject");
 
 	while (objElem) {
-		shared_ptr<GameObject> go = GameObject::Instantiate();
+		shared_ptr<GameObject> go;
+		const char* prefabPath = objElem->Attribute("PrefabPath");
 
-		string name = objElem->Attribute("Name");
-		go->SetName(name);
+		if (prefabPath != 0) {
+			go = RESOURCE->LoadPrefabObject(prefabPath)[0];
+		}
+		else {
+			go = GameObject::Instantiate();
 
-		const char* psoName = objElem->Attribute("PSO");
-		if (psoName != 0) go->SetPSOName(psoName);
+			string name = objElem->Attribute("Name");
+			go->SetName(name);
+
+			const char* psoName = objElem->Attribute("PSO");
+			if (psoName != 0) go->SetPSOName(psoName);
+		}
 
 		// Component
 		XMLElement* componentsElem = objElem->FirstChildElement("Components");
-		XMLElement* compElem = componentsElem->FirstChildElement("Component");
+		if (componentsElem != nullptr) {
+			XMLElement* compElem = componentsElem->FirstChildElement("Component");
 
-		while (compElem) {
-			string componentType = compElem->Attribute("ComponentType");
-			shared_ptr<Component> component = ComponentFactory::Create(componentType);
+			while (compElem) {
+				string componentType = compElem->Attribute("ComponentType");
+				shared_ptr<Component> component = ComponentFactory::Create(componentType);
 
-			go->AddComponent(component);
-			component->LoadXML(compElem);
+				go->AddComponent(component);
+				component->LoadXML(compElem);
 
-			compElem = compElem->NextSiblingElement("Component");
+				compElem = compElem->NextSiblingElement("Component");
+			}
 		}
 
 		// Child Objects

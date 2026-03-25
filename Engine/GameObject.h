@@ -99,6 +99,9 @@ private:
 	int _componentCount = 0;
 	array<vector<shared_ptr<Component>>, COUNT_COMPONENTTYPE> _components;
 
+	bool _isPrefab = false;
+	string _prefabPath;
+
 	bool _isSnapshotCaptured = false;
 };
 

@@ -450,6 +450,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 	vector<shared_ptr<GameObject>> loadedObjects;
 	vector<pair<int, int>> objHierarchyIdxPair;
 	vector<pair<shared_ptr<SkinnedMeshRenderer>, string>> boneSettingQueue;
+	vector<shared_ptr<Animator>> delayedAnimators;
 
 	UINT32 objectCount;
 	FILEIO->ReadFileData(fileHandle, &objectCount, sizeof(UINT32));
@@ -528,6 +529,8 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 				case ComponentType::Animator:
 				{
 					shared_ptr<Animator> animator = make_shared<Animator>();
+					delayedAnimators.push_back(animator);
+					go->AddComponent(animator);
 
 					bool isPlayOnInit, isLoop;
 					FILEIO->ReadFileData(fileHandle, &isPlayOnInit, sizeof(bool));
@@ -549,8 +552,6 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 					animator->SetPlayOnInit(isPlayOnInit);
 					animator->SetLoop(isLoop);
 					animator->SetCurrentAnimation(currentAnimName);
-
-					go->AddComponent(animator);
 
 					break;
 				}
@@ -581,24 +582,25 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 
 	CloseHandle(fileHandle);
 
-	for (auto& idxPair : objHierarchyIdxPair)
-	{
+	for (auto& idxPair : objHierarchyIdxPair) {
 		if (idxPair.second == -1)
 			continue;
 
 		loadedObjects[idxPair.first]->GetTransform()->SetParent(loadedObjects[idxPair.second]->GetTransform());
 	}
 
-	for (auto& renderer : boneSettingQueue)
-	{
-		for (auto& go : loadedObjects)
-		{
-			if (go->GetName() == renderer.second)
-			{
+	for (auto& renderer : boneSettingQueue) {
+		for (auto& go : loadedObjects) {
+			if (go->GetName() == renderer.second) {
 				renderer.first->SetRootBone(go->GetTransform());
 				break;
 			}
 		}
+	}
+
+	for (auto& animator : delayedAnimators) {
+		// 불안정한 구현. 추후에 파일 구조를 바꾸고 반드시 리팩토링 해야함.
+		animator->SetBone(loadedObjects[0]->GetName());
 	}
 
 	if (isLegacyComponent)

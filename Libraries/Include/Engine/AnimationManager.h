@@ -12,6 +12,7 @@ public:
 
 public:
 	void AddAnimator(shared_ptr<Animator> animator) { _animators.push_back(animator); }
+	void InitializeOnRuntime();
 
 private:
 	vector<shared_ptr<Animator>> _animators;

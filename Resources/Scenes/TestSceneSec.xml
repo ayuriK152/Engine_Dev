@@ -6,13 +6,7 @@
                 <Component ComponentType="MeshRenderer" MeshName="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
             </Components>
         </GameObject>
-        <GameObject Name="EditorCamera" PSO="opaque_solid">
-            <Components>
-                <Component ComponentType="Transform" PosX="7.571897" PosY="8.4759035" PosZ="-6.154695" ScaleX="1" ScaleY="1" ScaleZ="1" RotX="42.456253" RotY="-64.285896" RotZ="-3.9355318e-06"/>
-                <Component ComponentType="Camera"/>
-                <Component ComponentType="EditorCamera"/>
-            </Components>
-        </GameObject>
+        
         <GameObject Name="GlobalLight" PSO="opaque_solid">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="0.99999976" ScaleZ="0.99999988" RotX="54.735638" RotY="45.000416" RotZ="4.8297011e-06"/>

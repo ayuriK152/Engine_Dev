@@ -562,7 +562,15 @@ void EngineGUIManager::ShowCamera(shared_ptr<Camera> camera)
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::SeparatorText("Main Camera");
-		ImGui::Text(camera->IsMainCamera() ? "True" : "False");
+		if (ImGui::Button("Set Main Camera")) {
+			camera->SetAsMainCamera();
+		}
+		ImGui::Text("Is Main Camera: ");
+		ImGui::SameLine();
+		if (camera->IsMainCamera())
+			ImGui::TextColored({ 0, 1, 0, 1 }, "True");
+		else
+			ImGui::TextColored({ 1, 0, 0, 1 }, "False");
 	}
 }
 
@@ -578,17 +586,14 @@ void EngineGUIManager::ShowLight(shared_ptr<Light> light)
 
 void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 {
-	if (ImGui::CollapsingHeader("Animator", ImGuiTreeNodeFlags_DefaultOpen))
-	{
+	if (ImGui::CollapsingHeader("Animator", ImGuiTreeNodeFlags_DefaultOpen)) {
 		static string addAnimPath;
 
-		if (ImGui::Button("PreviewMode Toggle"))
-		{
+		if (ImGui::Button("PreviewMode Toggle")) {
 			animator->SetPreviewMode(!animator->IsPreviewMode());
 		}
 
-		if (animator->IsPreviewMode())
-		{
+		if (animator->IsPreviewMode()) {
 			auto previewAnim = animator->GetPreviewAnimation();
 			ImGui::SeparatorText("Preview Mode");
 			ImGui::Text("Name:");
@@ -598,22 +603,18 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 			ImGui::SeparatorText("AnimationTick");
 			float tick = animator->GetPreviewTick();
 			float duration = previewAnim != nullptr ? previewAnim->GetDuration() : 0.0f;
-			if (ImGui::SliderFloat("##TickSlider", &tick, 0.0f, duration, "%.1f"))
-			{
+			if (ImGui::SliderFloat("##TickSlider", &tick, 0.0f, duration, "%.1f")) {
 				animator->SetPreviewPlaying(false);
 				animator->SetPreviewTick(tick);
 			}
-			if (ImGui::Button(animator->IsPreviewPlaying() ? "Pause" : "Play"))
-			{
+			if (ImGui::Button(animator->IsPreviewPlaying() ? "Pause" : "Play")) {
 				animator->SetPreviewPlaying(!animator->IsPreviewPlaying());
 			}
 
 			ImGui::InputText("##PreviewAnimationName", &addAnimPath);
-			if (ImGui::Button("Set Animation"))
-			{
+			if (ImGui::Button("Set Animation")) {
 				auto animation = RESOURCE->LoadAnimation(addAnimPath);
-				if (animation == nullptr)
-				{
+				if (animation == nullptr) {
 					DEBUG->ErrorLog("Failed to load animation");
 					return;
 				}
@@ -633,11 +634,9 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 
 			ImGui::SeparatorText("Animation List");
 			ImGui::InputText("##AddAnimationName", &addAnimPath);
-			if (ImGui::Button("Add Animation"))
-			{
+			if (ImGui::Button("Add Animation")) {
 				auto animation = RESOURCE->LoadAnimation(addAnimPath);
-				if (animation == nullptr)
-				{
+				if (animation == nullptr) {
 					DEBUG->ErrorLog("Failed to load animation");
 					return;
 				}
@@ -646,18 +645,15 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 			}
 
 			vector<string> removeQueue;
-			for (auto& a : animator->GetAnimations())
-			{
+			for (auto& a : animator->GetAnimations()) {
 				ImGui::Text(a.first.c_str());
 				ImGui::SameLine();
 				string buttonLabel = "-##" + a.second->GetPath();
-				if (ImGui::Button(buttonLabel.c_str()))
-				{
+				if (ImGui::Button(buttonLabel.c_str())) {
 					removeQueue.push_back(a.first);
 				}
 			}
-			if (removeQueue.size() > 0)
-			{
+			if (removeQueue.size() > 0) {
 				for (const string& name : removeQueue)
 					animator->RemoveAnimation(name);
 			}
@@ -675,8 +671,7 @@ void EngineGUIManager::ShowScript(shared_ptr<Script> script)
 
 void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 {
-	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen))
-	{
+	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::Checkbox("Gravity", &rigidbody->_isGravity);
 	}
 }

@@ -18,6 +18,11 @@ void EditorManager::Init()
 
 void EditorManager::Play()
 {
+	if (Camera::GetCurrentCamera() == nullptr) {
+		DEBUG->ErrorLog("Main camera does not exists! Can not start this scene!");
+		return;
+	}
+
 	auto objects = RENDER->GetObjects();
 	
 	for (auto& go : objects) {

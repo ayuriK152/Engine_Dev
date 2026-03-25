@@ -151,7 +151,7 @@ int Camera::GetFramesDirty()
 
 void Camera::SetAsMainCamera()
 {
-	_isMainCamera = true;
 	if (_currentCamera != nullptr) _currentCamera->_isMainCamera = false;
+	_isMainCamera = true;
 	_currentCamera = static_pointer_cast<Camera>(shared_from_this());
 }

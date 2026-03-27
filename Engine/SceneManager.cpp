@@ -83,7 +83,7 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 	ReadGameObjectData(objsElem, nullptr);
 
 	// 이 부분은 추후에 에디터에서만 적용되도록 변경해야함.
-	SetWindowText(GRAPHIC->GetMainWnd(), Utils::ToWString("Bulb Engine | " + _currentSceneName).c_str());
+	EDITOR->SetEditorWindowText(_currentSceneName);
 }
 
 void SceneManager::SaveScene(bool saveAs)
@@ -174,7 +174,7 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 		const char* prefabPath = objElem->Attribute("PrefabPath");
 
 		if (prefabPath != 0) {
-			go = RESOURCE->LoadPrefabObject(prefabPath)[0];
+			go = GameObject::LoadPrefab(prefabPath);
 		}
 		else {
 			go = GameObject::Instantiate();

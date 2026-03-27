@@ -151,6 +151,17 @@ shared_ptr<GameObject> GameObject::Instantiate()
 	return go;
 }
 
+shared_ptr<GameObject> GameObject::LoadPrefab(string filePath)
+{
+	shared_ptr<GameObject> go = RESOURCE->LoadPrefabObject(filePath)[0];
+
+	if (go != nullptr) {
+		go->_isPrefab = true;
+		go->_prefabPath = filePath;
+	}
+	return go;
+}
+
 void GameObject::AddComponent(shared_ptr<Component> component)
 {
 	int componentTypeIdx = GetComponentTypeIndex(component->type);

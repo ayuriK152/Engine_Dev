@@ -14,14 +14,14 @@ public:
 
 	bool IsOnPlay() { return _isOnPlay; }
 
-private:
-	void StoreState();
-	void RestoreState();
+	void SetEditorWindowText(string text);
 
+private:
 	void RestoreObjectComponents(shared_ptr<GameObject> go, GameObjectSnapshot objectSnapshot);
 
 private:
 	bool _isOnPlay = false;
+	string _currentWindowText;
 
 	vector<GameObjectSnapshot> _objectSnapshots;
 	vector<ComponentSnapshot> _compSnapshots;

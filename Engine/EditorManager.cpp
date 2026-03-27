@@ -40,6 +40,7 @@ void EditorManager::Play()
 	}
 
 	_isOnPlay = true;
+	SetEditorWindowText(_currentWindowText);
 }
 
 void EditorManager::Stop()
@@ -82,16 +83,13 @@ void EditorManager::Stop()
 	_compSnapshots.clear();
 
 	_isOnPlay = false;
+	SetEditorWindowText(_currentWindowText);
 }
 
-void EditorManager::StoreState()
+void EditorManager::SetEditorWindowText(string text)
 {
-
-}
-
-void EditorManager::RestoreState()
-{
-
+	_currentWindowText = text;
+	SetWindowText(GRAPHIC->GetMainWnd(), Utils::ToWString("Bulb Engine | " + _currentWindowText + (_isOnPlay ? " - On Play" : "")).c_str());
 }
 
 void EditorManager::RestoreObjectComponents(shared_ptr<GameObject> go, GameObjectSnapshot objectSnapshot)

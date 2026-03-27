@@ -60,7 +60,7 @@ void EngineGUIManager::Init()
 	_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
 	_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = false;
-	_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = false; 
+	_guiToggleValues[TOGGLEVALUE_GUI_DEBUGSETTINGS] = false; 
 }
 
 void EngineGUIManager::Update()
@@ -76,6 +76,11 @@ void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)
 	ImGui::NewFrame();
 
 	{
+		if (EDITOR->IsOnPlay()) {
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0, 0.2f, 0, 1 });
+			_isEditorColorChangedOnPlay = true;
+		}
+
 		ShowMainMenuBar();
 
 		if (_guiToggleValues[TOGGLEVALUE_GUI_DEMOWINDOW])
@@ -85,12 +90,17 @@ void EngineGUIManager::Render(ID3D12GraphicsCommandList* cmdList)
 			ShowConsole();
 		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESTATUS])
 			ShowEngineStatus();
-		if (_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS])
+		if (_guiToggleValues[TOGGLEVALUE_GUI_DEBUGSETTINGS])
 			ShowDebugSettings();
 
 		ShowHierarchyView();
 		ShowInspectorView();
 		ShowResourceDirectory();
+
+		if (_isEditorColorChangedOnPlay) {
+			ImGui::PopStyleColor();
+			_isEditorColorChangedOnPlay = false;
+		}
 	}
 
 	ImGui::Render();
@@ -139,7 +149,7 @@ void EngineGUIManager::ShowDebugSettings()
 	ImGui::SetNextWindowBgAlpha(0.60f);
 	ImGui::SetNextWindowSize(windowSize);
 
-	if (ImGui::Begin("Engine Settings", &_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS], windowFlags))
+	if (ImGui::Begin("Engine Settings", &_guiToggleValues[TOGGLEVALUE_GUI_DEBUGSETTINGS], windowFlags))
 	{
 		bool isPysicsDebugRenderEnabled = DEBUG->IsPhysicsDebugRenderEnabled();
 		if (ImGui::Checkbox("Pysics Debug Render", &isPysicsDebugRenderEnabled))
@@ -689,10 +699,6 @@ void EngineGUIManager::DrawGizmo()
 
 void EngineGUIManager::ToggleWindows()
 {
-	if (INPUTM->IsKeyDown(KeyValue::ESC)) {
-		_guiToggleValues[TOGGLEVALUE_GUI_PREFERENCES] = !_guiToggleValues[TOGGLEVALUE_GUI_PREFERENCES];
-	}
-
 	if (INPUTM->IsKeyDown(KeyValue::F1)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE] = !_guiToggleValues[TOGGLEVALUE_GUI_CONSOLE];
 	}
@@ -703,7 +709,7 @@ void EngineGUIManager::ToggleWindows()
 	}
 
 	if (INPUTM->IsKeyDown(KeyValue::F3)) {
-		_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS] = !_guiToggleValues[TOGGLEVALUE_GUI_ENGINESETTINGS];
+		_guiToggleValues[TOGGLEVALUE_GUI_DEBUGSETTINGS] = !_guiToggleValues[TOGGLEVALUE_GUI_DEBUGSETTINGS];
 	}
 
 	if (INPUTM->IsKeyDown(KeyValue::F4)) {
@@ -717,11 +723,6 @@ void EngineGUIManager::ToggleWindows()
 	if (INPUTM->IsKeyDown(KeyValue::F6)) {
 		_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR] = !_guiToggleValues[TOGGLEVALUE_GUI_RESOURCEDIR];
 	}
-}
-
-void EngineGUIManager::ShowEnginePreferences()
-{
-
 }
 
 void EngineGUIManager::ShowConsole()

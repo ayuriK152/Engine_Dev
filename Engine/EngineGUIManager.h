@@ -4,7 +4,7 @@
 #define TOGGLEVALUE_GUI_PREFERENCES		"GUI_Preferences"
 #define TOGGLEVALUE_GUI_CONSOLE			"GUI_Console"
 #define TOGGLEVALUE_GUI_ENGINESTATUS	"GUI_EngineStatus"
-#define TOGGLEVALUE_GUI_ENGINESETTINGS	"GUI_EngineSettings"
+#define TOGGLEVALUE_GUI_DEBUGSETTINGS	"GUI_DebugSettings"
 #define TOGGLEVALUE_GUI_HIERARCHY		"GUI_Hierarchy"
 #define TOGGLEVALUE_GUI_INSPECTOR		"GUI_Inspector"
 #define TOGGLEVALUE_GUI_RESOURCEDIR		"GUI_ResourceDirectory"
@@ -79,7 +79,6 @@ private:
 	void ToggleWindows();
 
 	void ShowMainMenuBar();
-	void ShowEnginePreferences();
 	void ShowConsole();
 	void ShowEngineStatus();
 	void ShowDebugSettings();
@@ -117,5 +116,7 @@ private:
 
 	shared_ptr<GameObject> _selectedObj = nullptr;
 	bool _isParentSelectMode = false;
+
+	bool _isEditorColorChangedOnPlay = false;
 };
 

@@ -17,6 +17,8 @@ class CharacterController;
 
 class GameObject : public enable_shared_from_this<GameObject>
 {
+	friend class GameObject;
+
 public:
 	GameObject();
 	~GameObject();
@@ -34,6 +36,7 @@ public:
 
 public:
 	static shared_ptr<GameObject> Instantiate();
+	static shared_ptr<GameObject> LoadPrefab(string filePath);
 
 	void AddComponent(shared_ptr<Component> component);
 	template<typename T>

@@ -231,7 +231,10 @@ void EngineGUIManager::ShowInspectorView()
 		}
 		else
 		{
-			ImGui::InputText("ObjName", &_selectedObj->GetName());
+			string name = _selectedObj->GetName();
+			if (ImGui::InputText("ObjName", &name)) {
+				_selectedObj->SetName(name);
+			}
 			ImGui::Text(("PSO: " + _selectedObj->GetPSOName()).c_str());
 			ImGui::Text(("Tag: " + _selectedObj->GetTag()).c_str());
 			if (ImGui::Button("Save as Prefab"))

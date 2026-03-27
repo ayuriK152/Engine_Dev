@@ -208,6 +208,12 @@ void GameObject::SetFramesDirty()
 	_numFramesDirty = RENDER->GetNumFrameResources();
 }
 
+void GameObject::SetPrefabPath(string path)
+{
+	_prefabPath = path;
+	_isPrefab = true;
+}
+
 void GameObject::Delete(float time)
 {
 	_isDeleteReserved = true;

@@ -18,6 +18,7 @@ class CharacterController;
 class GameObject : public enable_shared_from_this<GameObject>
 {
 	friend class GameObject;
+	friend class EngineGUIManager;
 
 public:
 	GameObject();
@@ -72,6 +73,10 @@ public:
 	void SetFramesDirty();
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
+
+	bool IsPrefab() { return _isPrefab; }
+	string GetPrefabPath() { return _prefabPath; }
+	void SetPrefabPath(string path);
 
 	void Delete(float time);
 

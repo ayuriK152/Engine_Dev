@@ -46,8 +46,12 @@ void CharacterController::Init()
 
 void CharacterController::PreUpdate()
 {
-	// 1. 중력 값을 상수로 정의하고 따로 받아오도록 리팩토링 필요함
-	// 2. 중력이 두 번 적용되고 있는건 아닌지?
+	if (!EDITOR->IsOnPlay()) return;
+
+	Vector3 pos = GetTransform()->GetPosition();
+	_character->SetPosition({ pos.x, pos.y, pos.z });
+
+	// 중력이 두 번 적용되고 있는건 아닌지?
 	_verticalVelocity -=  GRAVITY_ACC * TIME->DeltaTime() * (_isGravity ? _gravityFactor : 0.0f);
 	_currentVelocity = _desiredVelocity;
 	_currentVelocity.y += _verticalVelocity;

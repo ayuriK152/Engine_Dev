@@ -18,6 +18,7 @@ class CharacterController;
 class GameObject : public enable_shared_from_this<GameObject>
 {
 	friend class GameObject;
+	friend class EngineGUIManager;
 
 public:
 	GameObject();
@@ -73,6 +74,10 @@ public:
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
+	bool IsPrefab() { return _isPrefab; }
+	string GetPrefabPath() { return _prefabPath; }
+	void SetPrefabPath(string path);
+
 	void Delete(float time);
 
 	GameObjectSnapshot CaptureSnapshot();
@@ -83,8 +88,6 @@ public:
 	D3D12_PRIMITIVE_TOPOLOGY primitiveType;
 
 	UINT objectID;
-
-	// unordered_map<ComponentType, shared_ptr<Component>> components;
 
 private:
 	static int _idCount;

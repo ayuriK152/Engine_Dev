@@ -48,7 +48,7 @@ void PlayerScript::Init()
 
 	_movingDirection = { 0.0f, 0.0f, 0.0f };
 
-	_controller = make_shared<CharacterController>();
+	_controller = static_pointer_cast<CharacterController>(ComponentFactory::Create("CharacterController"));
 	_controller->SetHalfHeight(0.5f);
 	_controller->SetRadius(0.3f);
 	_controller->SetOffset(Vector3(0.0f, 0.8f, 0.0f));

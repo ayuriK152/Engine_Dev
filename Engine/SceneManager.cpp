@@ -178,16 +178,16 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 		}
 		else {
 			go = GameObject::Instantiate();
-
-			string name = objElem->Attribute("Name");
-			go->SetName(name);
-
-			const char* psoName = objElem->Attribute("PSO");
-			if (psoName != 0) go->SetPSOName(psoName);
-
-			const char* tag = objElem->Attribute("Tag");
-			if (tag != 0) go->SetTag(tag);
 		}
+
+		const char* name = objElem->Attribute("Name");
+		if (name != 0) go->SetName(name);
+
+		const char* psoName = objElem->Attribute("PSO");
+		if (psoName != 0) go->SetPSOName(psoName);
+
+		const char* tag = objElem->Attribute("Tag");
+		if (tag != 0) go->SetTag(tag);
 
 		// Component
 		XMLElement* componentsElem = objElem->FirstChildElement("Components");
@@ -222,25 +222,32 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> go)
 {
 	XMLElement* objElem = objsElem->InsertNewChildElement("GameObject");
+
+	if (go->IsPrefab()) {
+		objElem->SetAttribute("PrefabPath", go->GetPrefabPath().c_str());
+	}
+
 	objElem->SetAttribute("Name", go->GetName().c_str());
 	objElem->SetAttribute("PSO", go->GetPSOName().c_str());
 	objElem->SetAttribute("Tag", go->GetTag().c_str());
 
-	XMLElement* compsElem = objElem->InsertNewChildElement("Components");
-	auto& componentsArr = go->GetAllComponents();
-	for (auto& componentsVec : componentsArr) {
-		for (auto& component : componentsVec) {
-			XMLElement* compElem = compsElem->InsertNewChildElement("Component");
-			component->SaveXML(compElem);
+	if (!go->IsPrefab()) {
+		XMLElement* compsElem = objElem->InsertNewChildElement("Components");
+		auto& componentsArr = go->GetAllComponents();
+		for (auto& componentsVec : componentsArr) {
+			for (auto& component : componentsVec) {
+				XMLElement* compElem = compsElem->InsertNewChildElement("Component");
+				component->SaveXML(compElem);
+			}
 		}
-	}
 
-	shared_ptr<Transform> transform = go->GetTransform();
-	auto& childs = transform->GetChilds();
-	if (childs.size() > 0) {
-		XMLElement* childsElem = objElem->InsertNewChildElement("GameObjects");
-		for (int i = 0; i < childs.size(); ++i) {
-			WriteGameObjectData(childsElem, childs[i]->GetGameObject());
+		shared_ptr<Transform> transform = go->GetTransform();
+		auto& childs = transform->GetChilds();
+		if (childs.size() > 0) {
+			XMLElement* childsElem = objElem->InsertNewChildElement("GameObjects");
+			for (int i = 0; i < childs.size(); ++i) {
+				WriteGameObjectData(childsElem, childs[i]->GetGameObject());
+			}
 		}
 	}
 

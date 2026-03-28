@@ -45,6 +45,10 @@ public:
 
 	ComponentType MapLegacyComponentType(UINT32 legacyType);
 
+	/* FOR EDITOR ONLY */
+	void LoadEntireResources();
+	void LoadMeshes();
+
 private:
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;

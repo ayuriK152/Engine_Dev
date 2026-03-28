@@ -56,6 +56,12 @@ int Utils::Random(int from, int to)
 
 string Utils::GetFileName(string path)
 {
-	size_t separateIdx = path.find_last_of('\\');
-	return path.erase(0, separateIdx == string::npos ? 0 : separateIdx).erase(path.find_last_of('.'), string::npos);
+	string result;
+
+	size_t separateIdx = path.find_last_of('\\') + 1;
+	result = path.erase(0, separateIdx == string::npos ? 0 : separateIdx);
+	size_t extIdx = result.find_last_of('.');
+	if (extIdx != string::npos) result.erase(extIdx, string::npos);
+
+	return result;
 }

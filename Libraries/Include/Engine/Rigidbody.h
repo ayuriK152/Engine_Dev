@@ -73,7 +73,7 @@ public:
 	float customData;
 
 private:
-	bool _isGravity;				// 중력 여부
+	bool _isGravity = true;				// 중력 여부
 	bool _isStatic = false;
 	bool _isTrigger = false;
 	bool _isPhysicsActive = true;

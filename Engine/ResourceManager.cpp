@@ -102,6 +102,10 @@ void ResourceManager::CreateDefaultResources()
 	shared_ptr<Mesh> skyboxSphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 1));
 	skyboxSphereMesh->SetName(L"Mesh_SkyboxSphere");
 	Add<Mesh>(L"Mesh_SkyboxSphere", skyboxSphereMesh);
+
+
+	/* FOR EDITOR ONLY */
+	LoadEntireResources();
 }
 
 void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
@@ -626,5 +630,28 @@ ComponentType ResourceManager::MapLegacyComponentType(UINT32 legacyType)
 	case 9: return ComponentType::Script;
 	case 10: return ComponentType::ParticleEmitter;
 	case 11: return ComponentType::CharacterController;
+	}
+}
+
+void ResourceManager::LoadEntireResources()
+{
+	LoadMeshes();
+}
+
+void ResourceManager::LoadMeshes()
+{
+	tinyxml2::XMLDocument doc;
+	filesystem::path p = RESOURCE_PATH_MESH;
+	filesystem::recursive_directory_iterator iter(p);
+
+	for (auto& i = iter; i != filesystem::end(iter); i++)
+	{
+		if (filesystem::is_directory(i->path())) continue;
+
+		string pathStr = i->path().string();
+		wstring fileName = Utils::ToWString(Utils::GetFileName(pathStr));
+		shared_ptr<Mesh> mesh = LoadMesh(pathStr);
+
+		Add<Mesh>(fileName, mesh);
 	}
 }

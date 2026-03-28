@@ -30,6 +30,9 @@ public:
 	void SetMesh(shared_ptr<Mesh> mesh);
 
 	shared_ptr<Material> GetMaterial() { return _material; }
-	void SetMaterial(shared_ptr<Material> mat) { _material = mat; }
+	void SetMaterial(shared_ptr<Material> mat) { 
+		_material = mat;
+		GetGameObject()->SetFramesDirty();
+	}
 };
 

@@ -60,7 +60,11 @@ void MeshRenderer::OnDestroy()
 void MeshRenderer::LoadXML(XMLElement* compElem)
 {
 	const char* meshName = compElem->Attribute("MeshName");
-	if (meshName != 0) SetMesh(RESOURCE->Get<Mesh>(Utils::ToWString(meshName)));
+	if (meshName != 0) {
+		shared_ptr<Mesh> mesh = RESOURCE->Get<Mesh>(Utils::ToWString(meshName));
+		if (mesh == nullptr) mesh = RESOURCE->LoadMesh(meshName);
+		SetMesh(mesh);
+	}
 
 	const char* materialName = compElem->Attribute("Material");
 	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
@@ -103,4 +107,6 @@ void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 	if (GRAPHIC->GetDevice() == nullptr)
 		return;
 	_mesh->CreateBuffer();
+
+	GetGameObject()->SetFramesDirty();
 }

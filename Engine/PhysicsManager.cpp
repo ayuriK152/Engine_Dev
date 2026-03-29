@@ -3,7 +3,9 @@
 
 PhysicsManager::~PhysicsManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - PhysicsManager\n";
+#endif
 
 	for (shared_ptr<Rigidbody> rb : _rigidbodies)
 		rb.reset();

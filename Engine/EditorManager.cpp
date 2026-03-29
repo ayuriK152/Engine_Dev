@@ -3,7 +3,9 @@
 
 EditorManager::~EditorManager()
 {
-
+#ifdef PRINT_DEBUG_CONSOLE_LOG
+	cout << "Released - EditorManager\n";
+#endif
 }
 
 void EditorManager::Init()

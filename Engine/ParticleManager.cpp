@@ -3,7 +3,9 @@
 
 ParticleManager::~ParticleManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - ParticleManager\n";
+#endif
 
 	for (auto pe : _particleEmitters)
 		pe.second.reset();

@@ -9,7 +9,9 @@ DescriptorHeapAllocator EngineGUIManager::_srvHeapDescAllocator;
 
 EngineGUIManager::~EngineGUIManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - EngineGUIManager\n";
+#endif
 
 	// 공식 문서에서는 소멸자에 아래 함수들을 호출하라고 되있는데 이상하게 호출하면 크래시가 뜰 때가 많음
 	// 일단 주석처리로 해결

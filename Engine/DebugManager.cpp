@@ -3,8 +3,9 @@
 
 DebugManager::~DebugManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - DebugManager\n";
-
+#endif
 }
 
 void DebugManager::Init()

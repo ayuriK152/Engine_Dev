@@ -10,7 +10,9 @@ CharacterController::CharacterController() : Component(ComponentType::CharacterC
 
 CharacterController::~CharacterController()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - CharacterController:" << _id << "\n";
+#endif
 }
 
 void CharacterController::Init()
@@ -77,7 +79,9 @@ void CharacterController::PreUpdate()
 
 void CharacterController::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - CharacterController:" << _id << "\n";
+#endif
 }
 
 void CharacterController::LoadXML(XMLElement* compElem)

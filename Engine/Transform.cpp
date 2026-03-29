@@ -22,12 +22,16 @@ Transform::Transform() : Super(ComponentType::Transform)
 
 Transform::~Transform()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - Transfrom:" << _id << "\n";
+#endif
 }
 
 void Transform::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - Transfrom:" << _id << "\n";
+#endif
 }
 
 void Transform::LoadXML(XMLElement* compElem)

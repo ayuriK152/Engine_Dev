@@ -14,7 +14,9 @@ Camera::Camera() : Super(ComponentType::Camera)
 
 Camera::~Camera()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - Camera:" << _id << "\n";
+#endif
 }
 
 void Camera::Init()
@@ -67,7 +69,9 @@ void Camera::Update()
 
 void Camera::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - Camera:" << _id << "\n";
+#endif
 
 	_currentCamera = nullptr;
 }

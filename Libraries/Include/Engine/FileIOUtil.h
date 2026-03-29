@@ -27,6 +27,8 @@ public:
 
 	void ReadFileData(HANDLE fileHandle, void* out, UINT32 dataSize);
 	void ReadFileData(HANDLE fileHandle, string& out);
+
+	string ReadINI(string section, string key, string dir, string default = "none");
 };
 
 template<typename T>

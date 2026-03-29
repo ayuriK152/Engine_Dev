@@ -10,7 +10,9 @@ ParticleEmitter::ParticleEmitter() : Component(ComponentType::ParticleEmitter)
 
 ParticleEmitter::~ParticleEmitter()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - ParticleEmitter:" << _id << "\n";
+#endif
 }
 
 void ParticleEmitter::Init()
@@ -50,7 +52,9 @@ void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList, UINT renderStat
 
 void ParticleEmitter::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - ParticleEmitter:" << _id << "\n";
+#endif
 }
 
 void ParticleEmitter::LoadXML(XMLElement* compElem)

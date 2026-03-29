@@ -3,7 +3,9 @@
 
 SkeletonManager::~SkeletonManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - SkeletonManager\n";
+#endif
 
 	for (shared_ptr<Skeleton> s : _instancedSkeletons)
 		s.reset();

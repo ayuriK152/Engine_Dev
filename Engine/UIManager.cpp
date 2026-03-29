@@ -3,7 +3,9 @@
 
 UIManager::~UIManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - UIManager\n";
+#endif
 
 	_elements.clear();
 	_panels.clear();

@@ -15,7 +15,9 @@ MeshRenderer::MeshRenderer(ComponentType type) : Super(type)
 
 MeshRenderer::~MeshRenderer()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - MeshRenderer:" << _id << "\n";
+#endif
 }
 
 void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
@@ -47,7 +49,9 @@ void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 
 void MeshRenderer::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - MeshRenderer:" << _id << "\n";
+#endif
 
 	if (_mesh != nullptr) {
 		if (!RENDER->IsDestructorRunning()) _mesh->DecreaseInstanceCount();
@@ -101,7 +105,8 @@ void MeshRenderer::SetMesh(shared_ptr<Mesh> mesh)
 
 	_mesh = mesh;
 	_mesh->IncreaseInstanceCount();
-	_material = _mesh->GetMaterial();
+	if (_mesh->GetMaterial() != nullptr) _material = _mesh->GetMaterial();
+	else if (_material == nullptr) _material = RESOURCE->Get<Material>(L"Mat_Default");
 
 	// asset parser 임시조치
 	if (GRAPHIC->GetDevice() == nullptr)

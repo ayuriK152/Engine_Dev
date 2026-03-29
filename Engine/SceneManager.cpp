@@ -3,7 +3,9 @@
 
 SceneManager::~SceneManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - SceneManager\n";
+#endif
 }
 
 void SceneManager::Init()

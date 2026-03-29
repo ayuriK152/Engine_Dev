@@ -10,7 +10,9 @@ SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRen
 
 SkinnedMeshRenderer::~SkinnedMeshRenderer()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - SkinnedMeshRenderer:" << _id << "\n";
+#endif
 }
 
 void SkinnedMeshRenderer::Init()
@@ -50,7 +52,9 @@ void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT render
 
 void SkinnedMeshRenderer::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - SkinnedMeshRenderer:" << _id << "\n";
+#endif
 
 	if (_rootBone != nullptr)
 		_rootBone.reset();

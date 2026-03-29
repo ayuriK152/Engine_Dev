@@ -3,7 +3,9 @@
 
 ThreadManager::~ThreadManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - ThreadManager\n";
+#endif
 
 	{
 		unique_lock<mutex> lock(_queueMutex);

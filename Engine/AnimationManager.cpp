@@ -3,7 +3,9 @@
 
 AnimationManager::~AnimationManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - AnimationManager\n";
+#endif
 
 	for (shared_ptr<Animator> a : _animators)
 		a.reset();

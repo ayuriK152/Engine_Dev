@@ -3,7 +3,9 @@
 
 RenderManager::~RenderManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - RenderManager\n";
+#endif
 
 	_isDestructorRunning = true;
 

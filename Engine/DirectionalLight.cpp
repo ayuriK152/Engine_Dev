@@ -19,7 +19,9 @@ DirectionalLight::DirectionalLight(
 
 DirectionalLight::~DirectionalLight()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - DirectionalLight:" << _id << "\n";
+#endif
 }
 
 void DirectionalLight::Init()
@@ -63,7 +65,9 @@ void DirectionalLight::Update()
 
 void DirectionalLight::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - DirectionalLight:" << _id << "\n";
+#endif
 
 	RENDER->DeleteLight(static_pointer_cast<Light>(shared_from_this()));
 

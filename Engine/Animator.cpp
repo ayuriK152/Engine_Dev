@@ -18,7 +18,9 @@ Animator::Animator() : Component(ComponentType::Animator)
 
 Animator::~Animator()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - Component:Animator:" << _id << "\n";
+#endif
 }
 
 void Animator::Init()
@@ -103,7 +105,9 @@ void Animator::Update()
 
 void Animator::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - Animator:" << _id << "\n";
+#endif
 
 	for (auto anim : _animations)
 		anim.second.reset();

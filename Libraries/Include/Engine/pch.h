@@ -1,7 +1,8 @@
 #pragma once
 
 // Debuging Console
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+// #define PRINT_DEBUG_CONSOLE_LOG
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -69,9 +70,6 @@ using namespace Microsoft::WRL;
 /////////////////////////
 
 #include "magic_enum/magic_enum.hpp"
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
 #include "tinyxml2/tinyxml2.h"
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_stdlib.h"
@@ -115,7 +113,6 @@ using namespace JPH::literals;
 #pragma comment(lib, "DirectXTK/Release/DirectXTK12.lib")
 #pragma comment(lib, "Jolt/Release/Jolt.lib")
 #endif
-#pragma comment(lib, "assimp/assimp-vc143-mtd.lib")
 
 #include "Types.h"
 #include "Defines.h"

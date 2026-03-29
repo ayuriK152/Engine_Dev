@@ -19,7 +19,9 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - GameObject:" << _id << "\n";
+#endif
 
 	OnDestroy();
 }
@@ -38,17 +40,17 @@ void GameObject::Init()
 
 void GameObject::PreUpdate()
 {
+	if (!_isInitialized) {
+		_isInitialized = true;
+		Init();
+	}
+
 	if (_isDeleteReserved) {
 		_deleteTime -= TIME->DeltaTime();
 		if (_deleteTime <= 0.0f) {
 			RENDER->DeleteGameobject(shared_from_this());
 			return;
 		}
-	}
-
-	if (!_isInitialized) {
-		_isInitialized = true;
-		Init();
 	}
 
 	for (auto& componentVec : _components) {
@@ -127,7 +129,9 @@ void GameObject::OnCollisionExit(shared_ptr<GameObject> other)
 
 void GameObject::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - GameObject:" << _id << "\n";
+#endif
 
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;

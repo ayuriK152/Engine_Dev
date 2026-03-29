@@ -3,7 +3,9 @@
 
 ResourceManager::~ResourceManager()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - ResourceManager\n";
+#endif
 
 	for (KeyObjMap m : _resources) {
 		for (auto r : m) {
@@ -491,6 +493,7 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 				case ComponentType::MeshRenderer:
 				{
 					shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+					go->AddComponent(meshRenderer);
 
 					string meshPath;
 					FILEIO->ReadFileData(fileHandle, meshPath);
@@ -500,14 +503,13 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 					FILEIO->ReadFileData(fileHandle, matName);
 					meshRenderer->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matName)));
 
-					go->AddComponent(meshRenderer);
-
 					break;
 				}
 
 				case ComponentType::SkinnedMeshRenderer:
 				{
 					shared_ptr<SkinnedMeshRenderer> meshRenderer = make_shared<SkinnedMeshRenderer>();
+					go->AddComponent(meshRenderer);
 
 					string meshPath;
 					FILEIO->ReadFileData(fileHandle, meshPath);
@@ -525,7 +527,6 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 					meshRenderer->SetBoneData(boneDataName);
 
 					boneSettingQueue.push_back({ meshRenderer, rootBoneName });
-					go->AddComponent(meshRenderer);
 
 					break;
 				}
@@ -533,8 +534,8 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 				case ComponentType::Animator:
 				{
 					shared_ptr<Animator> animator = make_shared<Animator>();
-					delayedAnimators.push_back(animator);
 					go->AddComponent(animator);
+					delayedAnimators.push_back(animator);
 
 					bool isPlayOnInit, isLoop;
 					FILEIO->ReadFileData(fileHandle, &isPlayOnInit, sizeof(bool));
@@ -563,13 +564,12 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 				case ComponentType::Camera:
 				{
 					shared_ptr<Camera> camera = make_shared<Camera>();
+					go->AddComponent(camera);
 
 					bool isMainCamera;
 					FILEIO->ReadFileData(fileHandle, &isMainCamera, sizeof(bool));
 					if (isMainCamera)
 						camera->SetAsMainCamera();
-
-					go->AddComponent(camera);
 
 					break;
 				}

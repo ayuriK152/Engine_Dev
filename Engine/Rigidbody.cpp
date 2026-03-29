@@ -12,7 +12,9 @@ Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 
 Rigidbody::~Rigidbody()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - Rigidbody:" << _id << "\n";
+#endif
 }
 
 void Rigidbody::Init()
@@ -83,7 +85,9 @@ void Rigidbody::Update()
 
 void Rigidbody::OnDestroy()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - Rigidbody:" << _id << "\n";
+#endif
 
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	bodyInterface.RemoveBody(_bodyID);

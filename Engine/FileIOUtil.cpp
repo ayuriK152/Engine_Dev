@@ -308,3 +308,15 @@ void FileIOUtil::ReadFileData(HANDLE fileHandle, void* out, UINT32 dataSize)
 		NULL
 	);
 }
+
+string FileIOUtil::ReadINI(string section, string key, string dir, string default)
+{
+	wstring sectionW = Utils::ToWString(section);
+	wstring keyW = Utils::ToWString(key);
+	wstring dirW = Utils::ToWString(dir);
+	wstring defaultW = Utils::ToWString(default);
+
+	wchar_t out[255];
+	GetPrivateProfileString(sectionW.c_str(), keyW.c_str(), defaultW.c_str(), out, 255, dirW.c_str());
+	return Utils::ToString(out);
+}

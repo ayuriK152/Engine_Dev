@@ -18,6 +18,7 @@ public:
 	~AssetLoader();
 
 public:
+	void SetAssetPath(wstring path) { _assetPath = path; }
 	void ImportAssetFile(wstring file);
 	shared_ptr<GameObject> GetLoadedObject() { return _loadedObject[0]; }
 

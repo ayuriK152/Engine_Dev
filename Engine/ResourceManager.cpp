@@ -14,12 +14,7 @@ ResourceManager::~ResourceManager()
 	}
 }
 
-bool ResourceManager::CheckResourceExists(const string& filePath)
-{
-	return _resourcePaths.find(filePath) != _resourcePaths.end();
-}
-
-void ResourceManager::CreateDefaultResources()
+void ResourceManager::Init()
 {
 	//==========Shader==========
 	D3D_SHADER_MACRO skinnedDefines[] =
@@ -108,6 +103,11 @@ void ResourceManager::CreateDefaultResources()
 
 	/* FOR EDITOR ONLY */
 	LoadEntireResources();
+}
+
+bool ResourceManager::CheckResourceExists(const string& filePath)
+{
+	return _resourcePaths.find(filePath) != _resourcePaths.end();
 }
 
 void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
@@ -300,6 +300,120 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 	}
 }
 
+void ResourceManager::SavePrefabXML(shared_ptr<GameObject> prefabObject, const string& filePath)
+{
+	filesystem::path savePath(filePath + prefabObject->GetName() + ".xml");
+
+	tinyxml2::XMLDocument doc;
+	XMLElement* prefabElem = doc.NewElement("Prefab");
+	doc.InsertFirstChild(prefabElem);
+
+	prefabElem->SetAttribute("Name", prefabObject->GetName().c_str());
+	prefabElem->SetAttribute("PSO", prefabObject->GetPSOName().c_str());
+	prefabElem->SetAttribute("Tag", prefabObject->GetTag().c_str());
+
+	XMLElement* compsElem = prefabElem->InsertNewChildElement("Components");
+	auto& componentsArr = prefabObject->GetAllComponents();
+	for (auto& componentsVec : componentsArr) {
+		for (auto& component : componentsVec) {
+			XMLElement* compElem = compsElem->InsertNewChildElement("Component");
+			component->SaveXML(compElem);
+		}
+	}
+
+	shared_ptr<Transform> transform = prefabObject->GetTransform();
+	auto& childs = transform->GetChilds();
+	if (childs.size() > 0) {
+		XMLElement* childsElem = prefabElem->InsertNewChildElement("GameObjects");
+		for (int i = 0; i < childs.size(); ++i) {
+			SavePrefabXMLRecursive(childsElem, childs[i]->GetGameObject());
+		}
+	}
+
+	doc.SaveFile(savePath.string().c_str());
+}
+
+void ResourceManager::SavePrefabXMLRecursive(XMLElement* objsElem, shared_ptr<GameObject> object)
+{
+	XMLElement* objElem = objsElem->InsertNewChildElement("GameObject");
+
+	objElem->SetAttribute("Name", object->GetName().c_str());
+	objElem->SetAttribute("PSO", object->GetPSOName().c_str());
+	objElem->SetAttribute("Tag", object->GetTag().c_str());
+
+	XMLElement* compsElem = objElem->InsertNewChildElement("Components");
+	auto& componentsArr = object->GetAllComponents();
+	for (auto& componentsVec : componentsArr) {
+		for (auto& component : componentsVec) {
+			XMLElement* compElem = compsElem->InsertNewChildElement("Component");
+			component->SaveXML(compElem);
+		}
+	}
+
+	shared_ptr<Transform> transform = object->GetTransform();
+	auto& childs = transform->GetChilds();
+	if (childs.size() > 0) {
+		XMLElement* childsElem = objElem->InsertNewChildElement("GameObjects");
+		for (int i = 0; i < childs.size(); ++i) {
+			SavePrefabXMLRecursive(childsElem, childs[i]->GetGameObject());
+		}
+	}
+}
+
+void ResourceManager::LoadPrefabXMLRecursive(XMLElement* objsElem, shared_ptr<GameObject> parent)
+{
+	XMLElement* objElem = objsElem->FirstChildElement("GameObject");
+
+	while (objElem) {
+		shared_ptr<GameObject> go;
+		const char* prefabPath = objElem->Attribute("PrefabPath");
+
+		if (prefabPath != 0) {
+			go = GameObject::LoadPrefab(prefabPath);
+		}
+		else {
+			go = GameObject::Instantiate();
+		}
+
+		const char* name = objElem->Attribute("Name");
+		if (name != 0) go->SetName(name);
+
+		const char* psoName = objElem->Attribute("PSO");
+		if (psoName != 0) go->SetPSOName(psoName);
+
+		const char* tag = objElem->Attribute("Tag");
+		if (tag != 0) go->SetTag(tag);
+
+		// Component
+		XMLElement* componentsElem = objElem->FirstChildElement("Components");
+		if (componentsElem != nullptr) {
+			XMLElement* compElem = componentsElem->FirstChildElement("Component");
+
+			while (compElem) {
+				string componentType = compElem->Attribute("ComponentType");
+				shared_ptr<Component> component = ComponentFactory::Create(componentType);
+
+				go->AddComponent(component);
+				component->LoadXML(compElem);
+
+				compElem = compElem->NextSiblingElement("Component");
+			}
+		}
+
+		// Child Objects
+		XMLElement* childsElem = objElem->FirstChildElement("GameObjects");
+		if (childsElem != nullptr) {
+			LoadPrefabXMLRecursive(childsElem, go);
+		}
+
+		if (parent != nullptr) {
+			go->GetTransform()->SetParent(parent->GetTransform());
+		}
+
+		objElem = objElem->NextSiblingElement("GameObject");
+	}
+}
+
 shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath, false);
@@ -444,7 +558,7 @@ map<string, BoneData> ResourceManager::LoadBone(const string& filePath)
 	return boneData;
 }
 
-vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& filePath, bool isLegacyComponent)
+vector<shared_ptr<GameObject>> ResourceManager::LoadPrefab(const string& filePath, bool isLegacyComponent)
 {
 	HANDLE fileHandle = FILEIO->CreateFileHandle<GameObject>(filePath, false);
 	if (fileHandle == INVALID_HANDLE_VALUE)
@@ -519,15 +633,6 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 					FILEIO->ReadFileData(fileHandle, matName);
 					meshRenderer->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matName)));
 
-					string rootBoneName;
-					FILEIO->ReadFileData(fileHandle, rootBoneName);
-
-					string boneDataName;
-					FILEIO->ReadFileData(fileHandle, boneDataName);
-					meshRenderer->SetBoneData(boneDataName);
-
-					boneSettingQueue.push_back({ meshRenderer, rootBoneName });
-
 					break;
 				}
 
@@ -593,15 +698,6 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 		loadedObjects[idxPair.first]->GetTransform()->SetParent(loadedObjects[idxPair.second]->GetTransform());
 	}
 
-	for (auto& renderer : boneSettingQueue) {
-		for (auto& go : loadedObjects) {
-			if (go->GetName() == renderer.second) {
-				renderer.first->SetRootBone(go->GetTransform());
-				break;
-			}
-		}
-	}
-
 	for (auto& animator : delayedAnimators) {
 		// 불안정한 구현. 추후에 파일 구조를 바꾸고 반드시 리팩토링 해야함.
 		animator->SetBone(loadedObjects[0]->GetName());
@@ -611,6 +707,46 @@ vector<shared_ptr<GameObject>> ResourceManager::LoadPrefabObject(const string& f
 		SavePrefab(loadedObjects[0]);
 
 	return loadedObjects;
+}
+
+shared_ptr<GameObject> ResourceManager::LoadPrefabXML(const string& filePath)
+{
+	tinyxml2::XMLDocument doc;
+	XMLError e = doc.LoadFile(filePath.c_str());
+	if (e != XML_SUCCESS) return nullptr;
+
+	shared_ptr<GameObject> rootObj;
+	XMLElement* rootElem = doc.FirstChildElement();
+
+	const char* name = rootElem->Attribute("Name");
+	if (name != 0) rootObj->SetName(name);
+
+	const char* psoName = rootElem->Attribute("PSO");
+	if (psoName != 0) rootObj->SetPSOName(psoName);
+
+	const char* tag = rootElem->Attribute("Tag");
+	if (tag != 0) rootObj->SetTag(tag);
+
+	// Component
+	XMLElement* componentsElem = rootElem->FirstChildElement("Components");
+	if (componentsElem != nullptr) {
+		XMLElement* compElem = componentsElem->FirstChildElement("Component");
+
+		while (compElem) {
+			string componentType = compElem->Attribute("ComponentType");
+			shared_ptr<Component> component = ComponentFactory::Create(componentType);
+
+			rootObj->AddComponent(component);
+			component->LoadXML(compElem);
+
+			compElem = compElem->NextSiblingElement("Component");
+		}
+	}
+
+	XMLElement* objsElem = rootElem->FirstChildElement("GameObjects");
+	LoadPrefabXMLRecursive(objsElem, rootObj);
+
+	return rootObj;
 }
 
 ComponentType ResourceManager::MapLegacyComponentType(UINT32 legacyType)

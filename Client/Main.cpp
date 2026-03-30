@@ -1,8 +1,5 @@
 #include "pch.h"
 #include "Main.h"
-#include "DungeonScene.h"
-#include "PhysicsTestScene.h"
-#include "AnimationTestScene.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {

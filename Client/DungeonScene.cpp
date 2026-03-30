@@ -47,7 +47,7 @@ void DungeonScene::Init()
 	}
 
 	{
-		auto loadedObjects = RESOURCE->LoadPrefabObject("Paladin WProp J Nordstrom");
+		auto loadedObjects = RESOURCE->LoadPrefab("Paladin WProp J Nordstrom");
 		player = loadedObjects[0];
 		player->GetComponent<Animator>()->SetBone("Paladin WProp J Nordstrom");
 		gameObjects.insert(gameObjects.end(), loadedObjects.begin(), loadedObjects.end());
@@ -56,7 +56,7 @@ void DungeonScene::Init()
 	}
 
 	{
-		auto brute = RESOURCE->LoadPrefabObject("Brute");
+		auto brute = RESOURCE->LoadPrefab("Brute");
 		brute[0]->GetComponent<Animator>()->SetBone("Brute");
 		shared_ptr<EnemyScript> enemyScript = static_pointer_cast<EnemyScript>(ComponentFactory::Create("EnemyScript"));
 		enemyScript->target = player;

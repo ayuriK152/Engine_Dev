@@ -122,12 +122,25 @@ void Animator::OnDestroy()
 
 void Animator::LoadXML(XMLElement* compElem)
 {
+	XMLElement* animsElem = compElem->FirstChildElement("Animations");
 
+	XMLElement* animElem = animsElem->FirstChildElement("Animation");
+	while (animElem != nullptr) {
+		const char* path = animElem->Attribute("Path");
+		if (path != 0) AddAnimation(RESOURCE->LoadAnimation(path));
+		animElem = animElem->NextSiblingElement();
+	}
 }
 
 void Animator::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "Animator");
+
+	XMLElement* animsElem = compElem->InsertNewChildElement("Animations");
+	for (auto& anim : _animations) {
+		XMLElement* animElem = animsElem->InsertNewChildElement("Animation");
+		animElem->SetAttribute("Path", anim.second->GetPath().c_str());
+	}
 }
 
 ComponentSnapshot Animator::CaptureSnapshot()

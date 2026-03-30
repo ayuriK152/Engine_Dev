@@ -5,7 +5,7 @@ REGISTER_COMPONENT(DirectionalLight);
 
 DirectionalLight::DirectionalLight() : Super()
 {
-	//direction = GetTransform()->GetLook();
+
 }
 
 DirectionalLight::DirectionalLight(

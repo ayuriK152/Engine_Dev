@@ -110,6 +110,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 		{
 			_loadedObject[0]->SetName(Utils::ToString(_assetNameW));
 			RESOURCE->SavePrefab(_loadedObject[0]);
+			RESOURCE->SavePrefabXML(_loadedObject[0]);
 			cout << "Prefab parsed" << endl << endl;
 		}
 	}

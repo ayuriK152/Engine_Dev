@@ -48,7 +48,7 @@ void RenderManager::Init()
 	BuildSRVDescriptorHeap();
 
 	ENGINEGUI->Init();
-	RESOURCE->CreateDefaultResources();
+	RESOURCE->Init();
 
 	BuildPSOs();
 

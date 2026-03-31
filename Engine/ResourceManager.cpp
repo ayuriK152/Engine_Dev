@@ -85,18 +85,22 @@ void ResourceManager::Init()
 
 	//==========Mesh==========
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
+	boxMesh->SetPath(DEFAULT_MESH_BOX);
 	boxMesh->SetName(DEFAULT_MESH_BOX);
 	Add<Mesh>(DEFAULT_MESH_BOX, boxMesh);
 
 	shared_ptr<Mesh> sphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 3));
+	sphereMesh->SetPath(DEFAULT_MESH_SPHERE);
 	sphereMesh->SetName(DEFAULT_MESH_SPHERE);
 	Add<Mesh>(DEFAULT_MESH_SPHERE, sphereMesh);
 
 	shared_ptr<Mesh> quadMesh = make_shared<Mesh>(GeometryGenerator::CreateQuad());
+	quadMesh->SetPath(DEFAULT_MESH_QUAD);
 	quadMesh->SetName(DEFAULT_MESH_QUAD);
 	Add<Mesh>(DEFAULT_MESH_QUAD, quadMesh);
 
 	shared_ptr<Mesh> skyboxSphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 1));
+	skyboxSphereMesh->SetPath("Mesh_SkyboxSphere");
 	skyboxSphereMesh->SetName(L"Mesh_SkyboxSphere");
 	Add<Mesh>(L"Mesh_SkyboxSphere", skyboxSphereMesh);
 
@@ -407,7 +411,7 @@ void ResourceManager::LoadPrefabXMLRecursive(XMLElement* objsElem, shared_ptr<Ga
 		}
 
 		if (parent != nullptr) {
-			go->GetTransform()->SetParent(parent->GetTransform());
+			go->GetTransform()->SetParentOnly(parent->GetTransform());
 		}
 
 		objElem = objElem->NextSiblingElement("GameObject");
@@ -416,20 +420,19 @@ void ResourceManager::LoadPrefabXMLRecursive(XMLElement* objsElem, shared_ptr<Ga
 
 shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 {
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath, false);
-	if (fileHandle == INVALID_HANDLE_VALUE)
-	{
-		DEBUG->ErrorLog("Failed to load mesh file: " + filePath);
-		return nullptr;
-	}
-
 	string meshName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
 	meshName = meshName.substr(0, meshName.find_last_of('.'));
 
 	// 좀 더 개선할 수 있을 것 같음. 나머지 리소스들도 다.
 	if (RESOURCE->CheckResourceExists(filePath)) {
-		CloseHandle(fileHandle);
 		return RESOURCE->Get<Mesh>(Utils::ToWString(meshName));
+	}
+
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath, false);
+	if (fileHandle == INVALID_HANDLE_VALUE)
+	{
+		DEBUG->ErrorLog("Failed to load mesh file: " + filePath);
+		return nullptr;
 	}
 
 	UINT32 vertexCount;
@@ -471,20 +474,19 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 
 shared_ptr<Animation> ResourceManager::LoadAnimation(const string& filePath)
 {
-	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath, false);
-	if (fileHandle == INVALID_HANDLE_VALUE)
-	{
-		DEBUG->ErrorLog("Failed to load animation file: " + filePath);
-		return nullptr;
-	}
-
 	string animName;
 	animName = filePath.substr(filePath.find_last_of("\\") + 1, filePath.length());
 	animName = animName.substr(0, animName.find_last_of('.'));
 
 	if (RESOURCE->CheckResourceExists(filePath)) {
-		CloseHandle(fileHandle);
 		return RESOURCE->Get<Animation>(Utils::ToWString(animName));
+	}
+
+	HANDLE fileHandle = FILEIO->CreateFileHandle<Animation>(filePath, false);
+	if (fileHandle == INVALID_HANDLE_VALUE)
+	{
+		DEBUG->ErrorLog("Failed to load animation file: " + filePath);
+		return nullptr;
 	}
 
 	float duration, ticks;
@@ -715,7 +717,7 @@ shared_ptr<GameObject> ResourceManager::LoadPrefabXML(const string& filePath)
 	XMLError e = doc.LoadFile(filePath.c_str());
 	if (e != XML_SUCCESS) return nullptr;
 
-	shared_ptr<GameObject> rootObj;
+	shared_ptr<GameObject> rootObj = GameObject::Instantiate();
 	XMLElement* rootElem = doc.FirstChildElement();
 
 	const char* name = rootElem->Attribute("Name");

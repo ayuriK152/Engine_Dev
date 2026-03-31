@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 	desc.clientWidth = 1600;
 	desc.clientHeight = 900;
 
-	SCENE->LoadScene("TestSceneFirst.xml");
+	SCENE->LoadScene("TestSceneSec.xml");
 
 	GAMEAPP->SetAppInst(hInstance, desc);
 	GAMEAPP->Run();

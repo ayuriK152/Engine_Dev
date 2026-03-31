@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Camera.h"
 
-REGISTER_COMPONENT(Camera);
+// REGISTER_COMPONENT(Camera);
 
 shared_ptr<Camera> Camera::_currentCamera = nullptr;
 shared_ptr<Camera> Camera::_editorCamera = nullptr;

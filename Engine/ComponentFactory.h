@@ -25,6 +25,19 @@ public:
 		return nullptr;
 	}
 
+	static void Init() {
+		REGISTER_COMPONENT(DirectionalLight);
+		REGISTER_COMPONENT(MeshRenderer);
+		REGISTER_COMPONENT(SkinnedMeshRenderer);
+		REGISTER_COMPONENT(Rigidbody);
+		REGISTER_COMPONENT(Animator);
+		REGISTER_COMPONENT(Camera);
+		REGISTER_COMPONENT(CharacterController);
+		REGISTER_COMPONENT(ParticleEmitter);
+		REGISTER_COMPONENT(Transform);
+		REGISTER_COMPONENT(EditorCamera);
+	}
+
 private:
 	static unordered_map<string, Creator>& GetMap() {
 		static unordered_map<string, Creator> _registry;

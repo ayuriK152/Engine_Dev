@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SkinnedMeshRenderer.h"
 
-REGISTER_COMPONENT(SkinnedMeshRenderer);
+// REGISTER_COMPONENT(SkinnedMeshRenderer);
 
 SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRenderer)
 {
@@ -71,6 +71,9 @@ void SkinnedMeshRenderer::LoadXML(XMLElement* compElem)
 	const char* meshPath = compElem->Attribute("Mesh");
 	if (meshPath != 0) SetMesh(RESOURCE->LoadMesh(meshPath));
 
+	const char* materialName = compElem->Attribute("Material");
+	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
+
 	const char* rootBoneName = compElem->Attribute("RootBoneName");
 	if (rootBoneName != 0) _rootBoneName = rootBoneName;
 }
@@ -79,7 +82,8 @@ void SkinnedMeshRenderer::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "SkinnedMeshRenderer");
 
-	compElem->SetAttribute("Mesh", _mesh->GetPath().c_str());
+	if (_mesh != nullptr) compElem->SetAttribute("Mesh", _mesh->GetPath().c_str());
+	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
 	compElem->SetAttribute("RootBoneName", _rootBoneName.c_str());
 }
 

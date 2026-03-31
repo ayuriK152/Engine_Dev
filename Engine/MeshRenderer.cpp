@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "MeshRenderer.h"
 
-REGISTER_COMPONENT(MeshRenderer);
+// REGISTER_COMPONENT(MeshRenderer);
 
 MeshRenderer::MeshRenderer() : Super(ComponentType::MeshRenderer)
 {
@@ -63,12 +63,8 @@ void MeshRenderer::OnDestroy()
 
 void MeshRenderer::LoadXML(XMLElement* compElem)
 {
-	const char* meshName = compElem->Attribute("MeshName");
-	if (meshName != 0) {
-		shared_ptr<Mesh> mesh = RESOURCE->Get<Mesh>(Utils::ToWString(meshName));
-		if (mesh == nullptr) mesh = RESOURCE->LoadMesh(meshName);
-		SetMesh(mesh);
-	}
+	const char* meshPath = compElem->Attribute("Mesh");
+	if (meshPath != 0) SetMesh(RESOURCE->LoadMesh(meshPath));
 
 	const char* materialName = compElem->Attribute("Material");
 	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));

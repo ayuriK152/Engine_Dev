@@ -214,7 +214,7 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 		}
 
 		if (parent != nullptr) {
-			go->GetTransform()->SetParent(parent->GetTransform());
+			go->GetTransform()->SetParentOnly(parent->GetTransform());
 		}
 
 		objElem = objElem->NextSiblingElement("GameObject");
@@ -233,8 +233,10 @@ void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObje
 	objElem->SetAttribute("PSO", go->GetPSOName().c_str());
 	objElem->SetAttribute("Tag", go->GetTag().c_str());
 
+	// 프리팹이 아닌 경우 -> 모든 컴포넌트 정보 저장
+	// 프리팹인 경우 -> Transform의 정보 변화만 저장
+	XMLElement* compsElem = objElem->InsertNewChildElement("Components");
 	if (!go->IsPrefab()) {
-		XMLElement* compsElem = objElem->InsertNewChildElement("Components");
 		auto& componentsArr = go->GetAllComponents();
 		for (auto& componentsVec : componentsArr) {
 			for (auto& component : componentsVec) {
@@ -251,6 +253,11 @@ void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObje
 				WriteGameObjectData(childsElem, childs[i]->GetGameObject());
 			}
 		}
+	}
+	else {
+		shared_ptr<Transform> transform = go->GetTransform();
+		XMLElement* compElem = compsElem->InsertNewChildElement("Component");
+		transform->SaveXML(compElem);
 	}
 
 	objsElem->InsertEndChild(objElem);

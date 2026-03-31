@@ -28,6 +28,7 @@ bool Graphic::Init()
 
 	UseGraphicsCommandList();
 
+	ComponentFactory::Init();
 	THREAD->Init();
 	RENDER->Init();
 	FILEIO->Init();

@@ -127,6 +127,10 @@ struct Vector4 : public XMFLOAT4
 	Vector4(const XMFLOAT4& v) : XMFLOAT4(v.x, v.y, v.z, v.w) {}
 	Vector4(const XMVECTOR& v) { XMStoreFloat4(this, v); }
 
+	Vector4 Normalize() const {
+		return Vector4(XMQuaternionNormalize(XMLoadFloat4(this)));
+	}
+
 	Vector4 operator+(const Vector4& v) const {
 		return Vector4(XMLoadFloat4(this) + XMLoadFloat4(&v));
 	}

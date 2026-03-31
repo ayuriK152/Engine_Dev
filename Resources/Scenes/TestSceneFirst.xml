@@ -1,45 +1,50 @@
 <Scene Name="TestSceneFirst">
     <GameObjects>
-        <GameObject Name="skybox" PSO="skybox">
+        <GameObject Name="skybox" PSO="skybox" Tag="Default">
             <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
                 <Component ComponentType="MeshRenderer" MeshName="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
             </Components>
         </GameObject>
-
-        <GameObject Name="MainCamera">
+        <GameObject Name="MainCamera" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosY="3" PosZ="-10"/>
-                <Component ComponentType="Camera" MainCamera="True"/>
+                <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="-10" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="Camera" MainCamera="true"/>
             </Components>
         </GameObject>
-
-        <GameObject Name="GlobalLight">
+        <GameObject Name="GlobalLight" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform">
-                    <LookAt x="1.0" y="-2.0" z="1.0"/>
-                </Component>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.42470837" QuatY="0.3398512" QuatZ="-0.17592002" QuatW="0.82047313"/>
                 <Component ComponentType="DirectionalLight">
-                    <Ambient r="0.8" g="0.8" b="0.8" a="1.0"/>
-                    <Diffuse r="0.8" g="0.8" b="0.8" a="1.0"/>
-                    <Specular r="1.0" g="1.0" b="1.0" a="1.0"/>
+                    <Ambient r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+                    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+                    <Specular r="1" g="1" b="1" a="1"/>
                 </Component>
             </Components>
         </GameObject>
-
-        <GameObject Name="Ground">
+        <GameObject Name="Ground" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosY="-0.5" ScaleX="100" ScaleZ="100"/>
+                <Component ComponentType="Transform" PosX="0" PosY="-0.5" PosZ="0" ScaleX="100" ScaleY="1" ScaleZ="100" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
                 <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicBox" Material="PrototypeGround_100_1_100"/>
-                <Component ComponentType="Rigidbody" Static="true"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="true" Trigger="true" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="50" y="0.5" z="50"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
             </Components>
         </GameObject>
-        
-        <GameObject Name="Sphere">
+        <GameObject Name="Sphere" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosY="3"/>
+                <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
                 <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicSphere" Material="000"/>
-                <Component ComponentType="Rigidbody">
-                    <Collider Shape="Sphere"/>
+                <Component ComponentType="Rigidbody" Static="false" Gravity="false" Trigger="false" PhysicsActive="false">
+                    <Collider Shape="Sphere" Height="0.5" Radius="0.5">
+                        <Extent x="0.5" y="0.5" z="0.5"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
                 </Component>
             </Components>
         </GameObject>

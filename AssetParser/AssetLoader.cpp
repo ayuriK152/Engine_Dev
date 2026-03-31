@@ -340,7 +340,6 @@ void AssetLoader::BuildBones()
 	for (auto& meshObj : _meshObjs)
 	{
 		auto renderer = meshObj->GetComponent<SkinnedMeshRenderer>();
-		renderer->SetBoneData(_assetName);
 		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}
 

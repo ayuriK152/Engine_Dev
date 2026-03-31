@@ -26,25 +26,25 @@
         <GameObject Name="Paladin_J_Nordstrom_Shield" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom_Shield.bmesh" RootBoneName="mixamorig:Hips"/>
+                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom_Shield.bmesh" Material="Paladin_MAT" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
         <GameObject Name="Paladin_J_Nordstrom_Sword" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom_Sword.bmesh" RootBoneName="mixamorig:Hips"/>
+                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom_Sword.bmesh" Material="Paladin_MAT" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
         <GameObject Name="Paladin_J_Nordstrom_Helmet" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom_Helmet.bmesh" RootBoneName="mixamorig:Hips"/>
+                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom_Helmet.bmesh" Material="Paladin_MAT" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
         <GameObject Name="Paladin_J_Nordstrom" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom.bmesh" RootBoneName="mixamorig:Hips"/>
+                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Paladin WProp J Nordstrom\Paladin_J_Nordstrom.bmesh" Material="Paladin_MAT" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
         <GameObject Name="mixamorig:Hips" PSO="opaque_solid" Tag="Default">

@@ -1,4 +1,8 @@
 #pragma once
 
 #include "Engine/pch.h"
-#pragma comment(lib, "Engine/Engine.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "Engine/Debug/Engine.lib")
+#else
+#pragma comment(lib, "Engine/Release/Engine.lib")
+#endif

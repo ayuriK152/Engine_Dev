@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Rigidbody.h"
 
-REGISTER_COMPONENT(Rigidbody);
+// REGISTER_COMPONENT(Rigidbody);
 
 Rigidbody::Rigidbody() : Super(ComponentType::Rigidbody)
 {
@@ -136,9 +136,9 @@ void Rigidbody::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "Rigidbody");
 
 	compElem->SetAttribute("Static", _isStatic);
-	compElem->SetAttribute("Gravity", _isStatic);
-	compElem->SetAttribute("Trigger", _isStatic);
-	compElem->SetAttribute("PhysicsActive", _isStatic);
+	compElem->SetAttribute("Gravity", _isGravity);
+	compElem->SetAttribute("Trigger", _isTrigger);
+	compElem->SetAttribute("PhysicsActive", _isPhysicsActive);
 
 	XMLElement* colliderElem = compElem->InsertNewChildElement("Collider");
 	colliderElem->SetAttribute("Shape", magic_enum::enum_name(_colliderShape).data());

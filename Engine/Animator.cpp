@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Animator.h"
 
-REGISTER_COMPONENT(Animator);
+// REGISTER_COMPONENT(Animator);
 
 Animator::Animator() : Component(ComponentType::Animator)
 {
@@ -26,6 +26,9 @@ Animator::~Animator()
 void Animator::Init()
 {
 	_isPlaying = _isPlayOnInit;
+	if (!_boneFileName.empty()) {
+		SetBone(_boneFileName);
+	}
 
 	ANIMATION->AddAnimator(static_pointer_cast<Animator>(shared_from_this()));
 }
@@ -122,12 +125,30 @@ void Animator::OnDestroy()
 
 void Animator::LoadXML(XMLElement* compElem)
 {
+	const char* boneFile = compElem->Attribute("Bone");
+	if (boneFile != 0) _boneFileName = boneFile;
 
+	XMLElement* animsElem = compElem->FirstChildElement("Animations");
+
+	XMLElement* animElem = animsElem->FirstChildElement("Animation");
+	while (animElem != nullptr) {
+		const char* path = animElem->Attribute("Path");
+		if (path != 0) AddAnimation(RESOURCE->LoadAnimation(path));
+		animElem = animElem->NextSiblingElement();
+	}
 }
 
 void Animator::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "Animator");
+
+	compElem->SetAttribute("Bone", _boneFileName.c_str());
+
+	XMLElement* animsElem = compElem->InsertNewChildElement("Animations");
+	for (auto& anim : _animations) {
+		XMLElement* animElem = animsElem->InsertNewChildElement("Animation");
+		animElem->SetAttribute("Path", anim.second->GetPath().c_str());
+	}
 }
 
 ComponentSnapshot Animator::CaptureSnapshot()

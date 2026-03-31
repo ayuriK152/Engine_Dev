@@ -102,6 +102,7 @@ private:
 	void ShowAnimator(shared_ptr<Animator> animator);
 	void ShowScript(shared_ptr<Script> script);
 	void ShowRigidbody(shared_ptr<Rigidbody> rigidbody);
+	void ShowCharacterController(shared_ptr<CharacterController> controller);
 #pragma endregion
 
 	void DrawGizmo();

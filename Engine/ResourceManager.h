@@ -13,6 +13,8 @@ class ResourceManager
 public:
 	~ResourceManager();
 
+	void Init();
+
 public:
 	template<typename T>
 	bool Add(const wstring& key, shared_ptr<T> resource);
@@ -28,20 +30,22 @@ public:
 
 	bool CheckResourceExists(const string& filePath);
 
-	void CreateDefaultResources();
-
 	void SaveMesh(shared_ptr<Mesh> mesh, const string& filePath = "");
 	void SaveAnimation(shared_ptr<Animation> animation, const string& filePath = "");
 	void SaveBone(map<string, BoneData> bones, const string& boneName, const string& filePath = "");
 	void SavePrefab(shared_ptr<GameObject> prefabObject, const string& filePath = "");
-	void SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> object, int parentIdx, const string& prefabName);
+
+	// Use On Devlope Process
+	void SavePrefabXML(shared_ptr<GameObject> prefabObject, const string& filePath = RESOURCE_PATH_PREFAB);
 
 	shared_ptr<Mesh> LoadMesh(const string& filePath);
 	shared_ptr<Animation> LoadAnimation(const string& filePath);
 	map<string, BoneData> LoadBone(const string& filePath);
 
 	// Use isLegacyComponent parameter when only ComponentType enum data changed!!
-	vector<shared_ptr<GameObject>> LoadPrefabObject(const string& filePath, bool isLegacyComponent = false);
+	vector<shared_ptr<GameObject>> LoadPrefab(const string& filePath, bool isLegacyComponent = false);
+
+	shared_ptr<GameObject> LoadPrefabXML(const string& filePath);
 
 	ComponentType MapLegacyComponentType(UINT32 legacyType);
 
@@ -53,6 +57,11 @@ private:
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;
 	set<string> _resourcePaths;
+
+	void SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObject> object, int parentIdx, const string& prefabName);
+
+	void SavePrefabXMLRecursive(XMLElement* objsElem, shared_ptr<GameObject> object);
+	void LoadPrefabXMLRecursive(XMLElement* objsElem, shared_ptr<GameObject> parent);
 };
 
 template<typename T>

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ParticleEmitter.h"
 
-REGISTER_COMPONENT(ParticleEmitter);
+// REGISTER_COMPONENT(ParticleEmitter);
 
 ParticleEmitter::ParticleEmitter() : Component(ComponentType::ParticleEmitter)
 {

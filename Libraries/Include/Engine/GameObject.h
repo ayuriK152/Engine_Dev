@@ -12,6 +12,7 @@ class Rigidbody;
 class Animator;
 class ParticleEmitter;
 class CharacterController;
+class DirectionalLight;
 #pragma endregion
 
 

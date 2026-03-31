@@ -157,7 +157,8 @@ shared_ptr<GameObject> GameObject::Instantiate()
 
 shared_ptr<GameObject> GameObject::LoadPrefab(string filePath)
 {
-	shared_ptr<GameObject> go = RESOURCE->LoadPrefabObject(filePath)[0];
+	// shared_ptr<GameObject> go = RESOURCE->LoadPrefab(filePath)[0];
+	shared_ptr<GameObject> go = RESOURCE->LoadPrefabXML(filePath);
 
 	if (go != nullptr) {
 		go->_isPrefab = true;

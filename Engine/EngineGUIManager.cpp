@@ -292,6 +292,9 @@ void EngineGUIManager::ShowInspectorView()
 					case ComponentType::Rigidbody:
 						ShowRigidbody(static_pointer_cast<Rigidbody>(c));
 						break;
+					case ComponentType::CharacterController:
+						ShowCharacterController(static_pointer_cast<CharacterController>(c));
+						break;
 					}
 				}
 			}
@@ -384,7 +387,8 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
 	}
 	if (isNodeOpen)
 	{
-		for (shared_ptr<Transform> child : parent->GetChilds())
+		auto& childs = parent->GetChilds();
+		for (shared_ptr<Transform> child : childs)
 		{
 			HierarchyObjectRecursion(child);
 		}
@@ -660,7 +664,8 @@ void EngineGUIManager::ShowAnimator(shared_ptr<Animator> animator)
 			}
 
 			vector<string> removeQueue;
-			for (auto& a : animator->GetAnimations()) {
+			auto& animations = animator->GetAnimations();
+			for (auto& a : animations) {
 				ImGui::Text(a.first.c_str());
 				ImGui::SameLine();
 				string buttonLabel = "-##" + a.second->GetPath();
@@ -686,8 +691,31 @@ void EngineGUIManager::ShowScript(shared_ptr<Script> script)
 
 void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 {
+	bool isStatic = rigidbody->_isStatic;
+	bool isGravity = rigidbody->_isGravity;
+	bool isTrigger = rigidbody->_isTrigger;
+
 	if (ImGui::CollapsingHeader("Rigidbody", ImGuiTreeNodeFlags_DefaultOpen)) {
-		ImGui::Checkbox("Gravity", &rigidbody->_isGravity);
+		if (rigidbody->_isPhysicsActive)
+			ImGui::TextColored({ 0, 1, 0, 1 }, "Physics Active");
+		else
+			ImGui::TextColored({ 1, 0, 0, 1 }, "Physics Inactive");
+		if (ImGui::Checkbox("Static", &isStatic)) {
+			rigidbody->SetStatic(isStatic);
+		}
+		if (ImGui::Checkbox("Gravity", &isGravity)) {
+			rigidbody->SetGravity(isGravity);
+		}
+		if (ImGui::Checkbox("Trigger", &isTrigger)) {
+			rigidbody->SetColliderTrigger(isTrigger);
+		}
+	}
+}
+
+void EngineGUIManager::ShowCharacterController(shared_ptr<CharacterController> controller)
+{
+	if (ImGui::CollapsingHeader("CharacterController", ImGuiTreeNodeFlags_DefaultOpen)) {
+
 	}
 }
 

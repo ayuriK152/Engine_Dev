@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CharacterController.h"
 
-REGISTER_COMPONENT(CharacterController);
+// REGISTER_COMPONENT(CharacterController);
 
 CharacterController::CharacterController() : Component(ComponentType::CharacterController)
 {

@@ -37,9 +37,7 @@ public:
 
 		return MathHelper::RadianToDegree(_localRotation);
 	}
-	void SetLocalRotation(const Vector3& rotation) {
-		SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation));
-	}
+	void SetLocalRotation(const Vector3& rotation) { SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation)); }
 	// Get/Set Local Rotation With Radian
 	Vector3 GetLocalRotationRadian() {
 		if (_isDirty)
@@ -139,6 +137,9 @@ public:
 
 	shared_ptr<Transform> GetParent() { return _parent; }
 	void SetParent(shared_ptr<Transform> parent);
+
+	// Set parent with out calculate local matrix
+	void SetParentOnly(shared_ptr<Transform> parent);
 
 	const vector<shared_ptr<Transform>>& GetChilds() { return _childs; }
 	shared_ptr<Transform> GetChild(const string& name);

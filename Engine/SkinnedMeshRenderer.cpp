@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SkinnedMeshRenderer.h"
 
-REGISTER_COMPONENT(SkinnedMeshRenderer);
+// REGISTER_COMPONENT(SkinnedMeshRenderer);
 
 SkinnedMeshRenderer::SkinnedMeshRenderer() : Super(ComponentType::SkinnedMeshRenderer)
 {
@@ -18,12 +18,13 @@ SkinnedMeshRenderer::~SkinnedMeshRenderer()
 void SkinnedMeshRenderer::Init()
 {
 	// 본 데이터가 있는 경우 셰이더 코드의 Structured Buffer
-	if (_rootBone != nullptr)
-	{
-		_skeleton = SKELETON->GetSkeleton(_rootBone);
-		if (_skeleton == nullptr)
-			_skeleton = SKELETON->LoadSkeleton(_boneFileName, _rootBone);
+	if (_rootBone == nullptr) {
+		SetRootBone(GetTransform()->GetParent()->GetChild(_rootBoneName));
 	}
+
+	_skeleton = SKELETON->GetSkeleton(_rootBone);
+	if (_skeleton == nullptr)
+		DEBUG->ErrorLog("No Skeleton Exists!");
 
 	GetGameObject()->SetPSOName(PSO_OPAQUE_SKINNED);
 }
@@ -31,13 +32,12 @@ void SkinnedMeshRenderer::Init()
 // 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.
 void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
-	if (_rootBone != nullptr)
-	{
-		CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-		bone.Offset(_skeleton->GetBoneTransformSRVIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-		
-		cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_BONE_SB, bone);
-	}
+	if (_rootBone == nullptr) return;
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE bone(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+	bone.Offset(_skeleton->GetBoneTransformSRVIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
+
+	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_BONE_SB, bone);
 
 	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
 	cmdList->IASetVertexBuffers(0, 1, &_mesh->vertexBufferView);
@@ -68,12 +68,23 @@ void SkinnedMeshRenderer::OnDestroy()
 
 void SkinnedMeshRenderer::LoadXML(XMLElement* compElem)
 {
+	const char* meshPath = compElem->Attribute("Mesh");
+	if (meshPath != 0) SetMesh(RESOURCE->LoadMesh(meshPath));
 
+	const char* materialName = compElem->Attribute("Material");
+	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
+
+	const char* rootBoneName = compElem->Attribute("RootBoneName");
+	if (rootBoneName != 0) _rootBoneName = rootBoneName;
 }
 
 void SkinnedMeshRenderer::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "SkinnedMeshRenderer");
+
+	if (_mesh != nullptr) compElem->SetAttribute("Mesh", _mesh->GetPath().c_str());
+	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
+	compElem->SetAttribute("RootBoneName", _rootBoneName.c_str());
 }
 
 ComponentSnapshot SkinnedMeshRenderer::CaptureSnapshot()
@@ -94,4 +105,5 @@ void SkinnedMeshRenderer::RestoreSnapshot(ComponentSnapshot snapshot)
 void SkinnedMeshRenderer::SetRootBone(const shared_ptr<Transform> rootBone)
 {
 	_rootBone = rootBone;
+	_rootBoneName = _rootBone->GetGameObject()->GetName();
 }

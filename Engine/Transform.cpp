@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
 
-REGISTER_COMPONENT(Transform);
+// REGISTER_COMPONENT(Transform);
 
 Transform::Transform() : Super(ComponentType::Transform)
 {
@@ -36,9 +36,14 @@ void Transform::OnDestroy()
 
 void Transform::LoadXML(XMLElement* compElem)
 {
+	// if (GetGameObject()->GetName() == "mixamorig:Sword_joint") __debugbreak();
+
 	SetLocalPosition({ compElem->FloatAttribute("PosX"), compElem->FloatAttribute("PosY"), compElem->FloatAttribute("PosZ") });
 	SetLocalScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
-	SetLocalRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
+	//SetLocalRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
+	Vector4 quat(compElem->FloatAttribute("QuatX", 0), compElem->FloatAttribute("QuatY", 0), compElem->FloatAttribute("QuatZ", 0), compElem->FloatAttribute("QuatW", 1));
+
+	SetLocalQuaternion(quat.Normalize());
 
 	// 수동으로 씬 작성하는게 아니면 굳이 필요할까 싶음
 	XMLElement* lookAtElem = compElem->FirstChildElement("LookAt");
@@ -62,10 +67,16 @@ void Transform::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ScaleY", scl.y);
 	compElem->SetAttribute("ScaleZ", scl.z);
 
-	Vector3 rot = GetLocalRotation();
-	compElem->SetAttribute("RotX", rot.x);
-	compElem->SetAttribute("RotY", rot.y);
-	compElem->SetAttribute("RotZ", rot.z);
+	//Vector3 rot = GetLocalRotation();
+	//compElem->SetAttribute("RotX", rot.x);
+	//compElem->SetAttribute("RotY", rot.y);
+	//compElem->SetAttribute("RotZ", rot.z);
+
+	Vector4 quat = GetLocalQuaternion();
+	compElem->SetAttribute("QuatX", quat.x);
+	compElem->SetAttribute("QuatY", quat.y);
+	compElem->SetAttribute("QuatZ", quat.z);
+	compElem->SetAttribute("QuatW", quat.w);
 }
 
 ComponentSnapshot Transform::CaptureSnapshot()
@@ -149,7 +160,6 @@ void Transform::UpdateTransform()
 	// 앞에서 조건 다 걸러내긴 하는데 혹시 몰라서 한번 더 확인
 	if (!_isDirty)
 		return;
-
 
 	XMMATRIX matScale = XMMatrixScaling(_localScale.x, _localScale.y, _localScale.z);
 	XMMATRIX matRotation = XMMatrixRotationQuaternion(XMLoadFloat4(&_localQuaternion));
@@ -526,6 +536,15 @@ void Transform::SetParent(shared_ptr<Transform> parent)
 	_parent->AddChild(static_pointer_cast<Transform>(shared_from_this()));
 
 	SetLocalMatrix(_matLocal);
+}
+
+void Transform::SetParentOnly(shared_ptr<Transform> parent)
+{
+	_parent = parent;
+
+	_parent->AddChild(static_pointer_cast<Transform>(shared_from_this()));
+	
+	SetDirtyFlag();
 }
 
 shared_ptr<Transform> Transform::GetChild(const string& name)

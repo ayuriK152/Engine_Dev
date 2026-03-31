@@ -22,14 +22,12 @@ public:
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 public:
-	void SetBoneData(const string& boneFileName) { _boneFileName = boneFileName; }
 	void SetRootBone(const shared_ptr<Transform> rootBone);
 	shared_ptr<Transform> GetRootBone() const { return _rootBone; }
 
 private:
+	string _rootBoneName;
 	shared_ptr<Transform> _rootBone;
-
 	shared_ptr<Skeleton> _skeleton;
-	string _boneFileName;
 };
 

@@ -110,6 +110,7 @@ void AssetLoader::ImportAssetFile(wstring file)
 		{
 			_loadedObject[0]->SetName(Utils::ToString(_assetNameW));
 			RESOURCE->SavePrefab(_loadedObject[0]);
+			RESOURCE->SavePrefabXML(_loadedObject[0]);
 			cout << "Prefab parsed" << endl << endl;
 		}
 	}
@@ -339,7 +340,6 @@ void AssetLoader::BuildBones()
 	for (auto& meshObj : _meshObjs)
 	{
 		auto renderer = meshObj->GetComponent<SkinnedMeshRenderer>();
-		renderer->SetBoneData(_assetName);
 		renderer->SetRootBone(_boneObjs[0]->GetTransform());
 	}
 

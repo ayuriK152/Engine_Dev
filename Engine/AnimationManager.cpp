@@ -16,6 +16,7 @@ void AnimationManager::Update()
 	_futures.clear();
 
 	for (auto& animator : _animators) {
+		if (!animator->GetGameObject()->IsActive()) continue;
 		_futures.push_back(THREAD->EnqueueJob([animator] { animator->Update(); }));
 	}
 

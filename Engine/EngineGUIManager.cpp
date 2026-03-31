@@ -233,6 +233,11 @@ void EngineGUIManager::ShowInspectorView()
 		}
 		else
 		{
+			bool isActive = _selectedObj->IsActive();
+			if (ImGui::Checkbox("Active", &isActive)) {
+				_selectedObj->SetActive(isActive);
+			}
+
 			string name = _selectedObj->GetName();
 			if (ImGui::InputText("ObjName", &name)) {
 				_selectedObj->SetName(name);

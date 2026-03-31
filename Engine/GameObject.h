@@ -75,6 +75,9 @@ public:
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
+	bool IsActive() { return _isActive && _parentInactiveStack == 0; }
+	void SetActive(bool flag);
+
 	bool IsPrefab() { return _isPrefab; }
 	string GetPrefabPath() { return _prefabPath; }
 	void SetPrefabPath(string path);
@@ -97,6 +100,8 @@ private:
 	string _psoName;
 	string _tag;
 
+	bool _isActive = true;
+	int _parentInactiveStack = 0;
 	bool _isInitialized;
 	int _numFramesDirty;
 

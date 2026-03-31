@@ -40,6 +40,8 @@ void GameObject::Init()
 
 void GameObject::PreUpdate()
 {
+	if (!_isActive || _parentInactiveStack > 0) return;
+
 	if (!_isInitialized) {
 		_isInitialized = true;
 		Init();
@@ -57,6 +59,7 @@ void GameObject::PreUpdate()
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+			if (!c->IsActive()) continue;
 
 			// 런타임 중 추가되는 컴포넌트
 			if (!c->isInitialized) {
@@ -70,10 +73,14 @@ void GameObject::PreUpdate()
 
 void GameObject::Update()
 {
+	if (!_isActive || _parentInactiveStack > 0) return;
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+			if (!c->IsActive()) continue;
+
 			if ((UINT32)c->type & ((UINT32)ComponentType::ParticleEmitter | (UINT32)ComponentType::Animator))
 				continue;
 			c->Update();
@@ -83,10 +90,14 @@ void GameObject::Update()
 
 void GameObject::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
+	if (!_isActive || _parentInactiveStack > 0) return;
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+			if (!c->IsActive()) continue;
+
 			if ((UINT32)c->type & (UINT32)ComponentType::ParticleEmitter)
 				continue;
 			c->Render(cmdList, renderState);
@@ -96,10 +107,14 @@ void GameObject::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 
 void GameObject::OnCollisionEnter(shared_ptr<GameObject> other)
 {
+	if (!_isActive || _parentInactiveStack > 0) return;
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+			if (!c->IsActive()) continue;
+
 			c->OnCollisionEnter(other);
 		}
 	}
@@ -107,10 +122,14 @@ void GameObject::OnCollisionEnter(shared_ptr<GameObject> other)
 
 void GameObject::OnCollision(shared_ptr<GameObject> other)
 {
+	if (!_isActive || _parentInactiveStack > 0) return;
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+			if (!c->IsActive()) continue;
+
 			c->OnCollision(other);
 		}
 	}
@@ -118,10 +137,14 @@ void GameObject::OnCollision(shared_ptr<GameObject> other)
 
 void GameObject::OnCollisionExit(shared_ptr<GameObject> other)
 {
+	if (!_isActive || _parentInactiveStack > 0) return;
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
 		for (auto& c : componentVec) {
+			if (!c->IsActive()) continue;
+
 			c->OnCollisionExit(other);
 		}
 	}
@@ -211,6 +234,24 @@ void GameObject::SetPSOName(const string& name)
 void GameObject::SetFramesDirty()
 {
 	_numFramesDirty = RENDER->GetNumFrameResources();
+}
+
+void GameObject::SetActive(bool flag)
+{
+	if (_isActive == flag) return;
+
+	_isActive = flag;
+	auto& childs = GetTransform()->GetChilds();
+	if (_isActive) {
+		for (auto& t : childs) {
+			--t->GetGameObject()->_parentInactiveStack;
+		}
+	}
+	else {
+		for (auto& t : childs) {
+			++t->GetGameObject()->_parentInactiveStack;
+		}
+	}
 }
 
 void GameObject::SetPrefabPath(string path)

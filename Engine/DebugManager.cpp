@@ -64,7 +64,7 @@ void DebugManager::DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg inColor)
 	_vertices.push_back(VertexPC(inTo.GetX(), inTo.GetY(), inTo.GetZ(), inColor.r, inColor.g, inColor.b, inColor.a));
 }
 
-void DebugManager::DrawLine(Vector3 from, Vector3 to, ColorRGBA color)
+void DebugManager::DrawLine(Bulb::Vector3 from, Bulb::Vector3 to, Bulb::Color color)
 {
 	_indices.push_back(_vertices.size());
 	_indices.push_back(_vertices.size() + 1);
@@ -98,22 +98,22 @@ void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpa
 	XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&inModelMatrix);
 
 	AABox localBox = inGeometry->mBounds;
-	Vector3 minP = Vector3(localBox.mMin.GetX(), localBox.mMin.GetY(), localBox.mMin.GetZ());
-	Vector3 maxP = Vector3(localBox.mMax.GetX(), localBox.mMax.GetY(), localBox.mMax.GetZ());
+	Bulb::Vector3 minP = Bulb::Vector3(localBox.mMin.GetX(), localBox.mMin.GetY(), localBox.mMin.GetZ());
+	Bulb::Vector3 maxP = Bulb::Vector3(localBox.mMax.GetX(), localBox.mMax.GetY(), localBox.mMax.GetZ());
 
 	// 로컬 박스의 8개 점 계산
-	Vector3 corners[8] = {
-		Vector3(minP.x, minP.y, minP.z), Vector3(maxP.x, minP.y, minP.z),
-		Vector3(maxP.x, maxP.y, minP.z), Vector3(minP.x, maxP.y, minP.z),
-		Vector3(minP.x, minP.y, maxP.z), Vector3(maxP.x, minP.y, maxP.z),
-		Vector3(maxP.x, maxP.y, maxP.z), Vector3(minP.x, maxP.y, maxP.z)
+	Bulb::Vector3 corners[8] = {
+		Bulb::Vector3(minP.x, minP.y, minP.z), Bulb::Vector3(maxP.x, minP.y, minP.z),
+		Bulb::Vector3(maxP.x, maxP.y, minP.z), Bulb::Vector3(minP.x, maxP.y, minP.z),
+		Bulb::Vector3(minP.x, minP.y, maxP.z), Bulb::Vector3(maxP.x, minP.y, maxP.z),
+		Bulb::Vector3(maxP.x, maxP.y, maxP.z), Bulb::Vector3(minP.x, maxP.y, maxP.z)
 	};
 
 	// 8개 점을 world 행렬로 변환하여 선 12개 긋기
 	for (int i = 0; i < 24; i++)
 		_indices.push_back(_boxColliderIndices[i] + _vertices.size());
 	for (int i = 0; i < 8; i++)
-		_vertices.push_back(VertexPC(XMVector3TransformCoord(XMLoadFloat3(&corners[i]), world), ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f)));
+		_vertices.push_back(VertexPC(XMVector3TransformCoord(XMLoadFloat3(&corners[i]), world), Bulb::Color(0.0f, 1.0f, 0.0f, 1.0f)));
 }
 
 void DebugManager::DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor /*= Color::sWhite*/, float inHeight /*= 0.5f*/)

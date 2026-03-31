@@ -55,7 +55,7 @@ void UIText::SetFontSize(float fontSize)
 	UpdateTextFormat();
 }
 
-void UIText::SetTextColor(const ColorRGBA& color)
+void UIText::SetTextColor(const Bulb::Color& color)
 {
 	_textColor = color;
 
@@ -166,5 +166,5 @@ void UIText::UpdateTextLayout()
 void UIText::UpdateBrush()
 {
 	ThrowIfFailed(GRAPHIC->GetDeviceContextD2D()->CreateSolidColorBrush(
-		D2D1::ColorF(_textColor.x, _textColor.y, _textColor.z, _textColor.w), &_brush));
+		D2D1::ColorF(_textColor.r, _textColor.g, _textColor.b, _textColor.a), &_brush));
 }

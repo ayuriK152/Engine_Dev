@@ -89,8 +89,8 @@ public:
 	bool IsMouseCenterFixed() { return _isMouseCenterFixed; }
 	void SetMouseCenterFixMode(bool value) { _isMouseCenterFixed = value; }
 
-	Vector2 GetMousePosition() { return _mousePosition; }
-	Vector2 GetMouseDelta() { return _mouseDelta; }
+	Bulb::Vector2 GetMousePosition() { return _mousePosition; }
+	Bulb::Vector2 GetMouseDelta() { return _mouseDelta; }
 
 	bool IsMouseLeftButtonDown() { return _mouseStates.LeftButton == KeyState::Down; }
 	bool IsMouseLeftButtonPress() { return _mouseStates.LeftButton == KeyState::Press; }
@@ -108,8 +108,8 @@ private:
 	bool _isMouseMoving = false;
 	bool _isMouseCenterFixed = false;
 	MouseStates _mouseStates;
-	Vector2 _mousePosition;
-	Vector2 _mouseDelta;
+	Bulb::Vector2 _mousePosition;
+	Bulb::Vector2 _mouseDelta;
 	unordered_map<KeyValue, KeyState> _keyStates;
 };
 

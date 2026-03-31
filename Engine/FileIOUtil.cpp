@@ -25,31 +25,31 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 	node->InsertEndChild(element);
 
 	element = doc.NewElement("Ambient");
-	element->SetAttribute("r", material->ambient.x);
-	element->SetAttribute("g", material->ambient.y);
-	element->SetAttribute("b", material->ambient.z);
-	element->SetAttribute("a", material->ambient.w);
+	element->SetAttribute("r", material->ambient.r);
+	element->SetAttribute("g", material->ambient.g);
+	element->SetAttribute("b", material->ambient.b);
+	element->SetAttribute("a", material->ambient.a);
 	node->InsertEndChild(element);
 
 	element = doc.NewElement("Diffuse");
-	element->SetAttribute("r", material->diffuse.x);
-	element->SetAttribute("g", material->diffuse.y);
-	element->SetAttribute("b", material->diffuse.z);
-	element->SetAttribute("a", material->diffuse.w);
+	element->SetAttribute("r", material->diffuse.r);
+	element->SetAttribute("g", material->diffuse.g);
+	element->SetAttribute("b", material->diffuse.b);
+	element->SetAttribute("a", material->diffuse.a);
 	node->InsertEndChild(element);
 
 	element = doc.NewElement("Specular");
-	element->SetAttribute("r", material->specular.x);
-	element->SetAttribute("g", material->specular.y);
-	element->SetAttribute("b", material->specular.z);
-	element->SetAttribute("a", material->specular.w);
+	element->SetAttribute("r", material->specular.r);
+	element->SetAttribute("g", material->specular.g);
+	element->SetAttribute("b", material->specular.b);
+	element->SetAttribute("a", material->specular.a);
 	node->InsertEndChild(element);
 
 	element = doc.NewElement("Emissive");
-	element->SetAttribute("r", material->emissive.x);
-	element->SetAttribute("g", material->emissive.y);
-	element->SetAttribute("b", material->emissive.z);
-	element->SetAttribute("a", material->emissive.w);
+	element->SetAttribute("r", material->emissive.r);
+	element->SetAttribute("g", material->emissive.g);
+	element->SetAttribute("b", material->emissive.b);
+	element->SetAttribute("a", material->emissive.a);
 	node->InsertEndChild(element);
 
 	element = doc.NewElement("Metallic");
@@ -122,44 +122,44 @@ void FileIOUtil::LoadMaterials()
 
 		element = node->FirstChildElement("Ambient");
 		if (element) {
-			ColorRGBA ambient;
-			ambient.x = element->FloatAttribute("r");
-			ambient.y = element->FloatAttribute("g");
-			ambient.z = element->FloatAttribute("b");
-			ambient.w = element->FloatAttribute("a");
+			Bulb::Color ambient;
+			ambient.r = element->FloatAttribute("r");
+			ambient.g = element->FloatAttribute("g");
+			ambient.b = element->FloatAttribute("b");
+			ambient.a = element->FloatAttribute("a");
 
 			mat->ambient = ambient;
 		}
 
 		element = node->FirstChildElement("Diffuse");
 		if (element) {
-			ColorRGBA diffuse;
-			diffuse.x = element->FloatAttribute("r");
-			diffuse.y = element->FloatAttribute("g");
-			diffuse.z = element->FloatAttribute("b");
-			diffuse.w = element->FloatAttribute("a");
+			Bulb::Color diffuse;
+			diffuse.r = element->FloatAttribute("r");
+			diffuse.g = element->FloatAttribute("g");
+			diffuse.b = element->FloatAttribute("b");
+			diffuse.a = element->FloatAttribute("a");
 
 			mat->diffuse = diffuse;
 		}
 
 		element = node->FirstChildElement("Specular");
 		if (element) {
-			ColorRGBA specular;
-			specular.x = element->FloatAttribute("r");
-			specular.y = element->FloatAttribute("g");
-			specular.z = element->FloatAttribute("b");
-			specular.w = element->FloatAttribute("a");
+			Bulb::Color specular;
+			specular.r = element->FloatAttribute("r");
+			specular.g = element->FloatAttribute("g");
+			specular.b = element->FloatAttribute("b");
+			specular.a = element->FloatAttribute("a");
 
 			mat->specular = specular;
 		}
 
 		element = node->FirstChildElement("Emissive");
 		if (element) {
-			ColorRGBA emissive;
-			emissive.x = element->FloatAttribute("r");
-			emissive.y = element->FloatAttribute("g");
-			emissive.z = element->FloatAttribute("b");
-			emissive.w = element->FloatAttribute("a");
+			Bulb::Color emissive;
+			emissive.r = element->FloatAttribute("r");
+			emissive.g = element->FloatAttribute("g");
+			emissive.b = element->FloatAttribute("b");
+			emissive.a = element->FloatAttribute("a");
 
 			mat->emissive = emissive;
 		}

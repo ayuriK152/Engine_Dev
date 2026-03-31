@@ -19,113 +19,113 @@ public:
 public:
 	void ForceUpdateTransform();
 
-	Vector3 GetLocalPosition() { 
+	Bulb::Vector3 GetLocalPosition() { 
 		if (_isDirty)
 			UpdateTransform();
 
 		return _localPosition; 
 	}
-	void SetLocalPosition(const Vector3& position) { 
+	void SetLocalPosition(const Bulb::Vector3& position) { 
 		_localPosition = position; 
 		SetDirtyFlag();
 	}
 	
 	// Get/Set Local Rotation With Degree
-	Vector3 GetLocalRotation() {
+	Bulb::Vector3 GetLocalRotation() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return MathHelper::RadianToDegree(_localRotation);
 	}
-	void SetLocalRotation(const Vector3& rotation) { SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation)); }
+	void SetLocalRotation(const Bulb::Vector3& rotation) { SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation)); }
 	// Get/Set Local Rotation With Radian
-	Vector3 GetLocalRotationRadian() {
+	Bulb::Vector3 GetLocalRotationRadian() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return _localRotation;
 	}
-	void SetLocalRotationRadian(const Vector3& rotation);
+	void SetLocalRotationRadian(const Bulb::Vector3& rotation);
 
-	Vector4 GetQuaternion() {
+	Bulb::Vector4 GetQuaternion() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return _quaternion;
 	}
-	void SetQuaternion(const Vector4& quaternion);
+	void SetQuaternion(const Bulb::Vector4& quaternion);
 	void SetQuaternion(const XMVECTOR& quaternion);
 
-	Vector4 GetLocalQuaternion() {
+	Bulb::Vector4 GetLocalQuaternion() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return _localQuaternion;
 	}
-	void SetLocalQuaternion(const Vector4& quaternion);
+	void SetLocalQuaternion(const Bulb::Vector4& quaternion);
 	void SetLocalQuaternion(const XMVECTOR& quaternion);
 
-	Vector3 GetLocalScale() {
+	Bulb::Vector3 GetLocalScale() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return _localScale;
 	}
-	void SetLocalScale(const Vector3& scale) { 
+	void SetLocalScale(const Bulb::Vector3& scale) { 
 		_localScale = scale; 
 		SetDirtyFlag();
 	}
 
-	Vector3 GetPosition() { 
+	Bulb::Vector3 GetPosition() { 
 		if (_isDirty)
 			UpdateTransform();
 
 		return _position; 
 	}
-	void SetPosition(const Vector3& worldPosition);
+	void SetPosition(const Bulb::Vector3& worldPosition);
 
 	// Get/Set Rotation With Degree
-	Vector3 GetRotation() {
+	Bulb::Vector3 GetRotation() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return MathHelper::RadianToDegree(_rotation); 
 	}
-	void SetRotation(const Vector3& worldRotation) { SetRotationRadian(MathHelper::DegreeToRadian(worldRotation)); }
+	void SetRotation(const Bulb::Vector3& worldRotation) { SetRotationRadian(MathHelper::DegreeToRadian(worldRotation)); }
 
 	// Get/Set Rotation With Radian
-	Vector3 GetRotationRadian() {
+	Bulb::Vector3 GetRotationRadian() {
 		if (_isDirty)
 			UpdateTransform(); 
 
 		return _rotation;
 	}
-	void SetRotationRadian(const Vector3& worldRotation);
-	Vector3 GetScale() {
+	void SetRotationRadian(const Bulb::Vector3& worldRotation);
+	Bulb::Vector3 GetScale() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return _scale;
 	}
-	void SetScale(const Vector3& worldScale);
+	void SetScale(const Bulb::Vector3& worldScale);
 	XMMATRIX GetRotationMatrix();
 
-	Vector3 GetRight();
-	Vector3 GetLeft();
-	Vector3 GetUp();
-	Vector3 GetDown();
-	Vector3 GetLook();
-	Vector3 GetBack();
+	Bulb::Vector3 GetRight();
+	Bulb::Vector3 GetLeft();
+	Bulb::Vector3 GetUp();
+	Bulb::Vector3 GetDown();
+	Bulb::Vector3 GetLook();
+	Bulb::Vector3 GetBack();
 
-	void Translate(const Vector3& moveVec);
+	void Translate(const Bulb::Vector3& moveVec);
 
-	void Rotate(const Vector3& angle);
-	void Rotate(const Vector4& quat);
+	void Rotate(const Bulb::Vector3& angle);
+	void Rotate(const Bulb::Vector4& quat);
 	void Rotate(const XMVECTOR& angle);
 
-	void LookAt(const Vector3& targetPos);
-	void LookAtWithNoRoll(const Vector3& targetPos, float blendAlpha = 1.0f);
-	void LookAtOnlyYaw(const Vector3& targetPos, float blendAlpha = 1.0f);
+	void LookAt(const Bulb::Vector3& targetPos);
+	void LookAtWithNoRoll(const Bulb::Vector3& targetPos, float blendAlpha = 1.0f);
+	void LookAtOnlyYaw(const Bulb::Vector3& targetPos, float blendAlpha = 1.0f);
 
 	void SetLocalMatrix(XMMATRIX mat);
 
@@ -160,16 +160,16 @@ private:
 private:
 	bool _isDirty = false;
 
-	Vector3 _localPosition;
-	Vector3 _localRotation;
-	Vector3 _localScale;
+	Bulb::Vector3 _localPosition;
+	Bulb::Vector3 _localRotation;
+	Bulb::Vector3 _localScale;
 
-	Vector3 _position;
-	Vector3 _rotation;
-	Vector3 _scale;
+	Bulb::Vector3 _position;
+	Bulb::Vector3 _rotation;
+	Bulb::Vector3 _scale;
 
-	Vector4 _localQuaternion;
-	Vector4 _quaternion;
+	Bulb::Vector4 _localQuaternion;
+	Bulb::Vector4 _quaternion;
 
 	XMFLOAT4X4 _matLocal;
 	XMFLOAT4X4 _matWorld;

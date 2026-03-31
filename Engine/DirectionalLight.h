@@ -27,7 +27,7 @@ public:
 	LightConstants GetLightConstants() override;
 
 public:
-	Vector3 direction = { 0.0f, 1.0f, 0.0f };
+	Bulb::Vector3 direction = { 0.0f, 1.0f, 0.0f };
 
 private:
 	shared_ptr<Transform> _transform;

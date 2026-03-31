@@ -31,9 +31,9 @@ public:
 	virtual LightConstants GetLightConstants() = 0;
 
 public:
-	XMFLOAT4 ambient;
-	XMFLOAT4 diffuse;
-	XMFLOAT4 specular;
+	Bulb::Color ambient;
+	Bulb::Color diffuse;
+	Bulb::Color specular;
 
 protected:
 	XMFLOAT4X4 _matView;

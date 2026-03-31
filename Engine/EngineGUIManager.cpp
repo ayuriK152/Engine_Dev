@@ -445,9 +445,9 @@ void EngineGUIManager::ShowTransform()
 	{
 		bool isChanged = false;
 		auto transform = _selectedObj->GetTransform();
-		Vector3 pos = transform->GetLocalPosition();
-		Vector3 rot = transform->GetLocalRotation();
-		Vector3 scale = transform->GetLocalScale();
+		Bulb::Vector3 pos = transform->GetLocalPosition();
+		Bulb::Vector3 rot = transform->GetLocalRotation();
+		Bulb::Vector3 scale = transform->GetLocalScale();
 
 		ImGui::Text("Depth Level: %d", transform->GetDepthLevel());
 
@@ -723,7 +723,7 @@ void EngineGUIManager::DrawGizmo()
 {
 	if (_selectedObj != nullptr) {
 		shared_ptr<Transform> transform = _selectedObj->GetTransform();
-		Vector3 pos = transform->GetPosition();
+		Bulb::Vector3 pos = transform->GetPosition();
 		DEBUG->DrawLine(pos, pos + transform->GetRight().Normalize(), { 1.0f, 0.0f, 0.0f, 1.0f });
 		DEBUG->DrawLine(pos, pos + transform->GetUp().Normalize(), { 0.0f, 1.0f, 0.0f, 1.0f });
 		DEBUG->DrawLine(pos, pos + transform->GetLook().Normalize(), { 0.0f, 0.0f, 1.0f, 1.0f });

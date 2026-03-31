@@ -32,7 +32,7 @@ public:
 
 public:
 	// Box Only
-	void SetColliderExtents(const Vector3& size);
+	void SetColliderExtents(const Bulb::Vector3& size);
 
 	void SetColliderTrigger(bool value);
 
@@ -42,11 +42,11 @@ public:
 	// Sphere, Capsule Only
 	void SetColliderRadius(float radius);
 
-	void SetColliderOffset(const Vector3& offset);
+	void SetColliderOffset(const Bulb::Vector3& offset);
 
-	void SetColliderRotationOffset(const Vector3& angle);
+	void SetColliderRotationOffset(const Bulb::Vector3& angle);
 
-	Vector3 GetColliderOffset() { return _colliderOffset; }
+	Bulb::Vector3 GetColliderOffset() { return _colliderOffset; }
 
 	void SetColliderShape(ColliderShape colliderShape);
 
@@ -56,8 +56,8 @@ public:
 	bool IsStatic() { return _isStatic; }
 	void SetStatic(bool value);
 
-	Vector3 GetVelocity();
-	void SetVelocity(Vector3& velocity);
+	Bulb::Vector3 GetVelocity();
+	void SetVelocity(Bulb::Vector3& velocity);
 
 	bool IsPhysicsActive() { return _isPhysicsActive; }
 	void SetPhysicsActive(bool value);
@@ -80,11 +80,11 @@ private:
 
 	// Collider
 	ColliderShape _colliderShape = ColliderShape::Box;
-	Vector3 _extents = { 0.5f, 0.5f, 0.5f };
+	Bulb::Vector3 _extents = { 0.5f, 0.5f, 0.5f };
 	float _height = 0.5f;
 	float _radius = 0.5f;
-	Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };
-	Vector3 _colliderRotationOffset = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector3 _colliderOffset = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector3 _colliderRotationOffset = { 0.0f, 0.0f, 0.0f };
 	XMFLOAT4 _rotationOffsetQuaternion;
 
 	bool _shapeDataDirtyFlag = false;

@@ -12,10 +12,10 @@ public:
 public:
 	void UpdateTransform();
 
-	void SetPivot(const Vector2& pivot);
-	void SetPosition(const Vector3& position);
-	void SetLocalPosition(const Vector3& position);
-	void SetSize(const Vector2& size) {
+	void SetPivot(const Bulb::Vector2& pivot);
+	void SetPosition(const Bulb::Vector3& position);
+	void SetLocalPosition(const Bulb::Vector3& position);
+	void SetSize(const Bulb::Vector2& size) {
 		SetDirtyFlag();
 		_size = size;
 	}
@@ -30,13 +30,13 @@ public:
 	void SetDepth(float depth) { _depth = depth; }
 	void SetDynamicPosition(bool value) { _isDynamicPosition = value; }
 
-	Vector2 GetPivot() { return _pivot; }
-	Vector3 GetPosition();
-	Vector3 GetLocalPosition() {
+	Bulb::Vector2 GetPivot() { return _pivot; }
+	Bulb::Vector3 GetPosition();
+	Bulb::Vector3 GetLocalPosition() {
 		if (_isDirty) UpdateTransform();
 		return _localPosition; 
 	}
-	Vector2 GetSize() { return _size; }
+	Bulb::Vector2 GetSize() { return _size; }
 	float GetWidth() { return _size.x; }
 	float GetHeight() { return _size.y; }
 	float GetDepth() { 
@@ -59,12 +59,12 @@ private:
 private:
 	bool _isDirty = true;
 
-	Vector2 _pivot = { 0.5f, 0.5f };
+	Bulb::Vector2 _pivot = { 0.5f, 0.5f };
 
 	bool _isDynamicPosition = false;
-	Vector3 _position = { 0.0f, 0.0f, 0.0f };
-	Vector3 _localPosition = { 0.0f, 0.0f, 0.0f };
-	Vector2 _size = { 100.0f, 100.0f };
+	Bulb::Vector3 _position = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector3 _localPosition = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector2 _size = { 100.0f, 100.0f };
 	float _depth = 1.0f;
 
 	shared_ptr<UITransform> _parent = nullptr;

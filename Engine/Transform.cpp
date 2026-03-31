@@ -41,7 +41,7 @@ void Transform::LoadXML(XMLElement* compElem)
 	SetLocalPosition({ compElem->FloatAttribute("PosX"), compElem->FloatAttribute("PosY"), compElem->FloatAttribute("PosZ") });
 	SetLocalScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
 	//SetLocalRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
-	Vector4 quat(compElem->FloatAttribute("QuatX", 0), compElem->FloatAttribute("QuatY", 0), compElem->FloatAttribute("QuatZ", 0), compElem->FloatAttribute("QuatW", 1));
+	Bulb::Vector4 quat(compElem->FloatAttribute("QuatX", 0), compElem->FloatAttribute("QuatY", 0), compElem->FloatAttribute("QuatZ", 0), compElem->FloatAttribute("QuatW", 1));
 
 	SetLocalQuaternion(quat.Normalize());
 
@@ -57,12 +57,12 @@ void Transform::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "Transform");
 
 	// ForcedUpdateTransform() 쓰고 직접 접근하는건 문제가 없는지 검증 후 적용
-	Vector3 pos = GetLocalPosition();
+	Bulb::Vector3 pos = GetLocalPosition();
 	compElem->SetAttribute("PosX", pos.x);
 	compElem->SetAttribute("PosY", pos.y);
 	compElem->SetAttribute("PosZ", pos.z);
 
-	Vector3 scl = GetLocalScale();
+	Bulb::Vector3 scl = GetLocalScale();
 	compElem->SetAttribute("ScaleX", scl.x);
 	compElem->SetAttribute("ScaleY", scl.y);
 	compElem->SetAttribute("ScaleZ", scl.z);
@@ -72,7 +72,7 @@ void Transform::SaveXML(XMLElement* compElem)
 	//compElem->SetAttribute("RotY", rot.y);
 	//compElem->SetAttribute("RotZ", rot.z);
 
-	Vector4 quat = GetLocalQuaternion();
+	Bulb::Vector4 quat = GetLocalQuaternion();
 	compElem->SetAttribute("QuatX", quat.x);
 	compElem->SetAttribute("QuatY", quat.y);
 	compElem->SetAttribute("QuatZ", quat.z);
@@ -87,17 +87,17 @@ ComponentSnapshot Transform::CaptureSnapshot()
 	snapshot.componentType = "Transform";
 
 	ForceUpdateTransform();
-	Vector3 pos = GetLocalPosition();
+	Bulb::Vector3 pos = GetLocalPosition();
 	snapshot.datas.push_back(pos.x);
 	snapshot.datas.push_back(pos.y);
 	snapshot.datas.push_back(pos.z);
 
-	Vector3 scl = GetLocalScale();
+	Bulb::Vector3 scl = GetLocalScale();
 	snapshot.datas.push_back(scl.x);
 	snapshot.datas.push_back(scl.y);
 	snapshot.datas.push_back(scl.z);
 
-	Vector4 quat = GetLocalQuaternion();
+	Bulb::Vector4 quat = GetLocalQuaternion();
 	snapshot.datas.push_back(quat.x);
 	snapshot.datas.push_back(quat.y);
 	snapshot.datas.push_back(quat.z);
@@ -110,7 +110,7 @@ void Transform::RestoreSnapshot(ComponentSnapshot snapshot)
 {
 	SetLocalPosition({ snapshot.datas[0], snapshot.datas[1], snapshot.datas[2] });
 	SetLocalScale({ snapshot.datas[3], snapshot.datas[4], snapshot.datas[5] });
-	SetLocalQuaternion(Vector4(snapshot.datas[6], snapshot.datas[7], snapshot.datas[8], snapshot.datas[9]));
+	SetLocalQuaternion(Bulb::Vector4(snapshot.datas[6], snapshot.datas[7], snapshot.datas[8], snapshot.datas[9]));
 }
 
 void Transform::ForceUpdateTransform()
@@ -208,7 +208,7 @@ void Transform::UpdateDepthLevel()
 		child->UpdateDepthLevel();
 }
 
-void Transform::SetLocalRotationRadian(const Vector3& rotation)
+void Transform::SetLocalRotationRadian(const Bulb::Vector3& rotation)
 {
 	_localRotation = rotation;
 
@@ -216,7 +216,7 @@ void Transform::SetLocalRotationRadian(const Vector3& rotation)
 	SetDirtyFlag();
 }
 
-void Transform::SetQuaternion(const Vector4& quaternion)
+void Transform::SetQuaternion(const Bulb::Vector4& quaternion)
 {
 	XMVECTOR qLocal = XMQuaternionNormalize(XMLoadFloat4(&quaternion));
 	_quaternion = qLocal;
@@ -244,7 +244,7 @@ void Transform::SetQuaternion(const XMVECTOR& quaternion)
 	SetLocalQuaternion(qLocal);
 }
 
-void Transform::SetLocalQuaternion(const Vector4& quaternion)
+void Transform::SetLocalQuaternion(const Bulb::Vector4& quaternion)
 {
 	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
 	_localRotation = MathHelper::ConvertQuaternionToEuler(_localQuaternion);
@@ -258,12 +258,12 @@ void Transform::SetLocalQuaternion(const XMVECTOR& quaternion)
 	SetDirtyFlag();
 }
 
-void Transform::SetPosition(const Vector3& worldPosition)
+void Transform::SetPosition(const Bulb::Vector3& worldPosition)
 {
 	if (HasParent())
 	{
 		XMMATRIX inverseWorldMat = XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix()));
-		Vector3 position;
+		Bulb::Vector3 position;
 		XMStoreFloat3(&position, XMVector3Transform(XMLoadFloat3(&worldPosition), inverseWorldMat));
 
 		SetLocalPosition(position);
@@ -274,14 +274,14 @@ void Transform::SetPosition(const Vector3& worldPosition)
 	}
 }
 
-void Transform::SetRotationRadian(const Vector3& worldRotation)
+void Transform::SetRotationRadian(const Bulb::Vector3& worldRotation)
 {
 	XMVECTOR qWorld = XMQuaternionRotationRollPitchYaw(
 		worldRotation.x,
 		worldRotation.y,
 		worldRotation.z);
 
-	Vector3 localEuler = worldRotation;
+	Bulb::Vector3 localEuler = worldRotation;
 	if (HasParent())
 	{
 		XMMATRIX parentRotMat = _parent->GetRotationMatrix();
@@ -293,12 +293,12 @@ void Transform::SetRotationRadian(const Vector3& worldRotation)
 	SetLocalRotationRadian(localEuler);
 }
 
-void Transform::SetScale(const Vector3& worldScale)
+void Transform::SetScale(const Bulb::Vector3& worldScale)
 {
 	if (HasParent())
 	{
-		Vector3 parentScale = _parent->GetScale();
-		Vector3 scale = worldScale;
+		Bulb::Vector3 parentScale = _parent->GetScale();
+		Bulb::Vector3 scale = worldScale;
 		scale.x /= parentScale.x;
 		scale.y /= parentScale.y;
 		scale.z /= parentScale.z;
@@ -319,62 +319,62 @@ XMMATRIX Transform::GetRotationMatrix()
 	return XMMatrixRotationQuaternion(XMLoadFloat4(&_quaternion));
 }
 
-Vector3 Transform::GetRight()
+Bulb::Vector3 Transform::GetRight()
 {
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(_matWorld._11, _matWorld._12, _matWorld._13).Normalize();
+	return Bulb::Vector3(_matWorld._11, _matWorld._12, _matWorld._13).Normalize();
 }
 
-Vector3 Transform::GetLeft()
+Bulb::Vector3 Transform::GetLeft()
 {
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(-_matWorld._11, -_matWorld._12, -_matWorld._13).Normalize();
+	return Bulb::Vector3(-_matWorld._11, -_matWorld._12, -_matWorld._13).Normalize();
 }
 
-Vector3 Transform::GetUp()
+Bulb::Vector3 Transform::GetUp()
 {
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(_matWorld._21, _matWorld._22, _matWorld._23).Normalize();
+	return Bulb::Vector3(_matWorld._21, _matWorld._22, _matWorld._23).Normalize();
 }
 
-Vector3 Transform::GetDown()
+Bulb::Vector3 Transform::GetDown()
 {
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(-_matWorld._21, -_matWorld._22, -_matWorld._23).Normalize();
+	return Bulb::Vector3(-_matWorld._21, -_matWorld._22, -_matWorld._23).Normalize();
 }
 
-Vector3 Transform::GetLook()
+Bulb::Vector3 Transform::GetLook()
 {
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(_matWorld._31, _matWorld._32, _matWorld._33).Normalize();
+	return Bulb::Vector3(_matWorld._31, _matWorld._32, _matWorld._33).Normalize();
 }
 
-Vector3 Transform::GetBack()
+Bulb::Vector3 Transform::GetBack()
 {
 	if (_isDirty)
 		UpdateTransform();
 
-	return Vector3(-_matWorld._31, -_matWorld._32, -_matWorld._33).Normalize();
+	return Bulb::Vector3(-_matWorld._31, -_matWorld._32, -_matWorld._33).Normalize();
 }
 
-void Transform::Translate(const Vector3& moveVec)
+void Transform::Translate(const Bulb::Vector3& moveVec)
 {
 	_localPosition = _localPosition + moveVec;
 
 	SetDirtyFlag();
 }
 
-void Transform::Rotate(const Vector3& angle)
+void Transform::Rotate(const Bulb::Vector3& angle)
 {
 	XMVECTOR currentQuat = XMLoadFloat4(&_localQuaternion);
 	XMVECTOR deltaQuat = XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
@@ -388,12 +388,12 @@ void Transform::Rotate(const Vector3& angle)
 
 void Transform::Rotate(const XMVECTOR& angle)
 {
-	Vector3 f3_angle;
+	Bulb::Vector3 f3_angle;
 	XMStoreFloat3(&f3_angle, angle);
 	Rotate(f3_angle);
 }
 
-void Transform::Rotate(const Vector4& quat)
+void Transform::Rotate(const Bulb::Vector4& quat)
 {
 	XMVECTOR currentQuat = XMLoadFloat4(&_localQuaternion);
 	XMVECTOR deltaQuat = XMLoadFloat4(&quat);
@@ -405,7 +405,7 @@ void Transform::Rotate(const Vector4& quat)
 	SetDirtyFlag();
 }
 
-void Transform::LookAt(const Vector3& targetPos)
+void Transform::LookAt(const Bulb::Vector3& targetPos)
 {
 	XMVECTOR targetVec = XMVector3Normalize(XMLoadFloat3(&(targetPos - GetPosition())));
 
@@ -421,17 +421,17 @@ void Transform::LookAt(const Vector3& targetPos)
 	rotMat = XMMatrixTranspose(rotMat);
 	XMVECTOR quat = XMQuaternionNormalize(XMQuaternionRotationMatrix(rotMat));
 
-	Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
-	Vector4 quatVec;
+	Bulb::Vector3 euler = MathHelper::ConvertQuaternionToEuler(quat);
+	Bulb::Vector4 quatVec;
 	XMStoreFloat4(&quatVec, quat);
 	SetQuaternion(quatVec);
 
 	SetDirtyFlag();
 }
 
-void Transform::LookAtWithNoRoll(const Vector3& targetPos, float blendAlpha)
+void Transform::LookAtWithNoRoll(const Bulb::Vector3& targetPos, float blendAlpha)
 {
-	Vector3 dir = targetPos - GetPosition();
+	Bulb::Vector3 dir = targetPos - GetPosition();
 	dir = dir.Normalize();
 
 	if (blendAlpha < 1.0f)
@@ -451,9 +451,9 @@ void Transform::LookAtWithNoRoll(const Vector3& targetPos, float blendAlpha)
 	SetDirtyFlag();
 }
 
-void Transform::LookAtOnlyYaw(const Vector3& targetPos, float blendAlpha)
+void Transform::LookAtOnlyYaw(const Bulb::Vector3& targetPos, float blendAlpha)
 {
-	Vector3 dir = targetPos - GetPosition();
+	Bulb::Vector3 dir = targetPos - GetPosition();
 	dir = dir.Normalize();
 
 	if (blendAlpha < 1.0f)

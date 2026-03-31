@@ -24,20 +24,20 @@ struct DebugLog
 struct DebugLine
 {
 	DebugLine(float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a) {
-		from = Vector3(x1, y1, z1);
-		to = Vector3(x2, y2, z2);
-		color = ColorRGBA(r, g, b, a);
+		from = Bulb::Vector3(x1, y1, z1);
+		to = Bulb::Vector3(x2, y2, z2);
+		color = Bulb::Color(r, g, b, a);
 	}
 
-	DebugLine(Vector3 _from, Vector3 _to, ColorRGBA _color) {
+	DebugLine(Bulb::Vector3 _from, Bulb::Vector3 _to, Bulb::Color _color) {
 		from = _from;
 		to = _to;
 		color = _color;
 	}
 
-	Vector3 from;
-	Vector3 to;
-	ColorRGBA color;
+	Bulb::Vector3 from;
+	Bulb::Vector3 to;
+	Bulb::Color color;
 };
 
 class DebugManager : public JPH::DebugRenderer
@@ -55,7 +55,7 @@ public:
 
 
 	void DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg inColor) override;
-	void DrawLine(Vector3 from, Vector3 to, ColorRGBA color);
+	void DrawLine(Bulb::Vector3 from, Bulb::Vector3 to, Bulb::Color color);
 
 	void DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off) override;
 
@@ -94,7 +94,7 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW _vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW _indexBufferView;
 
-	ColorRGBA _colliderDebugColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+	Bulb::Color _colliderDebugColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 	const UINT16 _boxColliderIndices[24] = {
 				0, 1,

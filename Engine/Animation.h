@@ -10,9 +10,9 @@ public:
 		KeyFrame() : tick(-1.0) {}
 
 		double tick;
-		Vector3 position;
-		Vector4 rotation;
-		Vector3 scale;
+		Bulb::Vector3 position;
+		Bulb::Vector4 rotation;
+		Bulb::Vector3 scale;
 	};
 
 	struct AnimationData

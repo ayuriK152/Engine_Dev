@@ -1,5 +1,6 @@
 #pragma once
 #include "UIElement.h"
+
 class UIText : public UIPanel
 {
 public:
@@ -21,9 +22,9 @@ public:
 		_paragraphAlignment = paragraphAlignment;
 		_textFormat->SetParagraphAlignment(_paragraphAlignment);
 	}
-	void SetTextColor(const ColorRGBA& color);
+	void SetTextColor(const Bulb::Color& color);
 
-	void SetSize(const Vector2 size) { 
+	void SetSize(const Bulb::Vector2 size) { 
 		_transform->SetSize(size); 
 		_isDirty = true;
 	}
@@ -41,7 +42,7 @@ private:
 	wstring _text = L"Default Text";
 	wstring _fontName = L"Malgun Gothic";
 	float _fontSize = 24.0f;
-	ColorRGBA _textColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Bulb::Color _textColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	DWRITE_TEXT_ALIGNMENT _textAlignment = DWRITE_TEXT_ALIGNMENT_CENTER;
 	DWRITE_PARAGRAPH_ALIGNMENT _paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
 

@@ -71,7 +71,7 @@ private:
     bool _isStateChanged = false;
 
     vector<BaseState<EnemyScript>*> _patterns;
-    Vector3 _targetVec;
+	Bulb::Vector3 _targetVec;
 
 	shared_ptr<UIElement> _enemyStateUI;
 	shared_ptr<UIText> _damageText;

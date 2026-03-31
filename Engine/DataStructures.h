@@ -36,10 +36,10 @@ struct Vertex
 {
 	Vertex() {}
 	Vertex(
-		const Vector3& p,
-		const Vector3& n,
-		const Vector3& t,
-		const Vector2& uv) :
+		const Bulb::Vector3& p,
+		const Bulb::Vector3& n,
+		const Bulb::Vector3& t,
+		const Bulb::Vector2& uv) :
 		Position(p),
 		Normal(n),
 		Tangent(t),
@@ -67,29 +67,29 @@ struct Vertex
 		boneWeights.x = weight;
 	}
 
-	Vector3 Position;
-	Vector3 Normal;
-	Vector3 Tangent;
-	Vector2 TexC;
-	Vector4 boneWeights;
+	Bulb::Vector3 Position;
+	Bulb::Vector3 Normal;
+	Bulb::Vector3 Tangent;
+	Bulb::Vector2 TexC;
+	Bulb::Vector4 boneWeights;
 	INT boneIndices[4] = { -1, -1, -1, -1 };
 };
 
 struct VertexP
 {
 	VertexP() {};
-	VertexP(const Vector3& p) : Position(p) {}
+	VertexP(const Bulb::Vector3& p) : Position(p) {}
 	VertexP(float px, float py, float pz) : Position(px, py, pz) {}
 
-	Vector3 Position;
+	Bulb::Vector3 Position;
 };
 
 struct VertexPC
 {
 	VertexPC() {};
 	VertexPC(
-		const Vector3& p, 
-		const ColorRGBA& c) :
+		const Bulb::Vector3& p, 
+		const Bulb::Color& c) :
 		Position(p), 
 		Color(c) {}
 	VertexPC(
@@ -98,16 +98,16 @@ struct VertexPC
 		Position(px, py, pz), 
 		Color(cr, cg, cb, ca) {}
 
-	Vector3 Position;
-	ColorRGBA Color;
+	Bulb::Vector3 Position;
+	Bulb::Color Color;
 };
 
 struct VertexPT
 {
 	VertexPT() {};
 	VertexPT(
-		const Vector3& p, 
-		const Vector2& t) : 
+		const Bulb::Vector3& p, 
+		const Bulb::Vector2& t) : 
 		Position(p), 
 		TexC(t) {}
 	VertexPT(
@@ -115,8 +115,8 @@ struct VertexPT
 		float u, float v) : 
 		Position(px, py, pz), 
 		TexC(u, v) {}
-	Vector3 Position;
-	Vector2 TexC;
+	Bulb::Vector3 Position;
+	Bulb::Vector2 TexC;
 };
 
 struct ComponentSnapshot {

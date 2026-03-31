@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EnemyScript.h"
 
+using namespace Bulb;
+
 REGISTER_COMPONENT(EnemyScript)
 
 EnemyScript::~EnemyScript()

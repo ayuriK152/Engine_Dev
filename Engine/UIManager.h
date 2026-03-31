@@ -21,13 +21,13 @@ public:
 	void AddUI(const shared_ptr<UIElement>& ui);
 	void DeleteUI(const shared_ptr<UIElement>& ui);
 
-	Vector2 GetUIResolution() { return _uiResolution; }
+	Bulb::Vector2 GetUIResolution() { return _uiResolution; }
 
 private:
 	void CreateBuffer();
 
 private:
-	Vector2 _uiResolution = { 1920.0f, 1080.0f };
+	Bulb::Vector2 _uiResolution = { 1920.0f, 1080.0f };
 	int _elementCount = 0;
 	int _panelCount = 0;
 

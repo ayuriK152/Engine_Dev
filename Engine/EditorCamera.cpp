@@ -19,13 +19,13 @@ void EditorCamera::Update()
 
 	if (INPUTM->IsMouseRightButtonPress())
 	{
-		Vector2 mouseDelta = INPUTM->GetMouseDelta();
+		Bulb::Vector2 mouseDelta = INPUTM->GetMouseDelta();
 
 		_yaw += mouseDelta.x * 0.003f;
 		_pitch += mouseDelta.y * 0.003f;
 
-		Vector3 right = _transform->GetRight();
-		Vector3 up = _transform->GetUp();
+		Bulb::Vector3 right = _transform->GetRight();
+		Bulb::Vector3 up = _transform->GetUp();
 
 		XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), _pitch);
 		XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), _yaw);

@@ -33,9 +33,9 @@ void UIManager::Update()
 	for (auto& ui : _panels) {
 		UIInstanceConstants constants;
 		shared_ptr<UITransform> transform = ui->GetTransform();
-		Vector3 position = transform->GetPosition();
-		Vector2 size = transform->GetSize();
-		Vector2 pivot = transform->GetPivot();
+		Bulb::Vector3 position = transform->GetPosition();
+		Bulb::Vector2 size = transform->GetSize();
+		Bulb::Vector2 pivot = transform->GetPivot();
 
 		constants.CenterPos = { position.x, position.y };
 

@@ -11,7 +11,7 @@ public:
 	void Update() override;
 
 public:
-	void SetEntireSize(Vector2 size) {
+	void SetEntireSize(Bulb::Vector2 size) {
 		_transform->SetSize(size);
 		_transformBg->SetSize(size);
 		_transformFill->SetSize(size);
@@ -32,8 +32,8 @@ public:
 		_isDirty = true;
 	}
 
-	void SetBackgroundColor(const ColorRGBA color) { _background->SetColor(color); }
-	void SetFillColor(const ColorRGBA color) { _fill->SetColor(color); }
+	void SetBackgroundColor(const Bulb::Color color) { _background->SetColor(color); }
+	void SetFillColor(const Bulb::Color color) { _fill->SetColor(color); }
 
 private:
 	shared_ptr<UIPanel> _background;

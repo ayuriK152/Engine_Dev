@@ -3,6 +3,8 @@
 #include "TPVCamera.h"
 #include "EnemyScript.h"
 
+using namespace Bulb;
+
 REGISTER_COMPONENT(PlayerScript)
 
 PlayerScript::~PlayerScript()

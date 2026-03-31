@@ -31,11 +31,11 @@ public:
 	int numFramesDirty;
 
 	XMFLOAT4X4 matTransform;
-	ColorRGBA ambient;
-	ColorRGBA diffuse;
-	ColorRGBA specular;
-	ColorRGBA emissive;
-	Vector2 tilling;
+	Bulb::Color ambient;
+	Bulb::Color diffuse;
+	Bulb::Color specular;
+	Bulb::Color emissive;
+	Bulb::Vector2 tilling;
 	float metallic;
 	float roughness;
 

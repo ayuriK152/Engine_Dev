@@ -21,9 +21,9 @@ public:
 public:
 	void SetHalfHeight(float height) { _height = height; }
 	void SetRadius(float radius) { _radius = radius; }
-	void SetOffset(Vector3 offset) { _offset = offset; }
+	void SetOffset(Bulb::Vector3 offset) { _offset = offset; }
 
-	void SetVelocity(Vector3 velocity) { _desiredVelocity = velocity; }
+	void SetVelocity(Bulb::Vector3 velocity) { _desiredVelocity = velocity; }
 
 	void SetGravity(bool value) { _isGravity = value; }
 
@@ -34,10 +34,10 @@ private:
 
 	float _height = 0.5f;
 	float _radius = 0.5f;
-	Vector3 _offset = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector3 _offset = { 0.0f, 0.0f, 0.0f };
 
-	Vector3 _currentVelocity = { 0.0f, 0.0f, 0.0f };
-	Vector3 _desiredVelocity = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector3 _currentVelocity = { 0.0f, 0.0f, 0.0f };
+	Bulb::Vector3 _desiredVelocity = { 0.0f, 0.0f, 0.0f };
 	float _verticalVelocity = 0.0f;
 	bool _isGravity = true;
 	float _gravityFactor = 1.0f;

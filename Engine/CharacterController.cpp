@@ -30,7 +30,7 @@ void CharacterController::Init()
 	characterSettings.mMass = 80.0f;
 	characterSettings.mMaxStrength = 1000.0f;
 
-	Vector3 pos = GetTransform()->GetPosition();
+	Bulb::Vector3 pos = GetTransform()->GetPosition();
 
 	_character = new JPH::CharacterVirtual(
 		&characterSettings,
@@ -50,7 +50,7 @@ void CharacterController::PreUpdate()
 {
 	if (!EDITOR->IsOnPlay()) return;
 
-	Vector3 pos = GetTransform()->GetPosition();
+	Bulb::Vector3 pos = GetTransform()->GetPosition();
 	_character->SetPosition({ pos.x, pos.y, pos.z });
 
 	// 중력이 두 번 적용되고 있는건 아닌지?
@@ -68,7 +68,7 @@ void CharacterController::PreUpdate()
 	);
 
 	JPH::Vec3 newPos = _character->GetPosition();
-	GetTransform()->SetPosition(Vector3(newPos.GetX(), newPos.GetY(), newPos.GetZ()));
+	GetTransform()->SetPosition(Bulb::Vector3(newPos.GetX(), newPos.GetY(), newPos.GetZ()));
 
 	if (_character->GetGroundState() == JPH::CharacterVirtual::EGroundState::OnGround)
 		_verticalVelocity = 0.0f;

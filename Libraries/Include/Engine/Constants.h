@@ -20,10 +20,10 @@ struct InstanceConstants
 struct MaterialConstants
 {
 	XMFLOAT4X4 matTransform = MathHelper::Identity4x4();
-	ColorRGBA Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
-	ColorRGBA Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
-	ColorRGBA Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
-	ColorRGBA Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Bulb::Color Ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Bulb::Color Diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Bulb::Color Specular = { 0.01f, 0.01f, 0.01f, 1.0f };
+	Bulb::Color Emissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT2 Tilling = { 1.0f, 1.0f };
 	float Metallic = 0.5f;
 	float Roughness = 0.5f;
@@ -48,9 +48,9 @@ struct LightConstants
 {
 	XMFLOAT4X4 View = MathHelper::Identity4x4();
 	XMFLOAT4X4 Proj = MathHelper::Identity4x4();
-	XMFLOAT4 Ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
-	XMFLOAT4 Diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
-	XMFLOAT4 Specular = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Bulb::Color Ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Bulb::Color Diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Bulb::Color Specular = { 0.0f, 0.0f, 0.0f, 0.0f };
 	XMFLOAT3 Direction = { 0.0f, 0.0f, 0.0f };
 	UINT LightType = DIRECT_LIGHT;
 	XMFLOAT2 FalloffInfo = { 0.0f, 0.0f };
@@ -100,5 +100,5 @@ struct UIInstanceConstants
 	XMFLOAT2 Size;
 	float Depth;
 	UINT TextureIndex;
-	XMFLOAT4 Color;
+	Bulb::Color Color;
 };

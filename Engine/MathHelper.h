@@ -1,6 +1,5 @@
 #pragma once
 
-
 class MathHelper
 {
 public:
@@ -10,12 +9,12 @@ public:
 public:
 	static XMFLOAT4X4 Identity4x4();
 
-	static Vector3 ConvertQuaternionToEuler(const Vector4& quat);
-	static Vector3 ConvertQuaternionToEuler(const XMVECTOR& quat);
+	static Bulb::Vector3 ConvertQuaternionToEuler(const Bulb::Vector4& quat);
+	static Bulb::Vector3 ConvertQuaternionToEuler(const XMVECTOR& quat);
 
-	static Vector3 RadianToDegree(const Vector3& radian);
-	static Vector3 DegreeToRadian(const Vector3& degree);
+	static Bulb::Vector3 RadianToDegree(const Bulb::Vector3& radian);
+	static Bulb::Vector3 DegreeToRadian(const Bulb::Vector3& degree);
 
-	static float CCW(const Vector2& va, const Vector2& vb);
+	static float CCW(const Bulb::Vector2& va, const Bulb::Vector2& vb);
 };
 

@@ -101,7 +101,7 @@ public:
 	void AddRigidbody(shared_ptr<Rigidbody> rbd) { _rigidbodies.push_back(rbd); }
 	void DeleteRigidbody(shared_ptr<Rigidbody> rbd);
 
-	vector<shared_ptr<GameObject>> OverlapSphere(Vector3 position, float radius, string tag = "");
+	vector<shared_ptr<GameObject>> OverlapSphere(Bulb::Vector3 position, float radius, string tag = "");
 
 private:
 	vector<shared_ptr<Rigidbody>> _rigidbodies;

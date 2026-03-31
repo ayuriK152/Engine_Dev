@@ -249,9 +249,9 @@ void Animator::UpdateBoneTransform(int boneIdx)
 		alpha = std::clamp(alpha, 0.0f, 1.0f);
 
 		// Lerp / Slerp
-		Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
-		Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
-		Vector4 rot;
+		Bulb::Vector3 pos = currKeyFrame.position.Lerp(nextFrame.position, alpha);
+		Bulb::Vector3 scale = currKeyFrame.scale.Lerp(nextFrame.scale, alpha);
+		Bulb::Vector4 rot;
 		XMStoreFloat4(&rot, XMQuaternionSlerp(XMLoadFloat4(&currKeyFrame.rotation), XMLoadFloat4(&nextFrame.rotation), alpha));
 
 		XMMATRIX matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
@@ -477,7 +477,7 @@ void Animator::UpdateBoneInstances()
 }
 
 
-void Animator::Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile)
+void Animator::Attack(Bulb::Vector3 offset, Bulb::Vector3 scale, float damage, bool isHostile)
 {
 	shared_ptr<GameObject> attackColliderObj = GameObject::Instantiate();
 	attackColliderObj->GetTransform()->SetPosition(GetTransform()->GetPosition());

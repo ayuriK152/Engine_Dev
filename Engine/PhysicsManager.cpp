@@ -62,8 +62,8 @@ void PhysicsManager::Update()
 		_physicsSystem->GetBodyInterface().GetPositionAndRotation(rigidbody->GetBodyID(), position, rotation);
 
 		// DX12 엔진의 Transform 업데이트
-		Vector3 pos(position.GetX(), position.GetY(), position.GetZ());
-		Vector4 rot(rotation.GetX(), rotation.GetY(), rotation.GetZ(), rotation.GetW());
+		Bulb::Vector3 pos(position.GetX(), position.GetY(), position.GetZ());
+		Bulb::Vector4 rot(rotation.GetX(), rotation.GetY(), rotation.GetZ(), rotation.GetW());
 		pos = pos - XMVector3Rotate(XMLoadFloat3(&rigidbody->GetColliderOffset()), XMLoadFloat4(&rot));
 		rigidbody->GetTransform()->SetLocalPosition(pos);
 		rigidbody->GetTransform()->SetQuaternion(rot);
@@ -128,7 +128,7 @@ void PhysicsManager::DeleteRigidbody(shared_ptr<Rigidbody> rbd)
 	}
 }
 
-vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Vector3 position, float radius, string tag)
+vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Bulb::Vector3 position, float radius, string tag)
 {
 	vector<shared_ptr<GameObject>> results;
 

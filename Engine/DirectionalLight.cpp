@@ -78,31 +78,31 @@ void DirectionalLight::LoadXML(XMLElement* compElem)
 {
 	XMLElement* ambientElem = compElem->FirstChildElement("Ambient");
 	if (ambientElem) {
-		ColorRGBA color;
-		color.x = ambientElem->FloatAttribute("r");
-		color.y = ambientElem->FloatAttribute("g");
-		color.z = ambientElem->FloatAttribute("b");
-		color.w = ambientElem->FloatAttribute("a");
+		Bulb::Color color;
+		color.r = ambientElem->FloatAttribute("r");
+		color.g = ambientElem->FloatAttribute("g");
+		color.b = ambientElem->FloatAttribute("b");
+		color.a = ambientElem->FloatAttribute("a");
 		ambient = color;
 	}
 
 	XMLElement* diffuseElem = compElem->FirstChildElement("Diffuse");
 	if (diffuseElem) {
-		ColorRGBA color;
-		color.x = diffuseElem->FloatAttribute("r");
-		color.y = diffuseElem->FloatAttribute("g");
-		color.z = diffuseElem->FloatAttribute("b");
-		color.w = diffuseElem->FloatAttribute("a");
+		Bulb::Color color;
+		color.r = diffuseElem->FloatAttribute("r");
+		color.g = diffuseElem->FloatAttribute("g");
+		color.b = diffuseElem->FloatAttribute("b");
+		color.a = diffuseElem->FloatAttribute("a");
 		diffuse = color;
 	}
 
 	XMLElement* specularElem = compElem->FirstChildElement("Specular");
 	if (specularElem) {
-		ColorRGBA color;
-		color.x = specularElem->FloatAttribute("r");
-		color.y = specularElem->FloatAttribute("g");
-		color.z = specularElem->FloatAttribute("b");
-		color.w = specularElem->FloatAttribute("a");
+		Bulb::Color color;
+		color.r = specularElem->FloatAttribute("r");
+		color.g = specularElem->FloatAttribute("g");
+		color.b = specularElem->FloatAttribute("b");
+		color.a = specularElem->FloatAttribute("a");
 		specular = color;
 	}
 }
@@ -112,22 +112,22 @@ void DirectionalLight::SaveXML(XMLElement* compElem)
 	compElem->SetAttribute("ComponentType", "DirectionalLight");
 
 	XMLElement* ambientElem = compElem->InsertNewChildElement("Ambient");
-	ambientElem->SetAttribute("r", ambient.x);
-	ambientElem->SetAttribute("g", ambient.y);
-	ambientElem->SetAttribute("b", ambient.z);
-	ambientElem->SetAttribute("a", ambient.w);
+	ambientElem->SetAttribute("r", ambient.r);
+	ambientElem->SetAttribute("g", ambient.g);
+	ambientElem->SetAttribute("b", ambient.b);
+	ambientElem->SetAttribute("a", ambient.a);
 
 	XMLElement* diffuseElem = compElem->InsertNewChildElement("Diffuse");
-	diffuseElem->SetAttribute("r", diffuse.x);
-	diffuseElem->SetAttribute("g", diffuse.y);
-	diffuseElem->SetAttribute("b", diffuse.z);
-	diffuseElem->SetAttribute("a", diffuse.w);
+	diffuseElem->SetAttribute("r", diffuse.r);
+	diffuseElem->SetAttribute("g", diffuse.g);
+	diffuseElem->SetAttribute("b", diffuse.b);
+	diffuseElem->SetAttribute("a", diffuse.a);
 
 	XMLElement* specularElem = compElem->InsertNewChildElement("Specular");
-	specularElem->SetAttribute("r", specular.x);
-	specularElem->SetAttribute("g", specular.y);
-	specularElem->SetAttribute("b", specular.z);
-	specularElem->SetAttribute("a", specular.w);
+	specularElem->SetAttribute("r", specular.r);
+	specularElem->SetAttribute("g", specular.g);
+	specularElem->SetAttribute("b", specular.b);
+	specularElem->SetAttribute("a", specular.a);
 }
 
 ComponentSnapshot DirectionalLight::CaptureSnapshot()

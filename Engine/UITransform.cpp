@@ -28,7 +28,7 @@ void UITransform::UpdateTransform()
 	}
 }
 
-void UITransform::SetPivot(const Vector2& pivot)
+void UITransform::SetPivot(const Bulb::Vector2& pivot)
 {
 	_pivot = pivot;
 
@@ -39,7 +39,7 @@ void UITransform::SetPivot(const Vector2& pivot)
 	_localPosition.y = _localPosition.y + height;
 }
 
-void UITransform::SetPosition(const Vector3& position)
+void UITransform::SetPosition(const Bulb::Vector3& position)
 {
 	_position = position;
 	if (_parent != nullptr) {
@@ -52,7 +52,7 @@ void UITransform::SetPosition(const Vector3& position)
 	SetDirtyFlag();
 }
 
-void UITransform::SetLocalPosition(const Vector3& position)
+void UITransform::SetLocalPosition(const Bulb::Vector3& position)
 {
 	_localPosition = position;
 
@@ -66,15 +66,15 @@ void UITransform::SetLocalPosition(const Vector3& position)
 	SetDirtyFlag();
 }
 
-Vector3 UITransform::GetPosition()
+Bulb::Vector3 UITransform::GetPosition()
 {
 	if (_isDirty) UpdateTransform();
 	float width = _size.x * (0.5f - _pivot.x);
 	float height = _size.y * (0.5f - _pivot.y);
 
 	if (_isDynamicPosition) {
-		Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&_position), XMLoadFloat4x4(&Camera::GetViewProjMatrix())));
-		Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
+		Bulb::Vector4 clipPos(XMVector3Transform(XMLoadFloat3(&_position), XMLoadFloat4x4(&Camera::GetViewProjMatrix())));
+		Bulb::Vector2 ndc(clipPos.x / clipPos.w, clipPos.y / clipPos.w);
 		D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
 		return { ndc.x * 0.5f * viewport.Width, ndc.y * 0.5f * viewport.Height, _position.z };
 	}

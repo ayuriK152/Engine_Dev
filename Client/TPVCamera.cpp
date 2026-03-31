@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "TPVCamera.h"
 
+using namespace Bulb;
+
 REGISTER_COMPONENT(TPVCamera)
 
 TPVCamera::~TPVCamera()

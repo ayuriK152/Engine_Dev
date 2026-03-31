@@ -17,7 +17,7 @@ void InputManager::Update()
 
 	if (!_isMouseMoving)
 	{
-		_mouseDelta = Vector2(0.0f, 0.0f);
+		_mouseDelta = Bulb::Vector2(0.0f, 0.0f);
 	}
 
 	auto _keyValues = magic_enum::enum_values<KeyValue>();
@@ -78,7 +78,7 @@ void InputManager::OnMouseClick(USHORT buttonFlags)
 void InputManager::OnMouseMove(int x, int y)
 {
 	_isMouseMoving = true;
-	_mouseDelta = Vector2((float)x, (float)y);
+	_mouseDelta = Bulb::Vector2((float)x, (float)y);
 
 	if (_isMouseCenterFixed)
 	{

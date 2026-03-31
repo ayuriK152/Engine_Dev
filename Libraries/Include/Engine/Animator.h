@@ -22,7 +22,7 @@ struct AnimationEvent
 {
 	AnimationEventTypes type;
 	float Tick;
-	Vector4 datas[3];
+	Bulb::Vector4 datas[3];
 };
 
 class Animator : public Component
@@ -104,7 +104,7 @@ private:
 	void UpdateBoneTransform(int boneIdx);
 	void UpdateBoneTransformPreviewMode(int boneIdx);
 
-	void Attack(Vector3 offset, Vector3 scale, float damage, bool isHostile);
+	void Attack(Bulb::Vector3 offset, Bulb::Vector3 scale, float damage, bool isHostile);
 
 public:
 	Event<AnimationEvent> animationEvent;

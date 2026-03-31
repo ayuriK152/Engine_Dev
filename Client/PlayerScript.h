@@ -132,7 +132,7 @@ private:
 	shared_ptr<GameObject> _lockOnTarget;
 	bool _isLockOn = false;
 
-	Vector3 _movingDirection;
+	Bulb::Vector3 _movingDirection;
 
 	vector<BaseState<PlayerScript>*> _states;
 

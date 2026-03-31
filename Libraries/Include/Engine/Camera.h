@@ -44,7 +44,7 @@ private:
 	XMFLOAT4X4 _matViewProj;
 	XMFLOAT4X4 _matOrtho;
 	float _aspectRatio;
-	Vector2 _viewportSize;
+	Bulb::Vector2 _viewportSize;
 
 	bool _isMainCamera = false;
 	static shared_ptr<Camera> _currentCamera;

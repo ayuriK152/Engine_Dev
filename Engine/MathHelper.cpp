@@ -15,9 +15,9 @@ XMFLOAT4X4 MathHelper::Identity4x4()
 	return I;
 }
 
-Vector3 MathHelper::ConvertQuaternionToEuler(const Vector4& quat)
+Bulb::Vector3 MathHelper::ConvertQuaternionToEuler(const Bulb::Vector4& quat)
 {
-	Vector3 angles;
+	Bulb::Vector3 angles;
 
 	// roll (x-axis rotation)
 	double sinr_cosp = 2 * (quat.w * quat.x + quat.y * quat.z);
@@ -37,32 +37,32 @@ Vector3 MathHelper::ConvertQuaternionToEuler(const Vector4& quat)
 	return angles;
 }
 
-Vector3 MathHelper::ConvertQuaternionToEuler(const XMVECTOR& quat)
+Bulb::Vector3 MathHelper::ConvertQuaternionToEuler(const XMVECTOR& quat)
 {
-	Vector4 quatConvert;
+	Bulb::Vector4 quatConvert;
 	XMStoreFloat4(&quatConvert, quat);
 	return ConvertQuaternionToEuler(quatConvert);
 }
 
-Vector3 MathHelper::RadianToDegree(const Vector3& radian)
+Bulb::Vector3 MathHelper::RadianToDegree(const Bulb::Vector3& radian)
 {
-	Vector3 result;
+	Bulb::Vector3 result;
 	result.x = XMConvertToDegrees(radian.x);
 	result.y = XMConvertToDegrees(radian.y);
 	result.z = XMConvertToDegrees(radian.z);
 	return result;
 }
 
-Vector3 MathHelper::DegreeToRadian(const Vector3& degree)
+Bulb::Vector3 MathHelper::DegreeToRadian(const Bulb::Vector3& degree)
 {
-	Vector3 result;
+	Bulb::Vector3 result;
 	result.x = XMConvertToRadians(degree.x);
 	result.y = XMConvertToRadians(degree.y);
 	result.z = XMConvertToRadians(degree.z);
 	return result;
 }
 
-float MathHelper::CCW(const Vector2& va, const Vector2& vb)
+float MathHelper::CCW(const Bulb::Vector2& va, const Bulb::Vector2& vb)
 {
 	return va.x * vb.y - va.y * vb.x;
 }

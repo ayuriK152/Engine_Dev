@@ -193,7 +193,7 @@ void Rigidbody::RestoreSnapshot(ComponentSnapshot snapshot)
 	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetAngularVelocity(_bodyID, { 0.0f, 0.0f, 0.0f });
 }
 
-void Rigidbody::SetColliderExtents(const Vector3& extents)
+void Rigidbody::SetColliderExtents(const Bulb::Vector3& extents)
 {
 	_extents = extents;
 
@@ -227,15 +227,15 @@ void Rigidbody::SetColliderRadius(float radius)
 		UpdateShapeData();
 }
 
-void Rigidbody::SetColliderOffset(const Vector3& offset)
+void Rigidbody::SetColliderOffset(const Bulb::Vector3& offset)
 {
 	_colliderOffset = offset;
 }
 
-void Rigidbody::SetColliderRotationOffset(const Vector3& angle)
+void Rigidbody::SetColliderRotationOffset(const Bulb::Vector3& angle)
 {
 	_colliderRotationOffset = angle;
-	Vector3 radian = MathHelper::DegreeToRadian(_colliderRotationOffset);
+	Bulb::Vector3 radian = MathHelper::DegreeToRadian(_colliderRotationOffset);
 	XMStoreFloat4(
 		&_rotationOffsetQuaternion, 
 		XMQuaternionRotationRollPitchYaw(radian.x, radian.y, radian.z)
@@ -276,12 +276,12 @@ void Rigidbody::SetStatic(bool value)
 		EActivation::Activate);
 }
 
-Vector3 Rigidbody::GetVelocity() {
+Bulb::Vector3 Rigidbody::GetVelocity() {
 	JPH::Vec3 vel = PHYSICS->GetPhysicsSystem()->GetBodyInterface().GetLinearVelocity(_bodyID);
-	return Vector3(vel.mValue);
+	return Bulb::Vector3(vel.mValue);
 }
 
-void Rigidbody::SetVelocity(Vector3& velocity) {
+void Rigidbody::SetVelocity(Bulb::Vector3& velocity) {
 	PHYSICS->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(_bodyID, JPH::Vec3(velocity.x, velocity.y, velocity.z));
 }
 
@@ -355,12 +355,12 @@ JPH::ShapeSettings::ShapeResult Rigidbody::FitOnMesh()
 		return shapeSettings.Create();
 	}
 
-	Vector3 scale = GetTransform()->GetScale();
+	Bulb::Vector3 scale = GetTransform()->GetScale();
 	float minX = FLT_MAX, minY = FLT_MAX, minZ = FLT_MAX;
 	float maxX = -FLT_MAX, maxY = -FLT_MAX, maxZ = -FLT_MAX;
 	for (auto& v : mesh->GetVertices())
 	{
-		Vector3 vertex = v.Position * scale;
+		Bulb::Vector3 vertex = v.Position * scale;
 
 		if (minX > vertex.x) minX = vertex.x;
 		if (minY > vertex.y) minY = vertex.y;
@@ -371,7 +371,7 @@ JPH::ShapeSettings::ShapeResult Rigidbody::FitOnMesh()
 		if (maxZ < vertex.z) maxZ = vertex.z;
 	}
 
-	_extents = Vector3((maxX - minX) / 2, (maxY - minY) / 2, (maxZ - minZ) / 2);
+	_extents = Bulb::Vector3((maxX - minX) / 2, (maxY - minY) / 2, (maxZ - minZ) / 2);
 
 	JPH::BoxShapeSettings shapeSettings(JPH::Vec3(_extents.x, _extents.y, _extents.z));
 	return shapeSettings.Create();

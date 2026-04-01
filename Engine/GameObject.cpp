@@ -23,7 +23,8 @@ GameObject::~GameObject()
 	cout << "Released - GameObject:" << _id << "\n";
 #endif
 
-	OnDestroy();
+	if (!_isDestroyed)
+		OnDestroy();
 }
 
 void GameObject::Init()
@@ -50,6 +51,7 @@ void GameObject::PreUpdate()
 	if (_isDeleteReserved) {
 		_deleteTime -= TIME->DeltaTime();
 		if (_deleteTime <= 0.0f) {
+			auto& childs = GetTransform()->GetChilds();
 			RENDER->DeleteGameobject(shared_from_this());
 			return;
 		}
@@ -156,6 +158,11 @@ void GameObject::OnDestroy()
 	cout << "OnDestroy - GameObject:" << _id << "\n";
 #endif
 
+	auto& childs = GetTransform()->GetChilds();
+	for (auto& c : childs) {
+		c->OnDestroy();
+	}
+
 	for (auto& componentVec : _components) {
 		if (componentVec.size() == 0) continue;
 
@@ -169,6 +176,8 @@ void GameObject::OnDestroy()
 
 		componentVec.clear();
 	}
+
+	_isDestroyed = true;
 }
 
 shared_ptr<GameObject> GameObject::Instantiate()

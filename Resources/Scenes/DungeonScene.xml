@@ -2,7 +2,7 @@
     <GameObjects>
         <GameObject Name="skybox" PSO="skybox">
             <Components>
-                <Component ComponentType="MeshRenderer" MeshName="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
             </Components>
         </GameObject>
 
@@ -29,14 +29,8 @@
         <GameObject Name="Ground">
             <Components>
                 <Component ComponentType="Transform" PosY="-0.5" ScaleX="100" ScaleZ="100"/>
-                <Component ComponentType="MeshRenderer" MeshName="Mesh_BasicBox" Material="PrototypeGround_100_1_100"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="PrototypeGround_100_1_100"/>
                 <Component ComponentType="Rigidbody" Static="true"/>
-            </Components>
-        </GameObject>
-
-        <GameObject Name="TestObject">
-            <Components>
-                <Component ComponentType="MeshRenderer" MeshName="BezierCircle.002" Material="Stone wall"/>
             </Components>
         </GameObject>
     </GameObjects>

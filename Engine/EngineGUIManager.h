@@ -86,7 +86,7 @@ private:
 	void ShowInspectorView();
 	void ShowResourceDirectory();
 
-	void HierarchyObjectRecursion(shared_ptr<Transform> parent);
+	void HierarchyObjectRecursion(shared_ptr<Transform> transform);
 
 #pragma region MainMenus
 	void ShowMenuFile();

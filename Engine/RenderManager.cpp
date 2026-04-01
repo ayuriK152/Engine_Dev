@@ -64,8 +64,12 @@ void RenderManager::Init()
 
 void RenderManager::PreUpdate()
 {
-	for (auto& o : _objects)
-		o->PreUpdate();
+	for (int i = 0; i < _objects.size(); ++i) {
+		_objects[i]->PreUpdate();
+
+		// 런타임 중에 삭제된 경우
+		if (_objects[i] == nullptr) --i;
+	}
 }
 
 void RenderManager::Update()
@@ -414,16 +418,27 @@ shared_ptr<GameObject> RenderManager::AddGameObject(shared_ptr<GameObject> obj)
 
 void RenderManager::DeleteGameobject(shared_ptr<GameObject> obj)
 {
-	for (int i = 0; i < _objects.size(); i++) {
-		if (obj == _objects[i]) {
-			_objects.erase(_objects.begin() + i);
-		}
-	}
+	vector<shared_ptr<GameObject>> deleteObjs;
+	deleteObjs.push_back(obj);
 
-	int objPsoIdx = Temp_GetPSOIndex(obj->GetPSOName());
-	for (int i = 0; i < _objectsSortedPSO[objPsoIdx].size(); i++) {
-		if (obj == _objectsSortedPSO[objPsoIdx][i]) {
-			_objectsSortedPSO[objPsoIdx].erase(_objectsSortedPSO[objPsoIdx].begin() + i);
+	auto& childs = obj->GetTransform()->GetChilds();
+	for (auto& c : childs) {
+		deleteObjs.push_back(c->GetGameObject());
+	}
+	obj->OnDestroy();
+
+	for (auto& o : deleteObjs) {
+		for (int i = 0; i < _objects.size(); i++) {
+			if (o == _objects[i]) {
+				_objects.erase(_objects.begin() + i);
+			}
+		}
+
+		int objPsoIdx = Temp_GetPSOIndex(o->GetPSOName());
+		for (int i = 0; i < _objectsSortedPSO[objPsoIdx].size(); i++) {
+			if (o == _objectsSortedPSO[objPsoIdx][i]) {
+				_objectsSortedPSO[objPsoIdx].erase(_objectsSortedPSO[objPsoIdx].begin() + i);
+			}
 		}
 	}
 }

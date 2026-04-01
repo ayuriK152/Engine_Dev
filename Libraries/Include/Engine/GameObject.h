@@ -82,7 +82,7 @@ public:
 	string GetPrefabPath() { return _prefabPath; }
 	void SetPrefabPath(string path);
 
-	void Delete(float time);
+	void Delete(float time = 0);
 
 	GameObjectSnapshot CaptureSnapshot();
 	void RestoreSnapshot(GameObjectSnapshot snapshot);
@@ -107,6 +107,7 @@ private:
 
 	float _deleteTime = 0.0f;
 	bool _isDeleteReserved = false;
+	bool _isDestroyed = false;
 
 	int _componentCount = 0;
 	array<vector<shared_ptr<Component>>, COUNT_COMPONENTTYPE> _components;

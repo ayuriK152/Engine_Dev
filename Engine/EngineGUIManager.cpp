@@ -366,35 +366,44 @@ void EngineGUIManager::ShowResourceDirectory()
 	ImGui::End();
 }
 
-void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> parent)
+void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> transform)
 {
 	ImGuiTreeNodeFlags tree_flags = 
 		ImGuiTreeNodeFlags_OpenOnArrow | 
 		ImGuiTreeNodeFlags_OpenOnDoubleClick | 
 		ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
 
-	if (parent->GetChilds().size() == 0)
+	if (transform->GetChilds().size() == 0)
 		tree_flags |= ImGuiTreeNodeFlags_Leaf;
-	if (_selectedObj == parent->GetGameObject())
+	if (_selectedObj == transform->GetGameObject())
 		tree_flags |= ImGuiTreeNodeFlags_Selected;
 
-	// label값 id추가해서 중복 방지하도록 조치 필요함
-	bool isNodeOpen = ImGui::TreeNodeEx((parent->GetGameObject()->GetName() + "##" + to_string(parent->GetGameObject()->GetId())).c_str(), tree_flags);
-	if (ImGui::IsItemClicked())
-	{
-		if (_isParentSelectMode && _selectedObj != nullptr)
-		{
-			_selectedObj->GetTransform()->SetParent(parent);
+	bool isNodeOpen = ImGui::TreeNodeEx((transform->GetGameObject()->GetName() + "##" + to_string(transform->GetGameObject()->GetId())).c_str(), tree_flags);
+	// left click
+	if (ImGui::IsItemClicked(0)) {
+		if (_isParentSelectMode && _selectedObj != nullptr) {
+			_selectedObj->GetTransform()->SetParent(transform);
 			_isParentSelectMode = false;
 			cout << _isParentSelectMode << endl;
 		}
-		_selectedObj = parent->GetGameObject();
+		_selectedObj = transform->GetGameObject();
 	}
-	if (isNodeOpen)
-	{
-		auto& childs = parent->GetChilds();
-		for (shared_ptr<Transform> child : childs)
-		{
+	// right click
+	else if (ImGui::IsItemClicked(1)) {
+		_selectedObj = transform->GetGameObject();
+		ImGui::OpenPopup("ObjectRightClickPopup");
+	}
+	if (ImGui::BeginPopup("ObjectRightClickPopup")) {
+		if (ImGui::Selectable("Delete Object")) {
+			_selectedObj->Delete();
+			_selectedObj = nullptr;
+		}
+		ImGui::EndPopup();
+	}
+
+	if (isNodeOpen) {
+		auto& childs = transform->GetChilds();
+		for (shared_ptr<Transform> child : childs) {
 			HierarchyObjectRecursion(child);
 		}
 		ImGui::TreePop();

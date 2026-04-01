@@ -65,10 +65,14 @@ void RenderManager::Init()
 void RenderManager::PreUpdate()
 {
 	for (int i = 0; i < _objects.size(); ++i) {
-		_objects[i]->PreUpdate();
+		if (_objects[i] != nullptr)
+			_objects[i]->PreUpdate();
 
 		// 런타임 중에 삭제된 경우
-		if (_objects[i] == nullptr) --i;
+		if (_objects[i] == nullptr) {
+			_objects.erase(_objects.begin() + i);
+			--i;
+		}
 	}
 }
 
@@ -430,7 +434,9 @@ void RenderManager::DeleteGameobject(shared_ptr<GameObject> obj)
 	for (auto& o : deleteObjs) {
 		for (int i = 0; i < _objects.size(); i++) {
 			if (o == _objects[i]) {
-				_objects.erase(_objects.begin() + i);
+				_objects[i].reset();
+				// _objects.erase(_objects.begin() + i);
+				break;
 			}
 		}
 
@@ -438,6 +444,7 @@ void RenderManager::DeleteGameobject(shared_ptr<GameObject> obj)
 		for (int i = 0; i < _objectsSortedPSO[objPsoIdx].size(); i++) {
 			if (o == _objectsSortedPSO[objPsoIdx][i]) {
 				_objectsSortedPSO[objPsoIdx].erase(_objectsSortedPSO[objPsoIdx].begin() + i);
+				break;
 			}
 		}
 	}

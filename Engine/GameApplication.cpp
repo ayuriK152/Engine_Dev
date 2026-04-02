@@ -71,6 +71,7 @@ void GameApplication::PreUpdate()
 {
 	if (!_appStatus.appPaused) {
 		DEBUG->PreUpdate();
+		PHYSICS->PreUpdate();
 		RENDER->PreUpdate();
 	}
 }

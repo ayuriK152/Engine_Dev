@@ -45,6 +45,23 @@ void PhysicsManager::Init()
 void PhysicsManager::PreUpdate()
 {
 	if (!EDITOR->IsOnPlay()) return;
+
+	for (auto& rigidbody : _rigidbodies) {
+		rigidbody->PreUpdate();
+
+		BodyID bodyId = rigidbody->GetBodyID();
+		if (!rigidbody->IsActive() || !rigidbody->GetGameObject()->IsActive()) {
+			if (_physicsSystem->GetBodyInterface().IsActive(bodyId))
+				_physicsSystem->GetBodyInterface().DeactivateBody(bodyId);
+		}
+		else {
+			if (!rigidbody->IsStatic()) {
+				if (!_physicsSystem->GetBodyInterface().IsActive(bodyId)) {
+					_physicsSystem->GetBodyInterface().ActivateBody(bodyId);
+				}
+			}
+		}
+	}
 }
 
 void PhysicsManager::Update()
@@ -54,7 +71,9 @@ void PhysicsManager::Update()
 	_physicsSystem->Update(TIME->DeltaTime(), 1, _tempAlloc, _jobSystem);
 
 	for (auto& rigidbody : _rigidbodies) {
-		if (!_physicsSystem->GetBodyInterface().IsActive(rigidbody->GetBodyID()))
+		if (!_physicsSystem->GetBodyInterface().IsActive(rigidbody->GetBodyID()) || 
+			!rigidbody->IsActive() ||
+			!rigidbody->GetGameObject()->IsActive())
 			continue;
 
 		JPH::RVec3 position;

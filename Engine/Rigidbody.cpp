@@ -58,11 +58,6 @@ void Rigidbody::Init()
 
 void Rigidbody::PreUpdate()
 {
-
-}
-
-void Rigidbody::Update()
-{
 	if (!_isPhysicsActive) return;
 
 	if (_gameObject.lock()->GetFramesDirty() > 0) {
@@ -81,6 +76,11 @@ void Rigidbody::Update()
 			JPH::EActivation::Activate
 		);
 	}
+}
+
+void Rigidbody::Update()
+{
+
 }
 
 void Rigidbody::OnDestroy()

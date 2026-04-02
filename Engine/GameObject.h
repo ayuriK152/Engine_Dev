@@ -75,7 +75,9 @@ public:
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
-	bool IsActive() { return _isActive && _parentInactiveStack == 0; }
+	bool IsActive() { 
+		return _isActive && _parentInactiveStack == 0;
+	}
 	void SetActive(bool flag);
 
 	bool IsPrefab() { return _isPrefab; }

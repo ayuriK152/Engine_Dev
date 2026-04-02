@@ -368,6 +368,8 @@ void EngineGUIManager::ShowResourceDirectory()
 
 void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> transform)
 {
+	if (transform->GetGameObject() == nullptr) return;
+
 	ImGuiTreeNodeFlags tree_flags = 
 		ImGuiTreeNodeFlags_OpenOnArrow | 
 		ImGuiTreeNodeFlags_OpenOnDoubleClick | 

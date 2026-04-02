@@ -32,6 +32,9 @@ void Transform::OnDestroy()
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - Transfrom:" << _id << "\n";
 #endif
+	if (_parent != nullptr) {
+		_parent->RemoveChild(static_pointer_cast<Transform>(shared_from_this()));
+	}
 }
 
 void Transform::LoadXML(XMLElement* compElem)
@@ -568,6 +571,18 @@ void Transform::AddChild(shared_ptr<Transform> child)
 {
 	_childs.push_back(child);
 	child->UpdateDepthLevel();
+}
+
+bool Transform::RemoveChild(shared_ptr<Transform> child)
+{
+	for (int i = 0; i < _childs.size(); ++i) {
+		if (_childs[i] == child) {
+			_childs.erase(_childs.begin() + i);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Transform::SetDirtyFlag()

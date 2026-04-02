@@ -38,6 +38,8 @@ void EditorManager::Play()
 			}
 		}
 
+		go->SetFramesDirty();
+
 		_objectSnapshots.push_back(goSnapshot);
 	}
 

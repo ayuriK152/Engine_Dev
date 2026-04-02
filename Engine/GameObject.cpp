@@ -68,6 +68,10 @@ void GameObject::PreUpdate()
 				c->isInitialized = true;
 				c->Init();
 			}
+
+			if ((UINT32)c->type & ((UINT32)ComponentType::Rigidbody))
+				continue;
+
 			c->PreUpdate();
 		}
 	}

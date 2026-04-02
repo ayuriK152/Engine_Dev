@@ -7,6 +7,6 @@
     <Metallic value="0.0"/>
     <Roughness value="0.5"/>
     <Tilling x="100" y="100"/>
-    <DiffuseTexture>prototype_dark1.dds</DiffuseTexture>
+    <DiffuseTexture>..\Resources\Textures\Prototype\prototype_dark1.dds</DiffuseTexture>
     <NormalTexture></NormalTexture>
 </Material>

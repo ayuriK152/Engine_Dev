@@ -6,6 +6,6 @@
     <Emissive r="0" g="0" b="0" a="1"/>
     <Metallic value="0.7"/>
     <Roughness value="0.5"/>
-    <DiffuseTexture>Paladin_diffuse.png</DiffuseTexture>
-    <NormalTexture>Paladin_normal.png</NormalTexture>
+    <DiffuseTexture>..\Resources\Textures\Paladin\Paladin_diffuse.png</DiffuseTexture>
+    <NormalTexture>..\Resources\Textures\Paladin\Paladin_normal.png</NormalTexture>
 </Material>

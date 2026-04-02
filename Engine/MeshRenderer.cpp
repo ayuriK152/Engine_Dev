@@ -73,7 +73,7 @@ void MeshRenderer::LoadXML(XMLElement* compElem)
 void MeshRenderer::SaveXML(XMLElement* compElem)
 {
 	compElem->SetAttribute("ComponentType", "MeshRenderer");
-	if (_mesh != nullptr) compElem->SetAttribute("MeshName", _mesh->GetName().c_str());
+	if (_mesh != nullptr) compElem->SetAttribute("Mesh", _mesh->GetPath().c_str());
 	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
 }
 

@@ -6,6 +6,6 @@
     <Emissive r="0" g="0" b="0" a="1"/>
     <Metallic value="0.0"/>
     <Roughness value="0.5"/>
-    <DiffuseTexture>000.dds</DiffuseTexture>
+    <DiffuseTexture>..\Resources\Textures\000.dds</DiffuseTexture>
     <NormalTexture></NormalTexture>
 </Material>

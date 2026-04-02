@@ -6,6 +6,6 @@
     <Emissive r="0" g="0" b="0" a="1"/>
     <Metallic value="0.0"/>
     <Roughness value="0.4"/>
-    <DiffuseTexture>MaleBruteA_Hair_diffuse.png</DiffuseTexture>
-    <NormalTexture>MaleBruteA_Hair_normal.png</NormalTexture>
+    <DiffuseTexture>..\Resources\Textures\Brute\MaleBruteA_Hair_diffuse.png</DiffuseTexture>
+    <NormalTexture>..\Resources\Textures\Brute\MaleBruteA_Hair_normal.png</NormalTexture>
 </Material>

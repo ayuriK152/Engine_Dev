@@ -6,6 +6,6 @@
     <Emissive r="0" g="0" b="0" a="1"/>
     <Metallic value="0.0"/>
     <Roughness value="0.6"/>
-    <DiffuseTexture>MaleBruteA_Body_diffuse.png</DiffuseTexture>
+    <DiffuseTexture>..\Resources\Textures\Brute\MaleBruteA_Body_diffuse.png</DiffuseTexture>
     <NormalTexture></NormalTexture>
 </Material>

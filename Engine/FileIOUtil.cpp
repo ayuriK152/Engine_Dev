@@ -95,7 +95,7 @@ void FileIOUtil::LoadTextures()
 		//auto defaultTex = make_shared<Texture>(UniversalUtils::ToWString(fileName));
 		auto defaultTex = make_shared<Texture>(i->path().c_str());
 		defaultTex->SetName(fileName);
-		RESOURCE->Add<Texture>(Utils::ToWString(fileName.substr(0, fileName.size() - (format.size() + 1))), defaultTex);
+		RESOURCE->Add<Texture>(Utils::ToWString(defaultTex->GetPath()), defaultTex);
 	}
 }
 
@@ -190,13 +190,13 @@ void FileIOUtil::LoadMaterials()
 		element = node->FirstChildElement("DiffuseTexture");
 		if (element->GetText()) {
 			textureName = string(element->GetText());
-			mat->SetDiffuse(RESOURCE->Get<Texture>(Utils::ToWString(textureName.substr(0, textureName.length() - 4))));
+			mat->SetDiffuse(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
 		}
 
 		element = node->FirstChildElement("NormalTexture");
 		if (element->GetText()) {
 			textureName = string(element->GetText());
-			mat->SetNormal(RESOURCE->Get<Texture>(Utils::ToWString(textureName.substr(0, textureName.length() - 4))));
+			mat->SetNormal(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
 		}
 
 		RESOURCE->Add<Material>(Utils::ToWString(name), mat);

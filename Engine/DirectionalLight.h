@@ -1,7 +1,7 @@
 #pragma once
 #include "Light.h"
 
-class DirectionalLight : public Light
+class BULB_API DirectionalLight : public Light
 {
 	using Super = Light;
 public:
@@ -17,8 +17,8 @@ public:
 
 	void OnDestroy() override;
 
-	void LoadXML(XMLElement* compElem) override;
-	void SaveXML(XMLElement* compElem) override;
+	void LoadXML(Bulb::XMLElement compElem) override;
+	void SaveXML(Bulb::XMLElement compElem) override;
 
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;

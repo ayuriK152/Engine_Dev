@@ -66,25 +66,25 @@ void SkinnedMeshRenderer::OnDestroy()
 		_material.reset();
 }
 
-void SkinnedMeshRenderer::LoadXML(XMLElement* compElem)
+void SkinnedMeshRenderer::LoadXML(Bulb::XMLElement compElem)
 {
-	const char* meshPath = compElem->Attribute("Mesh");
+	const char* meshPath = compElem.Attribute("Mesh");
 	if (meshPath != 0) SetMesh(RESOURCE->LoadMesh(meshPath));
 
-	const char* materialName = compElem->Attribute("Material");
+	const char* materialName = compElem.Attribute("Material");
 	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
 
-	const char* rootBoneName = compElem->Attribute("RootBoneName");
+	const char* rootBoneName = compElem.Attribute("RootBoneName");
 	if (rootBoneName != 0) _rootBoneName = rootBoneName;
 }
 
-void SkinnedMeshRenderer::SaveXML(XMLElement* compElem)
+void SkinnedMeshRenderer::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "SkinnedMeshRenderer");
+	compElem.SetAttribute("ComponentType", "SkinnedMeshRenderer");
 
-	if (_mesh != nullptr) compElem->SetAttribute("Mesh", _mesh->GetPath().c_str());
-	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
-	compElem->SetAttribute("RootBoneName", _rootBoneName.c_str());
+	if (_mesh != nullptr) compElem.SetAttribute("Mesh", _mesh->GetPath().c_str());
+	if (_material != nullptr) compElem.SetAttribute("Material", _material->GetName().c_str());
+	compElem.SetAttribute("RootBoneName", _rootBoneName.c_str());
 }
 
 ComponentSnapshot SkinnedMeshRenderer::CaptureSnapshot()

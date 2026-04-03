@@ -1,6 +1,6 @@
 #pragma once
 
-class EngineStatusManager
+class BULB_API EngineStatusManager
 {
 	DECLARE_SINGLE(EngineStatusManager)
 public:

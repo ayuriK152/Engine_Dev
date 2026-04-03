@@ -1,6 +1,6 @@
 #pragma once
 
-class EditorManager
+class BULB_API EditorManager
 {
 	DECLARE_SINGLE(EditorManager);
 public:

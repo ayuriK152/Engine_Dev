@@ -33,8 +33,6 @@ bool Graphic::Init()
 	RENDER->Init();
 	FILEIO->Init();
 	UI->Init();
-	if (_appDesc.app != nullptr)
-		_appDesc.app->Init();
 	SCENE->Init();
 	PHYSICS->Init();
 	DEBUG->Init();
@@ -48,9 +46,7 @@ bool Graphic::Init()
 
 void Graphic::Update()
 {
-	// Delete Soon
-	if (_appDesc.app != nullptr)
-		_appDesc.app->Update();
+	// EMPTY
 }
 
 

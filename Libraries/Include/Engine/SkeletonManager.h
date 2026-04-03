@@ -2,7 +2,7 @@
 
 class Skeleton;
 
-class SkeletonManager
+class BULB_API SkeletonManager
 {
 	DECLARE_SINGLE(SkeletonManager);
 public:

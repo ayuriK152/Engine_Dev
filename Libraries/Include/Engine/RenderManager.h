@@ -83,7 +83,7 @@
 
 #define		MAX_HIERARCHY_DEPTH		32
 
-class RenderManager
+class BULB_API RenderManager
 {
 	DECLARE_SINGLE(RenderManager)
 public:

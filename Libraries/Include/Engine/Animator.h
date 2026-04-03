@@ -7,7 +7,7 @@
 class Animation;
 class Skeleton;
 
-enum AnimationEventTypes {
+enum BULB_API AnimationEventTypes {
 	Speed,
 	Attack,
 	End,
@@ -18,14 +18,14 @@ enum AnimationEventTypes {
 // 현재는 애니메이션을 잘라서 사용하는 경우가 없기 때문에 tick을 0부터 시작한다고 가정
 // 하지만 추후에 애니메이션 앞부분을 잘라서 사용하면 이벤트 처리에 프레임당 딜레이가 생기는 잠재적인 문제가 있음
 // 크런치 이후에 수정이 반드시 필요함
-struct AnimationEvent
+struct BULB_API AnimationEvent
 {
 	AnimationEventTypes type;
 	float Tick;
 	Bulb::Vector4 datas[3];
 };
 
-class Animator : public Component
+class BULB_API Animator : public Component
 {
 	friend class AnimationManager;
 public:
@@ -37,8 +37,8 @@ public:
 
 	void OnDestroy() override;
 
-	void LoadXML(XMLElement* compElem) override;
-	void SaveXML(XMLElement* compElem) override;
+	void LoadXML(Bulb::XMLElement compElem) override;
+	void SaveXML(Bulb::XMLElement compElem) override;
 
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;

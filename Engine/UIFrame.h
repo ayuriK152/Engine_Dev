@@ -1,6 +1,7 @@
 #pragma once
 #include "UIElement.h"
-class UIFrame : public UIElement
+
+class BULB_API UIFrame : public UIElement
 {
 public:
 	UIFrame();

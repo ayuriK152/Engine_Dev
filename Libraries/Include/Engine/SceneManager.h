@@ -1,6 +1,6 @@
 #pragma once
 
-class SceneManager
+class BULB_API SceneManager
 {
 	DECLARE_SINGLE(SceneManager);
 public:

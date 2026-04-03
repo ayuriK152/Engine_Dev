@@ -65,7 +65,7 @@ struct DescriptorHeapAllocator
 	}
 };
 
-class EngineGUIManager
+class BULB_API EngineGUIManager
 {
 	DECLARE_SINGLE(EngineGUIManager)
 public:

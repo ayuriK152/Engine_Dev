@@ -1,6 +1,6 @@
 #pragma once
 
-class Utils
+class BULB_API Utils
 {
 public:
 	static void Init();

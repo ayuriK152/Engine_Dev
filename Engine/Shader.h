@@ -8,7 +8,7 @@ enum class ShaderType
 	GS		// Geometry Shader
 };
 
-class Shader : public Resource
+class BULB_API Shader : public Resource
 {
 	using Super = Resource;
 public:

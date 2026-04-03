@@ -4,6 +4,12 @@
 // #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 // #define PRINT_DEBUG_CONSOLE_LOG
 
+#ifdef BULB_ENGINEAPI_EXPORTS
+#define BULB_API __declspec(dllexport)
+#else
+#define BULB_API __declspec(dllimport)
+#endif
+
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 
@@ -127,7 +133,6 @@ using namespace JPH::literals;
 
 #include "Constants.h"
 
-#include "IExecute.h"
 #include "Component.h"
 
 /*************/
@@ -179,6 +184,7 @@ using namespace JPH::literals;
 #include "Skeleton.h"
 #include "Event.h"
 #include "ComponentFactory.h"
+#include "XMLElement.h"
 
 /************/
 /* Managers */

@@ -2,7 +2,7 @@
 
 #define DEFAULT_UI_COUNT 10
 
-class UIManager
+class BULB_API UIManager
 {
 	DECLARE_SINGLE(UIManager)
 public:

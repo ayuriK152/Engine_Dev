@@ -57,14 +57,14 @@ void ParticleEmitter::OnDestroy()
 #endif
 }
 
-void ParticleEmitter::LoadXML(XMLElement* compElem)
+void ParticleEmitter::LoadXML(Bulb::XMLElement compElem)
 {
 
 }
 
-void ParticleEmitter::SaveXML(XMLElement* compElem)
+void ParticleEmitter::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "ParticleEmitter");
+	compElem.SetAttribute("ComponentType", "ParticleEmitter");
 }
 
 ComponentSnapshot ParticleEmitter::CaptureSnapshot()

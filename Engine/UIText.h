@@ -1,7 +1,7 @@
 #pragma once
 #include "UIElement.h"
 
-class UIText : public UIPanel
+class BULB_API UIText : public UIPanel
 {
 public:
 	UIText();

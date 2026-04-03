@@ -1,6 +1,6 @@
 #pragma once
 
-class GameApplication
+class BULB_API GameApplication
 {
 	DECLARE_SINGLE(GameApplication);
 public:

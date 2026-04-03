@@ -8,9 +8,6 @@
       <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="IExecute.h">
-      <Filter>04. Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="MathHelper.h">
       <Filter>98. Utils</Filter>
     </ClInclude>
@@ -31,9 +28,6 @@
     </ClInclude>
     <ClInclude Include="UploadBuffer.h">
       <Filter>01. EngineComponents</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTimer.h">
-      <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="DXUtil.h">
       <Filter>98. Utils</Filter>
@@ -215,6 +209,10 @@
     <ClInclude Include="EditorCamera.h">
       <Filter>07. Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>01. EngineComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLElement.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -280,9 +278,6 @@
       <Filter>00. Core</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="IExecute.cpp">
-      <Filter>04. Interfaces</Filter>
-    </ClCompile>
     <ClCompile Include="MathHelper.cpp">
       <Filter>98. Utils</Filter>
     </ClCompile>
@@ -293,9 +288,6 @@
       <Filter>98. Utils</Filter>
     </ClCompile>
     <ClCompile Include="Graphic.cpp">
-      <Filter>00. Core</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
       <Filter>00. Core</Filter>
     </ClCompile>
     <ClCompile Include="DXUtil.cpp">
@@ -463,6 +455,10 @@
     <ClCompile Include="EditorCamera.cpp">
       <Filter>07. Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>01. EngineComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLElement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

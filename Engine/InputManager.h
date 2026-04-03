@@ -1,6 +1,6 @@
 #pragma once
 
-enum KeyValue
+enum BULB_API KeyValue
 {
 	A		=	'A',
 	B		=	'B',
@@ -57,7 +57,7 @@ enum KeyValue
 	ALT		=	VK_MENU
 };
 
-enum KeyState
+enum BULB_API KeyState
 {
 	Idle,
 	Down,
@@ -65,7 +65,7 @@ enum KeyState
 	Up
 };
 
-struct MouseStates
+struct BULB_API MouseStates
 {
 	KeyState LeftButton = KeyState::Idle;
 	bool IsLeftButtonLazyUpdate = false;
@@ -73,7 +73,7 @@ struct MouseStates
 	bool IsRightButtonLazyUpdate = false;
 };
 
-class InputManager
+class BULB_API InputManager
 {
 	DECLARE_SINGLE(InputManager);
 public:

@@ -1,7 +1,7 @@
 #pragma once
 #include "UIElement.h"
 
-class UIPanel :  public UIElement
+class BULB_API UIPanel :  public UIElement
 {
 	friend class UIManager;
 public:

@@ -16,7 +16,7 @@ class DirectionalLight;
 #pragma endregion
 
 
-class GameObject : public enable_shared_from_this<GameObject>
+class BULB_API GameObject : public enable_shared_from_this<GameObject>
 {
 	friend class GameObject;
 	friend class EngineGUIManager;

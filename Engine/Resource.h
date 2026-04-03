@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ResourceType
+enum class BULB_API ResourceType
 {
 	Undefined,
 	Mesh,
@@ -17,7 +17,7 @@ enum
 	RESOURCE_TYPE_COUNT = static_cast<UINT8>(ResourceType::End)
 };
 
-class Resource
+class BULB_API Resource
 {
 public:
 	Resource(ResourceType type);

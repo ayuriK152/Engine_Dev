@@ -1,6 +1,6 @@
 #pragma once
 
-struct Particle {
+struct BULB_API Particle {
 	XMFLOAT3 Position;
 	XMFLOAT3 Velocity;
 	float Age;
@@ -10,7 +10,7 @@ struct Particle {
 	XMFLOAT4 Color;
 };
 
-struct EmitterSetting {
+struct BULB_API EmitterSetting {
 	XMFLOAT3 EmitterPos;
 	float SpawnRate;
 	float ParticleInitialVelocity = 5;
@@ -19,7 +19,7 @@ struct EmitterSetting {
 	UINT TextureIdx = 0;
 };
 
-class ParticleEmitter : public Component
+class BULB_API ParticleEmitter : public Component
 {
 public:
 	ParticleEmitter();
@@ -31,8 +31,8 @@ public:
 
 	void OnDestroy() override;
 
-	void LoadXML(XMLElement* compElem) override;
-	void SaveXML(XMLElement* compElem) override;
+	void LoadXML(Bulb::XMLElement compElem) override;
+	void SaveXML(Bulb::XMLElement compElem) override;
 
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;

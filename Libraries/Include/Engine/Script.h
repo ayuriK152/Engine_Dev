@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-class Script : public Component
+class BULB_API Script : public Component
 {
 	using Super = Component;
 public:
@@ -9,8 +9,8 @@ public:
 
 	virtual void OnDestroy() override = 0;
 
-	virtual void LoadXML(XMLElement* compElem) override = 0;
-	virtual void SaveXML(XMLElement* compElem) override = 0;
+	virtual void LoadXML(Bulb::XMLElement compElem) override = 0;
+	virtual void SaveXML(Bulb::XMLElement compElem) override = 0;
 
 	virtual ComponentSnapshot CaptureSnapshot() override { 
 		ComponentSnapshot snapshot;

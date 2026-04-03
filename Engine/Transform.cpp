@@ -37,49 +37,50 @@ void Transform::OnDestroy()
 	}
 }
 
-void Transform::LoadXML(XMLElement* compElem)
+void Transform::LoadXML(Bulb::XMLElement compElem)
 {
 	// if (GetGameObject()->GetName() == "mixamorig:Sword_joint") __debugbreak();
 
-	SetLocalPosition({ compElem->FloatAttribute("PosX"), compElem->FloatAttribute("PosY"), compElem->FloatAttribute("PosZ") });
-	SetLocalScale({ compElem->FloatAttribute("ScaleX", 1.0f), compElem->FloatAttribute("ScaleY", 1.0f), compElem->FloatAttribute("ScaleZ", 1.0f) });
-	//SetLocalRotation({ compElem->FloatAttribute("RotX"), compElem->FloatAttribute("RotY"), compElem->FloatAttribute("RotZ") });
-	Bulb::Vector4 quat(compElem->FloatAttribute("QuatX", 0), compElem->FloatAttribute("QuatY", 0), compElem->FloatAttribute("QuatZ", 0), compElem->FloatAttribute("QuatW", 1));
+	SetLocalPosition({ compElem.FloatAttribute("PosX"), compElem.FloatAttribute("PosY"), compElem.FloatAttribute("PosZ") });
+	SetLocalScale({ compElem.FloatAttribute("ScaleX", 1.0f), compElem.FloatAttribute("ScaleY", 1.0f), compElem.FloatAttribute("ScaleZ", 1.0f) });
+	//SetLocalRotation({ compElem.FloatAttribute("RotX"), compElem.FloatAttribute("RotY"), compElem.FloatAttribute("RotZ") });
+	Bulb::Vector4 quat(compElem.FloatAttribute("QuatX", 0), compElem.FloatAttribute("QuatY", 0), compElem.FloatAttribute("QuatZ", 0), compElem.FloatAttribute("QuatW", 1));
 
 	SetLocalQuaternion(quat.Normalize());
 
 	// 수동으로 씬 작성하는게 아니면 굳이 필요할까 싶음
-	XMLElement* lookAtElem = compElem->FirstChildElement("LookAt");
-	if (lookAtElem) {
-		LookAt({ lookAtElem->FloatAttribute("x"), lookAtElem->FloatAttribute("y"), lookAtElem->FloatAttribute("z") });
-	}
+	//Bulb::XMLElement lookAtElem = compElem.FirstChildElement("LookAt");
+	//if (lookAtElem) {
+	//	LookAt({ lookAtElem->FloatAttribute("x"), lookAtElem->FloatAttribute("y"), lookAtElem->FloatAttribute("z") });
+	//}
+	//delete lookAtElem;
 }
 
-void Transform::SaveXML(XMLElement* compElem)
+void Transform::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "Transform");
+	compElem.SetAttribute("ComponentType", "Transform");
 
 	// ForcedUpdateTransform() 쓰고 직접 접근하는건 문제가 없는지 검증 후 적용
 	Bulb::Vector3 pos = GetLocalPosition();
-	compElem->SetAttribute("PosX", pos.x);
-	compElem->SetAttribute("PosY", pos.y);
-	compElem->SetAttribute("PosZ", pos.z);
+	compElem.SetAttribute("PosX", pos.x);
+	compElem.SetAttribute("PosY", pos.y);
+	compElem.SetAttribute("PosZ", pos.z);
 
 	Bulb::Vector3 scl = GetLocalScale();
-	compElem->SetAttribute("ScaleX", scl.x);
-	compElem->SetAttribute("ScaleY", scl.y);
-	compElem->SetAttribute("ScaleZ", scl.z);
+	compElem.SetAttribute("ScaleX", scl.x);
+	compElem.SetAttribute("ScaleY", scl.y);
+	compElem.SetAttribute("ScaleZ", scl.z);
 
 	//Vector3 rot = GetLocalRotation();
-	//compElem->SetAttribute("RotX", rot.x);
-	//compElem->SetAttribute("RotY", rot.y);
-	//compElem->SetAttribute("RotZ", rot.z);
+	//compElem.SetAttribute("RotX", rot.x);
+	//compElem.SetAttribute("RotY", rot.y);
+	//compElem.SetAttribute("RotZ", rot.z);
 
 	Bulb::Vector4 quat = GetLocalQuaternion();
-	compElem->SetAttribute("QuatX", quat.x);
-	compElem->SetAttribute("QuatY", quat.y);
-	compElem->SetAttribute("QuatZ", quat.z);
-	compElem->SetAttribute("QuatW", quat.w);
+	compElem.SetAttribute("QuatX", quat.x);
+	compElem.SetAttribute("QuatY", quat.y);
+	compElem.SetAttribute("QuatZ", quat.z);
+	compElem.SetAttribute("QuatW", quat.w);
 }
 
 ComponentSnapshot Transform::CaptureSnapshot()

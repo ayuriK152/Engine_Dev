@@ -4,7 +4,7 @@
 using namespace DirectX;
 
 namespace Bulb {
-	struct Vector2 : public XMFLOAT2
+	struct BULB_API Vector2 : public XMFLOAT2
 	{
 		Vector2() : XMFLOAT2(0.0f, 0.0f) {}
 		Vector2(float x, float y) : XMFLOAT2(x, y) {}
@@ -58,7 +58,7 @@ namespace Bulb {
 		}
 	};
 
-	struct Vector3 : public XMFLOAT3
+	struct BULB_API Vector3 : public XMFLOAT3
 	{
 		Vector3() : XMFLOAT3(0.0f, 0.0f, 0.0f) {}
 		Vector3(float x, float y, float z) : XMFLOAT3(x, y, z) {}
@@ -121,7 +121,7 @@ namespace Bulb {
 		}
 	};
 
-	struct Vector4 : public XMFLOAT4
+	struct BULB_API Vector4 : public XMFLOAT4
 	{
 		Vector4() : XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) {}
 		Vector4(float x, float y, float z, float w) : XMFLOAT4(x, y, z, w) {}
@@ -165,7 +165,7 @@ namespace Bulb {
 		}
 	};
 
-	struct Color {
+	struct BULB_API Color {
 		union {
 			struct { float r, g, b, a; };
 			XMFLOAT4 xmf4;

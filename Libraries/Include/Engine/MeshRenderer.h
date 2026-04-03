@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "UploadBuffer.h"
 
-class MeshRenderer : public Component
+class BULB_API MeshRenderer : public Component
 {
 	using Super = Component;
 public:
@@ -13,8 +13,8 @@ public:
 
 	void OnDestroy() override;
 
-	void LoadXML(XMLElement* compElem) override;
-	void SaveXML(XMLElement* compElem) override;
+	void LoadXML(Bulb::XMLElement compElem) override;
+	void SaveXML(Bulb::XMLElement compElem) override;
 
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;

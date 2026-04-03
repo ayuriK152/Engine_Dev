@@ -76,15 +76,15 @@ void Camera::OnDestroy()
 	_currentCamera = nullptr;
 }
 
-void Camera::LoadXML(XMLElement* compElem)
+void Camera::LoadXML(Bulb::XMLElement compElem)
 {
-	_isMainCamera = compElem->BoolAttribute("MainCamera");
+	_isMainCamera = compElem.BoolAttribute("MainCamera");
 }
 
-void Camera::SaveXML(XMLElement* compElem)
+void Camera::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "Camera");
-	compElem->SetAttribute("MainCamera", _isMainCamera);
+	compElem.SetAttribute("ComponentType", "Camera");
+	compElem.SetAttribute("MainCamera", _isMainCamera);
 }
 
 ComponentSnapshot Camera::CaptureSnapshot()

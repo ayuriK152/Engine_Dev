@@ -2,7 +2,7 @@
 
 class UIElement;
 
-class UITransform : public enable_shared_from_this<UITransform>
+class BULB_API UITransform : public enable_shared_from_this<UITransform>
 {
 	friend class UITransform;
 public:

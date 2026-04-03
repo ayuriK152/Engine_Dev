@@ -1,6 +1,6 @@
 #pragma once
 
-class EditorCamera : public Script
+class BULB_API EditorCamera : public Script
 {
 public:
 	~EditorCamera();
@@ -10,8 +10,8 @@ public:
 
 	void OnDestroy() override;
 
-	void LoadXML(XMLElement* compElem) override {}
-	void SaveXML(XMLElement* compElem) override {}
+	void LoadXML(Bulb::XMLElement compElem) override {}
+	void SaveXML(Bulb::XMLElement compElem) override {}
 
 private:
 	shared_ptr<Transform> _transform;

@@ -84,14 +84,14 @@ void CharacterController::OnDestroy()
 #endif
 }
 
-void CharacterController::LoadXML(XMLElement* compElem)
+void CharacterController::LoadXML(Bulb::XMLElement compElem)
 {
 
 }
 
-void CharacterController::SaveXML(XMLElement* compElem)
+void CharacterController::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "CharacterController");
+	compElem.SetAttribute("ComponentType", "CharacterController");
 }
 
 ComponentSnapshot CharacterController::CaptureSnapshot()

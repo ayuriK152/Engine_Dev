@@ -1,6 +1,6 @@
 #pragma once
 
-class Skeleton
+class BULB_API Skeleton
 {
 public:
 	friend class SkeletonManager;

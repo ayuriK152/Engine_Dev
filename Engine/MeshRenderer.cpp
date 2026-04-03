@@ -61,20 +61,20 @@ void MeshRenderer::OnDestroy()
 		_material.reset();
 }
 
-void MeshRenderer::LoadXML(XMLElement* compElem)
+void MeshRenderer::LoadXML(Bulb::XMLElement compElem)
 {
-	const char* meshPath = compElem->Attribute("Mesh");
+	const char* meshPath = compElem.Attribute("Mesh");
 	if (meshPath != 0) SetMesh(RESOURCE->LoadMesh(meshPath));
 
-	const char* materialName = compElem->Attribute("Material");
+	const char* materialName = compElem.Attribute("Material");
 	if (materialName != 0) SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(materialName)));
 }
 
-void MeshRenderer::SaveXML(XMLElement* compElem)
+void MeshRenderer::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "MeshRenderer");
-	if (_mesh != nullptr) compElem->SetAttribute("Mesh", _mesh->GetPath().c_str());
-	if (_material != nullptr) compElem->SetAttribute("Material", _material->GetName().c_str());
+	compElem.SetAttribute("ComponentType", "MeshRenderer");
+	if (_mesh != nullptr) compElem.SetAttribute("Mesh", _mesh->GetPath().c_str());
+	if (_material != nullptr) compElem.SetAttribute("Material", _material->GetName().c_str());
 }
 
 ComponentSnapshot MeshRenderer::CaptureSnapshot()

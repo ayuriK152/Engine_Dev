@@ -1,6 +1,6 @@
 #pragma once
 
-class GameTimer
+class BULB_API GameTimer
 {
 	DECLARE_SINGLE(GameTimer);
 public:

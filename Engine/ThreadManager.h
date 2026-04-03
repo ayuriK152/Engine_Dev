@@ -1,6 +1,6 @@
 #pragma once
 
-class ThreadManager
+class BULB_API ThreadManager
 {
 	DECLARE_SINGLE(ThreadManager);
 public:

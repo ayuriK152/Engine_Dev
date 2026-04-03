@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 
-class Camera : public Component
+class BULB_API Camera : public Component
 {
 	friend class Camera;
 	using Super = Component;
@@ -14,8 +14,8 @@ public:
 
 	void OnDestroy() override;
 
-	void LoadXML(XMLElement* compElem) override;
-	void SaveXML(XMLElement* compElem) override;
+	void LoadXML(Bulb::XMLElement compElem) override;
+	void SaveXML(Bulb::XMLElement compElem) override;
 
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;

@@ -1,6 +1,6 @@
 #pragma once
 
-class Geometry
+class BULB_API Geometry
 {
 public:
 	Geometry();

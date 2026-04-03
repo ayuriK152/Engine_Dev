@@ -1,6 +1,6 @@
 #pragma once
 
-class UIElement : public enable_shared_from_this<UIElement>
+class BULB_API UIElement : public enable_shared_from_this<UIElement>
 {
 	friend class UIManager;
 protected:

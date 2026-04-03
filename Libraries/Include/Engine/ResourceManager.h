@@ -7,7 +7,7 @@
 
 class Mesh;
 
-class ResourceManager
+class BULB_API ResourceManager
 {
 	DECLARE_SINGLE(ResourceManager);
 public:

@@ -1,7 +1,7 @@
 #pragma once
 #include "Resource.h"
 
-class Animation : public Resource
+class BULB_API Animation : public Resource
 {
 public:
 	struct KeyFrame

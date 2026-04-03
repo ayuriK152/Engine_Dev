@@ -1,7 +1,7 @@
 #pragma once
 
 #define COUNT_COMPONENTTYPE	10
-enum class ComponentType
+enum class BULB_API ComponentType
 {
 	Undefined			 = 0,
 	Transform			 = 1 << 0,
@@ -17,7 +17,7 @@ enum class ComponentType
 };
 
 // For runtime add feature
-enum class UsableComponentType {
+enum class BULB_API UsableComponentType {
 	MeshRenderer,
 	SkinnedMeshRenderer,
 	Camera,
@@ -36,7 +36,7 @@ struct magic_enum::customize::enum_range<UsableComponentType> {
 	constexpr static int max = (int)UsableComponentType::Script;
 };
 
-enum class UIType
+enum class BULB_API UIType
 {
 	Frame = 1 << 0,
 	Panel = 1 << 1,

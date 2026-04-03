@@ -69,7 +69,7 @@ public:
 	}
 };
 
-class PhysicsManager : public JPH::ContactListener, public JPH::CharacterContactListener
+class BULB_API PhysicsManager : public JPH::ContactListener, public JPH::CharacterContactListener
 {
 	DECLARE_SINGLE(PhysicsManager);
 public:

@@ -1,6 +1,6 @@
 #pragma once
 
-class ParticleManager
+class BULB_API ParticleManager
 {
 	DECLARE_SINGLE(ParticleManager);
 public:

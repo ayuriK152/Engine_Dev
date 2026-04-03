@@ -5,7 +5,7 @@
 struct Vertex;
 #pragma endregion
 
-class Mesh : public Resource
+class BULB_API Mesh : public Resource
 {
 	using Super = Resource;
 public:

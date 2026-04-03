@@ -1,4 +1,5 @@
 #pragma once
+#include "XMLElement.h"
 
 #pragma region 전방선언
 class GameObject;
@@ -6,7 +7,7 @@ class Transform;
 class Camera;
 #pragma endregion
 
-class Component : public enable_shared_from_this<Component>
+class BULB_API Component : public enable_shared_from_this<Component>
 {
 public:
 	Component(ComponentType type);
@@ -23,8 +24,8 @@ public:
 	virtual void OnCollision(shared_ptr<GameObject> other) { }
 	virtual void OnCollisionExit(shared_ptr<GameObject> other) { }
 
-	virtual void LoadXML(XMLElement* compElem) = 0;
-	virtual void SaveXML(XMLElement* compElem) = 0;
+	virtual void LoadXML(Bulb::XMLElement compElem) = 0;
+	virtual void SaveXML(Bulb::XMLElement compElem) = 0;
 
 	virtual ComponentSnapshot CaptureSnapshot() = 0;
 	virtual void RestoreSnapshot(ComponentSnapshot snapshot) = 0;

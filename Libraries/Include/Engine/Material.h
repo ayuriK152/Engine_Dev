@@ -3,7 +3,7 @@
 
 class Texture;
 
-class Material : public Resource
+class BULB_API Material : public Resource
 {
 	using Super = Resource;
 public:

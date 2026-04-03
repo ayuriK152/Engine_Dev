@@ -124,14 +124,14 @@ void EnemyScript::OnDestroy()
 	_damageText.reset();
 }
 
-void EnemyScript::LoadXML(XMLElement* compElem)
+void EnemyScript::LoadXML(Bulb::XMLElement compElem)
 {
 
 }
 
-void EnemyScript::SaveXML(XMLElement* compElem)
+void EnemyScript::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "EnemyScript");
+	compElem.SetAttribute("ComponentType", "EnemyScript");
 }
 
 void EnemyScript::TakeDamage(int damage)

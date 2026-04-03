@@ -133,14 +133,14 @@ void PlayerScript::OnDestroy()
 	_lockOnTarget.reset();
 }
 
-void PlayerScript::LoadXML(XMLElement* compElem)
+void PlayerScript::LoadXML(Bulb::XMLElement compElem)
 {
 
 }
 
-void PlayerScript::SaveXML(XMLElement* compElem)
+void PlayerScript::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "PlayerScript");
+	compElem.SetAttribute("ComponentType", "PlayerScript");
 }
 
 void PlayerScript::Roll()

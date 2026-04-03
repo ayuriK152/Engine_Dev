@@ -121,12 +121,12 @@ void TPVCamera::OnDestroy()
 	_lockOnMarker.reset();
 }
 
-void TPVCamera::LoadXML(XMLElement* compElem)
+void TPVCamera::LoadXML(Bulb::XMLElement compElem)
 {
 
 }
 
-void TPVCamera::SaveXML(XMLElement* compElem)
+void TPVCamera::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "TPVCamera");
+	compElem.SetAttribute("ComponentType", "TPVCamera");
 }

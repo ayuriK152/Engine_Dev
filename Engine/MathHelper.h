@@ -1,6 +1,6 @@
 #pragma once
 
-class MathHelper
+class BULB_API MathHelper
 {
 public:
 	static const float Infinity;

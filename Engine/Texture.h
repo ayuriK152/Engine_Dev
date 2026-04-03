@@ -1,13 +1,13 @@
 #pragma once
 #include "Resource.h"
 
-enum TextureType
+enum BULB_API TextureType
 {
 	General,
 	Skybox
 };
 
-class Texture : public Resource
+class BULB_API Texture : public Resource
 {
 	using Super = Resource;
 public:

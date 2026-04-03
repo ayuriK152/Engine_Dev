@@ -95,16 +95,16 @@ void Rigidbody::OnDestroy()
 	PHYSICS->DeleteRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
 }
 
-void Rigidbody::LoadXML(XMLElement* compElem)
+void Rigidbody::LoadXML(Bulb::XMLElement compElem)
 {
-	SetStatic(compElem->BoolAttribute("Static", false));
-	SetGravity(compElem->BoolAttribute("Gravity", true));
-	SetColliderTrigger(compElem->BoolAttribute("Trigger", false));
-	SetPhysicsActive(compElem->BoolAttribute("PhysicsActive", true));
+	SetStatic(compElem.BoolAttribute("Static", false));
+	SetGravity(compElem.BoolAttribute("Gravity", true));
+	SetColliderTrigger(compElem.BoolAttribute("Trigger", false));
+	SetPhysicsActive(compElem.BoolAttribute("PhysicsActive", true));
 
-	XMLElement* colliderElem = compElem->FirstChildElement("Collider");
-	if (colliderElem) {
-		const char* colliderShape = colliderElem->Attribute("Shape");
+	Bulb::XMLElement colliderElem = compElem.FirstChildElement("Collider");
+	if (!colliderElem.IsNullPtr()) {
+		const char* colliderShape = colliderElem.Attribute("Shape");
 		if (colliderShape != 0) {
 			string shapeStr(colliderShape);
 			if (shapeStr == "Box") SetColliderShape(ColliderShape::Box);
@@ -112,53 +112,53 @@ void Rigidbody::LoadXML(XMLElement* compElem)
 			else if (shapeStr == "Capsule") SetColliderShape(ColliderShape::Capsule);
 		}
 
-		XMLElement* extentElem = colliderElem->FirstChildElement("Extent");
-		if (extentElem) {
-			SetColliderExtents({ extentElem->FloatAttribute("x", 0.5f), extentElem->FloatAttribute("y", 0.5f), extentElem->FloatAttribute("z", 0.5f) });
+		Bulb::XMLElement extentElem = colliderElem.FirstChildElement("Extent");
+		if (!extentElem.IsNullPtr()) {
+			SetColliderExtents({ extentElem.FloatAttribute("x", 0.5f), extentElem.FloatAttribute("y", 0.5f), extentElem.FloatAttribute("z", 0.5f) });
 		}
-		SetColliderHalfHeight(colliderElem->FloatAttribute("Height", 0.5f));
-		SetColliderRadius(colliderElem->FloatAttribute("Radius", 0.5f));
+		SetColliderHalfHeight(colliderElem.FloatAttribute("Height", 0.5f));
+		SetColliderRadius(colliderElem.FloatAttribute("Radius", 0.5f));
 
-		XMLElement* offsetElem = colliderElem->FirstChildElement("Offset");
-		if (offsetElem) {
-			SetColliderOffset({ offsetElem->FloatAttribute("x", 0.0f), offsetElem->FloatAttribute("y", 0.0f), offsetElem->FloatAttribute("z", 0.0f) });
+		Bulb::XMLElement offsetElem = colliderElem.FirstChildElement("Offset");
+		if (!offsetElem.IsNullPtr()) {
+			SetColliderOffset({ offsetElem.FloatAttribute("x", 0.0f), offsetElem.FloatAttribute("y", 0.0f), offsetElem.FloatAttribute("z", 0.0f) });
 		}
 
-		XMLElement* rotOffsetElem = colliderElem->FirstChildElement("RotOffset");
-		if (rotOffsetElem) {
-			SetColliderRotationOffset({ rotOffsetElem->FloatAttribute("x", 0.0f), rotOffsetElem->FloatAttribute("y", 0.0f), rotOffsetElem->FloatAttribute("z", 0.0f) });
+		Bulb::XMLElement rotOffsetElem = colliderElem.FirstChildElement("RotOffset");
+		if (!rotOffsetElem.IsNullPtr()) {
+			SetColliderRotationOffset({ rotOffsetElem.FloatAttribute("x", 0.0f), rotOffsetElem.FloatAttribute("y", 0.0f), rotOffsetElem.FloatAttribute("z", 0.0f) });
 		}
 	}
 }
 
-void Rigidbody::SaveXML(XMLElement* compElem)
+void Rigidbody::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "Rigidbody");
+	compElem.SetAttribute("ComponentType", "Rigidbody");
 
-	compElem->SetAttribute("Static", _isStatic);
-	compElem->SetAttribute("Gravity", _isGravity);
-	compElem->SetAttribute("Trigger", _isTrigger);
-	compElem->SetAttribute("PhysicsActive", _isPhysicsActive);
+	compElem.SetAttribute("Static", _isStatic);
+	compElem.SetAttribute("Gravity", _isGravity);
+	compElem.SetAttribute("Trigger", _isTrigger);
+	compElem.SetAttribute("PhysicsActive", _isPhysicsActive);
 
-	XMLElement* colliderElem = compElem->InsertNewChildElement("Collider");
-	colliderElem->SetAttribute("Shape", magic_enum::enum_name(_colliderShape).data());
-	colliderElem->SetAttribute("Height", _height);
-	colliderElem->SetAttribute("Radius", _radius);
+	Bulb::XMLElement colliderElem = compElem.InsertNewChildElement("Collider");
+	colliderElem.SetAttribute("Shape", magic_enum::enum_name(_colliderShape).data());
+	colliderElem.SetAttribute("Height", _height);
+	colliderElem.SetAttribute("Radius", _radius);
 
-	XMLElement* extentElem = colliderElem->InsertNewChildElement("Extent");
-	extentElem->SetAttribute("x", _extents.x);
-	extentElem->SetAttribute("y", _extents.y);
-	extentElem->SetAttribute("z", _extents.z);
+	Bulb::XMLElement extentElem = colliderElem.InsertNewChildElement("Extent");
+	extentElem.SetAttribute("x", _extents.x);
+	extentElem.SetAttribute("y", _extents.y);
+	extentElem.SetAttribute("z", _extents.z);
 
-	XMLElement* offsetElem = colliderElem->InsertNewChildElement("Offset");
-	offsetElem->SetAttribute("x", _colliderOffset.x);
-	offsetElem->SetAttribute("y", _colliderOffset.y);
-	offsetElem->SetAttribute("z", _colliderOffset.z);
+	Bulb::XMLElement offsetElem = colliderElem.InsertNewChildElement("Offset");
+	offsetElem.SetAttribute("x", _colliderOffset.x);
+	offsetElem.SetAttribute("y", _colliderOffset.y);
+	offsetElem.SetAttribute("z", _colliderOffset.z);
 
-	XMLElement* rotOffsetElem = colliderElem->InsertNewChildElement("RotOffset");
-	rotOffsetElem->SetAttribute("x", _colliderRotationOffset.x);
-	rotOffsetElem->SetAttribute("y", _colliderRotationOffset.y);
-	rotOffsetElem->SetAttribute("z", _colliderRotationOffset.z);
+	Bulb::XMLElement rotOffsetElem = colliderElem.InsertNewChildElement("RotOffset");
+	rotOffsetElem.SetAttribute("x", _colliderRotationOffset.x);
+	rotOffsetElem.SetAttribute("y", _colliderRotationOffset.y);
+	rotOffsetElem.SetAttribute("z", _colliderRotationOffset.z);
 }
 
 ComponentSnapshot Rigidbody::CaptureSnapshot()

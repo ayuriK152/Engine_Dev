@@ -7,21 +7,21 @@
 #define DEFAULT_VERTEX_BUFFER_SIZE	10000
 #define DEFAULT_INDEX_BUFFER_SIZE	30000
 
-enum LogLevel
+enum BULB_API LogLevel
 {
 	LOG_INFO,
 	LOG_WARN,
 	LOG_ERROR
 };
 
-struct DebugLog
+struct BULB_API DebugLog
 {
 	float time;
 	LogLevel logLevel;
 	string message;
 };
 
-struct DebugLine
+struct BULB_API DebugLine
 {
 	DebugLine(float x1, float y1, float z1, float x2, float y2, float z2, float r, float g, float b, float a) {
 		from = Bulb::Vector3(x1, y1, z1);
@@ -40,7 +40,7 @@ struct DebugLine
 	Bulb::Color color;
 };
 
-class DebugManager : public JPH::DebugRenderer
+class BULB_API DebugManager : public JPH::DebugRenderer
 {
 	JPH_OVERRIDE_NEW_DELETE
 	DECLARE_SINGLE(DebugManager);

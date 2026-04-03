@@ -123,31 +123,31 @@ void Animator::OnDestroy()
 		_previewAnimation.reset();
 }
 
-void Animator::LoadXML(XMLElement* compElem)
+void Animator::LoadXML(Bulb::XMLElement compElem)
 {
-	const char* boneFile = compElem->Attribute("Bone");
+	const char* boneFile = compElem.Attribute("Bone");
 	if (boneFile != 0) _boneFileName = boneFile;
 
-	XMLElement* animsElem = compElem->FirstChildElement("Animations");
+	Bulb::XMLElement animsElem = compElem.FirstChildElement("Animations");
 
-	XMLElement* animElem = animsElem->FirstChildElement("Animation");
-	while (animElem != nullptr) {
-		const char* path = animElem->Attribute("Path");
+	Bulb::XMLElement animElem = animsElem.FirstChildElement("Animation");
+	while (!animElem.IsNullPtr()) {
+		const char* path = animElem.Attribute("Path");
 		if (path != 0) AddAnimation(RESOURCE->LoadAnimation(path));
-		animElem = animElem->NextSiblingElement();
+		animElem = animElem.NextSiblingElement();
 	}
 }
 
-void Animator::SaveXML(XMLElement* compElem)
+void Animator::SaveXML(Bulb::XMLElement compElem)
 {
-	compElem->SetAttribute("ComponentType", "Animator");
+	compElem.SetAttribute("ComponentType", "Animator");
 
-	compElem->SetAttribute("Bone", _boneFileName.c_str());
+	compElem.SetAttribute("Bone", _boneFileName.c_str());
 
-	XMLElement* animsElem = compElem->InsertNewChildElement("Animations");
+	Bulb::XMLElement animsElem = compElem.InsertNewChildElement("Animations");
 	for (auto& anim : _animations) {
-		XMLElement* animElem = animsElem->InsertNewChildElement("Animation");
-		animElem->SetAttribute("Path", anim.second->GetPath().c_str());
+		Bulb::XMLElement animElem = animsElem.InsertNewChildElement("Animation");
+		animElem.SetAttribute("Path", anim.second->GetPath().c_str());
 	}
 }
 

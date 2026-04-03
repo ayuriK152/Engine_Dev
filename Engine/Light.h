@@ -14,8 +14,8 @@ public:
 
 	virtual void OnDestroy() override = 0;
 
-	virtual void LoadXML(XMLElement* compElem) override = 0;
-	virtual void SaveXML(XMLElement* compElem) override = 0;
+	virtual void LoadXML(Bulb::XMLElement compElem) override = 0;
+	virtual void SaveXML(Bulb::XMLElement compElem) override = 0;
 
 	virtual ComponentSnapshot CaptureSnapshot() override = 0;
 	virtual void RestoreSnapshot(ComponentSnapshot snapshot) override = 0;

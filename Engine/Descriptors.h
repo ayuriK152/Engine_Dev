@@ -1,8 +1,7 @@
 #pragma once
 
-struct AppDesc
+struct BULB_API AppDesc
 {
-	shared_ptr<class IExecute> app = nullptr;
 	wstring mainWndCaption = L"GameApplication";
 	bool _4xMsaaState = false;
 	int _4xMsaaQuality = 0;
@@ -10,7 +9,7 @@ struct AppDesc
 	int clientHeight = 720;
 };
 
-struct AppStatus
+struct BULB_API AppStatus
 {
 	bool		appPaused = false;
 	bool		minimized = false;

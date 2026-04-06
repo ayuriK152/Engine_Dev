@@ -71,6 +71,7 @@ void PhysicsManager::PreUpdate()
 
 		BodyID bodyId = rigidbody->GetBodyID();
 
+		// Exception for removed body
 		if (!_physicsSystem->GetBodyInterface().IsAdded(bodyId)) continue;
 
 		if (!rigidbody->IsActive() || !rigidbody->GetGameObject()->IsActive()) {

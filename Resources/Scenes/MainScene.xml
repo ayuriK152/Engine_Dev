@@ -1,11 +1,6 @@
 <Scene Name="MainScene">
+    <Skybox Texture="..\Resources\Textures\Skybox\CloudySkybox.dds"/>
     <GameObjects>
-        <GameObject Name="skybox" PSO="skybox" Tag="Default">
-            <Components>
-                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
-                <Component ComponentType="MeshRenderer" Mesh="Mesh_SkyboxSphere" Material="Mat_DefaultSkybox"/>
-            </Components>
-        </GameObject>
         <GameObject Name="MainCamera" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="-10" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
@@ -41,5 +36,7 @@
                 <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\SM_Barracks\SM_Barracks.bmesh" Material="..\Resources\Materials\SM_Barracks\DefaultMaterial.xml"/>
             </Components>
         </GameObject>
+        <!-- <GameObject PrefabPath="..\Resources\Prefabs\Paladin WProp J Nordstrom.xml">
+        </GameObject> -->
     </GameObjects>
 </Scene>

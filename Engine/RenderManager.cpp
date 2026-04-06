@@ -11,9 +11,15 @@ RenderManager::~RenderManager()
 
 	_isDestructorRunning = true;
 
-	_lights.clear();
 	_meshInstanceStartIndex.clear();
 
+	// Release Lights
+	for (shared_ptr<Light> l : _lights) {
+		l.reset();
+	}
+	_lights.clear();
+
+	// Release Objects
 	for (shared_ptr<GameObject> go : _objects) {
 		go->OnDestroy();
 		go.reset();
@@ -25,6 +31,12 @@ RenderManager::~RenderManager()
 			go.reset();
 		gos.clear();
 	}
+
+	_skyboxObject->OnDestroy();
+	_skyboxObject.reset();
+
+	// Release Textures
+	_skyboxTexture.reset();
 }
 
 RenderManager* RenderManager::GetInstance()
@@ -76,6 +88,11 @@ void RenderManager::Init()
 	
 	_shadowMap = make_unique<ShadowMap>(2048, 2048);
 	_shadowMap->BuildDescriptors();
+
+	_skyboxObject = make_shared<GameObject>();
+	shared_ptr<MeshRenderer> skyboxRenderer = make_shared<MeshRenderer>();
+	_skyboxObject->AddComponent(skyboxRenderer);
+	skyboxRenderer->SetMesh(RESOURCE->Get<Mesh>(DEFAULT_MESH_SKYBOX));
 
 	for (auto& o : _objects)
 		o->Init();
@@ -175,12 +192,8 @@ void RenderManager::Render()
 		_cmdLists[1]->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
 
 		// Skybox
-		if (_objectsSortedPSO[PSO_IDX_SKYBOX].size() > 0) {
-			_cmdLists[1]->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
-			for (auto& o : _objectsSortedPSO[PSO_IDX_SKYBOX]) {
-				o->Render(_cmdLists[1], RENDERSTATE_MAIN);
-			}
-		}
+		_cmdLists[1]->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
+		_skyboxObject->Render(_cmdLists[1], RENDERSTATE_MAIN);
 
 		// Opaque Solid
 		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SOLID].size() > 0) {

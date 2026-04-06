@@ -1,6 +1,6 @@
 #pragma once
 
-#define		PSO_COUNT				10
+#define		PSO_COUNT				9		// Except Skybox
 
 #define		PSO_OPAQUE_SOLID		"opaque_solid"
 #define		PSO_OPAQUE_SKINNED		"opaque_skinned"
@@ -16,15 +16,14 @@
 
 #define		PSO_IDX_OPAQUE_SOLID		0
 #define		PSO_IDX_OPAQUE_SKINNED		1
-#define		PSO_IDX_SKYBOX				2
-#define		PSO_IDX_SHADOWMAP			3
-#define		PSO_IDX_SHADOWMAP_SKINNED	4
-#define		PSO_IDX_WIREFRAME			5
-#define		PSO_IDX_DEBUG_PHYSICS		6
-#define		PSO_IDX_DEBUG_SHADOW		7
-#define		PSO_IDX_PARTICLE_UPDATE		8
-#define		PSO_IDX_PARTICLE_RENDER		9
-#define		PSO_IDX_UI					10
+#define		PSO_IDX_SHADOWMAP			2
+#define		PSO_IDX_SHADOWMAP_SKINNED	3
+#define		PSO_IDX_WIREFRAME			4
+#define		PSO_IDX_DEBUG_PHYSICS		5
+#define		PSO_IDX_DEBUG_SHADOW		6
+#define		PSO_IDX_PARTICLE_UPDATE		7
+#define		PSO_IDX_PARTICLE_RENDER		8
+#define		PSO_IDX_UI					9
 
 #define		RENDERSTATE_MAIN		0
 #define		RENDERSTATE_SHADOWMAP	1
@@ -137,8 +136,10 @@ public:
 
 	int GetSkyboxTexSRVHeapIndex() { return _skyboxTexSrvHeapIndex; }
 	void SetSkyboxTexture(shared_ptr<Texture> tex) {
-		_skyboxTexSrvHeapIndex = tex->GetSRVHeapIndex();
+		_skyboxTexture = tex;
+		_skyboxTexSrvHeapIndex = _skyboxTexture != nullptr ? _skyboxTexture->GetSRVHeapIndex() : -1;
 	}
+	shared_ptr<Texture> GetSkyboxTexture() { return _skyboxTexture; }
 
 	const ShadowMap* GetShadowMap() { return _shadowMap.get(); }
 
@@ -207,6 +208,8 @@ private:
 	FrameResource* _currFrameResource = nullptr;
 	vector<unique_ptr<FrameResource>> _frameResources;
 
+	shared_ptr<GameObject> _skyboxObject;
+	shared_ptr<Texture> _skyboxTexture;
 	vector<shared_ptr<GameObject>> _objects;
 	array<vector<shared_ptr<GameObject>>, PSO_COUNT> _objectsSortedPSO;
 	vector<UINT> _meshInstanceStartIndex;

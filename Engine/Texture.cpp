@@ -22,8 +22,8 @@ Texture::Texture(wstring filePath, bool isName) : Super(ResourceType::Texture)
 	else {
 		SetPath(filePath);
 	}
-	Load(_pathw);
 	textureType = TextureType::General;
+	Load(_pathw);
 	CreateSRV();
 }
 
@@ -59,8 +59,11 @@ void Texture::Load(const wstring& path)
 
 	if (_textureFormat == "dds")
 	{
+		bool isCubemap;
 		ThrowIfFailed(CreateDDSTextureFromFile(device, upload,
-			_pathw.c_str(), resource.GetAddressOf()));
+			_pathw.c_str(), resource.GetAddressOf(), false, 0Ui64, nullptr, &isCubemap));
+		if (isCubemap)
+			textureType = TextureType::Skybox;
 	}
 	else
 	{

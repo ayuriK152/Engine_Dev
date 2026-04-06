@@ -5,9 +5,16 @@ VertexSkyboxOut VS(VertexSkyboxIn vin, uint instanceID : SV_InstanceID) {
 
 	// Use local vertex position as cubemap lookup vector.
 	vout.LocalPosition = vin.Position;
-	
+
 	// Transform to world space.
-	float4 posW = mul(float4(vin.Position, 1.0f), Instances[instanceID + InstanceStartIndex].World);
+	float4 posW = mul(
+		float4(vin.Position, 1.0f), 
+		float4x4(
+    		1.0f, 0.0f, 0.0f, 0.0f,
+    		0.0f, 1.0f, 0.0f, 0.0f,
+    		0.0f, 0.0f, 1.0f, 0.0f,
+    		0.0f, 0.0f, 0.0f, 1.0f)
+	);
 
 	// Always center sky about camera.
 	posW.xyz += GetCameraPosition();

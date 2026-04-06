@@ -99,6 +99,14 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 
 	XMLNode* node = doc.FirstChild();
 
+	XMLElement* skyboxElem = node->FirstChildElement("Skybox");
+	const char* skyboxTexPath = skyboxElem->Attribute("Texture");
+	if (skyboxTexPath != 0) {
+		shared_ptr<Texture> skyboxTex = RESOURCE->Get<Texture>(Utils::ToWString(skyboxTexPath));
+		if (skyboxTex != nullptr)
+			RENDER->SetSkyboxTexture(skyboxTex);
+	}
+
 	XMLElement* objsElem = node->FirstChildElement("GameObjects");
 	
 	ReadGameObjectData(objsElem, nullptr);
@@ -166,6 +174,11 @@ void SceneManager::SaveScene(string scenePath, bool isFullPath)
 	XMLElement* sceneElem = doc.NewElement("Scene");
 	sceneElem->SetAttribute("Name", _currentSceneName.c_str());
 	doc.InsertFirstChild(sceneElem);
+
+	XMLElement* skyboxElem = sceneElem->InsertNewChildElement("Skybox");
+	shared_ptr<Texture> skyboxTex = RENDER->GetSkyboxTexture();
+	if (skyboxTex != nullptr)
+		skyboxElem->SetAttribute("Texture", skyboxTex->GetPath().c_str());
 
 	XMLElement* objsElem = sceneElem->InsertNewChildElement("GameObjects");
 	auto& gameObjects = RENDER->GetObjects();

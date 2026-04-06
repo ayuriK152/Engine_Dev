@@ -99,10 +99,6 @@ void ResourceManager::Init()
 	defaultMat->SetPath("Mat_Default");
 	Add<Material>(L"Mat_Default", defaultMat);
 
-	auto defaultSkyboxMat = make_shared<Material>("Mat_DefaultSkybox", L"Tex_DefaultSkybox");
-	defaultSkyboxMat->SetPath("Mat_DefaultSkybox");
-	Add<Material>(L"Mat_DefaultSkybox", defaultSkyboxMat);
-
 
 	//==========Mesh==========
 	shared_ptr<Mesh> boxMesh = make_shared<Mesh>(GeometryGenerator::CreateBox(1.0f, 1.0f, 1.0f, 1));
@@ -121,9 +117,9 @@ void ResourceManager::Init()
 	Add<Mesh>(DEFAULT_MESH_QUAD, quadMesh);
 
 	shared_ptr<Mesh> skyboxSphereMesh = make_shared<Mesh>(GeometryGenerator::CreateGeosphere(0.5f, 1));
-	skyboxSphereMesh->SetPath("Mesh_SkyboxSphere");
-	skyboxSphereMesh->SetName(L"Mesh_SkyboxSphere");
-	Add<Mesh>(L"Mesh_SkyboxSphere", skyboxSphereMesh);
+	skyboxSphereMesh->SetPath(DEFAULT_MESH_SKYBOX);
+	skyboxSphereMesh->SetName(DEFAULT_MESH_SKYBOX);
+	Add<Mesh>(DEFAULT_MESH_SKYBOX, skyboxSphereMesh);
 
 
 	/* FOR EDITOR ONLY */

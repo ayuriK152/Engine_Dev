@@ -138,6 +138,7 @@ void FileIOUtil::LoadMaterials()
 			name = string(element->GetText());
 
 		shared_ptr<Material> mat = make_shared<Material>(name);
+		mat->SetPath(i->path());
 
 		element = node->FirstChildElement("Ambient");
 		if (element) {
@@ -218,7 +219,7 @@ void FileIOUtil::LoadMaterials()
 			mat->SetNormal(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
 		}
 
-		RESOURCE->Add<Material>(Utils::ToWString(name), mat);
+		RESOURCE->Add<Material>(i->path(), mat);
 	}
 }
 

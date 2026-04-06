@@ -66,9 +66,13 @@ void PhysicsManager::PreUpdate()
 	if (!EDITOR->IsOnPlay()) return;
 
 	for (auto& rigidbody : _rigidbodies) {
+		if (!rigidbody->isInitialized) rigidbody->Init();
 		rigidbody->PreUpdate();
 
 		BodyID bodyId = rigidbody->GetBodyID();
+
+		if (!_physicsSystem->GetBodyInterface().IsAdded(bodyId)) continue;
+
 		if (!rigidbody->IsActive() || !rigidbody->GetGameObject()->IsActive()) {
 			if (_physicsSystem->GetBodyInterface().IsActive(bodyId))
 				_physicsSystem->GetBodyInterface().DeactivateBody(bodyId);

@@ -96,9 +96,11 @@ void ResourceManager::Init()
 
 	//==========Material==========
 	auto defaultMat = make_shared<Material>("Mat_Default");
+	defaultMat->SetPath("Mat_Default");
 	Add<Material>(L"Mat_Default", defaultMat);
 
 	auto defaultSkyboxMat = make_shared<Material>("Mat_DefaultSkybox", L"Tex_DefaultSkybox");
+	defaultSkyboxMat->SetPath("Mat_DefaultSkybox");
 	Add<Material>(L"Mat_DefaultSkybox", defaultSkyboxMat);
 
 
@@ -153,8 +155,8 @@ void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
 		FILEIO->WriteToFile(fileHandle, i);
 	}
 
-	string matName = mesh->GetMaterial()->GetName();
-	FILEIO->WriteToFile(fileHandle, matName);
+	string matPath = mesh->GetMaterial()->GetPath();
+	FILEIO->WriteToFile(fileHandle, matPath);
 
 	CloseHandle(fileHandle);
 }
@@ -444,7 +446,7 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 
 	// 좀 더 개선할 수 있을 것 같음. 나머지 리소스들도 다.
 	if (RESOURCE->CheckResourceExists(filePath)) {
-		return RESOURCE->Get<Mesh>(Utils::ToWString(meshName));
+		return RESOURCE->Get<Mesh>(Utils::ToWString(filePath));
 	}
 
 	HANDLE fileHandle = FILEIO->CreateFileHandle<Mesh>(filePath, false);
@@ -475,8 +477,8 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 		indices.push_back(index);
 	}
 
-	string matName;
-	FILEIO->ReadFileData(fileHandle, matName);
+	string matPath;
+	FILEIO->ReadFileData(fileHandle, matPath);
 
 	CloseHandle(fileHandle);
 
@@ -484,7 +486,7 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 	shared_ptr<Mesh> loadedMesh = make_shared<Mesh>(geometry);
 	loadedMesh->SetName(meshName);
 	loadedMesh->SetPath(filePath);
-	loadedMesh->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matName)));
+	loadedMesh->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matPath)));
 
 	Add<Mesh>(loadedMesh->GetNameW(), loadedMesh);
 
@@ -806,9 +808,8 @@ void ResourceManager::LoadMeshes()
 		if (filesystem::is_directory(i->path())) continue;
 
 		string pathStr = i->path().string();
-		wstring fileName = Utils::ToWString(Utils::GetFileName(pathStr));
 		shared_ptr<Mesh> mesh = LoadMesh(pathStr);
 
-		Add<Mesh>(fileName, mesh);
+		Add<Mesh>(i->path(), mesh);
 	}
 }

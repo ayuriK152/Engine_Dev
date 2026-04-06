@@ -25,8 +25,8 @@
         <GameObject Name="Ground" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="-0.5" PosZ="0" ScaleX="100" ScaleY="1" ScaleZ="100" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
-                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="PrototypeGround_100_1_100"/>
-                <Component ComponentType="Rigidbody" Static="true" Gravity="true" Trigger="true" PhysicsActive="true">
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGround_100_1_100.xml"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                     <Collider Shape="Box" Height="0.5" Radius="0.5">
                         <Extent x="50" y="0.5" z="50"/>
                         <Offset x="0" y="0" z="0"/>
@@ -38,8 +38,8 @@
         <GameObject Name="Sphere" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
-                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicSphere" Material="000"/>
-                <Component ComponentType="Rigidbody" Static="false" Gravity="false" Trigger="false" PhysicsActive="false">
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicSphere" Material="..\Resources\Materials\Prototype\000.xml"/>
+                <Component ComponentType="Rigidbody" Static="false" Gravity="true" Trigger="false" PhysicsActive="true">
                     <Collider Shape="Sphere" Height="0.5" Radius="0.5">
                         <Extent x="0.5" y="0.5" z="0.5"/>
                         <Offset x="0" y="0" z="0"/>

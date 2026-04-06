@@ -93,14 +93,13 @@ bool BulbApplication::Init()
 	RENDER->Init();
 	FILEIO->Init();
 	UI->Init();
-	SCENE->Init();
 	PHYSICS->Init();
+	SCENE->Init();
+	INPUTM->Init();
+	Utils::Init();
+
 	DEBUG->Init();
 	EDITOR->Init();
-
-	INPUTM->Init();
-
-	Utils::Init();
 
 	return true;
 }

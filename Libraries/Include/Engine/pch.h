@@ -206,5 +206,5 @@ using namespace JPH::literals;
 #include "EditorManager.h"
 
 #include "GameTimer.h"
-#include "GameApplication.h"
+#include "BulbApplication.h"
 #include "Graphic.h"

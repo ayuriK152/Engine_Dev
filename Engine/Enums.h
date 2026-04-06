@@ -44,3 +44,10 @@ enum class BULB_API UIType
 	Slider = 1 << 3,
 	Text = 1 << 4
 };
+
+namespace Bulb {
+	enum ProcessResult {
+		SUCCESS,
+		FAILED_INSTANCE_NOT_FOUND
+	};
+}

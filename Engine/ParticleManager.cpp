@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ParticleManager.h"
 
+ParticleManager* ParticleManager::s_instance = nullptr;
+
 ParticleManager::~ParticleManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -9,6 +11,23 @@ ParticleManager::~ParticleManager()
 
 	for (auto pe : _particleEmitters)
 		pe.second.reset();
+}
+
+ParticleManager* ParticleManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new ParticleManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult ParticleManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void ParticleManager::Init()

@@ -12,19 +12,11 @@ struct ComponentRegisterHelper {
 
 class ComponentFactory
 {
+	friend class BulbApplication;
+
 	using Creator = function<shared_ptr<Component>()>;
 
-public:
-	template<typename T>
-	static void Register(string name) {
-		GetMap()[name] = []() { return make_shared<T>(); };
-	}
-
-	static shared_ptr<Component> Create(string name) {
-		if (GetMap().contains(name)) return GetMap()[name]();
-		return nullptr;
-	}
-
+private:
 	static void Init() {
 		REGISTER_COMPONENT(DirectionalLight);
 		REGISTER_COMPONENT(MeshRenderer);
@@ -38,10 +30,20 @@ public:
 		REGISTER_COMPONENT(EditorCamera);
 	}
 
-private:
 	static unordered_map<string, Creator>& GetMap() {
 		static unordered_map<string, Creator> _registry;
 		return _registry;
+	}
+
+public:
+	template<typename T>
+	static void Register(string name) {
+		GetMap()[name] = []() { return make_shared<T>(); };
+	}
+
+	static shared_ptr<Component> Create(string name) {
+		if (GetMap().contains(name)) return GetMap()[name]();
+		return nullptr;
 	}
 };
 

@@ -2,6 +2,8 @@
 #include "Graphic.h"
 #include "Camera.h"
 
+Graphic* Graphic::s_instance = nullptr;
+
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -28,15 +30,6 @@ bool Graphic::Init()
 
 	UseGraphicsCommandList();
 
-	ComponentFactory::Init();
-	THREAD->Init();
-	RENDER->Init();
-	FILEIO->Init();
-	UI->Init();
-	SCENE->Init();
-	PHYSICS->Init();
-	DEBUG->Init();
-	EDITOR->Init();
 
 	ExecuteGraphicsCommandList();
 
@@ -53,6 +46,23 @@ void Graphic::Update()
 void Graphic::LateUpdate()
 {
 	ExecuteGraphicsCommandList();
+}
+
+Graphic* Graphic::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new Graphic();
+	return s_instance;
+}
+
+Bulb::ProcessResult Graphic::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void Graphic::WaitForFence(UINT64 fenceValue)
@@ -172,7 +182,7 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
 		return true;
 
-	AppStatus appStatus = GAMEAPP->GetAppStatus();
+	AppStatus appStatus = APP->GetAppStatus();
 	switch (msg)
 	{
 		case WM_ACTIVATE:
@@ -186,7 +196,7 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				appStatus.appPaused = false;
 				TIME->Start();
 			}
-			GAMEAPP->SetAppStatus(appStatus);
+			APP->SetAppStatus(appStatus);
 			return 0;
 
 		case WM_SIZE:
@@ -232,21 +242,21 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			}
-			GAMEAPP->SetAppStatus(appStatus);
+			APP->SetAppStatus(appStatus);
 			return 0;
 
 		case WM_ENTERSIZEMOVE:
 			appStatus.appPaused = true;
 			appStatus.resizing = true;
 			TIME->Stop();
-			GAMEAPP->SetAppStatus(appStatus);
+			APP->SetAppStatus(appStatus);
 			return 0;
 
 		case WM_EXITSIZEMOVE:
 			appStatus.appPaused = false;
 			appStatus.resizing = false;
 			TIME->Start();
-			GAMEAPP->SetAppStatus(appStatus);
+			APP->SetAppStatus(appStatus);
 			OnResize();
 			return 0;
 
@@ -345,7 +355,7 @@ bool Graphic::InitMainWindow()
 	wc.lpfnWndProc = MainWndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = GAMEAPP->GetAppInst();
+	wc.hInstance = APP->GetAppInst();
 	wc.hIcon = LoadIcon(0, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
@@ -364,7 +374,7 @@ bool Graphic::InitMainWindow()
 	int height = R.bottom - R.top;
 
 	_hMainWnd = CreateWindow(L"MainWnd", _appDesc.mainWndCaption.c_str(),
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, GAMEAPP->GetAppInst(), 0);
+		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, APP->GetAppInst(), 0);
 	if (!_hMainWnd)
 	{
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);

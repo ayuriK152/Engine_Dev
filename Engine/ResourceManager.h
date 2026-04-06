@@ -9,13 +9,22 @@ class Mesh;
 
 class BULB_API ResourceManager
 {
-	DECLARE_SINGLE(ResourceManager);
-public:
+	friend class BulbApplication;
+	friend class RenderManager;
+
+private:
+	ResourceManager() = default;
 	~ResourceManager();
 
 	void Init();
 
 public:
+	ResourceManager(const ResourceManager& rhs) = delete;
+	ResourceManager& operator=(const ResourceManager& rhs) = delete;
+
+	static ResourceManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	template<typename T>
 	bool Add(const wstring& key, shared_ptr<T> resource);
 
@@ -54,6 +63,8 @@ public:
 	void LoadMeshes();
 
 private:
+	static ResourceManager* s_instance;
+
 	using KeyObjMap = map<wstring, shared_ptr<Resource>>;
 	array<KeyObjMap, RESOURCE_TYPE_COUNT> _resources;
 	set<string> _resourcePaths;

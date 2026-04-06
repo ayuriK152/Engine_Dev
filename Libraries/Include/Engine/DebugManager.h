@@ -43,9 +43,13 @@ struct BULB_API DebugLine
 class BULB_API DebugManager : public JPH::DebugRenderer
 {
 	JPH_OVERRIDE_NEW_DELETE
-	DECLARE_SINGLE(DebugManager);
 	using Super = JPH::DebugRenderer;
-public:
+
+	friend class BulbApplication;
+	friend class RenderManager;
+
+private:
+	DebugManager() = default;
 	~DebugManager();
 
 	void Init();
@@ -53,6 +57,12 @@ public:
 	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 
+public:
+	DebugManager(const DebugManager& rhs) = delete;
+	DebugManager& operator=(const DebugManager& rhs) = delete;
+
+	static DebugManager* GetInstance();
+	static Bulb::ProcessResult Delete();
 
 	void DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg inColor) override;
 	void DrawLine(Bulb::Vector3 from, Bulb::Vector3 to, Bulb::Color color);
@@ -67,7 +77,6 @@ public:
 
 	void DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor = Color::sWhite, float inHeight = 0.5f) override;
 
-public:
 	bool IsPhysicsDebugRenderEnabled() { return _isPhysicsDebugRenderEnabled; }
 	void SetPhysicsDebugRenderEnabled(bool value) { _isPhysicsDebugRenderEnabled = value; }
 
@@ -78,6 +87,8 @@ public:
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
 
 private:
+	static DebugManager* s_instance;
+
 	bool _isPhysicsDebugRenderEnabled = false;
 
 	vector<DebugLog> _debugLogs;

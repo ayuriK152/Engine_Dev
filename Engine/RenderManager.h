@@ -85,17 +85,24 @@
 
 class BULB_API RenderManager
 {
-	DECLARE_SINGLE(RenderManager)
-public:
+	friend class BulbApplication;
+
+private:
+	RenderManager() = default;
 	~RenderManager();
 
-public:
 	void Init();
 	void PreUpdate();
 	void Update();
 	void Render();
 
 public:
+	RenderManager(const RenderManager& rhs) = delete;
+	RenderManager& operator=(const RenderManager& rhs) = delete;
+
+	static RenderManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	void InitializeOnRuntime();
 
 	ComPtr<ID3D12DescriptorHeap> GetCommonSRVHeap()const { return _srvHeap; }
@@ -175,6 +182,8 @@ private:
 	array<const CD3DX12_STATIC_SAMPLER_DESC, STATIC_SAMPLER_COUNT> GetStaticSamplers();
 
 private:
+	static RenderManager* s_instance;
+
 	ID3D12CommandAllocator* _cmdListAllocs[3];
 	ID3D12GraphicsCommandList* _cmdLists[3];
 

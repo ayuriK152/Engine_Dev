@@ -1,7 +1,24 @@
 #include "pch.h"
 #include "GameTimer.h"
 
-bool GameTimer::Initialize()
+GameTimer* GameTimer::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new GameTimer();
+	return s_instance;
+}
+
+Bulb::ProcessResult GameTimer::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
+}
+
+bool GameTimer::Init()
 {
 	_secondsPerCount = 0.0;
 	_deltaTime = -1.0;
@@ -96,4 +113,6 @@ void GameTimer::Tick()
 		_deltaTime = 0.0;
 	}
 }
+
+GameTimer* GameTimer::s_instance = nullptr;
 

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AnimationManager.h"
 
+AnimationManager* AnimationManager::s_instance = nullptr;
+
 AnimationManager::~AnimationManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -9,6 +11,23 @@ AnimationManager::~AnimationManager()
 
 	for (shared_ptr<Animator> a : _animators)
 		a.reset();
+}
+
+AnimationManager* AnimationManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new AnimationManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult AnimationManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void AnimationManager::Update()

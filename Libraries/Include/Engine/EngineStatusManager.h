@@ -2,13 +2,21 @@
 
 class BULB_API EngineStatusManager
 {
-	DECLARE_SINGLE(EngineStatusManager)
-public:
+	friend class BulbApplication;
+
+private:
+	EngineStatusManager() = default;
 	~EngineStatusManager() = default;
 
 	void Update();
 
 public:
+	EngineStatusManager(const EngineStatusManager& rhs) = delete;
+	EngineStatusManager& operator=(const EngineStatusManager& rhs) = delete;
+
+	static EngineStatusManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	void ResetValues() {
 		_frameCount = 0.0f;
 		_maxFrameCount = 0.0f;
@@ -30,6 +38,8 @@ public:
 	string GetAverageFrameCountString();
 
 private:
+	static EngineStatusManager* s_instance;
+
 	int _frameCount = 0;
 	int _currentFrameCount = 0;
 	float _maxFrameCount = 0.0f;

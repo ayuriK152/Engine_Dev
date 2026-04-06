@@ -2,22 +2,26 @@
 
 class Graphic
 {
-	friend class GameApplication;
-	DECLARE_SINGLE(Graphic);
+	friend class BulbApplication;
+	friend class RenderManager;
+
 private:
-	Graphic(const Graphic& rhs) = delete;
-	Graphic& operator=(const Graphic& rhs) = delete;
+	Graphic() = default;
 	~Graphic();
 
 	bool Init();
 	void Update();
 	void LateUpdate();
+	void RenderEnd(FrameResource* currentFrameResource);
 
 	void OnResize();
 
 public:
-	void RenderEnd(FrameResource* currentFrameResource);
+	Graphic(const Graphic& rhs) = delete;
+	Graphic& operator=(const Graphic& rhs) = delete;
 
+	static Graphic* GetInstance();
+	static Bulb::ProcessResult Delete();
 
 // Getter/Setter
 public:
@@ -99,6 +103,8 @@ private:
 	void FlushCommandQueue();
 
 private:
+	static Graphic* s_instance;
+
 	HWND      _hMainWnd = nullptr;
 
 	// DX12

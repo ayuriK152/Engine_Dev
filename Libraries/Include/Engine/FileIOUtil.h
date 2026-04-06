@@ -2,13 +2,21 @@
 
 class FileIOUtil
 {
-	DECLARE_SINGLE(FileIOUtil);
-public:
+	friend class BulbApplication;
+
+private:
+	FileIOUtil() = default;
 	~FileIOUtil() = default;
 
 	void Init();
 
 public:
+	FileIOUtil(const FileIOUtil& rhs) = delete;
+	FileIOUtil& operator=(const FileIOUtil& rhs) = delete;
+
+	static FileIOUtil* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	void XMLFromMaterial(shared_ptr<Material> material, const wstring& name);
 
 	void LoadTextures();
@@ -29,6 +37,9 @@ public:
 	void ReadFileData(HANDLE fileHandle, string& out);
 
 	string ReadINI(string section, string key, string dir, string default = "none");
+
+private:
+	static FileIOUtil* s_instance;
 };
 
 template<typename T>

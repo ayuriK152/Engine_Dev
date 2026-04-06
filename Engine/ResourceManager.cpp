@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ResourceManager.h"
 
+ResourceManager* ResourceManager::s_instance = nullptr;
+
 ResourceManager::~ResourceManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -12,6 +14,23 @@ ResourceManager::~ResourceManager()
 			r.second.reset();
 		}
 	}
+}
+
+ResourceManager* ResourceManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new ResourceManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult ResourceManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void ResourceManager::Init()

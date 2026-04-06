@@ -1,6 +1,25 @@
 #include "pch.h"
 #include "EngineStatusManager.h"
 
+EngineStatusManager* EngineStatusManager::s_instance = nullptr;
+
+EngineStatusManager* EngineStatusManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new EngineStatusManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult EngineStatusManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
+}
+
 void EngineStatusManager::Update()
 {
 	_frameCount += 1;

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ThreadManager.h"
 
+ThreadManager* ThreadManager::s_instance = nullptr;
+
 ThreadManager::~ThreadManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -18,6 +20,23 @@ ThreadManager::~ThreadManager()
 		if (t.joinable())
 			t.join();
 	}
+}
+
+ThreadManager* ThreadManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new ThreadManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult ThreadManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void ThreadManager::Init()

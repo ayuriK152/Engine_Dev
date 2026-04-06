@@ -12,8 +12,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 
 	SCENE->LoadScene("MainScene.xml");
 
-	GAMEAPP->SetAppInst(hInstance, desc);
-	GAMEAPP->Run();
+	APP->SetAppInst(hInstance, desc);
+	APP->Run();
 
 	return 0;
 }

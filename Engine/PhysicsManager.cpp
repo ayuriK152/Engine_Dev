@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "PhysicsManager.h"
 
+PhysicsManager* PhysicsManager::s_instance = nullptr;
+
 PhysicsManager::~PhysicsManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -9,6 +11,23 @@ PhysicsManager::~PhysicsManager()
 
 	for (shared_ptr<Rigidbody> rb : _rigidbodies)
 		rb.reset();
+}
+
+PhysicsManager* PhysicsManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new PhysicsManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult PhysicsManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void PhysicsManager::Init()

@@ -3,6 +3,8 @@
 
 #pragma region static fields
 
+EngineGUIManager* EngineGUIManager::s_instance = nullptr;
+
 DescriptorHeapAllocator EngineGUIManager::_srvHeapDescAllocator;
 
 #pragma endregion
@@ -18,6 +20,23 @@ EngineGUIManager::~EngineGUIManager()
 	//ImGui_ImplDX12_Shutdown();
 	//ImGui_ImplWin32_Shutdown();
 	//ImGui::DestroyContext();
+}
+
+EngineGUIManager* EngineGUIManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new EngineGUIManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult EngineGUIManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void EngineGUIManager::Init()

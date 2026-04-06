@@ -2,9 +2,18 @@
 
 class BULB_API GameTimer
 {
-	DECLARE_SINGLE(GameTimer);
+private:
+	GameTimer() = default;
+	~GameTimer() = default;
+
 public:
-	bool Initialize();
+	GameTimer(const GameTimer& rhs) = delete;
+	GameTimer& operator=(const GameTimer& rhs) = delete;
+
+	static GameTimer* GetInstance();
+	static Bulb::ProcessResult Delete();
+
+	bool Init();
 
 	float TotalTime()const; // in seconds
 	float DeltaTime()const; // in seconds
@@ -15,6 +24,8 @@ public:
 	void Tick();  // Call every frame.
 
 private:
+	static GameTimer* s_instance;
+
 	double _secondsPerCount;
 	double _deltaTime;
 

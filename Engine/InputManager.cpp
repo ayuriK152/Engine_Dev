@@ -1,7 +1,26 @@
 #include "pch.h"
 #include "InputManager.h"
 
-void InputManager::Initialize()
+InputManager* InputManager::s_instance = nullptr;
+
+InputManager* InputManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new InputManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult InputManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
+}
+
+void InputManager::Init()
 {
 	auto _keyValues = magic_enum::enum_values<KeyValue>();
 	for (auto& keyValue : _keyValues)

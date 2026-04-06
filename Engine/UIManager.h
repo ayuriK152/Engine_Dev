@@ -4,8 +4,11 @@
 
 class BULB_API UIManager
 {
-	DECLARE_SINGLE(UIManager)
+	friend class BulbApplication;
+	friend class RenderManager;
+
 public:
+	UIManager() = default;
 	~UIManager();
 
 	void Init();
@@ -13,6 +16,12 @@ public:
 	void Render(ID3D12GraphicsCommandList* cmdList);
 
 public:
+	UIManager(const UIManager& rhs) = delete;
+	UIManager& operator=(const UIManager& rhs) = delete;
+
+	static UIManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	template<typename T>
 	shared_ptr<T> CreateUI(string name = "");
 
@@ -27,6 +36,8 @@ private:
 	void CreateBuffer();
 
 private:
+	static UIManager* s_instance;
+
 	Bulb::Vector2 _uiResolution = { 1920.0f, 1080.0f };
 	int _elementCount = 0;
 	int _panelCount = 0;

@@ -1,11 +1,30 @@
 #include "pch.h"
 #include "DebugManager.h"
 
+DebugManager* DebugManager::s_instance = nullptr;
+
 DebugManager::~DebugManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - DebugManager\n";
 #endif
+}
+
+DebugManager* DebugManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new DebugManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult DebugManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void DebugManager::Init()

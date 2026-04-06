@@ -71,8 +71,10 @@ public:
 
 class BULB_API PhysicsManager : public JPH::ContactListener, public JPH::CharacterContactListener
 {
-	DECLARE_SINGLE(PhysicsManager);
-public:
+	friend class BulbApplication;
+
+private:
+	PhysicsManager() = default;
 	~PhysicsManager();
 
 	void Init();
@@ -95,6 +97,12 @@ public:
 #pragma endregion
 
 public:
+	PhysicsManager(const PhysicsManager& rhs) = delete;
+	PhysicsManager& operator=(const PhysicsManager& rhs) = delete;
+
+	static PhysicsManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	JPH::PhysicsSystem* GetPhysicsSystem() { return _physicsSystem; }
 	JPH::TempAllocator* GetTempAllocator() { return _tempAlloc; }
 
@@ -104,6 +112,8 @@ public:
 	vector<shared_ptr<GameObject>> OverlapSphere(Bulb::Vector3 position, float radius, string tag = "");
 
 private:
+	static PhysicsManager* s_instance;
+
 	vector<shared_ptr<Rigidbody>> _rigidbodies;
 
 	JPH::PhysicsSystem* _physicsSystem = nullptr;

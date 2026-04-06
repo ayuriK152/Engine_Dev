@@ -75,13 +75,21 @@ struct BULB_API MouseStates
 
 class BULB_API InputManager
 {
-	DECLARE_SINGLE(InputManager);
-public:
+	friend class BulbApplication;
+
+private:
+	InputManager() = default;
 	~InputManager() = default;
 
-public:
-	void Initialize();
+	void Init();
 	void Update();
+
+public:
+	InputManager(const InputManager& rhs) = delete;
+	InputManager& operator=(const InputManager& rhs) = delete;
+
+	static InputManager* GetInstance();
+	static Bulb::ProcessResult Delete();
 
 	bool IsKeyDown(KeyValue key);
 	bool IsKeyPress(KeyValue key);
@@ -105,6 +113,8 @@ private:
 	void MouseButtonUpdate();
 
 private:
+	static InputManager* s_instance;
+
 	bool _isMouseMoving = false;
 	bool _isMouseCenterFixed = false;
 	MouseStates _mouseStates;

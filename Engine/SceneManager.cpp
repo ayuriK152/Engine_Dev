@@ -1,11 +1,30 @@
 #include "pch.h"
 #include "SceneManager.h"
 
+SceneManager* SceneManager::s_instance = nullptr;
+
 SceneManager::~SceneManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - SceneManager\n";
 #endif
+}
+
+SceneManager* SceneManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new SceneManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult SceneManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void SceneManager::Init()

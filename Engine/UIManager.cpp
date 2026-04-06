@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "UIManager.h"
 
+UIManager* UIManager::s_instance = nullptr;
+
 UIManager::~UIManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -9,6 +11,23 @@ UIManager::~UIManager()
 
 	_elements.clear();
 	_panels.clear();
+}
+
+UIManager* UIManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new UIManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult UIManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void UIManager::Init()

@@ -4,17 +4,27 @@ class Animator;
 
 class AnimationManager
 {
-	DECLARE_SINGLE(AnimationManager);
-public:
+	friend class BulbApplication;
+
+private:
+	AnimationManager() = default;
 	~AnimationManager();
 
 	void Update();
 
 public:
+	AnimationManager(const AnimationManager& rhs) = delete;
+	AnimationManager& operator=(const AnimationManager& rhs) = delete;
+
+	static AnimationManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	void AddAnimator(shared_ptr<Animator> animator) { _animators.push_back(animator); }
 	void InitializeOnRuntime();
 
 private:
+	static AnimationManager* s_instance;
+
 	vector<shared_ptr<Animator>> _animators;
 
 	// 멀티스레드용

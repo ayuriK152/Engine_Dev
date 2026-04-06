@@ -2,19 +2,29 @@
 
 class BULB_API ParticleManager
 {
-	DECLARE_SINGLE(ParticleManager);
-public:
+	friend class BulbApplication;
+	friend class RenderManager;
+
+private:
+	ParticleManager() = default;
 	~ParticleManager();
 
-public:
 	void Init();
 	void Update(ID3D12GraphicsCommandList* cmdList);
 	void Render(ID3D12GraphicsCommandList* cmdList, UINT renderState);
 
 public:
+	ParticleManager(const ParticleManager& rhs) = delete;
+	ParticleManager& operator=(const ParticleManager& rhs) = delete;
+
+	static ParticleManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
 	void AddParticleEmitter(shared_ptr<ParticleEmitter> particleEmitter);
 
 private:
+	static ParticleManager* s_instance;
+
 	// map을 사용하는게 최선인지 고민
 	unordered_map<int, shared_ptr<ParticleEmitter>> _particleEmitters;
 };

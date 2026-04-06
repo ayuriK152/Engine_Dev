@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "RenderManager.h"
 
+RenderManager* RenderManager::s_instance = nullptr;
+
 RenderManager::~RenderManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
@@ -23,6 +25,23 @@ RenderManager::~RenderManager()
 			go.reset();
 		gos.clear();
 	}
+}
+
+RenderManager* RenderManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new RenderManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult RenderManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void RenderManager::Init()

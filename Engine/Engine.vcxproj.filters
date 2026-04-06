@@ -4,7 +4,7 @@
     <ClInclude Include="Types.h">
       <Filter>05. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="GameApplication.h">
+    <ClInclude Include="BulbApplication.h">
       <Filter>00. Core</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
@@ -274,7 +274,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameApplication.cpp">
+    <ClCompile Include="BulbApplication.cpp">
       <Filter>00. Core</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp" />

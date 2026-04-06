@@ -1,11 +1,30 @@
 #include "pch.h"
 #include "EditorManager.h"
 
+EditorManager* EditorManager::s_instance = nullptr;
+
 EditorManager::~EditorManager()
 {
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - EditorManager\n";
 #endif
+}
+
+EditorManager* EditorManager::GetInstance()
+{
+	if (s_instance == nullptr)
+		s_instance = new EditorManager();
+	return s_instance;
+}
+
+Bulb::ProcessResult EditorManager::Delete()
+{
+	if (s_instance != nullptr) {
+		delete s_instance;
+		s_instance = nullptr;
+		return Bulb::ProcessResult::SUCCESS;
+	}
+	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
 void EditorManager::Init()

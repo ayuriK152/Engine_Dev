@@ -67,15 +67,17 @@ struct DescriptorHeapAllocator
 
 class BULB_API EngineGUIManager
 {
-	DECLARE_SINGLE(EngineGUIManager)
-public:
+	friend class BulbApplication;
+	friend class RenderManager;
+
+private:
+	EngineGUIManager() = default;
 	~EngineGUIManager();
 
 	void Init();
 	void Update();
 	void Render(ID3D12GraphicsCommandList* cmdList);
 
-private:
 	void ToggleWindows();
 
 	void ShowMainMenuBar();
@@ -108,9 +110,18 @@ private:
 	void DrawGizmo();
 
 public:
+	EngineGUIManager(const EngineGUIManager& rhs) = delete;
+	EngineGUIManager& operator=(const EngineGUIManager& rhs) = delete;
+
+	static EngineGUIManager* GetInstance();
+	static Bulb::ProcessResult Delete();
+
+public:
 	bool isShowDemoWindow = true;
 
 private:
+	static EngineGUIManager* s_instance;
+
 	static DescriptorHeapAllocator _srvHeapDescAllocator;
 
 	unordered_map<string, bool> _guiToggleValues;

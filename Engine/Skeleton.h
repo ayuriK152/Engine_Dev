@@ -2,12 +2,12 @@
 
 class BULB_API Skeleton
 {
-public:
 	friend class SkeletonManager;
+
+public:
 	Skeleton();
 	~Skeleton();
 
-public:
 	void Init();
 
 	void UpdateUploadBuffer();

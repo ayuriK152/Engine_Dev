@@ -12,8 +12,6 @@ Animator::Animator() : Component(ComponentType::Animator)
 
 	_currentAnimation = EMPTY_ANIMATION;
 	_nextAnimation = EMPTY_ANIMATION;
-
-	_skeleton = make_shared<Skeleton>();
 }
 
 Animator::~Animator()

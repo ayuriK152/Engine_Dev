@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "Main.h"
+#include "EnemyScript.h"
+#include "PlayerScript.h"
+#include "TPVCamera.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {
@@ -13,6 +16,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 	SCENE->LoadScene("MainScene.xml");
 
 	APP->SetAppInst(hInstance, desc);
+
+	//REGISTER_COMPONENT(EnemyScript);
+	//REGISTER_COMPONENT(PlayerScript);
+	//REGISTER_COMPONENT(TPVCamera);
 	APP->Run();
 
 	return 0;

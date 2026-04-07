@@ -43,6 +43,16 @@ void AnimationManager::Update()
 		f.get();
 }
 
+void AnimationManager::DeleteAnimator(shared_ptr<Animator> animator)
+{
+	for (int i = 0; i < _animators.size(); ++i) {
+		if (_animators[i] == animator) {
+			_animators.erase(_animators.begin() + i);
+			break;
+		}
+	}
+}
+
 void AnimationManager::InitializeOnRuntime()
 {
 	_animators.clear();

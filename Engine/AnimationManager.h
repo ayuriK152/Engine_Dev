@@ -20,6 +20,8 @@ public:
 	static Bulb::ProcessResult Delete();
 
 	void AddAnimator(shared_ptr<Animator> animator) { _animators.push_back(animator); }
+	void DeleteAnimator(shared_ptr<Animator> animator);
+
 	void InitializeOnRuntime();
 
 private:

@@ -121,6 +121,8 @@ void Animator::OnDestroy()
 		_skeleton.reset();
 	if (_previewAnimation != nullptr)
 		_previewAnimation.reset();
+
+	ANIMATION->DeleteAnimator(static_pointer_cast<Animator>(shared_from_this()));
 }
 
 void Animator::LoadXML(Bulb::XMLElement compElem)

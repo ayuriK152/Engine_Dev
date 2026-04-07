@@ -162,7 +162,7 @@ void GameObject::OnDestroy()
 	cout << "OnDestroy - GameObject:" << _id << "\n";
 #endif
 
-	auto& childs = GetTransform()->GetChilds();
+	auto childs = GetTransform()->GetChilds();
 	for (auto& c : childs) {
 		c->OnDestroy();
 	}

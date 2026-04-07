@@ -36,7 +36,7 @@
                 <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\SM_Barracks\SM_Barracks.bmesh" Material="..\Resources\Materials\SM_Barracks\DefaultMaterial.xml"/>
             </Components>
         </GameObject>
-        <!-- <GameObject PrefabPath="..\Resources\Prefabs\Paladin WProp J Nordstrom.xml">
-        </GameObject> -->
+        <GameObject PrefabPath="..\Resources\Prefabs\Paladin WProp J Nordstrom.xml">
+        </GameObject>
     </GameObjects>
 </Scene>

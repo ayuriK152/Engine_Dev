@@ -10,7 +10,7 @@ struct ComponentRegisterHelper {
 	}
 };
 
-class ComponentFactory
+class BULB_API ComponentFactory
 {
 	friend class BulbApplication;
 

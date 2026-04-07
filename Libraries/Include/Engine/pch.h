@@ -122,7 +122,6 @@ using namespace JPH::literals;
 
 #include "Types.h"
 #include "Defines.h"
-#include "Descriptors.h"
 #include "DataStructures.h"
 #include "Enums.h"
 
@@ -132,8 +131,6 @@ using namespace JPH::literals;
 #include "GeometryGenerator.h"
 
 #include "Constants.h"
-
-#include "Component.h"
 
 /*************/
 /* Resources */
@@ -150,6 +147,8 @@ using namespace JPH::literals;
 /**************/
 /* Components */
 /**************/
+#include "Component.h"
+
 #include "MeshRenderer.h"
 #include "SkinnedMeshRenderer.h"
 #include "Transform.h"

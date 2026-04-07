@@ -23,9 +23,6 @@
     <ClInclude Include="Graphic.h">
       <Filter>00. Core</Filter>
     </ClInclude>
-    <ClInclude Include="Descriptors.h">
-      <Filter>05. Defines</Filter>
-    </ClInclude>
     <ClInclude Include="UploadBuffer.h">
       <Filter>01. EngineComponents</Filter>
     </ClInclude>
@@ -155,8 +152,6 @@
     <ClInclude Include="ParticleManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMap.h" />
-    <ClInclude Include="Skeleton.h" />
     <ClInclude Include="SkeletonManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
@@ -196,7 +191,6 @@
     <ClInclude Include="UIFrame.h">
       <Filter>06. UI</Filter>
     </ClInclude>
-    <ClInclude Include="Event.h" />
     <ClInclude Include="SceneManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
@@ -212,7 +206,18 @@
     <ClInclude Include="GameTimer.h">
       <Filter>01. EngineComponents</Filter>
     </ClInclude>
-    <ClInclude Include="XMLElement.h" />
+    <ClInclude Include="ShadowMap.h">
+      <Filter>03. Resources\Not Inherited</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLElement.h">
+      <Filter>08. Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>03. Resources\Not Inherited</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>09. Sub Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -271,6 +276,15 @@
     </Filter>
     <Filter Include="07. Scripts">
       <UniqueIdentifier>{ee3426e1-da10-417f-a938-963255469342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Resources\Not Inherited">
+      <UniqueIdentifier>{6e69c4fa-caea-4b76-ace4-598a29de2636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. Wrapper">
+      <UniqueIdentifier>{dd67f47d-26ea-4b0e-bfd5-c198fe6eabfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. Sub Systems">
+      <UniqueIdentifier>{c9399f1b-9425-4da8-8cd7-887a6484f729}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -401,8 +415,6 @@
     <ClCompile Include="ParticleManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowMap.cpp" />
-    <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="SkeletonManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
@@ -442,7 +454,6 @@
     <ClCompile Include="UIFrame.cpp">
       <Filter>06. UI</Filter>
     </ClCompile>
-    <ClCompile Include="Event.cpp" />
     <ClCompile Include="SceneManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
@@ -458,7 +469,18 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>01. EngineComponents</Filter>
     </ClCompile>
-    <ClCompile Include="XMLElement.cpp" />
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>03. Resources\Not Inherited</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLElement.cpp">
+      <Filter>08. Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>03. Resources\Not Inherited</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>09. Sub Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

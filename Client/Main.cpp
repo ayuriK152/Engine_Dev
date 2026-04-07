@@ -17,9 +17,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 
 	APP->SetAppInst(hInstance, desc);
 
-	//REGISTER_COMPONENT(EnemyScript);
-	//REGISTER_COMPONENT(PlayerScript);
-	//REGISTER_COMPONENT(TPVCamera);
 	APP->Run();
 
 	return 0;

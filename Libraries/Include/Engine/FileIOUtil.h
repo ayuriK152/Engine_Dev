@@ -1,6 +1,6 @@
 #pragma once
 
-class FileIOUtil
+class BULB_API FileIOUtil
 {
 	friend class BulbApplication;
 

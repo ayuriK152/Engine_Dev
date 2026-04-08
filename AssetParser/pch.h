@@ -1,9 +1,13 @@
 #pragma once
 
+#ifdef _DEBUG
+#error "Asset parser does not support build on debug state"
+#endif
+
 #define JPH_DEBUG_RENDERER
 
 #include "Engine/pch.h"
-#pragma comment(lib, "Engine/Release/Engine.lib")
+#pragma comment(lib, "Engine/Release/BulbCore.lib")
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"

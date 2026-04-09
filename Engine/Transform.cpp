@@ -566,6 +566,8 @@ shared_ptr<Transform> Transform::GetChild(const string& name)
 		for (shared_ptr<Transform> c : subChilds)
 			childs.push(c);
 	}
+
+	return nullptr;
 }
 
 void Transform::AddChild(shared_ptr<Transform> child)

@@ -289,6 +289,26 @@ void RenderManager::InitializeOnRuntime()
 	AddGameObject(editorCameraObj);
 }
 
+shared_ptr<GameObject> RenderManager::GetObject(string objName)
+{
+	for (auto& go : _objects) {
+		if (go->GetName() == objName)
+			return go;
+	}
+
+	return nullptr;
+}
+
+shared_ptr<GameObject> RenderManager::GetObjectWithTag(string tag)
+{
+	for (auto& go : _objects) {
+		if (go->GetTag() == tag)
+			return go;
+	}
+
+	return nullptr;
+}
+
 D3D12_GRAPHICS_PIPELINE_STATE_DESC RenderManager::CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, ID3D12RootSignature* rootSignature, wstring vsName, wstring psName, wstring dsName, wstring hsName, wstring gsName)
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = CreatePSODesc(rootSignature, vsName, psName, dsName, hsName, gsName);

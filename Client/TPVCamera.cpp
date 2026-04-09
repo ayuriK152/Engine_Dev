@@ -12,6 +12,11 @@ TPVCamera::~TPVCamera()
 
 void TPVCamera::Init()
 {
+	_transform = GetTransform();
+
+	cameraTransform = _transform->GetChild(_cameraTransformName);
+	armTransform = _transform->GetChild(_armTransformName);
+
 	if (cameraTransform == nullptr) {
 		DEBUG->ErrorLog("Camera Transform was nullptr!");
 		return;
@@ -21,12 +26,13 @@ void TPVCamera::Init()
 		return;
 	}
 
-	_transform = GetTransform();
 	armTransform->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
+	cameraTransform->SetLocalPosition(Vector3(0.0f, 0.0f, -distance));
 
-	if (cameraTransform->GetParent() != _transform) {
-		cameraTransform->SetParent(armTransform);
-		cameraTransform->SetLocalPosition(Vector3(0.0f, 0.0f, -distance));
+	if (onwerTransform == nullptr) {
+		shared_ptr<GameObject> go = RENDER->GetObjectWithTag(initTargetTag);
+		if (go != nullptr) onwerTransform = go->GetTransform();
+		DEBUG->ErrorLog("Onwer Transform with tag named " + initTargetTag);
 	}
 
 	if (onwerTransform != nullptr) {
@@ -60,7 +66,6 @@ void TPVCamera::Update()
 	{
 		INPUTM->SetMouseCenterFixMode(!INPUTM->IsMouseCenterFixed());
 		ShowCursor(INPUTM->IsMouseCenterFixed() ? FALSE : TRUE);
-		isCameraControllOn = !isCameraControllOn;
 	}
 
 	if (!isCameraControllOn || cameraTransform == nullptr || onwerTransform == nullptr)
@@ -123,10 +128,29 @@ void TPVCamera::OnDestroy()
 
 void TPVCamera::LoadXML(Bulb::XMLElement compElem)
 {
+	_armTransformName = compElem.Attribute("Arm");
 
+	_cameraTransformName = compElem.Attribute("Camera");
+
+	const char* tag = compElem.Attribute("InitTargetTag");
+	if (tag != 0) initTargetTag = tag;
+
+	Bulb::XMLElement offsetElem = compElem.FirstChildElement("Offset");
+	offset.x = offsetElem.FloatAttribute("PosX");
+	offset.y = offsetElem.FloatAttribute("PosY");
+	offset.z = offsetElem.FloatAttribute("PosZ");
 }
 
 void TPVCamera::SaveXML(Bulb::XMLElement compElem)
 {
 	compElem.SetAttribute("ComponentType", "TPVCamera");
+
+	compElem.SetAttribute("Arm", armTransform->GetGameObject()->GetName().c_str());
+	compElem.SetAttribute("Camera", cameraTransform->GetGameObject()->GetName().c_str());
+	compElem.SetAttribute("InitTargetTag", initTargetTag.c_str());
+
+	Bulb::XMLElement offsetElem = compElem.InsertNewChildElement("Offset");
+	offsetElem.SetAttribute("PosX", offset.x);
+	offsetElem.SetAttribute("PosY", offset.y);
+	offsetElem.SetAttribute("PosZ", offset.z);
 }

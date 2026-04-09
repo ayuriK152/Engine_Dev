@@ -1,0 +1,23 @@
+<Prefab Name="TPVCamera" PSO="opaque_solid" Tag="Default">
+    <Components>
+        <Component ComponentType="Transform"/>
+        <Component ComponentType="TPVCamera" Arm="CameraArm" Camera="Camera" InitTargetTag="Player">
+            <Offset PosY="2.0"/>
+        </Component>
+    </Components>
+    <GameObjects>
+        <GameObject Name="CameraArm" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform"/>
+            </Components>
+            <GameObjects>
+                <GameObject Name="Camera" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform"/>
+                        <Component ComponentType="Camera" MainCamera="True"/>
+                    </Components>
+                </GameObject>
+            </GameObjects>
+        </GameObject>
+    </GameObjects>
+</Prefab>

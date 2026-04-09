@@ -32,7 +32,12 @@ public:
 	bool isCameraControllOn = true;
 	bool isLockOn = false;
 
+	string initTargetTag = "Player";
+
 private:
+	string _armTransformName;
+	string _cameraTransformName;
+
 	shared_ptr<Transform> _transform;
 	Bulb::Vector3 _pivotPosition;
 	Bulb::Vector3 _targetPivotPosition;

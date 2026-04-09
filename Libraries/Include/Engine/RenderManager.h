@@ -105,8 +105,7 @@ public:
 	void InitializeOnRuntime();
 
 	ComPtr<ID3D12DescriptorHeap> GetCommonSRVHeap()const { return _srvHeap; }
-	
-	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
+
 	const ComPtr<ID3D12PipelineState>& GetCurrPSO() { return _currPSO; }
 
 	// Create PSO Descriptor
@@ -128,7 +127,16 @@ public:
 	UINT GetAndIncreaseSRVHeapIndex() { return _srvHeapIndex++; }
 
 	shared_ptr<GameObject> AddGameObject(shared_ptr<GameObject> obj);
+
 	void DeleteGameobject(shared_ptr<GameObject> obj);
+
+	const vector<shared_ptr<GameObject>>& GetObjects() { return _objects; }
+
+	// Returns the object that matches the name for the first
+	shared_ptr<GameObject> GetObject(string objName);
+
+	// Returns the object that matches the tag for the first
+	shared_ptr<GameObject> GetObjectWithTag(string tag);
 
 	vector<shared_ptr<Light>>& GetLights() { return _lights; }
 	void AddLight(shared_ptr<Light> light) { _lights.push_back(light); }

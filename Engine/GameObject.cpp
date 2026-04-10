@@ -69,6 +69,10 @@ void GameObject::PreUpdate()
 				c->Init();
 			}
 
+#ifdef BULB_EDITOR
+			if (!EDITOR->IsOnPlay() && _tag != "EditorCamera") continue;
+#endif
+
 			if ((UINT32)c->type & ((UINT32)ComponentType::Rigidbody))
 				continue;
 
@@ -79,6 +83,10 @@ void GameObject::PreUpdate()
 
 void GameObject::Update()
 {
+#ifdef BULB_EDITOR
+	if (!EDITOR->IsOnPlay() && _tag != "EditorCamera") return;
+#endif
+
 	if (!_isActive || _parentInactiveStack > 0) return;
 
 	for (auto& componentVec : _components) {

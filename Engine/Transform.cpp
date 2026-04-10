@@ -526,9 +526,12 @@ XMFLOAT4X4 Transform::GetWorldMatrix()
 
 void Transform::SetParent(shared_ptr<Transform> parent)
 {
+	if (_parent != nullptr)
+		_parent->RemoveChild(static_pointer_cast<Transform>(shared_from_this()));
+
 	_parent = parent;
 
-	if (HasParent())
+	if (_parent != nullptr)
 		XMStoreFloat4x4(&_matLocal, XMLoadFloat4x4(&_matWorld) * XMMatrixInverse(nullptr, XMLoadFloat4x4(&_parent->GetWorldMatrix())));
 	else
 		_matLocal = _matWorld;

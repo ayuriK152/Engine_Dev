@@ -415,9 +415,12 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> transform)
 		ImGui::OpenPopup("ObjectRightClickPopup");
 	}
 	if (ImGui::BeginPopup("ObjectRightClickPopup")) {
-		if (ImGui::Selectable("Delete Object")) {
+		if (ImGui::Selectable("Delete ##Object")) {
 			_selectedObj->Delete();
 			_selectedObj = nullptr;
+		}
+		if (ImGui::Selectable("Duplicate ##Object")) {
+			// _selectedObj->Duplicate();
 		}
 		ImGui::EndPopup();
 	}

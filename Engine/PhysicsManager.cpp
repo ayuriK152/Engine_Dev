@@ -63,25 +63,29 @@ void PhysicsManager::Init()
 
 void PhysicsManager::PreUpdate()
 {
-	if (!EDITOR->IsOnPlay()) return;
-
 	for (auto& rigidbody : _rigidbodies) {
 		if (!rigidbody->isInitialized) rigidbody->Init();
 		rigidbody->PreUpdate();
 
+#ifdef BULB_EDITOR
+		if (!EDITOR->IsOnPlay()) continue;
+#endif
+
 		BodyID bodyId = rigidbody->GetBodyID();
 
+		JPH::BodyInterface& bodyInterface = _physicsSystem->GetBodyInterface();
+
 		// Exception for removed body
-		if (!_physicsSystem->GetBodyInterface().IsAdded(bodyId)) continue;
+		if (!bodyInterface.IsAdded(bodyId)) continue;
 
 		if (!rigidbody->IsActive() || !rigidbody->GetGameObject()->IsActive()) {
-			if (_physicsSystem->GetBodyInterface().IsActive(bodyId))
-				_physicsSystem->GetBodyInterface().DeactivateBody(bodyId);
+			if (bodyInterface.IsActive(bodyId))
+				bodyInterface.DeactivateBody(bodyId);
 		}
 		else {
 			if (!rigidbody->IsStatic()) {
-				if (!_physicsSystem->GetBodyInterface().IsActive(bodyId)) {
-					_physicsSystem->GetBodyInterface().ActivateBody(bodyId);
+				if (!bodyInterface.IsActive(bodyId)) {
+					bodyInterface.ActivateBody(bodyId);
 				}
 			}
 		}

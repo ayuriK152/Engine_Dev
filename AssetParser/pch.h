@@ -7,7 +7,7 @@
 #define JPH_DEBUG_RENDERER
 
 #include "Engine/pch.h"
-#pragma comment(lib, "Engine/Release/BulbCore.lib")
+#pragma comment(lib, "Engine/Release/BulbEditorCore.lib")
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"

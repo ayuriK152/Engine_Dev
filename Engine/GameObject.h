@@ -38,6 +38,7 @@ public:
 
 public:
 	static shared_ptr<GameObject> Instantiate();
+
 	static shared_ptr<GameObject> LoadPrefab(string filePath);
 
 	// Returns added component. Returns a component that already exists if duplicate additions are not possible, such as Transform.

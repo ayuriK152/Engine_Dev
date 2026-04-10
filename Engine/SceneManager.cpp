@@ -232,7 +232,7 @@ void SceneManager::ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObjec
 				string componentType = compElem->Attribute("ComponentType");
 				shared_ptr<Component> component = ComponentFactory::Create(componentType);
 
-				go->AddComponent(component);
+				component = go->AddComponent(component);
 				component->LoadXML(compElem);
 
 				compElem = compElem->NextSiblingElement("Component");

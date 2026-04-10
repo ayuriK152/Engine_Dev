@@ -203,14 +203,23 @@ shared_ptr<GameObject> GameObject::LoadPrefab(string filePath)
 	return go;
 }
 
-void GameObject::AddComponent(shared_ptr<Component> component)
+shared_ptr<Component> GameObject::AddComponent(shared_ptr<Component> component)
 {
 	int componentTypeIdx = GetComponentTypeIndex(component->type);
-	if (componentTypeIdx == -1) return;
+	if (componentTypeIdx == -1) return nullptr;
+
+	// Transform
+	if (componentTypeIdx == 0) {
+		if (_components[componentTypeIdx].size() > 0) {
+			return _components[componentTypeIdx][0];
+		}
+	}
 	
 	++_componentCount;
 	component->SetGameObject(shared_from_this());
 	_components[componentTypeIdx].push_back(component);
+
+	return component;
 }
 
 shared_ptr<Transform> GameObject::GetTransform()

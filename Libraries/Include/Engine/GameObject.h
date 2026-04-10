@@ -40,7 +40,8 @@ public:
 	static shared_ptr<GameObject> Instantiate();
 	static shared_ptr<GameObject> LoadPrefab(string filePath);
 
-	void AddComponent(shared_ptr<Component> component);
+	// Returns added component. Returns a component that already exists if duplicate additions are not possible, such as Transform.
+	shared_ptr<Component> AddComponent(shared_ptr<Component> component);
 	template<typename T>
 	shared_ptr<T> GetComponent();
 	shared_ptr<Transform> GetTransform();

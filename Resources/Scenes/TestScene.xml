@@ -20,7 +20,7 @@
         <GameObject Name="Ground" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="-0.5" PosZ="0" ScaleX="100" ScaleY="1" ScaleZ="100" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
-                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGround_100_1_100.xml"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey_100_1_100.xml"/>
                 <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                     <Collider Shape="Box" Height="0.5" Radius="0.5">
                         <Extent x="50" y="0.5" z="50"/>

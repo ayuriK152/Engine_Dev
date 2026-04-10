@@ -484,7 +484,7 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 	loadedMesh->SetPath(filePath);
 	loadedMesh->SetMaterial(RESOURCE->Get<Material>(Utils::ToWString(matPath)));
 
-	Add<Mesh>(loadedMesh->GetNameW(), loadedMesh);
+	Add<Mesh>(loadedMesh->GetPathW(), loadedMesh);
 
 	return loadedMesh;
 }
@@ -805,7 +805,5 @@ void ResourceManager::LoadMeshes()
 
 		string pathStr = i->path().string();
 		shared_ptr<Mesh> mesh = LoadMesh(pathStr);
-
-		Add<Mesh>(i->path(), mesh);
 	}
 }

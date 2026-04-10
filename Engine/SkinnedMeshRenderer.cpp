@@ -83,7 +83,7 @@ void SkinnedMeshRenderer::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("ComponentType", "SkinnedMeshRenderer");
 
 	if (_mesh != nullptr) compElem.SetAttribute("Mesh", _mesh->GetPath().c_str());
-	if (_material != nullptr) compElem.SetAttribute("Material", _material->GetName().c_str());
+	if (_material != nullptr) compElem.SetAttribute("Material", _material->GetPath().c_str());
 	compElem.SetAttribute("RootBoneName", _rootBoneName.c_str());
 }
 

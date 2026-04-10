@@ -126,7 +126,6 @@ void RenderManager::Update()
 		o->Update();
 	}
 
-	//DEBUG->Update();
 	_currFrameResource->Update();
 }
 

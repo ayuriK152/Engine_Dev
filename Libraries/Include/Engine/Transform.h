@@ -30,14 +30,19 @@ public:
 		SetDirtyFlag();
 	}
 	
-	// Get/Set Local Rotation With Degree
+	// Get local rotation on degree
 	Bulb::Vector3 GetLocalRotation() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return MathHelper::RadianToDegree(_localRotation);
 	}
-	void SetLocalRotation(const Bulb::Vector3& rotation) { SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation)); }
+
+	// Set local rotation on degree
+	void SetLocalRotation(const Bulb::Vector3& rotation) {
+		SetLocalRotationRadian(MathHelper::DegreeToRadian(rotation));
+	}
+
 	// Get/Set Local Rotation With Radian
 	Bulb::Vector3 GetLocalRotationRadian() {
 		if (_isDirty)
@@ -84,14 +89,18 @@ public:
 	}
 	void SetPosition(const Bulb::Vector3& worldPosition);
 
-	// Get/Set Rotation With Degree
+	// Get rotation on degree
 	Bulb::Vector3 GetRotation() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return MathHelper::RadianToDegree(_rotation); 
 	}
-	void SetRotation(const Bulb::Vector3& worldRotation) { SetRotationRadian(MathHelper::DegreeToRadian(worldRotation)); }
+
+	// Set rotation on degree
+	void SetRotation(const Bulb::Vector3& worldRotation) { 
+		SetRotationRadian(MathHelper::DegreeToRadian(worldRotation));
+	}
 
 	// Get/Set Rotation With Radian
 	Bulb::Vector3 GetRotationRadian() {
@@ -101,13 +110,16 @@ public:
 		return _rotation;
 	}
 	void SetRotationRadian(const Bulb::Vector3& worldRotation);
+
 	Bulb::Vector3 GetScale() {
 		if (_isDirty)
 			UpdateTransform();
 
 		return _scale;
 	}
+
 	void SetScale(const Bulb::Vector3& worldScale);
+
 	XMMATRIX GetRotationMatrix();
 
 	Bulb::Vector3 GetRight();
@@ -149,6 +161,7 @@ public:
 	bool HasParent() { return _parent != nullptr; }
 
 	void SetDirtyFlag();
+	bool IsDirty() { return _isDirty; }
 
 	UINT GetDepthLevel() { return _depthLevel; }
 
@@ -163,14 +176,13 @@ private:
 
 	Bulb::Vector3 _localPosition;
 	Bulb::Vector3 _localRotation;
+	Bulb::Vector4 _localQuaternion;
 	Bulb::Vector3 _localScale;
 
 	Bulb::Vector3 _position;
 	Bulb::Vector3 _rotation;
-	Bulb::Vector3 _scale;
-
-	Bulb::Vector4 _localQuaternion;
 	Bulb::Vector4 _quaternion;
+	Bulb::Vector3 _scale;
 
 	XMFLOAT4X4 _matLocal;
 	XMFLOAT4X4 _matWorld;

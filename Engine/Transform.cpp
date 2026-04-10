@@ -217,6 +217,7 @@ void Transform::SetLocalRotationRadian(const Bulb::Vector3& rotation)
 	_localRotation = rotation;
 
 	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
+
 	SetDirtyFlag();
 }
 
@@ -252,6 +253,7 @@ void Transform::SetLocalQuaternion(const Bulb::Vector4& quaternion)
 {
 	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(XMLoadFloat4(&quaternion)));
 	_localRotation = MathHelper::ConvertQuaternionToEuler(_localQuaternion);
+
 	SetDirtyFlag();
 }
 
@@ -259,6 +261,7 @@ void Transform::SetLocalQuaternion(const XMVECTOR& quaternion)
 {
 	XMStoreFloat4(&_localQuaternion, XMQuaternionNormalize(quaternion));
 	_localRotation = MathHelper::ConvertQuaternionToEuler(_localQuaternion);
+
 	SetDirtyFlag();
 }
 
@@ -429,8 +432,6 @@ void Transform::LookAt(const Bulb::Vector3& targetPos)
 	Bulb::Vector4 quatVec;
 	XMStoreFloat4(&quatVec, quat);
 	SetQuaternion(quatVec);
-
-	SetDirtyFlag();
 }
 
 void Transform::LookAtWithNoRoll(const Bulb::Vector3& targetPos, float blendAlpha)
@@ -447,12 +448,9 @@ void Transform::LookAtWithNoRoll(const Bulb::Vector3& targetPos, float blendAlph
 	XMVECTOR quatPitch = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), pitch);
 	XMVECTOR quatYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw);
 	XMQuaternionRotationRollPitchYaw(pitch, yaw, 0.0f);
-	//XMVECTOR quatFinal = XMQuaternionNormalize(XMQuaternionMultiply(quatYaw, quatPitch));
 	XMVECTOR quatFinal = XMQuaternionRotationRollPitchYaw(pitch, yaw, 0.0f);
 
 	SetQuaternion(quatFinal);
-
-	SetDirtyFlag();
 }
 
 void Transform::LookAtOnlyYaw(const Bulb::Vector3& targetPos, float blendAlpha)
@@ -468,8 +466,6 @@ void Transform::LookAtOnlyYaw(const Bulb::Vector3& targetPos, float blendAlpha)
 	XMVECTOR quatYaw = XMQuaternionNormalize(XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw));
 
 	SetQuaternion(quatYaw);
-
-	SetDirtyFlag();
 }
 
 void Transform::SetLocalMatrix(XMFLOAT4X4 mat)

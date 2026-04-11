@@ -57,76 +57,64 @@
                         <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                     </Components>
                     <GameObjects>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-6" PosY="0" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-2" PosY="0" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="2" PosY="0" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="6" PosY="0" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-6" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-2" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="2" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="6" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-6" PosY="0" PosZ="-4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-2" PosY="0" PosZ="-4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="2" PosY="0" PosZ="-4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
-                        <GameObject Name="Tile" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tile" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="6" PosY="0" PosZ="-4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Tiles4x4.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
                     </GameObjects>
@@ -136,10 +124,9 @@
                         <Component ComponentType="Transform" PosX="0" PosY="4" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                     </Components>
                     <GameObjects>
-                        <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="Wall" PSO="opaque_solid" Tag="Default">
                             <Components>
                                 <Component ComponentType="Transform" PosX="-6" PosY="0" PosZ="6" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
-                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\StoneWall1.bmesh" Material="Mat_Default"/>
                             </Components>
                         </GameObject>
                     </GameObjects>

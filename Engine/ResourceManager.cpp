@@ -763,7 +763,8 @@ shared_ptr<GameObject> ResourceManager::LoadPrefabXML(const string& filePath)
 	}
 
 	XMLElement* objsElem = rootElem->FirstChildElement("GameObjects");
-	LoadPrefabXMLRecursive(objsElem, rootObj);
+	if (objsElem != nullptr)
+		LoadPrefabXMLRecursive(objsElem, rootObj);
 
 	return rootObj;
 }

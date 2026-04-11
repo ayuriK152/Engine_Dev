@@ -102,6 +102,9 @@ private:
 
 	void FlushCommandQueue();
 
+public:
+	int cursorMovePendingX = 0, cursorMovePendingY = 0;
+
 private:
 	static Graphic* s_instance;
 

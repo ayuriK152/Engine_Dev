@@ -39,7 +39,9 @@ bool Graphic::Init()
 
 void Graphic::Update()
 {
-	// EMPTY
+	INPUTM->OnMouseMove(cursorMovePendingX, cursorMovePendingY);
+	cursorMovePendingX = 0;
+	cursorMovePendingY = 0;
 }
 
 
@@ -274,21 +276,23 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		case WM_INPUT:
 		{
-			UINT dwSize = 0;
-			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, nullptr, &dwSize, sizeof(RAWINPUTHEADER));
-			if (dwSize == 0) break;
+			static BYTE lpb[sizeof(RAWINPUT)];
+			UINT dwSize = sizeof(RAWINPUT);
 
-			std::vector<BYTE> lpb(dwSize);
-			if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb.data(), &dwSize, sizeof(RAWINPUTHEADER)) != dwSize)
+			if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER)) != dwSize)
 				break;
 
-			RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(lpb.data());
+			RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(lpb);
 
 			if (raw->header.dwType == RIM_TYPEMOUSE)
 			{
-				if (raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0)
-					INPUTM->OnMouseMove(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
-				INPUTM->OnMouseClick(raw->data.mouse.usButtonFlags);
+				cursorMovePendingX += raw->data.mouse.lLastX;
+				cursorMovePendingY += raw->data.mouse.lLastY;
+				//if (raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0)
+				//	INPUTM->OnMouseMove(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
+
+				if (raw->data.mouse.usButtonFlags != 0)
+					INPUTM->OnMouseClick(raw->data.mouse.usButtonFlags);
 			}
 
 			return 0;

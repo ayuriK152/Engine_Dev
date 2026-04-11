@@ -34,19 +34,6 @@
                 <Component ComponentType="Transform" PosX="0" PosY="5" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
             </Components>
         </GameObject>
-        <GameObject Name="Floor Collider" PSO="opaque_solid" Tag="Default">
-            <Components>
-                <Component ComponentType="Transform" PosX="0" PosY="2.5" PosZ="0" ScaleX="16" ScaleY="1" ScaleZ="12" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
-                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
-                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
-                    <Collider Shape="Box" Height="0.5" Radius="0.5">
-                        <Extent x="8" y="0.5" z="6"/>
-                        <Offset x="0" y="0" z="0"/>
-                        <RotOffset x="0" y="0" z="0"/>
-                    </Collider>
-                </Component>
-            </Components>
-        </GameObject>
         <GameObject Name="StartSpace" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
@@ -155,6 +142,19 @@
                             </Components>
                         </GameObject>
                     </GameObjects>
+                </GameObject>
+                <GameObject Name="Floor Collider" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="0" PosY="2.5" PosZ="0" ScaleX="16" ScaleY="1" ScaleZ="12" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
+                        <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                            <Collider Shape="Box" Height="0.5" Radius="0.5">
+                                <Extent x="8" y="0.5" z="6"/>
+                                <Offset x="0" y="0" z="0"/>
+                                <RotOffset x="0" y="0" z="0"/>
+                            </Collider>
+                        </Component>
+                    </Components>
                 </GameObject>
             </GameObjects>
         </GameObject>

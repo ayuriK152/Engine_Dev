@@ -86,6 +86,12 @@ void EngineGUIManager::Init()
 
 void EngineGUIManager::Update()
 {
+	if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)) {
+		if (!ImGui::IsAnyItemHovered()) {
+			ImGui::FocusWindow(nullptr);
+		}
+	}
+
 	ToggleWindows();
 	DrawGizmo();
 }
@@ -226,12 +232,9 @@ void EngineGUIManager::ShowHierarchyView()
 		}
 
 		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
-		//if (ImGui::Button("Create Object")) {
-		//	GameObject::Instantiate();
-		//}
+
 		auto& objects = RENDER->GetObjects();
-		for (auto& o : objects)
-		{
+		for (auto& o : objects) {
 			if (o->GetTag() == "EditorCamera")
 				continue;
 			if (o->GetTransform()->GetDepthLevel() > 0)
@@ -239,8 +242,7 @@ void EngineGUIManager::ShowHierarchyView()
 			HierarchyObjectRecursion(o->GetTransform());
 		}
 	}
-	else if (_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY])
-	{
+	else if (_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY]) {
 		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = false;
 	}
 	ImGui::End();
@@ -265,15 +267,13 @@ void EngineGUIManager::ShowInspectorView()
 	ImGui::SetNextWindowSize(windowSize);
 
 	ImGui::SetNextWindowCollapsed(!_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR]);
-	if (ImGui::Begin("Inspector View", nullptr, windowFlags))
-	{
+	if (ImGui::Begin("Inspector View", nullptr, windowFlags)) {
+
 		_guiToggleValues[TOGGLEVALUE_GUI_INSPECTOR] = true;
-		if (_selectedObj == nullptr)
-		{
+		if (_selectedObj == nullptr) {
 			ImGui::Text("No GameObject Selected");
 		}
-		else
-		{
+		else {
 			bool isActive = _selectedObj->IsActive();
 			if (ImGui::Checkbox("Active", &isActive)) {
 				_selectedObj->SetActive(isActive);
@@ -285,8 +285,7 @@ void EngineGUIManager::ShowInspectorView()
 			}
 			ImGui::Text(("PSO: " + _selectedObj->GetPSOName()).c_str());
 			ImGui::Text(("Tag: " + _selectedObj->GetTag()).c_str());
-			if (ImGui::Button("Set Parent"))
-			{
+			if (ImGui::Button("Set Parent")) {
 				_isParentSelectMode = !_isParentSelectMode;
 				cout << _isParentSelectMode << endl;
 			}

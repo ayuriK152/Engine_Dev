@@ -100,11 +100,27 @@ public:
 	Bulb::Vector2 GetMousePosition() { return _mousePosition; }
 	Bulb::Vector2 GetMouseDelta() { return _mouseDelta; }
 
-	bool IsMouseLeftButtonDown() { return _mouseStates.LeftButton == KeyState::Down; }
-	bool IsMouseLeftButtonPress() { return _mouseStates.LeftButton == KeyState::Press; }
+	bool IsMouseLeftButtonDown() {
+		if (ImGui::GetIO().WantCaptureMouse) return false;
 
-	bool IsMouseRightButtonDown() { return  _mouseStates.RightButton == KeyState::Down; }
-	bool IsMouseRightButtonPress() { return _mouseStates.RightButton == KeyState::Press; }
+		return _mouseStates.LeftButton == KeyState::Down;
+	}
+	bool IsMouseLeftButtonPress() {
+		if (ImGui::GetIO().WantCaptureMouse) return false;
+
+		return _mouseStates.LeftButton == KeyState::Press;
+	}
+
+	bool IsMouseRightButtonDown() {
+		if (ImGui::GetIO().WantCaptureMouse) return false;
+
+		return  _mouseStates.RightButton == KeyState::Down;
+	}
+	bool IsMouseRightButtonPress() {
+		if (ImGui::GetIO().WantCaptureMouse) return false;
+
+		return _mouseStates.RightButton == KeyState::Press;
+	}
 
 	void OnMouseClick(USHORT buttonFlags);
 	void OnMouseMove(int x, int y);

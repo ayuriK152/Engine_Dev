@@ -81,6 +81,7 @@ using namespace Microsoft::WRL;
 #include "ImGUI/imgui_stdlib.h"
 #include "ImGUI/imgui_impl_dx12.h"
 #include "ImGUI/imgui_impl_win32.h"
+#include "ImGUI/imgui_internal.h"
 
 // Jolt Physics
 #include <Jolt/Jolt.h>

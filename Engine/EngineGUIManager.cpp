@@ -202,11 +202,33 @@ void EngineGUIManager::ShowHierarchyView()
 
 	if (ImGui::Begin("Hierarchy View", nullptr, windowFlags))
 	{
-		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
-		if (ImGui::Button("Create Object")) {
-			DEBUG->Log("Create Object");
-			GameObject::Instantiate();
+		if (ImGui::IsWindowHovered()) {
+			if (ImGui::IsMouseClicked(1)) {
+				ImGui::OpenPopup("hierarchy_funcs");
+			}
 		}
+
+		if (ImGui::BeginPopup("hierarchy_funcs")) {
+			if (ImGui::Selectable("Create Object")) {
+				GameObject::Instantiate();
+			}
+			if (ImGui::BeginMenu("Instantiate Prefab")) {
+				vector<string> prefabDirectories = EDITOR->GetPrefabList();
+				for (string& prefabDir : prefabDirectories) {
+					if (ImGui::MenuItem(prefabDir.c_str())) {
+						GameObject::LoadPrefab(prefabDir);
+						break;
+					}
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndPopup();
+		}
+
+		_guiToggleValues[TOGGLEVALUE_GUI_HIERARCHY] = true;
+		//if (ImGui::Button("Create Object")) {
+		//	GameObject::Instantiate();
+		//}
 		auto& objects = RENDER->GetObjects();
 		for (auto& o : objects)
 		{
@@ -263,10 +285,6 @@ void EngineGUIManager::ShowInspectorView()
 			}
 			ImGui::Text(("PSO: " + _selectedObj->GetPSOName()).c_str());
 			ImGui::Text(("Tag: " + _selectedObj->GetTag()).c_str());
-			if (ImGui::Button("Save as Prefab"))
-			{
-				RESOURCE->SavePrefab(_selectedObj);
-			}
 			if (ImGui::Button("Set Parent"))
 			{
 				_isParentSelectMode = !_isParentSelectMode;
@@ -421,6 +439,9 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> transform)
 		}
 		if (ImGui::Selectable("Duplicate ##Object")) {
 			// _selectedObj->Duplicate();
+		}
+		if (ImGui::Selectable("Save as Prefab ##Object")) {
+			RESOURCE->SavePrefabXML(_selectedObj);
 		}
 		ImGui::EndPopup();
 	}

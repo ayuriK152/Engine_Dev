@@ -24,6 +24,11 @@ public:
 
 	void SetEditorWindowText(string text);
 
+	void LoadMeshes();
+	void LoadPrefabs();
+
+	const vector<string>& GetPrefabList() { return _prefabDirectories; }
+
 private:
 	void RestoreObjectComponents(shared_ptr<GameObject> go, GameObjectSnapshot objectSnapshot);
 
@@ -35,5 +40,7 @@ private:
 
 	vector<GameObjectSnapshot> _objectSnapshots;
 	vector<ComponentSnapshot> _compSnapshots;
+
+	vector<string> _prefabDirectories;
 };
 

@@ -35,6 +35,9 @@ void EditorManager::Init()
 	cameraObj->GetTransform()->SetPosition({ 0, 3, 0 });
 	cameraObj->AddComponent(ComponentFactory::Create("Camera"));
 	cameraObj->AddComponent(ComponentFactory::Create("EditorCamera"));
+
+	LoadMeshes();
+	LoadPrefabs();
 }
 
 void EditorManager::Play()
@@ -113,6 +116,33 @@ void EditorManager::SetEditorWindowText(string text)
 {
 	_currentWindowText = text;
 	SetWindowText(GRAPHIC->GetMainWnd(), Utils::ToWString("Bulb Engine | " + _currentWindowText + (_isOnPlay ? " - On Play" : "")).c_str());
+}
+
+void EditorManager::LoadMeshes()
+{
+	filesystem::path p = RESOURCE_PATH_MESH;
+	filesystem::recursive_directory_iterator iter(p);
+
+	for (auto& i = iter; i != filesystem::end(iter); i++)
+	{
+		if (filesystem::is_directory(i->path())) continue;
+
+		string pathStr = i->path().string();
+		shared_ptr<Mesh> mesh = RESOURCE->LoadMesh(pathStr);
+	}
+}
+
+void EditorManager::LoadPrefabs()
+{
+	filesystem::path p = RESOURCE_PATH_PREFAB;
+	filesystem::recursive_directory_iterator iter(p);
+
+	for (auto& i = iter; i != filesystem::end(iter); i++)
+	{
+		if (filesystem::is_directory(i->path())) continue;
+
+		_prefabDirectories.push_back(i->path().string());
+	}
 }
 
 void EditorManager::RestoreObjectComponents(shared_ptr<GameObject> go, GameObjectSnapshot objectSnapshot)

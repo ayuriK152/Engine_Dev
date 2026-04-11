@@ -120,10 +120,6 @@ void ResourceManager::Init()
 	skyboxSphereMesh->SetPath(DEFAULT_MESH_SKYBOX);
 	skyboxSphereMesh->SetName(DEFAULT_MESH_SKYBOX);
 	Add<Mesh>(DEFAULT_MESH_SKYBOX, skyboxSphereMesh);
-
-
-	/* FOR EDITOR ONLY */
-	LoadEntireResources();
 }
 
 bool ResourceManager::CheckResourceExists(const string& filePath)
@@ -786,25 +782,5 @@ ComponentType ResourceManager::MapLegacyComponentType(UINT32 legacyType)
 	case 9: return ComponentType::Script;
 	case 10: return ComponentType::ParticleEmitter;
 	case 11: return ComponentType::CharacterController;
-	}
-}
-
-void ResourceManager::LoadEntireResources()
-{
-	LoadMeshes();
-}
-
-void ResourceManager::LoadMeshes()
-{
-	tinyxml2::XMLDocument doc;
-	filesystem::path p = RESOURCE_PATH_MESH;
-	filesystem::recursive_directory_iterator iter(p);
-
-	for (auto& i = iter; i != filesystem::end(iter); i++)
-	{
-		if (filesystem::is_directory(i->path())) continue;
-
-		string pathStr = i->path().string();
-		shared_ptr<Mesh> mesh = LoadMesh(pathStr);
 	}
 }

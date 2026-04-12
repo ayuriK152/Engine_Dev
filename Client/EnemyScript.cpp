@@ -80,6 +80,10 @@ void EnemyScript::Update()
 		}
 
 		else {
+			if (target == nullptr) {
+				target = RENDER->GetObjectWithTag("Player");
+			}
+
 			_targetVec = target->GetTransform()->GetPosition() - _transform->GetPosition();
 			_targetDistance = _targetVec.Length();
 			if (_targetDistance >= 2.0f && _currentState != EnemyMovementState::WALK) {

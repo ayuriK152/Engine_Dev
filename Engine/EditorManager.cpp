@@ -35,6 +35,7 @@ void EditorManager::Init()
 	cameraObj->GetTransform()->SetPosition({ 0, 3, 0 });
 	cameraObj->AddComponent(ComponentFactory::Create("Camera"));
 	cameraObj->AddComponent(ComponentFactory::Create("EditorCamera"));
+	cameraObj->Init();
 
 	LoadMeshes();
 	LoadPrefabs();

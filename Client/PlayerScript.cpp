@@ -69,6 +69,8 @@ void PlayerScript::Init()
 	_steminaBar->SetValueMaxLimit(steminaMax);
 	_steminaBar->SetValue(stemina);
 
+	tpvCameraScript = static_pointer_cast<TPVCamera>(RENDER->GetObject("TPVCamera")->GetComponent<Script>());
+
 	_states.push_back(new IdleState());
 	_states.push_back(new WalkState());
 	_states.push_back(new RunState());

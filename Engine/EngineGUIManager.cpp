@@ -86,12 +86,6 @@ void EngineGUIManager::Init()
 
 void EngineGUIManager::Update()
 {
-	if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)) {
-		if (!ImGui::IsAnyItemHovered()) {
-			ImGui::FocusWindow(nullptr);
-		}
-	}
-
 	ToggleWindows();
 	DrawGizmo();
 }
@@ -280,7 +274,7 @@ void EngineGUIManager::ShowInspectorView()
 			}
 
 			string name = _selectedObj->GetName();
-			if (ImGui::InputText("ObjName", &name)) {
+			if (ImGui::InputText("ObjName", &name, ImGuiInputTextFlags_EnterReturnsTrue)) {
 				_selectedObj->SetName(name);
 			}
 			ImGui::Text(("PSO: " + _selectedObj->GetPSOName()).c_str());

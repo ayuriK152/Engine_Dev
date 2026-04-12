@@ -26,8 +26,11 @@ float3 RandomDir(uint instanceID, float time)
 [numthreads(256, 1, 1)]
 void CS(int3 threadId : SV_DispatchThreadID) {
     uint id = threadId.x;
+    if (id > CurrentParticleMount) return;
+
     Particle p = particles[id];
 
+    // 파티클의 수명이 다한 경우 다시 생성, 그렇지 않은 경우 지속적으로 움직임
     if (p.Age >= p.LifeTime) {
         float3 dir = RandomDir(id, Time);
         p.Position = EmitterPos;
@@ -39,7 +42,7 @@ void CS(int3 threadId : SV_DispatchThreadID) {
         p.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
     else {
-        p.Velocity.y -= 9.8f * DeltaTime;
+        p.Velocity.y += GravityFactor * DeltaTime;
         p.Position += p.Velocity * DeltaTime;
         p.Age += DeltaTime;
     }

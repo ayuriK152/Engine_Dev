@@ -19,9 +19,11 @@ RWStructuredBuffer<Particle> particles : register(u0, space1);
 
 cbuffer cbParticleEmitterInfo : register(b0, space1) {
     float3  EmitterPos;
-    float   SpawnRate;
     float   ParticleInitVelocity;
-    float   ParticleLifeTime;
     float2  ParticleSize;
+    float   GravityFactor;
+    float   ParticleLifeTime;
+    float   SpawnRate;
+    uint    CurrentParticleMount;
     uint    TextureIdx;
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAX_PARTICLE_MOUNT	1024
+
 struct BULB_API Particle {
 	XMFLOAT3 Position;
 	XMFLOAT3 Velocity;
@@ -12,10 +14,12 @@ struct BULB_API Particle {
 
 struct BULB_API EmitterSetting {
 	XMFLOAT3 EmitterPos;
-	float SpawnRate;
-	float ParticleInitialVelocity = 5;
-	float ParticleLifeTime = 3;
-	XMFLOAT2 ParticleSize = { 0.01f, 0.01f };
+	float ParticleInitialVelocity = 1;
+	XMFLOAT2 ParticleSize = { 1.0f, 1.0f };
+	float GravityFactor = -9.8f;
+	float ParticleLifeTime = 1;
+	float SpawnRate = 1.0f;		// Per second
+	UINT CurrentParticleMount = 0;
 	UINT TextureIdx = 0;
 };
 
@@ -53,7 +57,11 @@ private:
 	ComPtr<ID3D12Resource> _particleBufferUpload;
 
 	EmitterSetting _emitterSetting;
+	string _particleTexture;
 
-	UINT _particleMount = 100;
+	float _instantiateTime = 0.0f;
+	float _elapsedTime = 0.0f;
+	UINT _mountPerTick = 5;
+	UINT _currentParticleMount = 0;
 	bool _isPlaying = false;
 };

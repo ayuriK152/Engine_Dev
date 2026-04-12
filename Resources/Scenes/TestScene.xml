@@ -32,7 +32,7 @@
         </GameObject>
         <GameObject Name="Sphere" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="Transform" PosX="0" PosY="3" PosZ="5" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
                 <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicSphere" Material="..\Resources\Materials\Prototype\000.xml"/>
                 <Component ComponentType="Rigidbody" Static="false" Gravity="true" Trigger="false" PhysicsActive="true">
                     <Collider Shape="Sphere" Height="0.5" Radius="0.5">
@@ -41,6 +41,7 @@
                         <RotOffset x="0" y="0" z="0"/>
                     </Collider>
                 </Component>
+                <Component ComponentType="ParticleEmitter" IsPlaying="True" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="1" GravityFactor="1" ParticleLifeTime="3" ParticleSizeX="0.1" ParticleSizeY="0.1" ParticleTexture="..\Resources\Textures\ParticleTest.png"/>
             </Components>
         </GameObject>
     </GameObjects>

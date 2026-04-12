@@ -110,12 +110,16 @@ public:
 
 	// Create PSO Descriptor
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(vector<D3D12_INPUT_ELEMENT_DESC>& inputLayout, ID3D12RootSignature* rootSignature, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	
 	// Create PSO Descriptor without InputLayout
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC CreatePSODesc(ID3D12RootSignature* rootSignature, wstring vsName = L"", wstring psName = L"", wstring dsName = L"", wstring hsName = L"", wstring gsName = L"");
+	
 	// Create PSO Descriptor for Compute Shader
 	D3D12_COMPUTE_PIPELINE_STATE_DESC CreateCSPSODesc(ID3D12RootSignature* rootSignature, wstring csName);
+	
 	// GetPSO with PSO name string. Refactoring on plan
 	const ComPtr<ID3D12PipelineState>& GetPSO(string name) { return _PSOs[name]; }
+	
 	void SetCurrPSO(string name);
 	void SetDefaultPSO();
 	void UpdateObjectPSO(shared_ptr<GameObject> obj, string targetPSO);

@@ -13,15 +13,29 @@ struct BULB_API Particle {
 };
 
 struct BULB_API EmitterSetting {
-	XMFLOAT3 EmitterPos;
+	Bulb::Vector3 EmitterPos;
 	float ParticleInitialVelocity = 1;
-	XMFLOAT2 ParticleSize = { 1.0f, 1.0f };
+
+	Bulb::Vector2 ParticleSize = { 1.0f, 1.0f };
 	float GravityFactor = -9.8f;
 	float ParticleLifeTime = 1;
-	float SpawnRate = 1.0f;		// Per second
-	UINT SpawnMount = 0;
+
+	Bulb::Color InitialColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	float EmitRate = 1.0f;		// Per second
+	UINT EmitMount = 0;
 	UINT StartIdx = 0;
 	UINT TextureIdx = 0;
+
+	Bulb::Vector3 EmitDirection;
+	float ConeAngle = 15.0f;
+
+	UINT EmitterShape = 0;		// 0 = Default, 1 = Cone
+};
+
+enum class BULB_API EmitterShape {
+	Sphere,
+	Cone
 };
 
 class BULB_API ParticleEmitter : public Component
@@ -51,6 +65,15 @@ public:
 	void SetParticleTexture(wstring textureName);
 	void SetParticleTexture(shared_ptr<Texture> texture);
 
+	EmitterShape GetEmitterShape() { return _emitterShape; }
+	void SetEmitterShape(EmitterShape shape) { _emitterShape = shape; }
+
+	Bulb::Vector3 GetConeDirection() { return _coneDirection; }
+	void SetConeDirection(Bulb::Vector3& dir) { _coneDirection = dir; }
+
+	float GetConeAngle() { return _emitterSetting.ConeAngle; }
+	void SetConeAngle(float angle) { _emitterSetting.ConeAngle = angle; }
+
 	EmitterSetting& GetParticleSetting() { return _emitterSetting; }
 	void SetParticleSetting(EmitterSetting setting) { _emitterSetting = setting; }
 
@@ -61,13 +84,15 @@ private:
 	ComPtr<ID3D12Resource> _particleBuffer;
 	ComPtr<ID3D12Resource> _particleBufferUpload;
 
+	EmitterShape _emitterShape;
 	EmitterSetting _emitterSetting;
 	Bulb::Vector3 _offset;
+	Bulb::Vector3 _coneDirection = { 0.0f, 1.0f, 0.0f };
 	string _particleTexture;
 
 	float _instantiateTime = 0.0f;
 	UINT _mountPerTick = 5;
-	UINT _spawnMount = 0;
+	UINT _emitMount = 0;
 	UINT _lastSpawnIdx = 0;
 	bool _isPlaying = false;
 };

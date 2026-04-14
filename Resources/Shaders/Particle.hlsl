@@ -23,8 +23,12 @@ cbuffer cbParticleEmitterInfo : register(b0, space1) {
     float2  ParticleSize;
     float   GravityFactor;
     float   ParticleLifeTime;
+    float4  InitialColor;
     float   SpawnRate;
     uint    SpawnMount;
     uint    StartIdx;
     uint    TextureIdx;
+    float3  EmitDirection;
+    float   ConeAngle;
+    uint    EmitterShape;
 };

@@ -26,20 +26,18 @@ void ParticleEmitter::Init()
 		nullptr,
 		IID_PPV_ARGS(&_particleBuffer)));
 
-	_instantiateTime = _emitterSetting.SpawnRate;
-
 	PARTICLE->AddParticleEmitter(static_pointer_cast<ParticleEmitter>(shared_from_this()));
 }
 
 void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 {
-	_spawnMount = 0;
+	_emitMount = 0;
 
 	if (_isPlaying)  {
 		_instantiateTime += TIME->DeltaTime();
-		if (_instantiateTime >= _emitterSetting.SpawnRate) {
-			_instantiateTime -= _emitterSetting.SpawnRate;
-			_spawnMount += _mountPerTick;
+		if (_instantiateTime >= _emitterSetting.EmitRate) {
+			_instantiateTime = 0.0f;
+			_emitMount += _mountPerTick;
 		}
 	}
 
@@ -50,10 +48,15 @@ void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 	pos = pos + XMVector3Rotate(XMLoadFloat3(&_offset), XMLoadFloat4(&rot));
 
 	_emitterSetting.EmitterPos = pos;
-	_emitterSetting.SpawnMount = _spawnMount;
+	_emitterSetting.EmitMount = _emitMount;
 	_emitterSetting.StartIdx = _lastSpawnIdx;
+	_emitterSetting.EmitterShape = (UINT)_emitterShape;
 
-	_lastSpawnIdx = (_lastSpawnIdx + _spawnMount) % MAX_PARTICLE_MOUNT;
+	if (_emitterShape == EmitterShape::Cone) {
+		XMStoreFloat3(&_emitterSetting.EmitDirection, XMVector3Rotate(XMLoadFloat3(&_coneDirection), XMLoadFloat4(&rot)));
+	}
+
+	_lastSpawnIdx = (_lastSpawnIdx + _emitMount) % MAX_PARTICLE_MOUNT;
 
 	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_EMITTER_CB, sizeof(EmitterSetting) / 4, &_emitterSetting, 0);
 
@@ -78,16 +81,38 @@ void ParticleEmitter::OnDestroy()
 void ParticleEmitter::LoadXML(Bulb::XMLElement compElem)
 {
 	_isPlaying = compElem.BoolAttribute("IsPlaying");
-	_offset.x = compElem.FloatAttribute("OffsetPosX", 0.0f);
-	_offset.y = compElem.FloatAttribute("OffsetPosY", 0.0f);
-	_offset.z = compElem.FloatAttribute("OffsetPosZ", 0.0f);
 	_mountPerTick = compElem.IntAttribute("MountPerTick", 5);
-	_emitterSetting.SpawnRate = compElem.FloatAttribute("SpawnRate", 1.0f);
+	_emitterSetting.EmitRate = compElem.FloatAttribute("SpawnRate", 1.0f);
 	_emitterSetting.ParticleInitialVelocity = compElem.FloatAttribute("ParticleInitVelocity", 1.0f);
 	_emitterSetting.GravityFactor = compElem.FloatAttribute("GravityFactor", -9.8f);
 	_emitterSetting.ParticleLifeTime = compElem.FloatAttribute("ParticleLifeTime", 1.0f);
-	_emitterSetting.ParticleSize.x = compElem.FloatAttribute("ParticleSizeX", 1.0f);
-	_emitterSetting.ParticleSize.y = compElem.FloatAttribute("ParticleSizeY", 1.0f);
+	_emitterShape = (EmitterShape)compElem.IntAttribute("EmitterShape");
+
+	Bulb::XMLElement posOffsetElem = compElem.FirstChildElement("OffsetPosition");
+	if (!posOffsetElem.IsNullPtr()) {
+		_offset.x = posOffsetElem.FloatAttribute("X", 0.0f);
+		_offset.y = posOffsetElem.FloatAttribute("Y", 0.0f);
+		_offset.z = posOffsetElem.FloatAttribute("Z", 0.0f);
+	}
+
+	Bulb::XMLElement particleSizeElem = compElem.FirstChildElement("ParticleSize");
+	if (!particleSizeElem.IsNullPtr()) {
+		_emitterSetting.ParticleSize.x = particleSizeElem.FloatAttribute("X", 1.0f);
+		_emitterSetting.ParticleSize.y = particleSizeElem.FloatAttribute("Y", 1.0f);
+	}
+
+	Bulb::XMLElement coneDirElem = compElem.FirstChildElement("ConeDirection");
+	if (!coneDirElem.IsNullPtr()) {
+		_coneDirection.x = coneDirElem.FloatAttribute("X", 0.0f);
+		_coneDirection.y = coneDirElem.FloatAttribute("Y", 0.0f);
+		_coneDirection.z = coneDirElem.FloatAttribute("Z", 0.0f);
+
+		if (_coneDirection.Length() < 0.001f)
+			_coneDirection = { 0.0f, 1.0f, 0.0f };
+
+		_coneDirection = _coneDirection.Normalize();	// È¤½Ã ¸ô¶ó¼­ ³Ö¾îµÒ
+	}
+
 	_particleTexture = compElem.Attribute("ParticleTexture");
 	_emitterSetting.TextureIdx = RESOURCE->Get<Texture>(Utils::ToWString(_particleTexture))->GetSRVHeapIndex();
 }
@@ -97,16 +122,27 @@ void ParticleEmitter::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("ComponentType", "ParticleEmitter");
 
 	compElem.SetAttribute("IsPlaying", _isPlaying);
-	compElem.SetAttribute("OffsetPosX", _offset.x);
-	compElem.SetAttribute("OffsetPosY", _offset.y);
-	compElem.SetAttribute("OffsetPosZ", _offset.z);
 	compElem.SetAttribute("MountPerTick", (int)_mountPerTick);
-	compElem.SetAttribute("SpawnRate", _emitterSetting.SpawnRate);
+	compElem.SetAttribute("SpawnRate", _emitterSetting.EmitRate);
 	compElem.SetAttribute("ParticleInitVelocity", _emitterSetting.ParticleInitialVelocity);
 	compElem.SetAttribute("GravityFactor", _emitterSetting.GravityFactor);
 	compElem.SetAttribute("ParticleLifeTime", _emitterSetting.ParticleLifeTime);
-	compElem.SetAttribute("ParticleSizeX", _emitterSetting.ParticleSize.x);
-	compElem.SetAttribute("ParticleSizeY", _emitterSetting.ParticleSize.y);
+	compElem.SetAttribute("EmitterShape", (int)_emitterShape);
+
+	Bulb::XMLElement posOffsetElem = compElem.InsertNewChildElement("OffsetPosition");
+	posOffsetElem.SetAttribute("X", _offset.x);
+	posOffsetElem.SetAttribute("Y", _offset.y);
+	posOffsetElem.SetAttribute("Z", _offset.z);
+
+	Bulb::XMLElement particleSizeElem = compElem.InsertNewChildElement("ParticleSize");
+	particleSizeElem.SetAttribute("X", _emitterSetting.ParticleSize.x);
+	particleSizeElem.SetAttribute("Y", _emitterSetting.ParticleSize.y);
+
+	Bulb::XMLElement coneDirElem = compElem.InsertNewChildElement("ConeDirection");
+	coneDirElem.SetAttribute("X", _coneDirection.x);
+	coneDirElem.SetAttribute("Y", _coneDirection.y);
+	coneDirElem.SetAttribute("Z", _coneDirection.z);
+
 	compElem.SetAttribute("ParticleTexture", _particleTexture.c_str());
 }
 

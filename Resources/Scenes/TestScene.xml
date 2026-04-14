@@ -1,4 +1,4 @@
-<Scene Name="TestSceneFirst">
+<Scene Name="TestScene">
     <Skybox Texture="..\Resources\Textures\EngineDefault\Skybox_Daylight.dds"/>
     <GameObjects>
         <GameObject Name="MainCamera" PSO="opaque_solid" Tag="Default">
@@ -41,7 +41,11 @@
                         <RotOffset x="0" y="0" z="0"/>
                     </Collider>
                 </Component>
-                <Component ComponentType="ParticleEmitter" IsPlaying="True" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="1" GravityFactor="0" ParticleLifeTime="3" ParticleSizeX="0.1" ParticleSizeY="0.1" ParticleTexture="..\Resources\Textures\ParticleTest.png"/>
+                <Component ComponentType="ParticleEmitter" IsPlaying="true" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="1" GravityFactor="0" ParticleLifeTime="3" EmitterShape="0" ParticleTexture="..\Resources\Textures\ParticleTest.png">
+                    <OffsetPosition X="0" Y="0" Z="0"/>
+                    <ParticleSize X="0.2" Y="0.2"/>
+                    <ConeDirection X="0" Y="1" Z="0"/>
+                </Component>
             </Components>
         </GameObject>
     </GameObjects>

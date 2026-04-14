@@ -498,11 +498,12 @@ void EngineGUIManager::ShowTransform()
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		static bool isChanged = false;
-		static shared_ptr<Transform> transform = _selectedObj->GetTransform();
-		static Bulb::Vector3 pos = transform->GetLocalPosition();
-		static Bulb::Vector3 rot = transform->GetLocalRotation();
-		static Bulb::Vector3 scale = transform->GetLocalScale();
+		shared_ptr<Transform> transform;  transform = _selectedObj->GetTransform();
+
+		static bool isChanged; isChanged = false;
+		static Bulb::Vector3 pos; pos = transform->GetLocalPosition();
+		static Bulb::Vector3 rot; rot = transform->GetLocalRotation();
+		static Bulb::Vector3 scale; scale = transform->GetLocalScale();
 
 		ImGui::Text("Depth Level: %d", transform->GetDepthLevel());
 
@@ -777,7 +778,7 @@ void EngineGUIManager::ShowCharacterController(shared_ptr<CharacterController> c
 void EngineGUIManager::ShowParticleEmitter(shared_ptr<ParticleEmitter> emitter)
 {
 	if (ImGui::CollapsingHeader("ParticleEmitter", ImGuiTreeNodeFlags_DefaultOpen)) {
-		static bool isPlaying = emitter->IsPlaying();
+		static bool isPlaying; isPlaying = emitter->IsPlaying();
 		if (ImGui::Checkbox("Is Playing ##ParticleEmitter", &isPlaying)) {
 			emitter->SetPlay(isPlaying);
 		}
@@ -791,10 +792,33 @@ void EngineGUIManager::ShowParticleEmitter(shared_ptr<ParticleEmitter> emitter)
 			emitter->SetParticleOffset(Bulb::Vector3{ offset[0], offset[1], offset[2] });
 		}
 
-		static bool changedFlag = false;
-		static EmitterSetting emitterSetting = emitter->GetParticleSetting();
+		static bool changedFlag; changedFlag = false;
+		static EmitterSetting emitterSetting; emitterSetting = emitter->GetParticleSetting();
 
-		static float particleSize[2] = { emitterSetting.ParticleSize.x, emitterSetting.ParticleSize.y };
+		static float emitRate; emitRate = emitterSetting.EmitRate;
+		ImGui::Text("Particle Emit Rate");
+		if (ImGui::InputFloat("##ParticleEmitRate", &emitRate)) {
+			emitterSetting.EmitRate = emitRate;
+			changedFlag = true;
+		}
+
+		static float lifetime; lifetime = emitterSetting.ParticleLifeTime;
+		ImGui::Text("Particle Lifetime");
+		if (ImGui::InputFloat("##ParticleLifetime", &lifetime)) {
+			emitterSetting.ParticleLifeTime = lifetime;
+			changedFlag = true;
+		}
+
+		static float gravityFactor; gravityFactor = emitterSetting.GravityFactor;
+		ImGui::Text("Gravity Factor");
+		if (ImGui::InputFloat("##ParticleGravityFactor", &gravityFactor)) {
+			emitterSetting.GravityFactor = gravityFactor;
+			changedFlag = true;
+		}
+
+		static float particleSize[2];
+		particleSize[0] = emitterSetting.ParticleSize.x;
+		particleSize[1] = emitterSetting.ParticleSize.y;
 		ImGui::Text("Particle Size");
 		if (ImGui::InputFloat2("##ParticleSize", particleSize)) {
 			emitterSetting.ParticleSize.x = particleSize[0];
@@ -802,25 +826,48 @@ void EngineGUIManager::ShowParticleEmitter(shared_ptr<ParticleEmitter> emitter)
 			changedFlag = true;
 		}
 
-		static float gravityFactor = emitterSetting.GravityFactor;
-		ImGui::Text("Gravity Factor");
-		if (ImGui::InputFloat("##ParticleGravityFactor", &gravityFactor)) {
-			emitterSetting.GravityFactor = gravityFactor;
-			changedFlag = true;
-		}
-
-		static float initVel = emitterSetting.ParticleInitialVelocity;
+		static float initVel; initVel = emitterSetting.ParticleInitialVelocity;
 		ImGui::Text("Initial Velocity");
 		if (ImGui::InputFloat("##ParticleInitVel", &initVel)) {
 			emitterSetting.ParticleInitialVelocity = initVel;
 			changedFlag = true;
 		}
 
-		static float lifetime = emitterSetting.ParticleLifeTime;
-		ImGui::Text("Particle Lifetime");
-		if (ImGui::InputFloat("##ParticleLifetime", &lifetime)) {
-			emitterSetting.ParticleLifeTime = lifetime;
-			changedFlag = true;
+		ImGui::Text("Emitter Shape");
+		static EmitterShape emitterShape; emitterShape = (EmitterShape)emitterSetting.EmitterShape;
+		if (ImGui::BeginCombo("##ParticleEmitterShape", magic_enum::enum_name(emitterShape).data())) {
+			if (ImGui::Selectable("Sphere", emitterShape == EmitterShape::Sphere)) {
+				emitter->SetEmitterShape(EmitterShape::Sphere);
+			}
+			if (ImGui::Selectable("Cone", emitterShape == EmitterShape::Cone)) {
+				emitter->SetEmitterShape(EmitterShape::Cone);
+			}
+
+			ImGui::EndCombo();
+		}
+
+		switch (emitterShape) {
+		case EmitterShape::Sphere:
+			break;
+
+		case EmitterShape::Cone: {
+			ImGui::Text("Emit Direction");
+			static Bulb::Vector3 bconeDir; bconeDir = emitter->GetConeDirection();
+			static float coneDir[3];
+			coneDir[0] = bconeDir.x;
+			coneDir[1] = bconeDir.y;
+			coneDir[2] = bconeDir.z;
+			if (ImGui::InputFloat3("##ParticleEmitterConeDirection", coneDir)) {
+				emitter->SetConeDirection(Bulb::Vector3{ coneDir[0], coneDir[1], coneDir[2] });
+			}
+
+			ImGui::Text("Cone Angle");
+			static float coneAngle; coneAngle = emitter->GetConeAngle();
+			if (ImGui::InputFloat("##ParticleEmitterConeAngle", &coneAngle)) {
+				emitter->SetConeAngle(coneAngle);
+			}
+			break;
+		}
 		}
 
 		if (changedFlag) {

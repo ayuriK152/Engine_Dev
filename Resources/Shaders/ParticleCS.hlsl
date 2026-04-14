@@ -28,6 +28,29 @@ float3 RandomDir(uint instanceID, float time)
     return normalize(v);
 }
 
+float3 RandomDir(uint instanceID, float time, float maxAngle, float3 direction = {0, 1, 0})
+{
+    uint seed = instanceID ^ Hash((uint)(time * 1000.0f));
+    
+    // 1. 구면 좌표계(Spherical Coordinates)를 이용한 방식
+    float u = float(Hash(seed)) / 4294967295.0f;      // 0 ~ 1
+    float v = float(Hash(seed + 12345U)) / 4294967295.0f; // 0 ~ 1
+
+    // maxAngle을 라디안으로 변환 (예: 20도 -> 0.34rad)
+    float phi = 2.0f * 3.141592f * u; // 한 바퀴 회전
+    float cosTheta = 1.0f - v * (1.0f - cos(maxAngle)); // 각도 제한
+    float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
+
+    // 원뿔 내부의 로컬 방향
+    float3 localDir = float3(cos(phi) * sinTheta, cosTheta, sin(phi) * sinTheta);
+    if (direction.y > 0.999f) return normalize(localDir);
+    
+    float3 up = abs(direction.z) < 0.999f ? float3(0, 0, 1) : float3(1, 0, 0);
+    float3 tangent = normalize(cross(up, direction));
+    float3 binormal = cross(direction, tangent);
+    return normalize(tangent * localDir.x + direction * localDir.y + binormal * localDir.z);
+}
+
 [numthreads(256, 1, 1)]
 void CS(int3 threadId : SV_DispatchThreadID) {
     uint id = threadId.x;
@@ -43,20 +66,26 @@ void CS(int3 threadId : SV_DispatchThreadID) {
 
     // 새로 생성할 파티클인 경우
     if (isNew) {
-        float3 dir = RandomDir(id, Time);
+        float3 dir;
+        if (EmitterShape == 0)
+            dir = RandomDir(id, Time);
+        else if (EmitterShape == 1)
+            dir = RandomDir(id, Time, ConeAngle * 3.141592 / 180.0, EmitDirection);
         p.Position = EmitterPos;
         p.Velocity = ParticleInitVelocity * dir;
         p.Age = 0.0f;
         p.LifeTime = ParticleLifeTime;
         p.TextureIndex = TextureIdx;
         p.Size = ParticleSize;
-        p.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        p.Color = InitialColor;
     }
     // 원래 있었고 살아있는 애
     else if (p.Age < p.LifeTime) {
         p.Velocity.y += GravityFactor * DeltaTime;
         p.Position += p.Velocity * DeltaTime;
         p.Age += DeltaTime;
+
+        p.Color = lerp(InitialColor, float4(0.0f, 0.0f, 0.0f, 0.0f), pow(p.Age / p.LifeTime, 10));
     }
     // 원래 있었고 죽은 애
     else {

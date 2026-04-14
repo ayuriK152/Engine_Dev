@@ -245,11 +245,11 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 			{
 				auto meshRenderer = static_pointer_cast<MeshRenderer>(c);
 
-				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
-				FILEIO->WriteToFile(fileHandle, meshPath);
+				// Mesh Path
+				FILEIO->WriteToFile(fileHandle, meshRenderer->GetMesh()->GetPath());
 
-				string matName = Utils::ToString(meshRenderer->GetMaterial()->GetNameW());
-				FILEIO->WriteToFile(fileHandle, matName);
+				// Material Path
+				FILEIO->WriteToFile(fileHandle, meshRenderer->GetMaterial()->GetPath());
 
 				break;
 			}
@@ -258,11 +258,11 @@ void ResourceManager::SavePrefabRecursive(HANDLE fileHandle, shared_ptr<GameObje
 			{
 				auto meshRenderer = static_pointer_cast<SkinnedMeshRenderer>(c);
 
-				string meshPath = meshRenderer->GetMesh()->GetPath();	// ResourcePath
-				FILEIO->WriteToFile(fileHandle, meshPath);
+				// Mesh Path
+				FILEIO->WriteToFile(fileHandle, meshRenderer->GetMesh()->GetPath());
 
-				string matName = Utils::ToString(meshRenderer->GetMaterial()->GetNameW());
-				FILEIO->WriteToFile(fileHandle, matName);
+				// Material Path
+				FILEIO->WriteToFile(fileHandle, meshRenderer->GetMaterial()->GetPath());
 
 				string rootBoneName = meshRenderer->GetRootBone()->GetGameObject()->GetName();
 				FILEIO->WriteToFile(fileHandle, rootBoneName);

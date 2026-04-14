@@ -1,0 +1,11 @@
+<Material>
+    <Name>RI_L_WallTorch1_On_M_inst.001</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.2158605" g="0.2158605" b="0.2158605" a="1"/>
+    <Specular r="0.2158605" g="0.2158605" b="0.2158605" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <Metallic value="0"/>
+    <Roughness value="1"/>
+    <DiffuseTexture>..\Resources\Textures\Props\Torch2\RI_L_WallTorch1_Albedo.png</DiffuseTexture>
+    <NormalTexture>..\Resources\Textures\Props\Torch2\RI_L_WallTorch1Normal.png</NormalTexture>
+</Material>

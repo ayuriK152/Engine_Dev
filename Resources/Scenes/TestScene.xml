@@ -41,7 +41,7 @@
                         <RotOffset x="0" y="0" z="0"/>
                     </Collider>
                 </Component>
-                <Component ComponentType="ParticleEmitter" IsPlaying="True" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="1" GravityFactor="1" ParticleLifeTime="3" ParticleSizeX="0.1" ParticleSizeY="0.1" ParticleTexture="..\Resources\Textures\ParticleTest.png"/>
+                <Component ComponentType="ParticleEmitter" IsPlaying="True" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="1" GravityFactor="0" ParticleLifeTime="3" ParticleSizeX="0.1" ParticleSizeY="0.1" ParticleTexture="..\Resources\Textures\ParticleTest.png"/>
             </Components>
         </GameObject>
     </GameObjects>

@@ -5,9 +5,9 @@ void GS(point VS_OUT input[1], inout TriangleStream<GS_OUT> triStream) {
     if (input[0].Size.x == 0 && input[0].Size.y == 0) return;
     
     float3 center = input[0].Position;
-    float size = input[0].Size;
-    float3 right = normalize(GetCameraRight()) * size;
-    float3 up = normalize(GetCameraUp()) * size;
+    float2 size = input[0].Size;
+    float3 right = normalize(GetCameraRight()) * size.x;
+    float3 up = normalize(GetCameraUp()) * size.y;
 
     // 4개의 billboard vertex 생성
     float3 offsets[4] = {

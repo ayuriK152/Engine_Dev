@@ -781,6 +781,20 @@ void EngineGUIManager::ShowParticleEmitter(shared_ptr<ParticleEmitter> emitter)
 		if (ImGui::Checkbox("Is Playing ##ParticleEmitter", &isPlaying)) {
 			emitter->SetPlay(isPlaying);
 		}
+
+		bool changedFlag = false;
+		EmitterSetting emitterSetting = emitter->GetParticleSetting();
+
+		float particleSize[2] = { emitterSetting.ParticleSize.x, emitterSetting.ParticleSize.y };
+		if (ImGui::InputFloat2("ParticleSize", particleSize)) {
+			emitterSetting.ParticleSize.x = particleSize[0];
+			emitterSetting.ParticleSize.y = particleSize[1];
+			changedFlag = true;
+		}
+
+		if (changedFlag) {
+			emitter->SetParticleSetting(emitterSetting);
+		}
 	}
 }
 

@@ -51,6 +51,7 @@ public:
 	void SetParticleTexture(wstring textureName);
 	void SetParticleTexture(shared_ptr<Texture> texture);
 
+	EmitterSetting& GetParticleSetting() { return _emitterSetting; }
 	void SetParticleSetting(EmitterSetting setting) { _emitterSetting = setting; }
 
 private:

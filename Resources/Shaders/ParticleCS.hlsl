@@ -1,23 +1,28 @@
 #include "Particle.hlsl"
 
-float Hash(uint n)
+uint Hash(uint n)
 {
-    n = (n << 13U) ^ n;
-    return (1.0f - ((n * (n * n * 15731U + 789221U) + 1376312589U) & 0x7fffffffU) / 1073741824.0f);
+    // n = (n << 13U) ^ n;
+    // return (1.0f - ((n * (n * n * 15731U + 789221U) + 1376312589U) & 0x7fffffffU) / 1073741824.0f);
+
+    n = ((n >> 16) ^ n) * 0x45d9f3b;
+    n = ((n >> 16) ^ n) * 0x45d9f3b;
+    n = (n >> 16) ^ n;
+    return n;
 }
 
 // 해시를 이용해 2D 또는 3D 난수 벡터를 만드는 함수
 float3 RandomDir(uint instanceID, float time)
 {
-    // 시간과 인스턴스ID를 섞어서 시드 생성
-    uint seed = instanceID * 92837111U + (uint)(time * 1000.0f);
+    uint seed = instanceID ^ Hash((uint)(time * 1000.0f));
+    
+    uint hX = Hash(seed);
+    uint hY = Hash(seed + 192837111U); // 인접하지 않은 큰 소수를 더함
+    uint hZ = Hash(seed + 374761393U);
 
-    float randX = Hash(seed);
-    float randY = Hash(seed + 1U);
-    float randZ = Hash(seed + 2U);
+    float3 v = float3(float(hX) / 4294967295.0f, float(hY) / 4294967295.0f, float(hZ) / 4294967295.0f) * 2.0f - 1.0f;
 
-    // -1 ~ 1 범위로 정규화
-    float3 v = float3(randX, randY, randZ) * 2.0f - 1.0f;
+    if (length(v) < 0.000001f) return float3(0, 1, 0);
 
     // 단위 벡터로 정규화
     return normalize(v);

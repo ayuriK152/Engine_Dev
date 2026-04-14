@@ -19,7 +19,8 @@ struct BULB_API EmitterSetting {
 	float GravityFactor = -9.8f;
 	float ParticleLifeTime = 1;
 	float SpawnRate = 1.0f;		// Per second
-	UINT CurrentParticleMount = 0;
+	UINT SpawnMount = 0;
+	UINT StartIdx = 0;
 	UINT TextureIdx = 0;
 };
 
@@ -60,8 +61,8 @@ private:
 	string _particleTexture;
 
 	float _instantiateTime = 0.0f;
-	float _elapsedTime = 0.0f;
 	UINT _mountPerTick = 5;
-	UINT _currentParticleMount = 0;
+	UINT _spawnMount = 0;
+	UINT _lastSpawnIdx = 0;
 	bool _isPlaying = false;
 };

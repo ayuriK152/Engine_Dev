@@ -26,12 +26,18 @@ float3 RandomDir(uint instanceID, float time)
 [numthreads(256, 1, 1)]
 void CS(int3 threadId : SV_DispatchThreadID) {
     uint id = threadId.x;
-    if (id > CurrentParticleMount) return;
+    if (id >= 1024) return;     // TEMP - 버퍼 최대 크기 따로 받아야함
 
     Particle p = particles[id];
 
-    // 파티클의 수명이 다한 경우 다시 생성, 그렇지 않은 경우 지속적으로 움직임
-    if (p.Age >= p.LifeTime) {
+    bool isNew = false;
+    uint endIdx = StartIdx + SpawnMount;
+
+    if (id >= StartIdx && id < endIdx) isNew = true;        // 최대 크기 넘어가는건 위에서 걸러서 신경 안써도 됨
+    if (endIdx >= 1024 && id < (endIdx % 1024)) isNew = true;
+
+    // 새로 생성할 파티클인 경우
+    if (isNew) {
         float3 dir = RandomDir(id, Time);
         p.Position = EmitterPos;
         p.Velocity = ParticleInitVelocity * dir;
@@ -41,10 +47,15 @@ void CS(int3 threadId : SV_DispatchThreadID) {
         p.Size = ParticleSize;
         p.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
-    else {
+    // 원래 있었고 살아있는 애
+    else if (p.Age < p.LifeTime) {
         p.Velocity.y += GravityFactor * DeltaTime;
         p.Position += p.Velocity * DeltaTime;
         p.Age += DeltaTime;
+    }
+    // 원래 있었고 죽은 애
+    else {
+        p.Size = float2(0.0f, 0.0f);
     }
 
     particles[id] = p;

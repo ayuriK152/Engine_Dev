@@ -330,6 +330,9 @@ void EngineGUIManager::ShowInspectorView()
 					case ComponentType::CharacterController:
 						ShowCharacterController(static_pointer_cast<CharacterController>(c));
 						break;
+					case ComponentType::ParticleEmitter:
+						ShowParticleEmitter(static_pointer_cast<ParticleEmitter>(c));
+						break;
 					}
 				}
 			}
@@ -768,6 +771,16 @@ void EngineGUIManager::ShowCharacterController(shared_ptr<CharacterController> c
 {
 	if (ImGui::CollapsingHeader("CharacterController", ImGuiTreeNodeFlags_DefaultOpen)) {
 
+	}
+}
+
+void EngineGUIManager::ShowParticleEmitter(shared_ptr<ParticleEmitter> emitter)
+{
+	if (ImGui::CollapsingHeader("ParticleEmitter", ImGuiTreeNodeFlags_DefaultOpen)) {
+		bool isPlaying = emitter->IsPlaying();
+		if (ImGui::Checkbox("Is Playing ##ParticleEmitter", &isPlaying)) {
+			emitter->SetPlay(isPlaying);
+		}
 	}
 }
 

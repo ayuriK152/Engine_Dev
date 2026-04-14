@@ -24,6 +24,7 @@ cbuffer cbParticleEmitterInfo : register(b0, space1) {
     float   GravityFactor;
     float   ParticleLifeTime;
     float   SpawnRate;
-    uint    CurrentParticleMount;
+    uint    SpawnMount;
+    uint    StartIdx;
     uint    TextureIdx;
 };

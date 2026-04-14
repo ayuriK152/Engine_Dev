@@ -33,34 +33,33 @@ void ParticleEmitter::Init()
 
 void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 {
-	if (!_isPlaying) return;
+	_spawnMount = 0;
 
-	_elapsedTime += TIME->DeltaTime();
-
-	if (_elapsedTime <= _emitterSetting.ParticleLifeTime) {
+	if (_isPlaying)  {
 		_instantiateTime += TIME->DeltaTime();
 		if (_instantiateTime >= _emitterSetting.SpawnRate) {
 			_instantiateTime -= _emitterSetting.SpawnRate;
-			_currentParticleMount += _mountPerTick;
+			_spawnMount += _mountPerTick;
 		}
 	}
 
 	_emitterSetting.EmitterPos = GetTransform()->GetPosition();
-	_emitterSetting.CurrentParticleMount = _currentParticleMount;
+	_emitterSetting.SpawnMount = _spawnMount;
+	_emitterSetting.StartIdx = _lastSpawnIdx;
+
+	_lastSpawnIdx = (_lastSpawnIdx + _spawnMount) % MAX_PARTICLE_MOUNT;
 
 	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_EMITTER_CB, sizeof(EmitterSetting) / 4, &_emitterSetting, 0);
 
 	cmdList->SetComputeRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
 
-	cmdList->Dispatch((_currentParticleMount + 255) / 256, 1, 1);
+	cmdList->Dispatch((MAX_PARTICLE_MOUNT + 255) / 256, 1, 1);
 }
 
 void ParticleEmitter::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 {
-	if (!_isPlaying) return;
-
 	cmdList->SetGraphicsRootUnorderedAccessView(ROOT_PARAM_PARTICLES_RW, _particleBuffer->GetGPUVirtualAddress());
-	cmdList->DrawInstanced(_currentParticleMount, 1, 0, 0);
+	cmdList->DrawInstanced(MAX_PARTICLE_MOUNT, 1, 0, 0);
 }
 
 void ParticleEmitter::OnDestroy()
@@ -76,7 +75,7 @@ void ParticleEmitter::LoadXML(Bulb::XMLElement compElem)
 	_mountPerTick = compElem.IntAttribute("MountPerTick", 5);
 	_emitterSetting.SpawnRate = compElem.FloatAttribute("SpawnRate", 1.0f);
 	_emitterSetting.ParticleInitialVelocity = compElem.FloatAttribute("ParticleInitVelocity", 1.0f);
-	_emitterSetting.GravityFactor = compElem.FloatAttribute("GravityFactor", 1.0f);
+	_emitterSetting.GravityFactor = compElem.FloatAttribute("GravityFactor", -9.8f);
 	_emitterSetting.ParticleLifeTime = compElem.FloatAttribute("ParticleLifeTime", 1.0f);
 	_emitterSetting.ParticleSize.x = compElem.FloatAttribute("ParticleSizeX", 1.0f);
 	_emitterSetting.ParticleSize.y = compElem.FloatAttribute("ParticleSizeY", 1.0f);

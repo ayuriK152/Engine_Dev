@@ -2,6 +2,8 @@
 
 [maxvertexcount(4)]
 void GS(point VS_OUT input[1], inout TriangleStream<GS_OUT> triStream) {
+    if (input[0].Size.x == 0 && input[0].Size.y == 0) return;
+    
     float3 center = input[0].Position;
     float size = input[0].Size;
     float3 right = normalize(GetCameraRight()) * size;

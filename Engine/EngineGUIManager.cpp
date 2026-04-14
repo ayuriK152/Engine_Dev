@@ -498,11 +498,11 @@ void EngineGUIManager::ShowTransform()
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		bool isChanged = false;
-		auto transform = _selectedObj->GetTransform();
-		Bulb::Vector3 pos = transform->GetLocalPosition();
-		Bulb::Vector3 rot = transform->GetLocalRotation();
-		Bulb::Vector3 scale = transform->GetLocalScale();
+		static bool isChanged = false;
+		static shared_ptr<Transform> transform = _selectedObj->GetTransform();
+		static Bulb::Vector3 pos = transform->GetLocalPosition();
+		static Bulb::Vector3 rot = transform->GetLocalRotation();
+		static Bulb::Vector3 scale = transform->GetLocalScale();
 
 		ImGui::Text("Depth Level: %d", transform->GetDepthLevel());
 
@@ -777,18 +777,49 @@ void EngineGUIManager::ShowCharacterController(shared_ptr<CharacterController> c
 void EngineGUIManager::ShowParticleEmitter(shared_ptr<ParticleEmitter> emitter)
 {
 	if (ImGui::CollapsingHeader("ParticleEmitter", ImGuiTreeNodeFlags_DefaultOpen)) {
-		bool isPlaying = emitter->IsPlaying();
+		static bool isPlaying = emitter->IsPlaying();
 		if (ImGui::Checkbox("Is Playing ##ParticleEmitter", &isPlaying)) {
 			emitter->SetPlay(isPlaying);
 		}
 
-		bool changedFlag = false;
-		EmitterSetting emitterSetting = emitter->GetParticleSetting();
+		static Bulb::Vector3 boffset; boffset = emitter->GetParticleOffset();
+		static float offset[3]; offset[0] = boffset.x; offset[1] = boffset.y; offset[2] = boffset.z;
 
-		float particleSize[2] = { emitterSetting.ParticleSize.x, emitterSetting.ParticleSize.y };
-		if (ImGui::InputFloat2("ParticleSize", particleSize)) {
+		ImGui::SeparatorText("Emitter Settings");
+		ImGui::Text("Emitter Position Offset");
+		if (ImGui::InputFloat3("##ParticleEmitterPositionOffset", offset)) {
+			emitter->SetParticleOffset(Bulb::Vector3{ offset[0], offset[1], offset[2] });
+		}
+
+		static bool changedFlag = false;
+		static EmitterSetting emitterSetting = emitter->GetParticleSetting();
+
+		static float particleSize[2] = { emitterSetting.ParticleSize.x, emitterSetting.ParticleSize.y };
+		ImGui::Text("Particle Size");
+		if (ImGui::InputFloat2("##ParticleSize", particleSize)) {
 			emitterSetting.ParticleSize.x = particleSize[0];
 			emitterSetting.ParticleSize.y = particleSize[1];
+			changedFlag = true;
+		}
+
+		static float gravityFactor = emitterSetting.GravityFactor;
+		ImGui::Text("Gravity Factor");
+		if (ImGui::InputFloat("##ParticleGravityFactor", &gravityFactor)) {
+			emitterSetting.GravityFactor = gravityFactor;
+			changedFlag = true;
+		}
+
+		static float initVel = emitterSetting.ParticleInitialVelocity;
+		ImGui::Text("Initial Velocity");
+		if (ImGui::InputFloat("##ParticleInitVel", &initVel)) {
+			emitterSetting.ParticleInitialVelocity = initVel;
+			changedFlag = true;
+		}
+
+		static float lifetime = emitterSetting.ParticleLifeTime;
+		ImGui::Text("Particle Lifetime");
+		if (ImGui::InputFloat("##ParticleLifetime", &lifetime)) {
+			emitterSetting.ParticleLifeTime = lifetime;
 			changedFlag = true;
 		}
 

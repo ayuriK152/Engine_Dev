@@ -2,6 +2,6 @@
     <Components>
         <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="0.001" ScaleY="0.001" ScaleZ="0.001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
         <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\torchd\RI_L_WallTorch1.bmesh" Material="..\Resources\Materials\torchd\RI_L_WallTorch1_On_M_inst.xml"/>
-        <Component ComponentType="ParticleEmitter" IsPlaying="true" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="1" GravityFactor="2" ParticleLifeTime="2" ParticleSizeX="0.30000001" ParticleSizeY="0.30000001" ParticleTexture="..\Resources\Textures\Particles\Fire1.png"/>
+        <Component ComponentType="ParticleEmitter" OffsetPosZ="-0.3" IsPlaying="true" MountPerTick="5" SpawnRate="0.2" ParticleInitVelocity="0.5" GravityFactor="1" ParticleLifeTime="2" ParticleSizeX="0.25" ParticleSizeY="0.25" ParticleTexture="..\Resources\Textures\Particles\Fire1.png"/>
     </Components>
 </Prefab>

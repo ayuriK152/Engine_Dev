@@ -54,11 +54,15 @@ public:
 	EmitterSetting& GetParticleSetting() { return _emitterSetting; }
 	void SetParticleSetting(EmitterSetting setting) { _emitterSetting = setting; }
 
+	Bulb::Vector3 GetParticleOffset() { return _offset; }
+	void SetParticleOffset(Bulb::Vector3& offset) { _offset = offset; }
+
 private:
 	ComPtr<ID3D12Resource> _particleBuffer;
 	ComPtr<ID3D12Resource> _particleBufferUpload;
 
 	EmitterSetting _emitterSetting;
+	Bulb::Vector3 _offset;
 	string _particleTexture;
 
 	float _instantiateTime = 0.0f;

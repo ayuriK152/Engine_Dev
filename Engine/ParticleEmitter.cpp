@@ -43,7 +43,13 @@ void ParticleEmitter::Update(ID3D12GraphicsCommandList* cmdList)
 		}
 	}
 
-	_emitterSetting.EmitterPos = GetTransform()->GetPosition();
+	shared_ptr<Transform> transform = GetTransform();
+	Bulb::Vector3 pos = transform->GetPosition();
+	Bulb::Vector4 rot = transform->GetQuaternion();
+
+	pos = pos + XMVector3Rotate(XMLoadFloat3(&_offset), XMLoadFloat4(&rot));
+
+	_emitterSetting.EmitterPos = pos;
 	_emitterSetting.SpawnMount = _spawnMount;
 	_emitterSetting.StartIdx = _lastSpawnIdx;
 
@@ -72,6 +78,9 @@ void ParticleEmitter::OnDestroy()
 void ParticleEmitter::LoadXML(Bulb::XMLElement compElem)
 {
 	_isPlaying = compElem.BoolAttribute("IsPlaying");
+	_offset.x = compElem.FloatAttribute("OffsetPosX", 0.0f);
+	_offset.y = compElem.FloatAttribute("OffsetPosY", 0.0f);
+	_offset.z = compElem.FloatAttribute("OffsetPosZ", 0.0f);
 	_mountPerTick = compElem.IntAttribute("MountPerTick", 5);
 	_emitterSetting.SpawnRate = compElem.FloatAttribute("SpawnRate", 1.0f);
 	_emitterSetting.ParticleInitialVelocity = compElem.FloatAttribute("ParticleInitVelocity", 1.0f);
@@ -88,6 +97,9 @@ void ParticleEmitter::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("ComponentType", "ParticleEmitter");
 
 	compElem.SetAttribute("IsPlaying", _isPlaying);
+	compElem.SetAttribute("OffsetPosX", _offset.x);
+	compElem.SetAttribute("OffsetPosY", _offset.y);
+	compElem.SetAttribute("OffsetPosZ", _offset.z);
 	compElem.SetAttribute("MountPerTick", (int)_mountPerTick);
 	compElem.SetAttribute("SpawnRate", _emitterSetting.SpawnRate);
 	compElem.SetAttribute("ParticleInitVelocity", _emitterSetting.ParticleInitialVelocity);

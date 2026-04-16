@@ -6,7 +6,10 @@ mt19937 Utils::_gen;
 DxException::DxException(HRESULT hr, const wstring& functionName, const wstring& filename, int lineNumber) :
 	errorCode(hr), functionName(functionName), filename(filename), lineNumber(lineNumber)
 {
-
+	DEBUG->ExportDebugLogs();
+	wchar_t errorMsg[512];
+	swprintf_s(errorMsg, L"HRESULT: 0x%08X\nFile: %s\nLine: %d\nCode: %S", hr, filename.c_str(), lineNumber, functionName.c_str());
+	MessageBox(nullptr, errorMsg, L"DirectX Critical Error", MB_OK | MB_ICONERROR);
 }
 
 wstring DxException::ToString() const

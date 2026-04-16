@@ -53,9 +53,13 @@ int BulbApplication::Run()
 	if (!Init())
 		return 0;
 
+	DEBUG->Log("Application Initialized");
+
 	MSG msg = { 0 };
 
 	TIME->Reset();
+
+	DEBUG->Log("Timer Reset");
 
 	while (msg.message != WM_QUIT)
 	{

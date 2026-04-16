@@ -435,7 +435,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <NoEntryPoint>false</NoEntryPoint>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\Lib\</AdditionalLibraryDirectories>

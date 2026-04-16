@@ -49,8 +49,8 @@ Global
 		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Debug|x64.Build.0 = Editor Debug|x64
 		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Debug|x86.ActiveCfg = Editor Debug|Win32
 		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Debug|x86.Build.0 = Editor Debug|Win32
-		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Release|x64.ActiveCfg = Editor Debug|x64
-		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Release|x64.Build.0 = Editor Debug|x64
+		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Release|x64.ActiveCfg = Editor Release|x64
+		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Release|x64.Build.0 = Editor Release|x64
 		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Release|x86.ActiveCfg = Editor Release|Win32
 		{507AB380-C738-4474-AA6B-481641243F0D}.Editor Release|x86.Build.0 = Editor Release|Win32
 		{28CF1FB7-C625-4124-B3E3-2CC50569EB4E}.Client Debug|x64.ActiveCfg = Editor Release|x64

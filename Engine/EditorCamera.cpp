@@ -42,9 +42,9 @@ void EditorCamera::Update()
 			_transform->Translate(_transform->GetRight() * TIME->DeltaTime() * 5.0f);
 		if (INPUTM->IsKeyPress(KeyValue::A))
 			_transform->Translate(_transform->GetRight() * TIME->DeltaTime() * -5.0f);
-		if (INPUTM->IsKeyPress(KeyValue::Q))
-			_transform->Translate(_transform->GetUp() * TIME->DeltaTime() * 5.0f);
 		if (INPUTM->IsKeyPress(KeyValue::E))
+			_transform->Translate(_transform->GetUp() * TIME->DeltaTime() * 5.0f);
+		if (INPUTM->IsKeyPress(KeyValue::Q))
 			_transform->Translate(_transform->GetUp() * TIME->DeltaTime() * -5.0f);
 	}
 }

@@ -86,6 +86,8 @@ public:
 	void ClearLogs() { _debugLogs.clear(); }
 	vector<DebugLog>& GetLogs() { return _debugLogs; }
 
+	void ExportDebugLogs();
+
 private:
 	static DebugManager* s_instance;
 

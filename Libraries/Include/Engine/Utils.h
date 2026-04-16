@@ -23,7 +23,7 @@ private:
 {																		\
 	HRESULT hr__ = (x);													\
 	wstring wfn = AnsiToWString(__FILE__);								\
-	if (FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); }	\
+	if (FAILED(hr__)) {	throw DxException(hr__, L#x, wfn, __LINE__); }	\
 }
 #endif
 

@@ -29,8 +29,6 @@ bool Graphic::Init()
 	OnResize();
 
 	UseGraphicsCommandList();
-
-
 	ExecuteGraphicsCommandList();
 
 	return true;
@@ -85,6 +83,7 @@ void Graphic::OnResize()
 
 	FlushCommandQueue();
 
+	ThrowIfFailed(_graphicsCmdListAlloc->Reset());
 	ThrowIfFailed(_graphicsCmdList->Reset(_graphicsCmdListAlloc, nullptr));
 
 	for (int i = 0; i < _SwapChainBufferCount; ++i)
@@ -235,10 +234,6 @@ LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						OnResize();
 					}
 					else if (appStatus.resizing)
-					{
-
-					}
-					else
 					{
 						OnResize();
 					}

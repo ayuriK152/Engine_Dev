@@ -154,3 +154,17 @@ void DebugManager::ErrorLog(const string& message)
 {
 	_debugLogs.push_back({ TIME->TotalTime(), LOG_ERROR, message });
 }
+
+void DebugManager::ExportDebugLogs()
+{
+	tinyxml2::XMLDocument doc;
+	XMLElement* mainElem = doc.NewElement("DebugLogs");
+	doc.InsertFirstChild(mainElem);
+
+	for (DebugLog& log : _debugLogs) {
+		XMLElement* logElem = mainElem->InsertNewChildElement("Log");
+		logElem->SetText(log.message.c_str());
+	}
+
+	doc.SaveFile("DebugLog.xml");
+}

@@ -5,7 +5,7 @@
 
 ParticleEmitter::ParticleEmitter() : Component(ComponentType::ParticleEmitter)
 {
-	_emitterSetting = {};
+
 }
 
 ParticleEmitter::~ParticleEmitter()

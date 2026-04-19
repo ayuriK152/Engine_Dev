@@ -5,7 +5,7 @@
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.18301269" QuatY="-0.68301272" QuatZ="0.18301271" QuatW="0.68301266"/>
                 <Component ComponentType="DirectionalLight">
-                    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+                    <Diffuse r="1" g="0.75" b="0.6" a="1"/>
                 </Component>
             </Components>
         </GameObject>

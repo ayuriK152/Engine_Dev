@@ -24,6 +24,8 @@ DirectionalLight::~DirectionalLight()
 
 void DirectionalLight::Init()
 {
+	_lightType = LightType::Directional;
+
 	_matProj = MathHelper::Identity4x4();
 
 	_transform = GetTransform();

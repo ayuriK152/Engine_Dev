@@ -1,6 +1,11 @@
 #pragma once
 #include "Component.h"
 
+enum class LightType {
+	Directional,
+	Point
+};
+
 class Light : public Component
 {
 	using Super = Component;
@@ -25,6 +30,8 @@ public:
 	int GetFramesDirty() { return _numFramesDirty; }
 	void ReleaseFramesDirty() { _numFramesDirty -= 1; }
 
+	LightType GetLightType() { return _lightType; }
+
 	XMFLOAT4X4& GetViewMatrix() { return _matView; }
 	XMFLOAT4X4& GetProjMatrix() { return _matProj; }
 
@@ -36,6 +43,8 @@ public:
 protected:
 	XMFLOAT4X4 _matView;
 	XMFLOAT4X4 _matProj;
+
+	LightType _lightType;
 
 private:
 	int _numFramesDirty = 0;

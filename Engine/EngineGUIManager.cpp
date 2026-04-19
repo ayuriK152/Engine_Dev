@@ -653,9 +653,27 @@ void EngineGUIManager::ShowLight(shared_ptr<Light> light)
 {
 	if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::SeparatorText("Light Type");
-		if (dynamic_pointer_cast<DirectionalLight>(light) != nullptr)
-			ImGui::Text("Directional Light");
+		switch (light->GetLightType()) {
+		case LightType::Directional:
+			ImGui::SeparatorText("Directional Light");
+			break;
+		case LightType::Point:
+			ImGui::SeparatorText("Point Light");
+			break;
+		}
+
+		static float diffuse[4];
+		diffuse[0] = light->diffuse.r;
+		diffuse[1] = light->diffuse.g;
+		diffuse[2] = light->diffuse.b;
+		diffuse[3] = light->diffuse.a;
+
+		if (ImGui::InputFloat4("##DiffuseLight", diffuse)) {
+			light->diffuse.r = diffuse[0];
+			light->diffuse.g = diffuse[1];
+			light->diffuse.b = diffuse[2];
+			light->diffuse.a = diffuse[3];
+		}
 	}
 }
 

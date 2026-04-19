@@ -22,6 +22,8 @@ PointLight::~PointLight()
 
 void PointLight::Init()
 {
+	_lightType = LightType::Point;
+
 	_matProj = MathHelper::Identity4x4();
 
 	_transform = GetTransform();

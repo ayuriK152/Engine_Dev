@@ -35,6 +35,7 @@ public:
 	
 private:
 	shared_ptr<Transform> _transform;
+	Bulb::Vector3 _position;
 
 	float _fallOffStart = 1.0f;
 	float _fallOffEnd = 2.0f;

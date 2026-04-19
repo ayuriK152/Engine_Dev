@@ -33,7 +33,9 @@ void PointLight::Init()
 
 void PointLight::Update()
 {
-
+	if (_transform->IsDirty()) {
+		_position = _transform->GetPosition();
+	}
 }
 
 void PointLight::OnDestroy()
@@ -87,7 +89,7 @@ LightConstants PointLight::GetLightConstants()
 {
 	LightConstants constants;
 	constants.LightType = POINT_LIGHT;
-	constants.Position = _transform->GetPosition();
+	constants.Position = _position;
 	constants.FallOffStart = _fallOffStart;
 	constants.FallOffEnd = _fallOffEnd;
 	constants.Diffuse = diffuse;

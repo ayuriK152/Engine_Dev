@@ -98,6 +98,10 @@ public:
 	UINT objectID;
 
 private:
+	static UINT32 _preUpdateBypassFlag;
+	static UINT32 _updateBypassFlag;
+	static UINT32 _renderBypassFlag;
+
 	static int _idCount;
 	int _id;
 	string _name;

@@ -125,6 +125,10 @@ void RenderManager::Update()
 
 		o->Update();
 	}
+	
+	for (auto& l : _lights) {
+		l->Update();
+	}
 
 	_currFrameResource->Update();
 }

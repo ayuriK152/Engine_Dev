@@ -1,6 +1,17 @@
 #include "pch.h"
 #include "GameObject.h"
 
+UINT32 GameObject::_preUpdateBypassFlag = 
+	(UINT32)ComponentType::Rigidbody;
+
+UINT32 GameObject::_updateBypassFlag = 
+	(UINT32)ComponentType::ParticleEmitter | 
+	(UINT32)ComponentType::Animator | 
+	(UINT32)ComponentType::Light;
+
+UINT32 GameObject::_renderBypassFlag = 
+	(UINT32)ComponentType::ParticleEmitter;
+
 int GameObject::_idCount = 0;
 
 GameObject::GameObject()
@@ -73,7 +84,7 @@ void GameObject::PreUpdate()
 			if (!EDITOR->IsOnPlay() && _tag != "EditorCamera") continue;
 #endif
 
-			if ((UINT32)c->type & ((UINT32)ComponentType::Rigidbody))
+			if ((UINT32)c->type & _preUpdateBypassFlag)
 				continue;
 
 			c->PreUpdate();
@@ -95,7 +106,7 @@ void GameObject::Update()
 		for (auto& c : componentVec) {
 			if (!c->IsActive()) continue;
 
-			if ((UINT32)c->type & ((UINT32)ComponentType::ParticleEmitter | (UINT32)ComponentType::Animator))
+			if ((UINT32)c->type & _updateBypassFlag)
 				continue;
 			c->Update();
 		}
@@ -112,7 +123,7 @@ void GameObject::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 		for (auto& c : componentVec) {
 			if (!c->IsActive()) continue;
 
-			if ((UINT32)c->type & (UINT32)ComponentType::ParticleEmitter)
+			if ((UINT32)c->type & _renderBypassFlag)
 				continue;
 			c->Render(cmdList, renderState);
 		}

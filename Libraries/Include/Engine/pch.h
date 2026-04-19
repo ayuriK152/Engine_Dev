@@ -161,6 +161,7 @@ using namespace JPH::literals;
 #include "Animator.h"
 #include "Light.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "Script.h"
 #include "ParticleEmitter.h"
 #include "CharacterController.h"

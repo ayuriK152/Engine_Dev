@@ -23,6 +23,7 @@ enum class BULB_API UsableComponentType {
 	Camera,
 	Rigidbody,
 	DirectionalLight,
+	PointLight,
 	Animator,
 	ParticleEmitter,
 	CharacterController,

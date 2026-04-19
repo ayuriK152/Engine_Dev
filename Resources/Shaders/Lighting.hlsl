@@ -91,48 +91,73 @@ float3 FresnelSchlick(float3 F0, float NdotV) {
     return F0 + (1.0 - F0) * pow(1.0 - NdotV, 5.0);
 }
 
-float4 BRDFLighting(Material mat, float4 albedo, float3 N, float3 V) {
+float3 ComputeDirectionalLight(Light light, Material mat, float4 albedo, VertexOut pixel, float3 V, float NdotV, float3 F0) {
+    float3 L = normalize(-light.Direction);
+    float3 H = normalize(V + L);
+
+    float NdotL = dot(pixel.Normal, L);
+    float NdotH = dot(pixel.Normal, H);
+
+    float D = DistributionGGX(NdotH, mat.Roughness);
+    float G = GeometrySmith(NdotV, NdotL, mat.Roughness);
+    float3 F = FresnelSchlick(F0, NdotV);
+
+    float3 nom = D * G * F;
+    float denom = 4 * max(dot(L, pixel.Normal), 0.0) * max(dot(V, pixel.Normal), 0.0) + 0.0001;
+    float3 specular = nom / max(denom, 0.0001);
+
+    float3 kS = F;
+    float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (1.0 - mat.Metallic);
+
+    float3 diffuse = kD * albedo.rgb / acos(-1);
+    return (diffuse + specular) * light.Diffuse.rgb * max(dot(pixel.Normal, L), 0.0);
+}
+
+float3 ComputePointLight(Light light, Material mat, float4 albedo, VertexOut pixel, float3 V, float NdotV, float3 F0) {
+    float3 L = light.Position - pixel.PositionWorld;
+    float len = length(L);
+
+    if (len > light.FallOffEnd) return float3(0, 0, 0);
+
+    float att = saturate((light.FallOffEnd - len) / (light.FallOffEnd - light.FallOffStart));
+    
+    float3 H = normalize(V + L);
+
+    float NdotL = dot(pixel.Normal, L);
+    float NdotH = dot(pixel.Normal, H);
+
+    float D = DistributionGGX(NdotH, mat.Roughness);
+    float G = GeometrySmith(NdotV, NdotL, mat.Roughness);
+    float3 F = FresnelSchlick(F0, NdotV);
+
+    float3 nom = D * G * F;
+    float denom = 4 * max(dot(L, pixel.Normal), 0.0) * max(dot(V, pixel.Normal), 0.0) + 0.0001;
+    float3 specular = nom / max(denom, 0.0001);
+
+    float3 kS = F;
+    float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (1.0 - mat.Metallic);
+
+    float3 diffuse = kD * albedo.rgb / acos(-1);
+    return (diffuse + specular) * light.Diffuse.rgb * max(dot(pixel.Normal, L), 0.0) * att;
+}
+
+float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
     float3 color = { 0.0, 0.0, 0.0 };
     float3 F0 = lerp(float3(0.04, 0.04, 0.04), albedo.rgb, mat.Metallic);
 
-    float NdotV = dot(N, V);
+    float NdotV = dot(pixelIn.Normal, V);
 
-    // Global Light Process, refactoring later
-    {
-        float3 L = normalize(-Lights[0].Direction);
-        float3 H = normalize(V + L);
-
-        float NdotL = dot(N, L);
-        float NdotH = dot(N, H);
-
-        float D = DistributionGGX(NdotH, mat.Roughness);
-        float G = GeometrySmith(NdotV, NdotL, mat.Roughness);
-        float3 F = FresnelSchlick(F0, NdotV);
-
-        float3 nom = D * G * F;
-        float denom = 4 * max(dot(L, N), 0.0) * max(dot(V, N), 0.0) + 0.0001;
-        float3 specular = nom / max(denom, 0.0001);
-
-        float3 kS = F;
-        float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (1.0 - mat.Metallic);
-
-        float3 diffuse = kD * albedo.rgb / acos(-1);
-        color += (diffuse + specular) * Lights[0].Diffuse.rgb * max(dot(N, L), 0.0);
-
-        /* IBL, Delayed
-        {
-            float3 iblDiffuse = albedo.rgb * CubeMap.Sample(samLinearWrap, N).rgb;
-
-            float3 R = reflect(-V, N);
-            float3 prefilteredColor = CubeMap.SampleLevel(samLinearWrap, R, mat.Roughness * 8.0).rgb;
-            float3 iblSpecular = (1.0 - mat.Roughness) * prefilteredColor * F;
-
-            float3 indirectLight = kD * iblDiffuse / acos(-1) + iblSpecular;
-            color += indirectLight;
-        } */
+    for (int i = 0; i < gNumLights; i++) {
+        switch (Lights[i].LightType) {
+            case 0:
+                color += ComputeDirectionalLight(Lights[i], mat, albedo, pixelIn, V, NdotV, F0);
+                break;
+            case 1:
+                color += ComputePointLight(Lights[i], mat, albedo, pixelIn, V, NdotV, F0);
+                break;
+        }
     }
 
-    //color = color / (color + float3(1.0, 1.0, 1.0));
     color = pow(color, 1.0 / 2.2);
     color += albedo.rgb * 0.2;
 

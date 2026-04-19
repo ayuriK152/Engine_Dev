@@ -29,14 +29,14 @@ struct Animation {
 struct Light {
     float4x4 View;
     float4x4 Proj;
-    float4   Ambient;
     float4   Diffuse;
-    float4   Specular;
-    float3   Direction;
+    float3   Position;
     int      LightType;
-    float2   FalloffInfo;
+    float3   Direction;
     float    SpotPower;
-    int      padding1;
+    float    FallOffStart;
+    float    FallOffEnd;
+    float2   padding1;
 };
 
 struct Instance {

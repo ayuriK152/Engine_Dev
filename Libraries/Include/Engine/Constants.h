@@ -48,14 +48,14 @@ struct LightConstants
 {
 	XMFLOAT4X4 View = MathHelper::Identity4x4();
 	XMFLOAT4X4 Proj = MathHelper::Identity4x4();
-	Bulb::Color Ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
 	Bulb::Color Diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
-	Bulb::Color Specular = { 0.0f, 0.0f, 0.0f, 0.0f };
-	XMFLOAT3 Direction = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };
 	UINT LightType = DIRECT_LIGHT;
-	XMFLOAT2 FalloffInfo = { 0.0f, 0.0f };
+	XMFLOAT3 Direction = { 0.0f, 0.0f, 0.0f };
 	float SpotPower = 0.0f;
-	int padding = 0;
+	float FallOffStart;
+	float FallOffEnd;
+	XMFLOAT2 padding;
 };
 
 struct LightGatherConstants

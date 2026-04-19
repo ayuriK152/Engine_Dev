@@ -6,7 +6,7 @@ class Light : public Component
 	using Super = Component;
 public:
 	Light();
-	Light(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular);
+	Light(XMFLOAT4 diffuse);
 	virtual ~Light();
 
 	virtual void Init() override = 0;
@@ -31,9 +31,7 @@ public:
 	virtual LightConstants GetLightConstants() = 0;
 
 public:
-	Bulb::Color ambient;
 	Bulb::Color diffuse;
-	Bulb::Color specular;
 
 protected:
 	XMFLOAT4X4 _matView;

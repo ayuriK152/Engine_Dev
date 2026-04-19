@@ -218,6 +218,9 @@
     <ClInclude Include="Event.h">
       <Filter>09. Sub Systems</Filter>
     </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>02. GameObject\Components\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -480,6 +483,9 @@
     </ClCompile>
     <ClCompile Include="Event.cpp">
       <Filter>09. Sub Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

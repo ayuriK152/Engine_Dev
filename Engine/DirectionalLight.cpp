@@ -8,11 +8,7 @@ DirectionalLight::DirectionalLight() : Super()
 
 }
 
-DirectionalLight::DirectionalLight(
-	XMFLOAT4 ambient, 
-	XMFLOAT4 diffuse, 
-	XMFLOAT4 specular) : 
-	Super(ambient, diffuse, specular)
+DirectionalLight::DirectionalLight(XMFLOAT4 diffuse) : Super(diffuse)
 {
 
 }
@@ -22,6 +18,8 @@ DirectionalLight::~DirectionalLight()
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - DirectionalLight:" << _id << "\n";
 #endif
+
+	_transform.reset();
 }
 
 void DirectionalLight::Init()
@@ -76,16 +74,6 @@ void DirectionalLight::OnDestroy()
 
 void DirectionalLight::LoadXML(Bulb::XMLElement compElem)
 {
-	Bulb::XMLElement ambientElem = compElem.FirstChildElement("Ambient");
-	if (!ambientElem.IsNullPtr()) {
-		Bulb::Color color;
-		color.r = ambientElem.FloatAttribute("r");
-		color.g = ambientElem.FloatAttribute("g");
-		color.b = ambientElem.FloatAttribute("b");
-		color.a = ambientElem.FloatAttribute("a");
-		ambient = color;
-	}
-
 	Bulb::XMLElement diffuseElem = compElem.FirstChildElement("Diffuse");
 	if (!diffuseElem.IsNullPtr()) {
 		Bulb::Color color;
@@ -95,39 +83,17 @@ void DirectionalLight::LoadXML(Bulb::XMLElement compElem)
 		color.a = diffuseElem.FloatAttribute("a");
 		diffuse = color;
 	}
-
-	Bulb::XMLElement specularElem = compElem.FirstChildElement("Specular");
-	if (!specularElem.IsNullPtr()) {
-		Bulb::Color color;
-		color.r = specularElem.FloatAttribute("r");
-		color.g = specularElem.FloatAttribute("g");
-		color.b = specularElem.FloatAttribute("b");
-		color.a = specularElem.FloatAttribute("a");
-		specular = color;
-	}
 }
 
 void DirectionalLight::SaveXML(Bulb::XMLElement compElem)
 {
 	compElem.SetAttribute("ComponentType", "DirectionalLight");
 
-	Bulb::XMLElement ambientElem = compElem.InsertNewChildElement("Ambient");
-	ambientElem.SetAttribute("r", ambient.r);
-	ambientElem.SetAttribute("g", ambient.g);
-	ambientElem.SetAttribute("b", ambient.b);
-	ambientElem.SetAttribute("a", ambient.a);
-
 	Bulb::XMLElement diffuseElem = compElem.InsertNewChildElement("Diffuse");
 	diffuseElem.SetAttribute("r", diffuse.r);
 	diffuseElem.SetAttribute("g", diffuse.g);
 	diffuseElem.SetAttribute("b", diffuse.b);
 	diffuseElem.SetAttribute("a", diffuse.a);
-
-	Bulb::XMLElement specularElem = compElem.InsertNewChildElement("Specular");
-	specularElem.SetAttribute("r", specular.r);
-	specularElem.SetAttribute("g", specular.g);
-	specularElem.SetAttribute("b", specular.b);
-	specularElem.SetAttribute("a", specular.a);
 }
 
 ComponentSnapshot DirectionalLight::CaptureSnapshot()
@@ -148,11 +114,10 @@ void DirectionalLight::RestoreSnapshot(ComponentSnapshot snapshot)
 LightConstants DirectionalLight::GetLightConstants()
 {
 	LightConstants constants;
+	constants.LightType = DIRECT_LIGHT;
 	constants.View = _matView;
 	constants.Proj = _matProj;
-	constants.Ambient = ambient;
 	constants.Diffuse = diffuse;
-	constants.Specular = specular;
 	constants.Direction = direction;
 
 	return constants;

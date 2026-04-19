@@ -20,7 +20,7 @@ StructuredBuffer<Material> Materials    : register(t0);
 StructuredBuffer<Light> Lights          : register(t1);
 TextureCube CubeMap                     : register(t2);
 Texture2D   ShadowMap                   : register(t3);
-Texture2D   TextureMaps[100]             : register(t4);
+Texture2D   TextureMaps[100]            : register(t4);
 
 cbuffer ClientInfo : register(b0) {
     float   DeltaTime;

@@ -6,10 +6,7 @@ class BULB_API DirectionalLight : public Light
 	using Super = Light;
 public:
 	DirectionalLight();
-	DirectionalLight(
-		XMFLOAT4 ambient,
-		XMFLOAT4 diffuse, 
-		XMFLOAT4 specular);
+	DirectionalLight(XMFLOAT4 diffuse);
 	virtual ~DirectionalLight();
 
 	void Init() override;

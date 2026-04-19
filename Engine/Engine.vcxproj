@@ -55,6 +55,7 @@
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="ParticleEmitter.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />

@@ -19,6 +19,7 @@ class BULB_API ComponentFactory
 private:
 	static void Init() {
 		REGISTER_COMPONENT(DirectionalLight);
+		REGISTER_COMPONENT(PointLight);
 		REGISTER_COMPONENT(MeshRenderer);
 		REGISTER_COMPONENT(SkinnedMeshRenderer);
 		REGISTER_COMPONENT(Rigidbody);

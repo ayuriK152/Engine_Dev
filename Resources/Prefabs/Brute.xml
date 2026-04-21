@@ -12,61 +12,55 @@
         <Component ComponentType="EnemyScript"/>
     </Components>
     <GameObjects>
-        <GameObject Name="BattleAxe_GEO" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="BattleAxe_GEO" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\BattleAxe_GEO.bmesh" Material="..\Resources\Materials\Brute\blinn7.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Hair" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Hair" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Hair.bmesh" Material="..\Resources\Materials\Brute\MaleBruteA_Hair6.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Bottoms" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Bottoms" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Bottoms.bmesh" Material="..\Resources\Materials\Brute\MaleBruteA_Bottom5.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Shoes" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Shoes" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Shoes.bmesh" Material="..\Resources\Materials\Brute\MaleBruteA_Shoes6.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Moustaches" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Moustaches" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Moustaches.bmesh" Material="..\Resources\Materials\Brute\MaleBruteA_Moustache5.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Eyes" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Eyes" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Eyes.bmesh" Material="..\Resources\Materials\Brute\EyeSpec_MAT2.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Eyelashes" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Eyelashes" PSO="trans_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Eyelashes.bmesh" Material="..\Resources\Materials\Brute\Body_MAT4.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Body" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Body" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Body.bmesh" Material="..\Resources\Materials\Brute\Body_MAT4.xml" RootBoneName="mixamorig:Hips"/>
             </Components>
         </GameObject>
-        <GameObject Name="MaleBruteA_Body" PSO="opaque_solid" Tag="Default">
-            <Components>
-                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Body.bmesh" Material="..\Resources\Materials\Brute\Body_MAT4.xml" RootBoneName="mixamorig:Hips"/>
-            </Components>
-        </GameObject>
-        <GameObject Name="MaleBruteA_Earrings" PSO="opaque_solid" Tag="Default">
+        <GameObject Name="MaleBruteA_Earrings" PSO="opaque_skinned" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                 <Component ComponentType="SkinnedMeshRenderer" Mesh="..\Resources\Meshes\Brute\MaleBruteA_Earrings.bmesh" Material="..\Resources\Materials\Brute\Body_MAT4.xml" RootBoneName="mixamorig:Hips"/>

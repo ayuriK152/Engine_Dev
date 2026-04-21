@@ -1,9 +1,11 @@
 #pragma once
 
-#define		PSO_COUNT				9		// Except Skybox
+#define		PSO_COUNT				11		// Except Skybox
 
 #define		PSO_OPAQUE_SOLID		"opaque_solid"
 #define		PSO_OPAQUE_SKINNED		"opaque_skinned"
+#define		PSO_TRANS_SOLID			"trans_solid"
+#define		PSO_TRANS_SKINNED		"trans_skinned"
 #define		PSO_SKYBOX				"skybox"
 #define		PSO_SHADOWMAP			"shadowmap"
 #define		PSO_SHADOWMAP_SKINNED	"shadowmap_skinned"
@@ -16,14 +18,16 @@
 
 #define		PSO_IDX_OPAQUE_SOLID		0
 #define		PSO_IDX_OPAQUE_SKINNED		1
-#define		PSO_IDX_SHADOWMAP			2
-#define		PSO_IDX_SHADOWMAP_SKINNED	3
-#define		PSO_IDX_WIREFRAME			4
-#define		PSO_IDX_DEBUG_PHYSICS		5
-#define		PSO_IDX_DEBUG_SHADOW		6
-#define		PSO_IDX_PARTICLE_UPDATE		7
-#define		PSO_IDX_PARTICLE_RENDER		8
-#define		PSO_IDX_UI					9
+#define		PSO_IDX_TRANS_SOLID			2
+#define		PSO_IDX_TRANS_SKINNED		3
+#define		PSO_IDX_SHADOWMAP			4
+#define		PSO_IDX_SHADOWMAP_SKINNED	5
+#define		PSO_IDX_WIREFRAME			6
+#define		PSO_IDX_DEBUG_PHYSICS		7
+#define		PSO_IDX_DEBUG_SHADOW		8
+#define		PSO_IDX_PARTICLE_UPDATE		9
+#define		PSO_IDX_PARTICLE_RENDER		10
+#define		PSO_IDX_UI					11
 
 #define		RENDERSTATE_MAIN		0
 #define		RENDERSTATE_SHADOWMAP	1

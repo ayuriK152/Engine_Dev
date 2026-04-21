@@ -43,11 +43,11 @@ void ResourceManager::Init()
 
 	// opaque shaders
 	auto stdVS = make_shared<Shader>(L"DefaultVS.hlsl", nullptr, ShaderType::VS);
-	Add<Shader>(L"standardVS", stdVS);
+	Add<Shader>(L"defaultVS", stdVS);
 	auto skinnedVS = make_shared<Shader>(L"DefaultVS.hlsl", skinnedDefines, ShaderType::VS);
 	Add<Shader>(L"skinnedVS", skinnedVS);
 	auto opaquePS = make_shared<Shader>(L"DefaultPS.hlsl", nullptr, ShaderType::PS);
-	Add<Shader>(L"opaquePS", opaquePS);
+	Add<Shader>(L"defaultPS", opaquePS);
 
 	// skybox shaders
 	auto skyboxVS = make_shared<Shader>(L"SkyboxVS.hlsl", nullptr, ShaderType::VS);

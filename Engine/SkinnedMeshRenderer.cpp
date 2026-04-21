@@ -26,7 +26,12 @@ void SkinnedMeshRenderer::Init()
 	if (_skeleton == nullptr)
 		DEBUG->ErrorLog("No Skeleton Exists!");
 
-	GetGameObject()->SetPSOName(PSO_OPAQUE_SKINNED);
+	// PSO가 알파블렌딩을 사용하도록 명시된 경우만 알파블렌딩 사용 PSO로 변경, 그 이외에는 기본
+	string pso = GetGameObject()->GetPSOName();
+	if (pso != PSO_TRANS_SKINNED && pso != PSO_TRANS_SOLID)
+		GetGameObject()->SetPSOName(PSO_OPAQUE_SKINNED);
+	else
+		GetGameObject()->SetPSOName(PSO_TRANS_SKINNED);
 }
 
 // 스킨드 메쉬에 대한 인스턴싱은 이뤄지지 않고있음.

@@ -163,11 +163,17 @@ void RenderManager::Render()
 		for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SOLID]) {
 			o->Render(_cmdLists[0], RENDERSTATE_SHADOWMAP);
 		}
+		for (auto& o : _objectsSortedPSO[PSO_IDX_TRANS_SOLID]) {
+			o->Render(_cmdLists[0], RENDERSTATE_SHADOWMAP);
+		}
 
 		// Shadow Map Skinned
 		_cmdLists[0]->SetPipelineState(_PSOs[PSO_SHADOWMAP_SKINNED].Get());
 
 		for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
+			o->Render(_cmdLists[0], RENDERSTATE_SHADOWMAP);
+		}
+		for (auto& o : _objectsSortedPSO[PSO_IDX_TRANS_SKINNED]) {
 			o->Render(_cmdLists[0], RENDERSTATE_SHADOWMAP);
 		}
 
@@ -210,6 +216,22 @@ void RenderManager::Render()
 		if (_objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED].size() > 0) {
 			_cmdLists[1]->SetPipelineState(_PSOs[PSO_OPAQUE_SKINNED].Get());
 			for (auto& o : _objectsSortedPSO[PSO_IDX_OPAQUE_SKINNED]) {
+				o->Render(_cmdLists[1], RENDERSTATE_MAIN);
+			}
+		}
+
+		// Trans Solid
+		if (_objectsSortedPSO[PSO_IDX_TRANS_SOLID].size() > 0) {
+			_cmdLists[1]->SetPipelineState(_PSOs[PSO_TRANS_SOLID].Get());
+			for (auto& o : _objectsSortedPSO[PSO_IDX_TRANS_SOLID]) {
+				o->Render(_cmdLists[1], RENDERSTATE_MAIN);
+			}
+		}
+
+		// Trans Skinned
+		if (_objectsSortedPSO[PSO_IDX_TRANS_SKINNED].size() > 0) {
+			_cmdLists[1]->SetPipelineState(_PSOs[PSO_TRANS_SKINNED].Get());
+			for (auto& o : _objectsSortedPSO[PSO_IDX_TRANS_SKINNED]) {
 				o->Render(_cmdLists[1], RENDERSTATE_MAIN);
 			}
 		}
@@ -444,14 +466,16 @@ UINT RenderManager::Temp_GetPSOIndex(string name)
 {
 	if (name == PSO_OPAQUE_SOLID)		return 0;
 	if (name == PSO_OPAQUE_SKINNED)		return 1;
-	if (name == PSO_SKYBOX)				return 2;
-	if (name == PSO_SHADOWMAP)			return 3;
-	if (name == PSO_SHADOWMAP_SKINNED)	return 4;
-	if (name == PSO_WIREFRAME)			return 5;
-	if (name == PSO_DEBUG_PHYSICS)		return 6;
-	if (name == PSO_DEBUG_SHADOW)		return 7;
-	if (name == PSO_PARTICLE_UPDATE)	return 8;
-	if (name == PSO_PARTICLE_RENDER)	return 9;
+	if (name == PSO_TRANS_SOLID)		return 2;
+	if (name == PSO_TRANS_SKINNED)		return 3;
+	if (name == PSO_SKYBOX)				return 4;
+	if (name == PSO_SHADOWMAP)			return 5;
+	if (name == PSO_SHADOWMAP_SKINNED)	return 6;
+	if (name == PSO_WIREFRAME)			return 7;
+	if (name == PSO_DEBUG_PHYSICS)		return 8;
+	if (name == PSO_DEBUG_SHADOW)		return 9;
+	if (name == PSO_PARTICLE_UPDATE)	return 10;
+	if (name == PSO_PARTICLE_RENDER)	return 11;
 }
 
 void RenderManager::BuildFrameResources()
@@ -741,8 +765,30 @@ void RenderManager::BuildSRVDescriptorHeap()
 void RenderManager::BuildPSOs()
 {
 	// Default Layout
-	auto opaqueSolid = CreatePSODesc(_solidInputLayout, _rootSignatureDefault.Get(), L"standardVS", L"opaquePS");
-	auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, _rootSignatureDefault.Get(), L"skinnedVS", L"opaquePS");
+	auto opaqueSolid = CreatePSODesc(_solidInputLayout, _rootSignatureDefault.Get(), L"defaultVS", L"defaultPS");
+	auto opaqueSkinned = CreatePSODesc(_skinnedInputLayout, _rootSignatureDefault.Get(), L"skinnedVS", L"defaultPS");
+
+	auto transSolid = opaqueSolid;
+	auto transSkinned = opaqueSkinned;
+
+	D3D12_BLEND_DESC blendDesc = {};
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	transSolid.BlendState = blendDesc;
+	transSolid.DepthStencilState.DepthEnable = TRUE;
+	transSolid.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	transSkinned.BlendState = blendDesc;
+	transSkinned.DepthStencilState.DepthEnable = TRUE;
+	transSkinned.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 
 	// Wireframe Layout
 	auto opaqueWireframe = opaqueSkinned;
@@ -793,10 +839,10 @@ void RenderManager::BuildPSOs()
 	{
 		particleRender.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 
-		D3D12_BLEND_DESC blendDesc = {};
-		blendDesc.AlphaToCoverageEnable = FALSE;
-		blendDesc.IndependentBlendEnable = FALSE;
-		auto& blendRt = blendDesc.RenderTarget[0];
+		D3D12_BLEND_DESC particleBlendDesc = {};
+		particleBlendDesc.AlphaToCoverageEnable = FALSE;
+		particleBlendDesc.IndependentBlendEnable = FALSE;
+		auto& blendRt = particleBlendDesc.RenderTarget[0];
 		blendRt.BlendEnable = TRUE;
 		blendRt.LogicOpEnable = FALSE;
 		blendRt.SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -813,7 +859,7 @@ void RenderManager::BuildPSOs()
 		depthDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		depthDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
-		particleRender.BlendState = blendDesc;
+		particleRender.BlendState = particleBlendDesc;
 		particleRender.DepthStencilState = depthDesc;
 	}
 
@@ -837,6 +883,8 @@ void RenderManager::BuildPSOs()
 
 	BuildPSO(PSO_OPAQUE_SOLID, opaqueSolid);
 	BuildPSO(PSO_OPAQUE_SKINNED, opaqueSkinned);
+	BuildPSO(PSO_TRANS_SOLID, transSolid);
+	BuildPSO(PSO_TRANS_SKINNED, transSkinned);
 	BuildPSO(PSO_WIREFRAME, opaqueWireframe);
 	BuildPSO(PSO_SKYBOX, skybox);
 	BuildPSO(PSO_SHADOWMAP, shadow);

@@ -36,9 +36,7 @@ void DirectionalLight::Init()
 
 void DirectionalLight::Update()
 {
-	//if (_gameObject.lock()->GetFramesDirty() > 0)
-	if (_transform->IsDirty())
-	{
+	if (_gameObject.lock()->GetFramesDirty() > 0) {
 		direction = _transform->GetLook();
 
 		XMVECTOR eyePos = XMLoadFloat3(&_transform->GetPosition());

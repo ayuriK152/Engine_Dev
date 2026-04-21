@@ -23,19 +23,21 @@ float4 PS(VertexOut pin) : SV_TARGET {
     //float4 lighting = ComputeLight(mat, albedo, pin.Normal, eyeDir);
     float4 lighting = BRDFLighting(mat, albedo, pin, eyeDir);
 
-    float2 shadowMapTex;
-    float bias = 0.001;
-    shadowMapTex.x = pin.ShadowPos.x / pin.ShadowPos.w / 2.0 + 0.5;
-    shadowMapTex.y = -pin.ShadowPos.y / pin.ShadowPos.w / 2.0 + 0.5;
+    // float2 shadowMapTex;
+    // float bias = 0.001;
+    // shadowMapTex.x = pin.ShadowPos.x / pin.ShadowPos.w / 2.0 + 0.5;
+    // shadowMapTex.y = -pin.ShadowPos.y / pin.ShadowPos.w / 2.0 + 0.5;
 
-    float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex).r;
-    float lightDepthValue = pin.ShadowPos.z / pin.ShadowPos.w;
-    lightDepthValue = lightDepthValue - bias;
+    // float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex).r;
+    // float lightDepthValue = pin.ShadowPos.z / pin.ShadowPos.w;
+    // lightDepthValue = lightDepthValue - bias;
 
-    if (lightDepthValue < depthValue) {
-        return lighting;
-    }
-    else {
-        return lighting;
-    }
+    // if (lightDepthValue < depthValue) {
+    //     return lighting;
+    // }
+    // else {
+    //     return lighting * 0.6;
+    // }
+    
+    return lighting;
 }

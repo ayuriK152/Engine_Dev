@@ -14,7 +14,10 @@ public:
 
 	virtual ComponentSnapshot CaptureSnapshot() override { 
 		ComponentSnapshot snapshot;
+
 		snapshot.id = _id;
+		snapshot.componentType = "Script (No Snapshot Setting)";
+
 		return snapshot;
 	};
 	virtual void RestoreSnapshot(ComponentSnapshot snapshot) override { };

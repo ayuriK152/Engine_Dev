@@ -33,7 +33,7 @@ void PointLight::Init()
 
 void PointLight::Update()
 {
-	if (_transform->IsDirty()) {
+	if (_gameObject.lock()->GetFramesDirty() > 0) {
 		_position = _transform->GetPosition();
 	}
 }
@@ -76,6 +76,9 @@ void PointLight::SaveXML(Bulb::XMLElement compElem)
 ComponentSnapshot PointLight::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;
+
+	snapshot.id = _id;
+	snapshot.componentType = "PointLight";
 
 	return snapshot;
 }

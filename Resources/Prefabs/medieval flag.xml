@@ -1,0 +1,22 @@
+<Prefab Name="medieval flag" PSO="opaque_solid" Tag="Default">
+    <Components>
+        <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="0.003" ScaleY="0.003" ScaleZ="0.003" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+        <Component ComponentType="PointLight">
+            <Diffuse r="0.5" g="0.1" b="0" a="0"/>
+        </Component>
+    </Components>
+    <GameObjects>
+        <GameObject Name="Cylinder.006" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\medieval flag\Cylinder.006.bmesh" Material="..\Resources\Materials\medieval flag\pole.xml"/>
+            </Components>
+        </GameObject>
+        <GameObject Name="Plane.004" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="10" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0.70710683" QuatW="0.70710677"/>
+                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\medieval flag\Plane.004.bmesh" Material="..\Resources\Materials\medieval flag\flag.xml"/>
+            </Components>
+        </GameObject>
+    </GameObjects>
+</Prefab>

@@ -552,7 +552,7 @@ void RenderManager::UpdateMeshInstanceStartIndices()
 
 	// temp
 	for (auto& go : _objects) {
-		go->SetFramesDirty();
+		if (go != nullptr) go->SetFramesDirty();
 	}
 }
 

@@ -653,15 +653,7 @@ void EngineGUIManager::ShowLight(shared_ptr<Light> light)
 {
 	if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		switch (light->GetLightType()) {
-		case LightType::Directional:
-			ImGui::SeparatorText("Directional Light");
-			break;
-		case LightType::Point:
-			ImGui::SeparatorText("Point Light");
-			break;
-		}
-
+		ImGui::Text("Light Color");
 		static float diffuse[4];
 		diffuse[0] = light->diffuse.r;
 		diffuse[1] = light->diffuse.g;
@@ -669,10 +661,33 @@ void EngineGUIManager::ShowLight(shared_ptr<Light> light)
 		diffuse[3] = light->diffuse.a;
 
 		if (ImGui::InputFloat4("##DiffuseLight", diffuse)) {
-			light->diffuse.r = diffuse[0];
-			light->diffuse.g = diffuse[1];
-			light->diffuse.b = diffuse[2];
-			light->diffuse.a = diffuse[3];
+			light->diffuse.r = clamp(diffuse[0], 0.0f, 1.0f);
+			light->diffuse.g = clamp(diffuse[1], 0.0f, 1.0f);
+			light->diffuse.b = clamp(diffuse[2], 0.0f, 1.0f);
+			light->diffuse.a = clamp(diffuse[3], 0.0f, 1.0f);
+		}
+
+		switch (light->GetLightType()) {
+		case LightType::Directional: {
+			ImGui::SeparatorText("Directional Light");
+			break;
+		}
+		case LightType::Point: {
+			ImGui::SeparatorText("Point Light");
+
+			static shared_ptr<PointLight> pointLight;
+			pointLight = static_pointer_cast<PointLight>(light);
+
+			static float fallOffValues[2];
+			fallOffValues[0] = pointLight->GetFallOffStart();
+			fallOffValues[1] = pointLight->GetFallOffEnd();
+
+			ImGui::Text("FallOff Value");
+			if (ImGui::InputFloat2("##PointLightFallOffValue", fallOffValues)) {
+				pointLight->SetFallOffValues(fallOffValues[0], fallOffValues[1]);
+			}
+			break;
+		}
 		}
 	}
 }

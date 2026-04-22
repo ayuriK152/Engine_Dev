@@ -1,0 +1,11 @@
+<Material>
+    <Name>pole</Name>
+    <Ambient r="0" g="0" b="0" a="1"/>
+    <Diffuse r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Specular r="0.80000001" g="0.80000001" b="0.80000001" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <Metallic value="0"/>
+    <Roughness value="1"/>
+    <DiffuseTexture>..\Resources\Textures\Medieval Flag\flagpole high_pole_BaseColor.1001.png</DiffuseTexture>
+    <NormalTexture>..\Resources\Textures\Medieval Flag\flagpole high_pole_Normal.1001.png</NormalTexture>
+</Material>

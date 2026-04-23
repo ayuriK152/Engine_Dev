@@ -93,6 +93,8 @@ private:
 #pragma region MainMenus
 	void ShowMenuFile();
 	void ShowMenuEdit();
+	void ShowPreferences();
+	void ShowView();
 #pragma endregion
 
 #pragma region Component

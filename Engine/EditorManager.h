@@ -32,6 +32,9 @@ public:
 private:
 	void RestoreObjectComponents(shared_ptr<GameObject> go, GameObjectSnapshot objectSnapshot);
 
+public:
+	bool isNoneMouseMode = false;
+
 private:
 	static EditorManager* s_instance;
 

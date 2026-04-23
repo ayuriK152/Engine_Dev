@@ -464,6 +464,16 @@ void EngineGUIManager::ShowMainMenuBar()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Preferences")) {
+			ShowPreferences();
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("View")) {
+			ShowView();
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -485,12 +495,33 @@ void EngineGUIManager::ShowMenuFile()
 
 void EngineGUIManager::ShowMenuEdit()
 {
-	if (ImGui::MenuItem("Play", 0, nullptr, !EDITOR->IsOnPlay())) {
+	static bool isOnPlay;
+	isOnPlay = EDITOR->IsOnPlay();
+	if (ImGui::MenuItem("Play", 0, nullptr, !isOnPlay)) {
 		EDITOR->Play();
 	}
 
-	if (ImGui::MenuItem("Stop", 0, nullptr, EDITOR->IsOnPlay())) {
+	if (ImGui::MenuItem("Stop", 0, nullptr, isOnPlay)) {
 		EDITOR->Stop();
+	}
+}
+
+void EngineGUIManager::ShowPreferences()
+{
+	if (ImGui::MenuItem("None Mouse Mode", 0, &EDITOR->isNoneMouseMode)) {
+		// EditorSetting.ini overwrite
+	}
+}
+
+void EngineGUIManager::ShowView()
+{
+	if (ImGui::BeginMenu("Debug")) {
+		static bool isPysicsDebugRenderEnabled;
+		isPysicsDebugRenderEnabled = DEBUG->IsPhysicsDebugRenderEnabled();
+		if (ImGui::MenuItem("Collider", 0, &isPysicsDebugRenderEnabled)) {
+			DEBUG->SetPhysicsDebugRenderEnabled(isPysicsDebugRenderEnabled);
+		}
+		ImGui::EndMenu();
 	}
 }
 

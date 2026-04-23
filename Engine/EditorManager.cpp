@@ -29,6 +29,13 @@ Bulb::ProcessResult EditorManager::Delete()
 
 void EditorManager::Init()
 {
+	filesystem::path editorSettingPath("./EditorSetting.ini");
+	if (!filesystem::exists(editorSettingPath))
+		ofstream out("EditorSetting.ini");
+
+	string noneMouseMode = FILEIO->ReadINI("InputSettings", "NoneMouseMode", editorSettingPath.string());
+	isNoneMouseMode = noneMouseMode == "true" ? true : false;
+
 	shared_ptr<GameObject> cameraObj = GameObject::Instantiate();
 	cameraObj->SetName("EditorCamera");
 	cameraObj->SetTag("EditorCamera");

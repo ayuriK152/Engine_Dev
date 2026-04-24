@@ -109,6 +109,10 @@ namespace Bulb {
 			return Vector3(XMLoadFloat3(this) * scalar);
 		}
 
+		Vector3 operator*(XMMATRIX mat) const {
+			return Vector3(XMVector3Transform(XMLoadFloat3(this), mat));
+		}
+
 		Vector3 operator/(float scalar) const {
 			assert(scalar != 0.0f);
 			return Vector3(XMLoadFloat3(this) / scalar);

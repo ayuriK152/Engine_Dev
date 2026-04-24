@@ -29,6 +29,7 @@ private:
 		REGISTER_COMPONENT(ParticleEmitter);
 		REGISTER_COMPONENT(Transform);
 		REGISTER_COMPONENT(EditorCamera);
+		REGISTER_COMPONENT(Terrain);
 	}
 
 	static unordered_map<string, Creator>& GetMap() {

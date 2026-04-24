@@ -264,6 +264,7 @@ int GameObject::GetComponentTypeIndex(ComponentType type)
 	if (type == ComponentType::Rigidbody)			return 7;
 	if (type == ComponentType::ParticleEmitter)		return 8;
 	if (type == ComponentType::CharacterController) return 9;
+	if (type == ComponentType::Terrain)				return 10;
 }
 
 void GameObject::SetPSOName(const string& name)

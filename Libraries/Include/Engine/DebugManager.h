@@ -1,11 +1,8 @@
 #pragma once
 #include <Jolt/Renderer/DebugRenderer.h>
 
-#define	MAX_VERTEX_COUNT	100
-#define MAX_INDEX_COUNT		300
-
-#define DEFAULT_VERTEX_BUFFER_SIZE	10000
-#define DEFAULT_INDEX_BUFFER_SIZE	30000
+#define DEFAULT_VERTEX_BUFFER_SIZE	50000
+#define DEFAULT_INDEX_BUFFER_SIZE	150000
 
 enum BULB_API LogLevel
 {
@@ -38,6 +35,17 @@ struct BULB_API DebugLine
 	Bulb::Vector3 from;
 	Bulb::Vector3 to;
 	Bulb::Color color;
+};
+
+class TriangleBatch : public JPH::RefTargetVirtual {
+public:
+	vector<JPH::DebugRenderer::Triangle> triangles;
+
+	virtual void AddRef() override { mRefCount++; }
+	virtual void Release() override { if (--mRefCount == 0) delete this; }
+
+private:
+	std::atomic<uint32_t> mRefCount = 0;
 };
 
 class BULB_API DebugManager : public JPH::DebugRenderer
@@ -96,20 +104,20 @@ private:
 	vector<DebugLog> _debugLogs;
 
 	vector<VertexPC> _vertices;
-	vector<UINT16> _indices;
+	vector<UINT32> _indices;
 
 	UINT _bufferVertexCount = 0;
 	UINT _bufferIndexCount = 0;
 
 	unique_ptr<UploadBuffer<VertexPC>> _vertexUploadBuffer;
-	unique_ptr<UploadBuffer<UINT16>> _indexUploadBuffer;
+	unique_ptr<UploadBuffer<UINT32>> _indexUploadBuffer;
 
 	D3D12_VERTEX_BUFFER_VIEW _vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW _indexBufferView;
 
 	Bulb::Color _colliderDebugColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 
-	const UINT16 _boxColliderIndices[24] = {
+	const UINT32 _boxColliderIndices[24] = {
 				0, 1,
 				1, 2,
 				2, 3,

@@ -30,7 +30,7 @@ Bulb::ProcessResult DebugManager::Delete()
 void DebugManager::Init()
 {
 	_vertexBufferView.StrideInBytes = sizeof(VertexPC);
-	_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
+	_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
 	_bufferVertexCount = DEFAULT_VERTEX_BUFFER_SIZE;
 	_vertexUploadBuffer = make_unique<UploadBuffer<VertexPC>>(DEFAULT_VERTEX_BUFFER_SIZE, false);
@@ -39,10 +39,10 @@ void DebugManager::Init()
 	_vertexBufferView.SizeInBytes = sizeof(VertexPC) * DEFAULT_VERTEX_BUFFER_SIZE;
 
 	_bufferIndexCount = DEFAULT_INDEX_BUFFER_SIZE;
-	_indexUploadBuffer = make_unique<UploadBuffer<UINT16>>(DEFAULT_INDEX_BUFFER_SIZE, false);
+	_indexUploadBuffer = make_unique<UploadBuffer<UINT32>>(DEFAULT_INDEX_BUFFER_SIZE, false);
 
 	_indexBufferView.BufferLocation = _indexUploadBuffer->GetResource()->GetGPUVirtualAddress();
-	_indexBufferView.SizeInBytes = sizeof(UINT16) * DEFAULT_INDEX_BUFFER_SIZE;
+	_indexBufferView.SizeInBytes = sizeof(UINT32) * DEFAULT_INDEX_BUFFER_SIZE;
 
 	Initialize();
 }
@@ -101,12 +101,31 @@ void DebugManager::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, Col
 
 JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount)
 {
-	return Batch();
+	TriangleBatch* batch = new TriangleBatch;
+	if (inTriangles == nullptr || inTriangleCount == 0)
+		return batch;
+	
+	batch->triangles.assign(inTriangles, inTriangles + inTriangleCount);
+	return batch;
 }
 
 JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Vertex* inVertices, int inVertexCount, const uint32* inIndices, int inIndexCount)
 {
-	return Batch();
+	TriangleBatch* batch = new TriangleBatch;
+
+	if (inVertices == nullptr || inVertexCount == 0 || inIndices == nullptr || inIndexCount == 0)
+		return batch;
+
+	size_t triangleCount = inIndexCount / 3;
+	batch->triangles.resize(triangleCount);
+	for (size_t t = 0; t < triangleCount; ++t) {
+		batch->triangles.push_back(JPH::DebugRenderer::Triangle());
+		batch->triangles[t].mV[0] = inVertices[inIndices[t * 3 + 0]];
+		batch->triangles[t].mV[1] = inVertices[inIndices[t * 3 + 1]];
+		batch->triangles[t].mV[2] = inVertices[inIndices[t * 3 + 2]];
+	}
+
+	return batch;
 }
 
 // 박스만 렌더링 할 수 있도록 되있음. 개선 가능하면 개선하는 편이 좋을 듯.
@@ -116,23 +135,22 @@ void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpa
 
 	XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&inModelMatrix);
 
-	AABox localBox = inGeometry->mBounds;
-	Bulb::Vector3 minP = Bulb::Vector3(localBox.mMin.GetX(), localBox.mMin.GetY(), localBox.mMin.GetZ());
-	Bulb::Vector3 maxP = Bulb::Vector3(localBox.mMax.GetX(), localBox.mMax.GetY(), localBox.mMax.GetZ());
+	const TriangleBatch* triangleBatch = static_cast<const TriangleBatch *>(inGeometry->mLODs[0].mTriangleBatch.GetPtr());
 
-	// 로컬 박스의 8개 점 계산
-	Bulb::Vector3 corners[8] = {
-		Bulb::Vector3(minP.x, minP.y, minP.z), Bulb::Vector3(maxP.x, minP.y, minP.z),
-		Bulb::Vector3(maxP.x, maxP.y, minP.z), Bulb::Vector3(minP.x, maxP.y, minP.z),
-		Bulb::Vector3(minP.x, minP.y, maxP.z), Bulb::Vector3(maxP.x, minP.y, maxP.z),
-		Bulb::Vector3(maxP.x, maxP.y, maxP.z), Bulb::Vector3(minP.x, maxP.y, maxP.z)
-	};
+	for (const JPH::DebugRenderer::Triangle& triangle : triangleBatch->triangles) {
+		Bulb::Vector3 v0 = { triangle.mV[0].mPosition.x, triangle.mV[0].mPosition.y, triangle.mV[0].mPosition.z };
+		Bulb::Vector3 v1 = { triangle.mV[1].mPosition.x, triangle.mV[1].mPosition.y, triangle.mV[1].mPosition.z };
+		Bulb::Vector3 v2 = { triangle.mV[2].mPosition.x, triangle.mV[2].mPosition.y, triangle.mV[2].mPosition.z };
+		v0 = v0 * world;
+		v1 = v1 * world;
+		v2 = v2 * world;
 
-	// 8개 점을 world 행렬로 변환하여 선 12개 긋기
-	for (int i = 0; i < 24; i++)
-		_indices.push_back(_boxColliderIndices[i] + _vertices.size());
-	for (int i = 0; i < 8; i++)
-		_vertices.push_back(VertexPC(XMVector3TransformCoord(XMLoadFloat3(&corners[i]), world), Bulb::Color(0.0f, 1.0f, 0.0f, 1.0f)));
+		Bulb::Color color = { 0.0f, 1.0f, 0.0f, 1.0f };
+
+		DrawLine(v0, v1, color);
+		DrawLine(v1, v2, color);
+		DrawLine(v2, v0, color);
+	}
 }
 
 void DebugManager::DrawText3D(RVec3Arg inPosition, const string_view& inString, ColorArg inColor /*= Color::sWhite*/, float inHeight /*= 0.5f*/)

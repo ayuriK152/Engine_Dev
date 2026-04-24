@@ -221,6 +221,7 @@
     <ClInclude Include="PointLight.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -487,6 +488,7 @@
     <ClCompile Include="PointLight.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

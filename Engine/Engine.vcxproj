@@ -94,6 +94,7 @@
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkeletonManager.h" />
     <ClInclude Include="SkinnedMeshRenderer.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Transform.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SkeletonManager.cpp" />
     <ClCompile Include="SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="Transform.cpp" />

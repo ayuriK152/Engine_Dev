@@ -22,9 +22,12 @@ public:
 
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
+	void SetHeightMap(shared_ptr<Texture> texture);
+
 private:
 	int _sampleCount;
 	vector<float> _heightSamples;
+	string _heightMapTexturePath;
 
 	JPH::BodyID _bodyID;
 	JPH::ShapeSettings::ShapeResult _shapeResult;

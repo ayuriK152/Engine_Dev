@@ -94,9 +94,35 @@ void DebugManager::DrawLine(Bulb::Vector3 from, Bulb::Vector3 to, Bulb::Color co
 
 void DebugManager::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow)
 {
-	DrawLine(inV1, inV2, inColor);
-	DrawLine(inV2, inV3, inColor);
-	DrawLine(inV3, inV1, inColor);
+	UINT32 start = _vertices.size();
+	_indices.push_back(start);
+	_indices.push_back(start + 1);
+	_indices.push_back(start + 1);
+	_indices.push_back(start + 2);
+	_indices.push_back(start + 2);
+	_indices.push_back(start);
+
+	_vertices.push_back(VertexPC(inV1.GetX(), inV1.GetY(), inV1.GetZ(), inColor.r, inColor.g, inColor.b, inColor.a));
+	_vertices.push_back(VertexPC(inV2.GetX(), inV2.GetY(), inV2.GetZ(), inColor.r, inColor.g, inColor.b, inColor.a));
+	_vertices.push_back(VertexPC(inV3.GetX(), inV3.GetY(), inV3.GetZ(), inColor.r, inColor.g, inColor.b, inColor.a));
+	//DrawLine(inV1, inV2, inColor);
+	//DrawLine(inV2, inV3, inColor);
+	//DrawLine(inV3, inV1, inColor);
+}
+
+void DebugManager::DrawTriangle(Bulb::Vector3 v1, Bulb::Vector3 v2, Bulb::Vector3 v3, Bulb::Color color)
+{
+	UINT32 start = _vertices.size();
+	_indices.push_back(start);
+	_indices.push_back(start + 1);
+	_indices.push_back(start + 1);
+	_indices.push_back(start + 2);
+	_indices.push_back(start + 2);
+	_indices.push_back(start);
+
+	_vertices.push_back(VertexPC(v1, color));
+	_vertices.push_back(VertexPC(v2, color));
+	_vertices.push_back(VertexPC(v3, color));
 }
 
 JPH::DebugRenderer::Batch DebugManager::CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount)
@@ -137,6 +163,8 @@ void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpa
 
 	const TriangleBatch* triangleBatch = static_cast<const TriangleBatch *>(inGeometry->mLODs[0].mTriangleBatch.GetPtr());
 
+	Bulb::Color color = { 0.0f, 1.0f, 0.0f, 1.0f };
+
 	for (const JPH::DebugRenderer::Triangle& triangle : triangleBatch->triangles) {
 		Bulb::Vector3 v0 = { triangle.mV[0].mPosition.x, triangle.mV[0].mPosition.y, triangle.mV[0].mPosition.z };
 		Bulb::Vector3 v1 = { triangle.mV[1].mPosition.x, triangle.mV[1].mPosition.y, triangle.mV[1].mPosition.z };
@@ -145,11 +173,7 @@ void DebugManager::DrawGeometry(RMat44Arg inModelMatrix, const AABox& inWorldSpa
 		v1 = v1 * world;
 		v2 = v2 * world;
 
-		Bulb::Color color = { 0.0f, 1.0f, 0.0f, 1.0f };
-
-		DrawLine(v0, v1, color);
-		DrawLine(v1, v2, color);
-		DrawLine(v2, v0, color);
+		DrawTriangle(v0, v1, v2, color);
 	}
 }
 

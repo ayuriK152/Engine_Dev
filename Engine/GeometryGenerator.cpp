@@ -181,6 +181,13 @@ shared_ptr<Geometry> GeometryGenerator::CreateQuad()
 	return geometry;
 }
 
+shared_ptr<Geometry> GeometryGenerator::CreateTerrain(UINT widthCount, UINT heightCount)
+{
+	shared_ptr<Geometry> geometry = make_shared<Geometry>();
+
+	return geometry;
+}
+
 void GeometryGenerator::Subdivide(shared_ptr<Geometry> geometry)
 {
 	// Save a copy of the input geometry.

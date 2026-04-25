@@ -1,8 +1,8 @@
 #pragma once
 #include <Jolt/Renderer/DebugRenderer.h>
 
-#define DEFAULT_VERTEX_BUFFER_SIZE	50000
-#define DEFAULT_INDEX_BUFFER_SIZE	150000
+#define DEFAULT_VERTEX_BUFFER_SIZE	1000000
+#define DEFAULT_INDEX_BUFFER_SIZE	1000000
 
 enum BULB_API LogLevel
 {
@@ -76,6 +76,8 @@ public:
 	void DrawLine(Bulb::Vector3 from, Bulb::Vector3 to, Bulb::Color color);
 
 	void DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off) override;
+
+	void DrawTriangle(Bulb::Vector3 v1, Bulb::Vector3 v2, Bulb::Vector3 v3, Bulb::Color color);
 
 	Batch CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount) override;
 

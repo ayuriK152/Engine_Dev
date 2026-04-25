@@ -8,6 +8,7 @@ public:
 	static shared_ptr<Geometry> CreateBox(float width, float height, float depth, UINT32 numSubdivisions);
 	static shared_ptr<Geometry> CreateGeosphere(float radius, UINT32 numSubdivisions);
 	static shared_ptr<Geometry> CreateQuad();
+	static shared_ptr<Geometry> CreateTerrain(UINT widthCount, UINT heightCount);
 
 	static void Subdivide(shared_ptr<Geometry> mesh);
 	static Vertex MidPoint(const Vertex& v0, const Vertex& v1);

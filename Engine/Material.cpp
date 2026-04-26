@@ -86,3 +86,57 @@ void Material::SetNormal(wstring textureName)
 	normalSrvHeapIndex = 0;
 	normalTextureName = Utils::ToString(textureName);
 }
+
+void Material::SetMetallicMap(shared_ptr<Texture> texture)
+{
+	if (texture == nullptr)
+	{
+		SetDiffuse(L"Tex_Default");
+		return;
+	}
+
+	metallicSrvHeapIndex = texture->GetSRVHeapIndex();
+	metallicTextureName = texture->GetName();
+}
+
+void Material::SetMetallicMap(wstring textureName)
+{
+	metallicSrvHeapIndex = 0;
+	metallicTextureName = Utils::ToString(textureName);
+}
+
+void Material::SetRoughnessMap(shared_ptr<Texture> texture)
+{
+	if (texture == nullptr)
+	{
+		SetDiffuse(L"Tex_Default");
+		return;
+	}
+
+	roughnessSrvHeapIndex = texture->GetSRVHeapIndex();
+	roughnessTextureName = texture->GetName();
+}
+
+void Material::SetRoughnessMap(wstring textureName)
+{
+	roughnessSrvHeapIndex = 0;
+	roughnessTextureName = Utils::ToString(textureName);
+}
+
+void Material::SetSpecularMap(shared_ptr<Texture> texture)
+{
+	if (texture == nullptr)
+	{
+		SetDiffuse(L"Tex_Default");
+		return;
+	}
+
+	specularSrvHeapIndex = texture->GetSRVHeapIndex();
+	specularTextureName = texture->GetName();
+}
+
+void Material::SetSpecularMap(wstring textureName)
+{
+	specularSrvHeapIndex = 0;
+	specularTextureName = Utils::ToString(textureName);
+}

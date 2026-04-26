@@ -56,6 +56,10 @@ struct Material {
     float    Roughness;
     uint     DiffuseMapIndex;
     uint     NormalMapIndex;
+    uint     MetallicMapIndex;
+    uint     RoughnessMapIndex;
+    uint     SpecularMapIndex;
+    float3   padding1;
 };
 
 struct Particle {

@@ -7,5 +7,5 @@
     <Metallic value="0.0"/>
     <Roughness value="0.6"/>
     <DiffuseTexture>..\Resources\Textures\Brute\MaleBruteA_Body_diffuse.png</DiffuseTexture>
-    <NormalTexture></NormalTexture>
+    <NormalTexture>..\Resources\Textures\Brute\MaleBruteA_StdNM.png</NormalTexture>
 </Material>

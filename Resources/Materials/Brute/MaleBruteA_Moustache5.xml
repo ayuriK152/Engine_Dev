@@ -8,4 +8,5 @@
     <Roughness value="0.4"/>
     <DiffuseTexture>..\Resources\Textures\Brute\MaleBruteA_Moustache_diffuse.png</DiffuseTexture>
     <NormalTexture>..\Resources\Textures\Brute\MaleBruteA_Moustache_normal.png</NormalTexture>
+    <SpecularTexture>..\Resources\Textures\Brute\MaleBruteA_Moustache_specular.png</SpecularTexture>
 </Material>

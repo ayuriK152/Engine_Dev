@@ -10,7 +10,6 @@ FrameResource::FrameResource()
 	}
 
 
-	// ¾êµµ InitÀ¸·Î ¿Å°Ü¾ßµÊ
 	instanceSB = make_unique<UploadBuffer<InstanceConstants>>(DEFAULT_INSTANCE_COUNT, false);
 	materialSB = make_unique<UploadBuffer<MaterialConstants>>(DEFAULT_MATERIAL_COUNT, false);
 	lightSB = make_unique<UploadBuffer<LightConstants>>(DEFAULT_COUNT_LIGHT, false);
@@ -123,6 +122,9 @@ void FrameResource::UpdateMaterialSB()
 			matConstants.Roughness = mat->roughness;
 			matConstants.DiffuseMapIndex = mat->diffuseSrvHeapIndex;
 			matConstants.NormalMapIndex = mat->normalSrvHeapIndex;
+			matConstants.MetallicMapIndex = mat->metallicSrvHeapIndex;
+			matConstants.RoughnessMapIndex = mat->roughnessSrvHeapIndex;
+			matConstants.SpecularMapIndex = mat->specularSrvHeapIndex;
 
 			materialSB->CopyData(mat->matSBIndex, matConstants);
 

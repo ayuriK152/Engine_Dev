@@ -36,7 +36,6 @@ void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 		break;
 	}
 
-	// 버퍼뷰의 직접 접근을 막고 Getter 메소드 정의는 어떤지?
 	cmdList->IASetVertexBuffers(0, 1, &_mesh->vertexBufferView);
 	cmdList->IASetIndexBuffer(&_mesh->indexBufferView);
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

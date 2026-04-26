@@ -29,6 +29,10 @@ struct MaterialConstants
 	float Roughness = 0.5f;
 	UINT DiffuseMapIndex;
 	UINT NormalMapIndex;
+	UINT MetallicMapIndex;
+	UINT RoughnessMapIndex;
+	UINT SpecularMapIndex;
+	XMFLOAT3 padding;
 };
 
 struct CameraConstants

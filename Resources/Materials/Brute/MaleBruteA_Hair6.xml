@@ -8,4 +8,5 @@
     <Roughness value="0.4"/>
     <DiffuseTexture>..\Resources\Textures\Brute\MaleBruteA_Hair_diffuse.png</DiffuseTexture>
     <NormalTexture>..\Resources\Textures\Brute\MaleBruteA_Hair_normal.png</NormalTexture>
+    <SpecularTexture>..\Resources\Textures\Brute\MaleBruteA_Hair_specular.png</SpecularTexture>
 </Material>

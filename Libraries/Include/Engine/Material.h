@@ -19,15 +19,31 @@ public:
 	void SetNormal(shared_ptr<Texture> texture);
 	void SetNormal(wstring textureName);
 
+	void SetMetallicMap(shared_ptr<Texture> texture);
+	void SetMetallicMap(wstring textureName);
+
+	void SetRoughnessMap(shared_ptr<Texture> texture);
+	void SetRoughnessMap(wstring textureName);
+
+	void SetSpecularMap(shared_ptr<Texture> texture);
+	void SetSpecularMap(wstring textureName);
+
 	static int GetCount() { return _count; }
 
 public:
 	string diffuseTextureName;
 	string normalTextureName;
+	string metallicTextureName;
+	string roughnessTextureName;
+	string specularTextureName;
 
 	int matSBIndex;
 	int diffuseSrvHeapIndex;
 	int normalSrvHeapIndex;
+	int metallicSrvHeapIndex;
+	int roughnessSrvHeapIndex;
+	int specularSrvHeapIndex;
+
 	int numFramesDirty;
 
 	XMFLOAT4X4 matTransform;

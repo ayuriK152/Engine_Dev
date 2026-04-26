@@ -8,4 +8,5 @@
     <Roughness value="0.5"/>
     <DiffuseTexture>..\Resources\Textures\Brute\MaleBruteA_Shoes_diffuse1.jpg</DiffuseTexture>
     <NormalTexture>..\Resources\Textures\Brute\MaleBruteA_Shoes_normal.png</NormalTexture>
+    <SpecularTexture>..\Resources\Textures\Brute\MaleBruteA_Shoes_specular.png</SpecularTexture>
 </Material>

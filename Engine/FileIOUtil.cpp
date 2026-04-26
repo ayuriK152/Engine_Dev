@@ -87,6 +87,18 @@ void FileIOUtil::XMLFromMaterial(shared_ptr<Material> material, const wstring& n
 	element->SetText(material->normalTextureName.c_str());
 	node->InsertEndChild(element);
 
+	element = doc.NewElement("MetallicTexture");
+	element->SetText(material->metallicTextureName.c_str());
+	node->InsertEndChild(element);
+
+	element = doc.NewElement("RoughnessTexture");
+	element->SetText(material->roughnessTextureName.c_str());
+	node->InsertEndChild(element);
+
+	element = doc.NewElement("SpecularTexture");
+	element->SetText(material->specularTextureName.c_str());
+	node->InsertEndChild(element);
+
 	char fullpath[100] = RESOURCE_PATH_MATERIAL;
 	strcat(fullpath, Utils::ToChar(name));
 	strcat(fullpath, "\\");
@@ -208,15 +220,44 @@ void FileIOUtil::LoadMaterials()
 
 		string textureName = "";
 		element = node->FirstChildElement("DiffuseTexture");
-		if (element->GetText()) {
-			textureName = string(element->GetText());
+		const char* text = element->GetText();
+		if (text) {
+			textureName = string(text);
 			mat->SetDiffuse(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
 		}
 
 		element = node->FirstChildElement("NormalTexture");
-		if (element->GetText()) {
-			textureName = string(element->GetText());
+		text = element->GetText();
+		if (text) {
+			textureName = string(text);
 			mat->SetNormal(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
+		}
+
+		element = node->FirstChildElement("MetallicTexture");
+		if (element != nullptr) {
+			text = element->GetText();
+			if (text) {
+				textureName = string(text);
+				mat->SetMetallicMap(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
+			}
+		}
+
+		element = node->FirstChildElement("RoughnessTexture");
+		if (element != nullptr) {
+			text = element->GetText();
+			if (text) {
+				textureName = string(text);
+				mat->SetRoughnessMap(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
+			}
+		}
+
+		element = node->FirstChildElement("SpecularTexture");
+		if (element != nullptr) {
+			text = element->GetText();
+			if (text) {
+				textureName = string(text);
+				mat->SetSpecularMap(RESOURCE->Get<Texture>(Utils::ToWString(textureName)));
+			}
 		}
 
 		RESOURCE->Add<Material>(i->path(), mat);

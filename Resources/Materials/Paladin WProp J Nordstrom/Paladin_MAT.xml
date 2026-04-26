@@ -8,4 +8,5 @@
     <Roughness value="0.5"/>
     <DiffuseTexture>..\Resources\Textures\Paladin\Paladin_diffuse.png</DiffuseTexture>
     <NormalTexture>..\Resources\Textures\Paladin\Paladin_normal.png</NormalTexture>
+    <SpecularTexture>..\Resources\Textures\Paladin\Paladin_specular.png</SpecularTexture>
 </Material>

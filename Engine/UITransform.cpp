@@ -66,6 +66,25 @@ void UITransform::SetLocalPosition(const Bulb::Vector3& position)
 	SetDirtyFlag();
 }
 
+void UITransform::SetSize(const Bulb::Vector2& size)
+{
+	SetDirtyFlag();
+	if (_stretchByParent) {
+		_stretchPercentage = size;
+
+		Bulb::Vector2 parentSize;
+		if (_parent != nullptr)
+			parentSize = _parent->GetSize();
+		else
+			parentSize = { GRAPHIC->GetViewport().Width, GRAPHIC->GetViewport().Height };
+
+		_size = { parentSize.x * _stretchPercentage.x, parentSize.y * _stretchPercentage.y };
+	}
+	else {
+		_size = size;
+	}
+}
+
 Bulb::Vector3 UITransform::GetPosition()
 {
 	if (_isDirty) UpdateTransform();

@@ -34,6 +34,11 @@ void UIText::Update()
 	}
 }
 
+void UIText::LoadXML(XMLElement* uiElem)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
 void UIText::SetText(const wstring& text)
 {
 	_isDirty = true;

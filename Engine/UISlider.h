@@ -11,6 +11,8 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void LoadXML(XMLElement* uiElem) override;
+
 public:
 	void SetEntireSize(Bulb::Vector2 size) {
 		_transform->SetSize(size);

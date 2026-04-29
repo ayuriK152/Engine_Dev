@@ -9,6 +9,8 @@ public:
 	UIPanel(UIType type);
 	virtual ~UIPanel();
 
+	void LoadXML(XMLElement* uiElem) override;
+
 public:
 	void Render(ID3D12GraphicsCommandList* cmdList) override;
 

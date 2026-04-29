@@ -13,6 +13,8 @@ public:
 	virtual void Update() { }
 	virtual void Render(ID3D12GraphicsCommandList* cmdList) { }
 
+	virtual void LoadXML(XMLElement* uiElem) = 0;
+
 public:
 	void SetName(const string name) { _name = name; }
 	string GetName() { return _name; }

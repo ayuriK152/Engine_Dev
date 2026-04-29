@@ -15,10 +15,8 @@ public:
 	void SetPivot(const Bulb::Vector2& pivot);
 	void SetPosition(const Bulb::Vector3& position);
 	void SetLocalPosition(const Bulb::Vector3& position);
-	void SetSize(const Bulb::Vector2& size) {
-		SetDirtyFlag();
-		_size = size;
-	}
+	void SetStretchSize(bool value) { _stretchByParent = value; }
+	void SetSize(const Bulb::Vector2& size);
 	void SetWidth(float width) {
 		SetDirtyFlag();
 		_size.x = width;
@@ -64,6 +62,8 @@ private:
 	bool _isDynamicPosition = false;
 	Bulb::Vector3 _position = { 0.0f, 0.0f, 0.0f };
 	Bulb::Vector3 _localPosition = { 0.0f, 0.0f, 0.0f };
+	bool _stretchByParent = false;
+	Bulb::Vector2 _stretchPercentage = { 100.0f, 100.0f };
 	Bulb::Vector2 _size = { 100.0f, 100.0f };
 	float _depth = 1.0f;
 

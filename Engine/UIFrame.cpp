@@ -10,3 +10,8 @@ UIFrame::~UIFrame()
 {
 	cout << "Released - UIFrame\n";
 }
+
+void UIFrame::LoadXML(XMLElement* uiElem)
+{
+	
+}

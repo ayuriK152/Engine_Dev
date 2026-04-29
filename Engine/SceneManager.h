@@ -15,6 +15,8 @@ private:
 	void ReadGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> parent);
 	void WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObject> go);
 
+	void ReadUIData(XMLElement* uisElem, shared_ptr<UIElement> parent);
+
 public:
 	SceneManager(const SceneManager& rhs) = delete;
 	SceneManager& operator=(const SceneManager& rhs) = delete;

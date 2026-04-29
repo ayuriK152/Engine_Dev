@@ -100,16 +100,26 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 	XMLNode* node = doc.FirstChild();
 
 	XMLElement* skyboxElem = node->FirstChildElement("Skybox");
-	const char* skyboxTexPath = skyboxElem->Attribute("Texture");
-	if (skyboxTexPath != 0) {
-		shared_ptr<Texture> skyboxTex = RESOURCE->Get<Texture>(Utils::ToWString(skyboxTexPath));
-		if (skyboxTex != nullptr)
-			RENDER->SetSkyboxTexture(skyboxTex);
+	if (skyboxElem) {
+		const char* skyboxTexPath = skyboxElem->Attribute("Texture");
+		if (skyboxTexPath != 0) {
+			shared_ptr<Texture> skyboxTex = RESOURCE->Get<Texture>(Utils::ToWString(skyboxTexPath));
+			if (skyboxTex != nullptr)
+				RENDER->SetSkyboxTexture(skyboxTex);
+		}
 	}
 
 	XMLElement* objsElem = node->FirstChildElement("GameObjects");
 	
-	ReadGameObjectData(objsElem, nullptr);
+	if (objsElem != nullptr) {
+		ReadGameObjectData(objsElem, nullptr);
+	}
+
+	XMLElement* uisElem = node->FirstChildElement("UIs");
+
+	if (uisElem != nullptr) {
+		ReadUIData(uisElem, nullptr);
+	}
 
 	// 이 부분은 추후에 에디터에서만 적용되도록 변경해야함.
 	EDITOR->SetEditorWindowText(_currentSceneName);
@@ -293,4 +303,20 @@ void SceneManager::WriteGameObjectData(XMLElement* objsElem, shared_ptr<GameObje
 	}
 
 	objsElem->InsertEndChild(objElem);
+}
+
+void SceneManager::ReadUIData(XMLElement* uisElem, shared_ptr<UIElement> parent)
+{
+	XMLElement* uiElem = uisElem->FirstChildElement("UI");
+
+	while (uiElem) {
+		shared_ptr<UIElement> ui;
+		string uiType(uiElem->Attribute("Type"));
+
+		if (uiType == "Panel") ui = UI->CreateUI<UIPanel>();
+
+		ui->LoadXML(uiElem);
+
+		uiElem = uiElem->NextSiblingElement();
+	}
 }

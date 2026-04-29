@@ -10,6 +10,8 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void LoadXML(XMLElement* uiElem) override;
+
 public:
 	void SetText(const wstring& text);
 	void SetFont(const wstring& fontName);

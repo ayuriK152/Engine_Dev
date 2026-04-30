@@ -97,6 +97,8 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 	if (e != XML_SUCCESS)
 		return;
 
+	UI->Initialize();
+
 	XMLNode* node = doc.FirstChild();
 
 	XMLElement* skyboxElem = node->FirstChildElement("Skybox");

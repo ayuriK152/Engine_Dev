@@ -30,6 +30,12 @@ Bulb::ProcessResult UIManager::Delete()
 	return Bulb::ProcessResult::FAILED_INSTANCE_NOT_FOUND;
 }
 
+void UIManager::Initialize()
+{
+	_elements.clear();
+	_panels.clear();
+}
+
 void UIManager::Init()
 {
 	_quadMesh = RESOURCE->Get<Mesh>(DEFAULT_MESH_QUAD);

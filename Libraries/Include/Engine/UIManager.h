@@ -22,6 +22,8 @@ public:
 	static UIManager* GetInstance();
 	static Bulb::ProcessResult Delete();
 
+	void Initialize();
+
 	template<typename T>
 	shared_ptr<T> CreateUI(string name = "");
 

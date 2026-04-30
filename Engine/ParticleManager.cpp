@@ -55,3 +55,8 @@ void ParticleManager::AddParticleEmitter(shared_ptr<ParticleEmitter> particleEmi
 {
 	_particleEmitters[particleEmitter->GetID()] = particleEmitter;
 }
+
+void ParticleManager::DeleteParticleEmitter(shared_ptr<ParticleEmitter> particleEmitter)
+{
+	_particleEmitters.erase(particleEmitter->GetID());
+}

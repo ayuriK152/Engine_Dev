@@ -76,6 +76,8 @@ void ParticleEmitter::OnDestroy()
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "OnDestroy - ParticleEmitter:" << _id << "\n";
 #endif
+
+	PARTICLE->DeleteParticleEmitter(static_pointer_cast<ParticleEmitter>(shared_from_this()));
 }
 
 void ParticleEmitter::LoadXML(Bulb::XMLElement compElem)

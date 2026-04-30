@@ -21,6 +21,7 @@ public:
 	static Bulb::ProcessResult Delete();
 
 	void AddParticleEmitter(shared_ptr<ParticleEmitter> particleEmitter);
+	void DeleteParticleEmitter(shared_ptr<ParticleEmitter> particleEmitter);
 
 private:
 	static ParticleManager* s_instance;

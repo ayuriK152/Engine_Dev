@@ -9,6 +9,7 @@ private:
 	~SceneManager();
 
 	void Init();
+	void PreUpdate();
 
 	void InitializeScene();
 
@@ -26,6 +27,7 @@ public:
 
 	void LoadScene();
 	void LoadScene(string sceneName, bool isFullPath = false);
+	void LoadSceneOnRender(string scenePath);
 
 	void SaveScene(bool saveAs = false);
 	void SaveScene(string scenePath, bool isFullPath = false);

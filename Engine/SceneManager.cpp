@@ -37,6 +37,14 @@ void SceneManager::Init()
 	}
 }
 
+void SceneManager::PreUpdate()
+{
+	if (_queuedScenePath != "") {
+		LoadScene(_queuedScenePath);
+		_queuedScenePath = "";
+	}
+}
+
 void SceneManager::LoadScene()
 {
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -66,7 +74,8 @@ void SceneManager::LoadScene()
 			DEBUG->ErrorLog("Failed make relative path of target scene! Target scene should located in Resources/Scenes folder!");
 		}
 		else {
-			LoadScene(relPath);
+			LoadSceneOnRender(relPath);
+			//LoadScene(relPath);
 		}
 	}
 
@@ -125,6 +134,11 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 
 	// 이 부분은 추후에 에디터에서만 적용되도록 변경해야함.
 	EDITOR->SetEditorWindowText(_currentSceneName);
+}
+
+void SceneManager::LoadSceneOnRender(string scenePath)
+{
+	_queuedScenePath = scenePath;
 }
 
 void SceneManager::SaveScene(bool saveAs)

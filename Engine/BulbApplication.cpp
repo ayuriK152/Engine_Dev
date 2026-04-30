@@ -111,6 +111,7 @@ bool BulbApplication::Init()
 void BulbApplication::PreUpdate()
 {
 	if (!_appStatus.appPaused) {
+		SCENE->PreUpdate();
 		DEBUG->PreUpdate();
 		PHYSICS->PreUpdate();
 		RENDER->PreUpdate();

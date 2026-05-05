@@ -13,6 +13,11 @@ public:
 	virtual void Update() { }
 	virtual void Render(ID3D12GraphicsCommandList* cmdList) { }
 
+	virtual void OnMouseEnter() { _isHovered = true; }
+	virtual void OnMouseExit() { _isHovered = false; _isClicked = false; }
+	virtual void OnMouseDown() { if (_isHovered) _isClicked = true; }
+	virtual void OnMouseUp() { _isClicked = false; }
+
 	virtual void LoadXML(XMLElement* uiElem) = 0;
 
 public:
@@ -32,4 +37,8 @@ protected:
 	shared_ptr<UITransform> _transform;
 
 	UINT _renderActive = 0;
+
+	// Mouse Input
+	bool _isHovered;
+	bool _isClicked;
 };

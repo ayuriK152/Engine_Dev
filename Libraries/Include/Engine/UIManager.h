@@ -45,6 +45,7 @@ private:
 	int _panelCount = 0;
 
 	shared_ptr<Mesh> _quadMesh;
+	shared_ptr<UIElement> _hoveredUI;
 
 	vector<shared_ptr<UIElement>> _elements;
 	vector<shared_ptr<UIPanel>> _panels;

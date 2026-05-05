@@ -51,6 +51,8 @@ public:
 
 	bool IsDirty() { return _isDirty; }
 
+	bool CheckInRect(float x, float y);
+
 private:
 	void SetDirtyFlag();
 

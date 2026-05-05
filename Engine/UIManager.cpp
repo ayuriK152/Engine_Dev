@@ -47,14 +47,36 @@ void UIManager::Init()
 // dirty flag를 넣던가 해서 최적화 작업 필요
 void UIManager::Update()
 {
-	for (auto& ui : _elements) {
-		ui->Update();
-	}
-
 	D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
 	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewProjMatrix());
 
+	POINT mousePos = INPUTM->GetMousePosition();
+	mousePos.x = mousePos.x - viewport.Width / 2.0f;
+	mousePos.y = -mousePos.y + viewport.Height / 2.0f;
+
 	_uiConstants.clear();
+
+	static shared_ptr<UIElement> prevUI;
+	prevUI = _hoveredUI;
+	_hoveredUI = nullptr;
+	for (auto& ui : _elements) {
+		ui->Update();
+		if (ui->GetTransform()->CheckInRect(mousePos.x, mousePos.y)) {
+			if (_hoveredUI == nullptr)
+				_hoveredUI = ui;
+			else {
+				if (ui->GetTransform()->GetDepth() > _hoveredUI->GetTransform()->GetDepth()) {
+					_hoveredUI = ui;
+				}
+			}
+		}
+	}
+
+	if (prevUI != _hoveredUI) {
+		if (prevUI != nullptr) prevUI->OnMouseExit();
+		if (_hoveredUI != nullptr) _hoveredUI->OnMouseEnter();
+	}
+
 	for (auto& ui : _panels) {
 		UIInstanceConstants constants;
 		shared_ptr<UITransform> transform = ui->GetTransform();

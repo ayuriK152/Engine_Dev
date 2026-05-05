@@ -116,6 +116,14 @@ void UITransform::AddChild(shared_ptr<UITransform> child)
 	_childs.push_back(child);
 }
 
+bool UITransform::CheckInRect(float x, float y)
+{
+	float halfWidth = _size.x * 0.5f;
+	float halfHeight = _size.y * 0.5f;
+
+	return (x >= _position.x - halfWidth && x <= _position.x + halfWidth) && (y >= _position.y - halfHeight && y <= _position.y + halfHeight);
+}
+
 void UITransform::SetDirtyFlag()
 {
 	_isDirty = true;

@@ -105,15 +105,19 @@ void InputManager::OnMouseMove(int x, int y)
 	_isMouseMoving = true;
 	_mouseDelta = Bulb::Vector2((float)x, (float)y);
 
-	if (_isMouseCenterFixed)
-	{
-		RECT rect;
+	if (_isMouseCenterFixed) {
+		static RECT rect;
 		GetClientRect(GRAPHIC->GetMainWnd(), &rect);
-		POINT center = { (rect.right - rect.left) / 2, (rect.bottom - rect.top) / 2 };
+
+		static POINT center;
+		center = { (rect.right - rect.left) / 2, (rect.bottom - rect.top) / 2 };
 		ClientToScreen(GRAPHIC->GetMainWnd(), &center);
-		_mousePosition.x = center.x;
-		_mousePosition.y = center.y;
+		_mousePosition = center;
 		SetCursorPos(center.x, center.y);
+	}
+	else {
+		GetCursorPos(&_mousePosition);
+		ScreenToClient(GRAPHIC->GetMainWnd(), &_mousePosition);
 	}
 }
 

@@ -14,6 +14,9 @@ public:
 public:
 	void Render(ID3D12GraphicsCommandList* cmdList) override;
 
+	void OnMouseEnter() override;
+	void OnMouseExit() override;
+
 public:
 	void SetTexture(shared_ptr<Texture> texture);
 	void SetTexture(wstring textureName);

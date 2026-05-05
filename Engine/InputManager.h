@@ -101,7 +101,7 @@ public:
 	bool IsMouseCenterFixed() { return _isMouseCenterFixed; }
 	void SetMouseCenterFixMode(bool value) { _isMouseCenterFixed = value; }
 
-	Bulb::Vector2 GetMousePosition() { return _mousePosition; }
+	POINT GetMousePosition() { return _mousePosition; }
 	Bulb::Vector2 GetMouseDelta() { return _mouseDelta; }
 
 	bool IsMouseLeftButtonDown() {
@@ -138,7 +138,7 @@ private:
 	bool _isMouseMoving = false;
 	bool _isMouseCenterFixed = false;
 	MouseStates _mouseStates;
-	Bulb::Vector2 _mousePosition;
+	POINT _mousePosition;
 	Bulb::Vector2 _mouseDelta;
 	unordered_map<KeyValue, KeyState> _keyStates;
 };

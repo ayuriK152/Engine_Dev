@@ -296,6 +296,7 @@
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="StartMenuSceneScript.h" />
     <ClInclude Include="TPVCamera.h" />
   </ItemGroup>
   <ItemGroup>
@@ -311,6 +312,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Client Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Editor Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StartMenuSceneScript.cpp" />
     <ClCompile Include="TPVCamera.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

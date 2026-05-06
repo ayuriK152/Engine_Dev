@@ -222,6 +222,7 @@
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="UIButton.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -489,6 +490,7 @@
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="UIButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

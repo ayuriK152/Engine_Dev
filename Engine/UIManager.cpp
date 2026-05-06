@@ -65,7 +65,7 @@ void UIManager::Update()
 			if (_hoveredUI == nullptr)
 				_hoveredUI = ui;
 			else {
-				if (ui->GetTransform()->GetDepth() > _hoveredUI->GetTransform()->GetDepth()) {
+				if (ui->GetTransform()->GetDepth() <= _hoveredUI->GetTransform()->GetDepth()) {
 					_hoveredUI = ui;
 				}
 			}
@@ -75,6 +75,9 @@ void UIManager::Update()
 	if (prevUI != _hoveredUI) {
 		if (prevUI != nullptr) prevUI->OnMouseExit();
 		if (_hoveredUI != nullptr) _hoveredUI->OnMouseEnter();
+	}
+	if (_hoveredUI != nullptr) {
+		if (INPUTM->IsMouseLeftButtonDown()) _hoveredUI->OnMouseDown();
 	}
 
 	for (auto& ui : _panels) {

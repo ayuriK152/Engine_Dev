@@ -1,0 +1,62 @@
+#include "pch.h"
+#include "UIButton.h"
+
+UIButton::UIButton() : UIElement(UIType::Button)
+{
+	_name = "UIButton";
+
+	background = UI->CreateUI<UIPanel>();
+	text = UI->CreateUI<UIText>();
+}
+
+UIButton::~UIButton()
+{
+#ifdef PRINT_DEBUG_CONSOLE_LOG
+	cout << "Released - UIButton\n";
+#endif
+
+	background.reset();
+	text.reset();
+}
+
+void UIButton::Init()
+{
+	_transform->SetSize({ 200.0f, 60.0f });
+
+	background->SetColor(colorDefault);
+	background->GetTransform()->SetParent(_transform);
+	background->GetTransform()->SetStretchSize(true);
+	background->GetTransform()->SetSize({ 1.0f, 1.0f });
+	background->GetTransform()->SetDepth(_transform->GetDepth() + 1.0f);
+
+	text->GetTransform()->SetParent(_transform);
+	text->SetSize({ 200.0f, 60.0f });
+}
+
+void UIButton::Update()
+{
+
+}
+
+void UIButton::LoadXML(XMLElement* uiElem)
+{
+	XMLElement* textElem = uiElem->FirstChildElement("Text");
+	string textStr(textElem->Attribute("Text"));
+	text->SetText(textStr);
+}
+
+void UIButton::OnMouseEnter()
+{
+	background->SetColor(colorHovered);
+}
+
+void UIButton::OnMouseExit()
+{
+	background->SetColor(colorDefault);
+}
+
+void UIButton::OnMouseDown()
+{
+	background->SetColor(colorClicked);
+	buttonEvent.Execute();
+}

@@ -13,8 +13,14 @@ public:
 	void LoadXML(XMLElement* uiElem) override;
 
 public:
+	void SetText(const string& text) { SetText(Utils::ToWString(text)); }
+
 	void SetText(const wstring& text);
+
+	void SetFont(const string& fontName) { SetFont(Utils::ToWString(fontName)); }
+
 	void SetFont(const wstring& fontName);
+
 	void SetFontSize(float fontSize);
 	void SetTextAlignment(DWRITE_TEXT_ALIGNMENT textAlignment) { 
 		_textAlignment = textAlignment;

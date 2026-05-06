@@ -1,4 +1,17 @@
 <Scene Name="StartMenuScene">
+    <GameObjects>
+        <GameObject Name="MainCamera" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="Camera" MainCamera="true"/>
+            </Components>
+        </GameObject>
+        <GameObject>
+            <Components>
+                <Component ComponentType="StartMenuSceneScript"/>
+            </Components>
+        </GameObject>
+    </GameObjects>
     <UIs>
         <UI Type="Panel" Texture="..\Resources\Textures\EngineDefault\white1x1.dds">
             <Pivot x="0.5" y="0.5"/>

@@ -11,7 +11,9 @@ UISlider::UISlider() : UIElement(UIType::Slider)
 
 UISlider::~UISlider()
 {
+#ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - UISlider\n";
+#endif
 
 	_background.reset();
 	_fill.reset();

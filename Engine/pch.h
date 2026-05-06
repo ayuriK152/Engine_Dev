@@ -181,6 +181,7 @@ using namespace JPH::literals;
 #include "UIPanel.h"
 #include "UISlider.h"
 #include "UIText.h"
+#include "UIButton.h"
 
 
 #include "EditorCamera.h"

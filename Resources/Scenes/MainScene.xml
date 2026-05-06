@@ -29,7 +29,7 @@
         </GameObject>
         <GameObject PrefabPath="..\Resources\Prefabs\TPVCamera.xml" Name="TPVCamera" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosX="0" PosY="5" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="Transform" PosX="0" PosY="2" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
             </Components>
         </GameObject>
         <GameObject PrefabPath="..\Resources\Prefabs\Brute.xml" Name="Brute" PSO="opaque_solid" Tag="Enemy">

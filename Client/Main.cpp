@@ -3,6 +3,7 @@
 #include "EnemyScript.h"
 #include "PlayerScript.h"
 #include "TPVCamera.h"
+#include "StartMenuSceneScript.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {
@@ -13,7 +14,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 	desc.clientWidth = 1600;
 	desc.clientHeight = 900;
 
-	SCENE->LoadScene("MainScene.xml");
+	SCENE->LoadScene("StartMenuScene.xml");
 
 	APP->SetAppInst(hInstance, desc);
 

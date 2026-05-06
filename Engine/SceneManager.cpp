@@ -330,6 +330,7 @@ void SceneManager::ReadUIData(XMLElement* uisElem, shared_ptr<UIElement> parent)
 		string uiType(uiElem->Attribute("Type"));
 
 		if (uiType == "Panel") ui = UI->CreateUI<UIPanel>();
+		if (uiType == "Button") ui = UI->CreateUI<UIButton>();
 
 		ui->LoadXML(uiElem);
 

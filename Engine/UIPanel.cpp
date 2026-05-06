@@ -45,12 +45,12 @@ void UIPanel::Render(ID3D12GraphicsCommandList* cmdList)
 
 void UIPanel::OnMouseEnter()
 {
-	DEBUG->Log("Enter");
+
 }
 
 void UIPanel::OnMouseExit()
 {
-	DEBUG->Log("Exit");
+
 }
 
 void UIPanel::SetTexture(shared_ptr<Texture> texture)

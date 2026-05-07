@@ -1,8 +1,28 @@
 #pragma once
 #include "Script.h"
+#include "BaseState.h"
 
 class StartMenuSceneScript : public Script
 {
+	enum class StartMenuSceneState {
+		Initialized = -1,
+		MenuFadeIn,
+		Menu
+	};
+
+	class MenuFadeIn : public BaseState<StartMenuSceneScript> {
+		void StateStart(StartMenuSceneScript* owner) override;
+		void StateUpdate(StartMenuSceneScript* owner) override;
+
+	private:
+		float _elapsedTime = 0.0f;
+	};
+
+	class Menu : public BaseState<StartMenuSceneScript> {
+		void StateStart(StartMenuSceneScript* owner) override;
+		void StateUpdate(StartMenuSceneScript* owner) override;
+	};
+
 public:
 	~StartMenuSceneScript();
 
@@ -22,6 +42,20 @@ public:
 	void OnClickedStartButton();
 
 private:
+	void SetState(StartMenuSceneState state) {
+		if (_currentState == state) return;
+		_currentState = state;
+		_isStateChanged = true;
+	}
+
+private:
+	vector<BaseState<StartMenuSceneScript>*> _states;
+	StartMenuSceneState _currentState = StartMenuSceneState::Initialized;
+	bool _isStateChanged = false;
+
+	shared_ptr<UIPanel> _fadePanel;
 	shared_ptr<UIButton> _startButton;
+
+	float _fadeInTime = 1.0f;
 };
 

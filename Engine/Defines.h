@@ -23,6 +23,7 @@
 #define UI			GET_SINGLE(UIManager)
 #define SCENE		GET_SINGLE(SceneManager)
 #define EDITOR		GET_SINGLE(EditorManager)
+#define SOUND		GET_SINGLE(SoundManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)
 

@@ -47,6 +47,12 @@ void UIManager::Init()
 // dirty flag를 넣던가 해서 최적화 작업 필요
 void UIManager::Update()
 {
+	if (_sortFlag) {
+		sort(_elements.begin(), _elements.end(), [](shared_ptr<UIElement> a, shared_ptr<UIElement> b) -> bool { return a->GetTransform()->GetDepth() > b->GetTransform()->GetDepth(); });
+		sort(_panels.begin(), _panels.end(), [](shared_ptr<UIPanel> a, shared_ptr<UIPanel> b) -> bool { return a->GetTransform()->GetDepth() > b->GetTransform()->GetDepth(); });
+		_sortFlag = false;
+	}
+
 	D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
 	XMMATRIX viewProj = XMLoadFloat4x4(&Camera::GetViewProjMatrix());
 
@@ -61,6 +67,9 @@ void UIManager::Update()
 	_hoveredUI = nullptr;
 	for (auto& ui : _elements) {
 		ui->Update();
+
+		if (ui->_passthroughMouse) continue;
+
 		if (ui->GetTransform()->CheckInRect(mousePos.x, mousePos.y)) {
 			if (_hoveredUI == nullptr)
 				_hoveredUI = ui;
@@ -97,7 +106,7 @@ void UIManager::Update()
 		_uiConstants.push_back(constants);
 	}
 
-	_uploadBuffer->CopyData(_uiConstants.data(), _elements.size());
+	_uploadBuffer->CopyData(_uiConstants.data(), _panels.size());
 }
 
 void UIManager::Render(ID3D12GraphicsCommandList* cmdList)
@@ -143,6 +152,8 @@ void UIManager::AddUI(const shared_ptr<UIElement>& ui)
 		++_panelCount;
 		_panels.push_back(static_pointer_cast<UIPanel>(ui));
 	}
+
+	_sortFlag = true;
 }
 
 void UIManager::DeleteUI(const shared_ptr<UIElement>& ui)

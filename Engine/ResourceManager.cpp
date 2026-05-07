@@ -88,9 +88,11 @@ void ResourceManager::Init()
 
 	//==========Texture==========
 	auto defaultTex = make_shared<Texture>(L"..\\Resources\\Textures\\EngineDefault\\white1x1.dds");
+	defaultTex->SetName("Tex_Default");
 	Add<Texture>(L"Tex_Default", defaultTex);
 
 	auto skyboxTex = make_shared<Texture>(L"..\\Resources\\Textures\\EngineDefault\\Skybox_Daylight.dds", TextureType::Skybox);
+	skyboxTex->SetName("Tex_DefaultSkybox");
 	Add<Texture>(L"Tex_DefaultSkybox", skyboxTex);
 
 

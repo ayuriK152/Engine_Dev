@@ -25,7 +25,7 @@ public:
 		SetDirtyFlag();
 		_size.y = height;
 	}
-	void SetDepth(float depth) { _depth = depth; }
+	void SetDepth(float depth);
 	void SetDynamicPosition(bool value) { _isDynamicPosition = value; }
 
 	Bulb::Vector2 GetPivot() { return _pivot; }

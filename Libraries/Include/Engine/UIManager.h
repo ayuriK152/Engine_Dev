@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_UI_COUNT 10
+#define DEFAULT_UI_COUNT 30
 
 class BULB_API UIManager
 {
@@ -32,6 +32,8 @@ public:
 	void AddUI(const shared_ptr<UIElement>& ui);
 	void DeleteUI(const shared_ptr<UIElement>& ui);
 
+	void SetDepthSortFlag() { _sortFlag = true; }
+
 	Bulb::Vector2 GetUIResolution() { return _uiResolution; }
 
 private:
@@ -53,6 +55,8 @@ private:
 
 	unique_ptr<UploadBuffer<UIInstanceConstants>> _uploadBuffer = nullptr;
 	UINT _uploadBufferSrvIndex = -1;
+
+	bool _sortFlag = false;
 };
 
 template<typename T>

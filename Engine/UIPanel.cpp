@@ -9,7 +9,8 @@ UIPanel::UIPanel() : UIElement(UIType::Panel)
 
 UIPanel::UIPanel(UIType type) : UIElement((UINT)UIType::Panel | (UINT)type)
 {
-
+	_name = "UIPanel";
+	SetTexture(L"Tex_Default");
 }
 
 UIPanel::~UIPanel()
@@ -23,6 +24,8 @@ void UIPanel::LoadXML(XMLElement* uiElem)
 	SetTexture(RESOURCE->Get<Texture>(Utils::ToWString(_textureName)));
 
 	shared_ptr<UITransform> transform = GetTransform();
+
+	transform->SetDepth(uiElem->FloatAttribute("Depth"));
 
 	XMLElement* pivotElem = uiElem->FirstChildElement("Pivot");
 	transform->SetPivot({ pivotElem->FloatAttribute("x", 0.5f), pivotElem->FloatAttribute("y", 0.5f) });

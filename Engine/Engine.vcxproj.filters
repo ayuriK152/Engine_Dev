@@ -222,7 +222,12 @@
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h" />
-    <ClInclude Include="UIButton.h" />
+    <ClInclude Include="SoundManager.h">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>06. UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -490,7 +495,12 @@
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>01. EngineComponents\01. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="UIButton.cpp">
+      <Filter>06. UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Enums.h">

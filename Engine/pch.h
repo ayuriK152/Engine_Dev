@@ -85,6 +85,7 @@ using namespace Microsoft::WRL;
 #include "ImGUI/imgui_impl_dx12.h"
 #include "ImGUI/imgui_impl_win32.h"
 #include "ImGUI/imgui_internal.h"
+#include "fmod/fmod.hpp"
 
 // Jolt Physics
 #include <Jolt/Jolt.h>
@@ -125,6 +126,7 @@ using namespace JPH::literals;
 #pragma comment(lib, "DirectXTK/Release/DirectXTK12.lib")
 #pragma comment(lib, "Jolt/Release/Jolt.lib")
 #endif
+#pragma comment(lib, "fmod/fmod_vc.lib")
 
 #include "Types.h"
 #include "Defines.h"
@@ -212,6 +214,7 @@ using namespace JPH::literals;
 #include "UIManager.h"
 #include "SceneManager.h"
 #include "EditorManager.h"
+#include "SoundManager.h"
 
 #include "GameTimer.h"
 #include "BulbApplication.h"

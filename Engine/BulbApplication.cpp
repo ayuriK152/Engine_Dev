@@ -100,6 +100,7 @@ bool BulbApplication::Init()
 	PHYSICS->Init();
 	SCENE->Init();
 	INPUTM->Init();
+	SOUND->Init();
 	Utils::Init();
 
 	DEBUG->Init();

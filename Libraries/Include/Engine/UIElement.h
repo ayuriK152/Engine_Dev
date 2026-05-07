@@ -30,6 +30,8 @@ public:
 	void SetRenderActive(bool value);
 	bool IsRenderActive() { return _renderActive == 0; }
 
+	void SetPassthroughMouse(bool value) { _passthroughMouse = value; }
+
 protected:
 	string _name;
 	UINT _type;
@@ -41,4 +43,6 @@ protected:
 	// Mouse Input
 	bool _isHovered;
 	bool _isClicked;
+
+	bool _passthroughMouse = false;
 };

@@ -85,6 +85,17 @@ void UITransform::SetSize(const Bulb::Vector2& size)
 	}
 }
 
+void UITransform::SetDepth(float depth)
+{
+	float depthDiff = depth - _depth;
+	for (auto& child : _childs) {
+		child->SetDepth(child->GetDepth() + depthDiff);
+	}
+	_depth = depth;
+
+	UI->SetDepthSortFlag();
+}
+
 Bulb::Vector3 UITransform::GetPosition()
 {
 	if (_isDirty) UpdateTransform();

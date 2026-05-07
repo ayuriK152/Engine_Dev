@@ -79,6 +79,8 @@ void EditorManager::Play()
 
 void EditorManager::Stop()
 {
+	SOUND->StopAllSounds();
+
 	auto& objects = RENDER->GetObjects();
 
 	// 런타임중 생성된 오브젝트 삭제

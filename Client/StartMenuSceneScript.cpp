@@ -35,6 +35,9 @@ void StartMenuSceneScript::Init()
 	mainTitlePanel->GetTransform()->SetPosition({ 0.0f, 150.0f, 0.0f });
 
 	SOUND->SetMasterVolume(0.3f);
+
+	SOUND->LoadSound("Sounds/MainMenu.mp3", true);
+	SOUND->LoadSound("Sounds/StartGameButton.mp3", false);
 }
 
 void StartMenuSceneScript::Update()
@@ -62,8 +65,24 @@ void StartMenuSceneScript::SaveXML(Bulb::XMLElement compElem)
 
 }
 
+ComponentSnapshot StartMenuSceneScript::CaptureSnapshot()
+{
+	ComponentSnapshot snapshot;
+	snapshot.id = _id;
+	snapshot.componentType = "StartMenuSceneScript";
+
+	return snapshot;
+}
+
+void StartMenuSceneScript::RestoreSnapshot(ComponentSnapshot snapshot)
+{
+	SetState(StartMenuSceneState::MenuFadeIn);
+	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+}
+
 void StartMenuSceneScript::OnClickedStartButton()
 {
+	SOUND->PlaySound("Sounds/StartGameButton.mp3");
 	SCENE->LoadSceneOnRender("MainScene.xml");
 }
 
@@ -86,7 +105,6 @@ void StartMenuSceneScript::MenuFadeIn::StateUpdate(StartMenuSceneScript* owner)
 
 void StartMenuSceneScript::Menu::StateStart(StartMenuSceneScript* owner)
 {
-	SOUND->LoadSound("Sounds/MainMenu.mp3", true);
 	SOUND->PlaySound("Sounds/MainMenu.mp3");
 }
 

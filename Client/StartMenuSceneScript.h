@@ -29,14 +29,14 @@ public:
 	void Init() override;
 	void Update() override;
 
-
 	void OnDestroy() override;
-
 
 	void LoadXML(Bulb::XMLElement compElem) override;
 
-
 	void SaveXML(Bulb::XMLElement compElem) override;
+
+	ComponentSnapshot CaptureSnapshot() override;
+	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 public:
 	void OnClickedStartButton();

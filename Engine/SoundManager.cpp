@@ -37,6 +37,11 @@ void SoundManager::Init()
 	_system->getMasterChannelGroup(&_masterGroup);
 }
 
+void SoundManager::StopAllSounds()
+{
+	_masterGroup->stop();
+}
+
 void SoundManager::LoadSound(const string& path, bool loop)
 {
 	string fullPath = "../Resources/" + path;

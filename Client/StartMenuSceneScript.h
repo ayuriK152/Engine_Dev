@@ -7,7 +7,8 @@ class StartMenuSceneScript : public Script
 	enum class StartMenuSceneState {
 		Initialized = -1,
 		MenuFadeIn,
-		Menu
+		Menu,
+		MenuFadeOut
 	};
 
 	class MenuFadeIn : public BaseState<StartMenuSceneScript> {
@@ -20,7 +21,14 @@ class StartMenuSceneScript : public Script
 
 	class Menu : public BaseState<StartMenuSceneScript> {
 		void StateStart(StartMenuSceneScript* owner) override;
+	};
+
+	class MenuFadeOut : public BaseState<StartMenuSceneScript> {
+		void StateStart(StartMenuSceneScript* owner) override;
 		void StateUpdate(StartMenuSceneScript* owner) override;
+
+	private:
+		float _elapsedTime = 0.0f;
 	};
 
 public:
@@ -39,6 +47,7 @@ public:
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 public:
+	void OnMouseEnterStartButton();
 	void OnClickedStartButton();
 
 private:
@@ -57,5 +66,6 @@ private:
 	shared_ptr<UIButton> _startButton;
 
 	float _fadeInTime = 1.0f;
+	float _soundFadeOutTime = 2.0f;
 };
 

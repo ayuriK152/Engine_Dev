@@ -12,6 +12,7 @@ void StartMenuSceneScript::Init()
 {
 	_states.push_back(new MenuFadeIn());
 	_states.push_back(new Menu());
+	_states.push_back(new MenuFadeOut());
 	SetState(StartMenuSceneState::MenuFadeIn);
 
 	_fadePanel = UI->CreateUI<UIPanel>();
@@ -23,10 +24,12 @@ void StartMenuSceneScript::Init()
 	_startButton = UI->CreateUI<UIButton>();
 	_startButton->GetTransform()->SetDepth(3.0f);
 	_startButton->GetTransform()->SetPosition({ 0.0f, -100.0f, 0.0f });
+	_startButton->background->SetTexture(L"..\\Resources\\Textures\\UI\\ButtonHovered.png");
+	_startButton->background->GetTransform()->SetSize({ 300.0f, 75.0f });
+	_startButton->text->SetFont("Georgia");
 	_startButton->text->SetText("Start Game");
-	_startButton->buttonEvent += [this]() {
-		OnClickedStartButton();
-	};
+	_startButton->mouseEnterEvent += [this]() { OnMouseEnterStartButton(); };
+	_startButton->mouseDownEvent += [this]() { OnClickedStartButton(); };
 
 	shared_ptr<UIPanel> mainTitlePanel = UI->CreateUI<UIPanel>();
 	mainTitlePanel->SetTexture(L"..\\Resources\\Textures\\Logos\\MainTitle.png");
@@ -36,7 +39,10 @@ void StartMenuSceneScript::Init()
 
 	SOUND->SetMasterVolume(0.3f);
 
+	SOUND->AddGroup("BGM");
+
 	SOUND->LoadSound("Sounds/MainMenu.mp3", true);
+	SOUND->LoadSound("Sounds/UIButtonHovered.mp3", false);
 	SOUND->LoadSound("Sounds/StartGameButton.mp3", false);
 }
 
@@ -80,15 +86,20 @@ void StartMenuSceneScript::RestoreSnapshot(ComponentSnapshot snapshot)
 	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 }
 
+void StartMenuSceneScript::OnMouseEnterStartButton()
+{
+	SOUND->PlaySound("Sounds/UIButtonHovered.mp3");
+}
+
 void StartMenuSceneScript::OnClickedStartButton()
 {
 	SOUND->PlaySound("Sounds/StartGameButton.mp3");
-	SCENE->LoadSceneOnRender("MainScene.xml");
+	SetState(StartMenuSceneState::MenuFadeOut);
 }
 
 void StartMenuSceneScript::MenuFadeIn::StateStart(StartMenuSceneScript* owner)
 {
-	_elapsedTime = 0;
+	_elapsedTime = 0.0f;
 }
 
 void StartMenuSceneScript::MenuFadeIn::StateUpdate(StartMenuSceneScript* owner)
@@ -105,10 +116,23 @@ void StartMenuSceneScript::MenuFadeIn::StateUpdate(StartMenuSceneScript* owner)
 
 void StartMenuSceneScript::Menu::StateStart(StartMenuSceneScript* owner)
 {
-	SOUND->PlaySound("Sounds/MainMenu.mp3");
+	SOUND->PlaySound("Sounds/MainMenu.mp3", "BGM");
 }
 
-void StartMenuSceneScript::Menu::StateUpdate(StartMenuSceneScript* owner)
+void StartMenuSceneScript::MenuFadeOut::StateStart(StartMenuSceneScript* owner)
 {
+	_elapsedTime = 0.0f;
+	owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+}
 
+void StartMenuSceneScript::MenuFadeOut::StateUpdate(StartMenuSceneScript* owner)
+{
+	_elapsedTime += TIME->DeltaTime();
+	if (_elapsedTime >= owner->_soundFadeOutTime) {
+		SOUND->StopSoundGroup("BGM");
+		SCENE->LoadSceneOnRender("MainScene.xml");
+	}
+	else {
+		SOUND->SetVolume(1.0f - _elapsedTime / owner->_soundFadeOutTime, "BGM");
+	}
 }

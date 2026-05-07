@@ -18,7 +18,9 @@ public:
 	void OnMouseDown() override;
 
 public:
-	Event<> buttonEvent;
+	Event<> mouseEnterEvent;
+	Event<> mouseExitEvent;
+	Event<> mouseDownEvent;
 
 	shared_ptr<UIPanel> background;
 	shared_ptr<UIText> text;

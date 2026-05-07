@@ -19,6 +19,8 @@ public:
 
 	void StopAllSounds();
 
+	void StopSoundGroup(const string& group);
+
 	// 사운드 로드 기능
 	void LoadSound(const string& path, bool loop);
 	// 사운드 재생 기능

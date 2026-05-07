@@ -42,6 +42,11 @@ void SoundManager::StopAllSounds()
 	_masterGroup->stop();
 }
 
+void SoundManager::StopSoundGroup(const string& group)
+{
+	_channelGroups[group]->stop();
+}
+
 void SoundManager::LoadSound(const string& path, bool loop)
 {
 	string fullPath = "../Resources/" + path;
@@ -65,8 +70,11 @@ void SoundManager::PlaySound(const string& name, const string& group)
 
 void SoundManager::AddGroup(const string& name, const string& parentGroup)
 {
+	if (_channelGroups.contains(name)) return;
+
 	FMOD::ChannelGroup* channelGroup;
 	_system->createChannelGroup(name.c_str(), &channelGroup);
+	_channelGroups[name] = channelGroup;
 
 	if (_channelGroups.contains(parentGroup))
 		_channelGroups[parentGroup]->addGroup(channelGroup);

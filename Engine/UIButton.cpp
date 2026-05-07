@@ -25,8 +25,8 @@ void UIButton::Init()
 
 	background->SetColor(colorDefault);
 	background->GetTransform()->SetParent(_transform);
-	background->GetTransform()->SetStretchSize(true);
-	background->GetTransform()->SetSize({ 1.0f, 1.0f });
+	background->GetTransform()->SetStretchSize(false);
+	background->GetTransform()->SetSize({ 200.0f, 60.0f });
 	background->GetTransform()->SetDepth(_transform->GetDepth() + 1.0f);
 
 	text->GetTransform()->SetParent(_transform);
@@ -48,15 +48,17 @@ void UIButton::LoadXML(XMLElement* uiElem)
 void UIButton::OnMouseEnter()
 {
 	background->SetColor(colorHovered);
+	mouseEnterEvent.Execute();
 }
 
 void UIButton::OnMouseExit()
 {
 	background->SetColor(colorDefault);
+	mouseExitEvent.Execute();
 }
 
 void UIButton::OnMouseDown()
 {
 	background->SetColor(colorClicked);
-	buttonEvent.Execute();
+	mouseDownEvent.Execute();
 }

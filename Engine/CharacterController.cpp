@@ -48,7 +48,9 @@ void CharacterController::Init()
 
 void CharacterController::PreUpdate()
 {
+#ifdef BULB_EDITOR
 	if (!EDITOR->IsOnPlay()) return;
+#endif
 
 	Bulb::Vector3 pos = GetTransform()->GetPosition();
 	_character->SetPosition({ pos.x, pos.y, pos.z });

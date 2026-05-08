@@ -203,7 +203,9 @@ using namespace JPH::literals;
 #include "RenderManager.h"
 #include "InputManager.h"
 #include "FileIOUtil.h"
+#ifdef BULB_EDITOR
 #include "EngineGUIManager.h"
+#endif
 #include "EngineStatusManager.h"
 #include "DebugManager.h"
 #include "PhysicsManager.h"

@@ -133,7 +133,10 @@ void SceneManager::LoadScene(string sceneName, bool isFullPath)
 	}
 
 	// 이 부분은 추후에 에디터에서만 적용되도록 변경해야함.
+
+#ifdef BULB_EDITOR
 	EDITOR->SetEditorWindowText(_currentSceneName);
+#endif
 }
 
 void SceneManager::LoadSceneOnRender(string scenePath)
@@ -210,8 +213,10 @@ void SceneManager::SaveScene(string scenePath, bool isFullPath)
 	auto& gameObjects = RENDER->GetObjects();
 	for (auto& go : gameObjects) {
 		if (go->GetTransform()->GetDepthLevel() == 0) {
+#ifdef BULB_EDITOR
 			if (go->GetTag() == "EditorCamera")
 				continue;
+#endif
 			WriteGameObjectData(objsElem, go);
 		}
 	}

@@ -65,14 +65,18 @@ void InputManager::Update()
 
 bool InputManager::IsKeyDown(KeyValue key)
 {
+#ifdef BULB_EDITOR
 	if (ImGui::GetIO().WantCaptureKeyboard) return false;
+#endif
 
 	return _keyStates[key] == KeyState::Down;
 }
 
 bool InputManager::IsKeyPress(KeyValue key)
 {
+#ifdef BULB_EDITOR
 	if (ImGui::GetIO().WantCaptureKeyboard) return false;
+#endif
 
 	return _keyStates[key] == KeyState::Press;
 }
@@ -100,7 +104,9 @@ void InputManager::OnMouseClick(USHORT buttonFlags)
 
 void InputManager::OnMouseMove(int x, int y)
 {
+#ifdef BULB_EDITOR
 	if (ImGui::GetIO().WantCaptureMouse) return;
+#endif
 
 	_isMouseMoving = true;
 	_mouseDelta = Bulb::Vector2((float)x, (float)y);

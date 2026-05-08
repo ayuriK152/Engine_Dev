@@ -33,7 +33,9 @@ void Animator::Init()
 
 void Animator::Update()
 {
+#ifdef BULB_EDITOR
 	if (!EDITOR->IsOnPlay()) return;
+#endif
 
 	if (_isPreviewMode)
 	{

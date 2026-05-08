@@ -21,8 +21,10 @@ Camera::~Camera()
 
 void Camera::Init()
 {
+#ifdef BULB_EDITOR
 	if (GetGameObject()->GetTag() == "EditorCamera")
 		_editorCamera = static_pointer_cast<Camera>(shared_from_this());
+#endif
 
 	if (_isMainCamera)
 		SetAsMainCamera();
@@ -107,50 +109,68 @@ void Camera::RestoreSnapshot(ComponentSnapshot snapshot)
 
 XMFLOAT3& Camera::GetEyePos()
 {
+#ifdef BULB_EDITOR
 	if (EDITOR->IsOnPlay())
 		return _currentCamera->GetTransform()->GetPosition();
 	else
 		return _editorCamera->GetTransform()->GetPosition();
+#endif
+	return _currentCamera->GetTransform()->GetPosition();
 }
 
 XMFLOAT4X4& Camera::GetViewMatrix()
 {
+#ifdef BULB_EDITOR
 	if (EDITOR->IsOnPlay())
 		return _currentCamera->_matView;
 	else
 		return _editorCamera->_matView;
+#endif
+	return _currentCamera->_matView;
 }
 
 XMFLOAT4X4& Camera::GetProjMatrix()
 {
+#ifdef BULB_EDITOR
 	if (EDITOR->IsOnPlay())
 		return _currentCamera->_matProj;
 	else
 		return _editorCamera->_matProj;
+#endif
+	return _currentCamera->_matProj;
 }
 
 XMFLOAT4X4& Camera::GetViewProjMatrix()
 {
+#ifdef BULB_EDITOR
 	if (EDITOR->IsOnPlay())
 		return _currentCamera->_matViewProj;
 	else
 		return _editorCamera->_matViewProj;
+#endif
+	return _currentCamera->_matViewProj;
 }
 
 XMFLOAT4X4& Camera::GetOrthoMatrix()
 {
+#ifdef BULB_EDITOR
 	if (EDITOR->IsOnPlay())
 		return _currentCamera->_matOrtho;
 	else
 		return _editorCamera->_matOrtho;
+#endif
+	return _currentCamera->_matOrtho;
 }
 
 int Camera::GetFramesDirty()
 {
+#ifdef BULB_EDITOR
 	if (EDITOR->IsOnPlay())
 		return _currentCamera->GetGameObject()->GetFramesDirty();
 	else
 		return _editorCamera->GetGameObject()->GetFramesDirty();
+#endif
+	return _currentCamera->GetGameObject()->GetFramesDirty();
 }
 
 void Camera::SetAsMainCamera()

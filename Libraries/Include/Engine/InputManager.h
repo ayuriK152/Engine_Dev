@@ -105,23 +105,31 @@ public:
 	Bulb::Vector2 GetMouseDelta() { return _mouseDelta; }
 
 	bool IsMouseLeftButtonDown() {
+#ifdef BULB_EDITOR
 		if (ImGui::GetIO().WantCaptureMouse) return false;
+#endif
 
 		return _mouseStates.LeftButton == KeyState::Down;
 	}
 	bool IsMouseLeftButtonPress() {
+#ifdef BULB_EDITOR
 		if (ImGui::GetIO().WantCaptureMouse) return false;
+#endif
 
 		return _mouseStates.LeftButton == KeyState::Press;
 	}
 
 	bool IsMouseRightButtonDown() {
+#ifdef BULB_EDITOR
 		if (ImGui::GetIO().WantCaptureMouse) return false;
+#endif
 
 		return  _mouseStates.RightButton == KeyState::Down;
 	}
 	bool IsMouseRightButtonPress() {
+#ifdef BULB_EDITOR
 		if (ImGui::GetIO().WantCaptureMouse) return false;
+#endif
 
 		return _mouseStates.RightButton == KeyState::Press;
 	}

@@ -104,7 +104,9 @@ bool BulbApplication::Init()
 	Utils::Init();
 
 	DEBUG->Init();
+#ifdef BULB_EDITOR
 	EDITOR->Init();
+#endif
 
 	return true;
 }
@@ -129,7 +131,9 @@ void BulbApplication::Update()
 		ANIMATION->Update();
 		ENGINESTAT->Update();
 		UI->Update();
+#ifdef BULB_EDITOR
 		ENGINEGUI->Update();
+#endif
 		DEBUG->Update();
 
 		GRAPHIC->LateUpdate();
@@ -146,13 +150,17 @@ void BulbApplication::Update()
 void BulbApplication::ExitApplication()
 {
 	INPUTM->Delete();
+#ifdef BULB_EDITOR
 	EDITOR->Delete();
+#endif
 	DEBUG->Delete();
 	SCENE->Delete();
 	UI->Delete();
 	FILEIO->Delete();
 	RESOURCE->Delete();
+#ifdef BULB_EDITOR
 	ENGINEGUI->Delete();
+#endif
 	RENDER->Delete();
 	PHYSICS->Delete();
 	THREAD->Delete();

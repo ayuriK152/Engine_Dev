@@ -28,7 +28,9 @@ private:
 		REGISTER_COMPONENT(CharacterController);
 		REGISTER_COMPONENT(ParticleEmitter);
 		REGISTER_COMPONENT(Transform);
+#ifdef BULB_EDITOR
 		REGISTER_COMPONENT(EditorCamera);
+#endif
 		REGISTER_COMPONENT(Terrain);
 	}
 

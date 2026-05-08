@@ -78,7 +78,10 @@ void RenderManager::Init()
 	BuildInputLayout();
 	BuildSRVDescriptorHeap();
 
+
+#ifdef BULB_EDITOR
 	ENGINEGUI->Init();
+#endif
 	RESOURCE->Init();
 
 	BuildPSOs();
@@ -121,7 +124,7 @@ void RenderManager::Update()
 
 	// Objects Update
 	for (auto& o : _objects) {
-		if (o->GetComponentCount() <= 1) continue;
+		// if (o->GetComponentCount() <= 1) continue;
 
 		o->Update();
 	}
@@ -238,9 +241,10 @@ void RenderManager::Render()
 
 		RefreshMeshRenderCheckMap();
 
+#ifdef BULB_EDITOR
 		_cmdLists[1]->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
 		DEBUG->Render(_cmdLists[1]);
-
+#endif
 
 		ThrowIfFailed(_cmdLists[1]->Close());
 	});
@@ -268,7 +272,9 @@ void RenderManager::Render()
 		_cmdLists[2]->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		UI->Render(_cmdLists[2]);
 
+#ifdef BULB_EDITOR
 		ENGINEGUI->Render(_cmdLists[2]);
+#endif
 
 		_cmdLists[2]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
@@ -293,13 +299,17 @@ void RenderManager::Render()
 
 void RenderManager::InitializeOnRuntime()
 {
+#ifdef BULB_EDITOR
 	shared_ptr<GameObject> editorCameraObj;
+#endif
 
 	for (shared_ptr<GameObject> go : _objects) {
+#ifdef BULB_EDITOR
 		if (go->GetTag() == "EditorCamera") {
 			editorCameraObj = go;
 			continue;
 		}
+#endif
 		go->OnDestroy();
 		go.reset();
 	}
@@ -311,7 +321,9 @@ void RenderManager::InitializeOnRuntime()
 		gos.clear();
 	}
 
+#ifdef BULB_EDITOR
 	AddGameObject(editorCameraObj);
+#endif
 }
 
 shared_ptr<GameObject> RenderManager::GetObject(string objName)

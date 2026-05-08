@@ -94,7 +94,9 @@ void PhysicsManager::PreUpdate()
 
 void PhysicsManager::Update()
 {
+#ifdef BULB_EDITOR
 	if (!EDITOR->IsOnPlay()) return;
+#endif
 
 	_physicsSystem->Update(TIME->DeltaTime(), 1, _tempAlloc, _jobSystem);
 
@@ -119,7 +121,9 @@ void PhysicsManager::Update()
 
 void PhysicsManager::LateUpdate()
 {
+#ifdef BULB_EDITOR
 	if (!EDITOR->IsOnPlay()) return;
+#endif
 }
 
 void PhysicsManager::OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings)

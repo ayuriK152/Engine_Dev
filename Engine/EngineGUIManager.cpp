@@ -829,6 +829,22 @@ void EngineGUIManager::ShowRigidbody(shared_ptr<Rigidbody> rigidbody)
 		if (ImGui::Checkbox("Trigger", &isTrigger)) {
 			rigidbody->SetColliderTrigger(isTrigger);
 		}
+
+		switch (rigidbody->GetColliderShape()) {
+		case ColliderShape::Box: {
+			static Bulb::Vector3 extents;
+			extents = rigidbody->GetColliderExtents();
+			static float extentsValues[3];
+			extentsValues[0] = extents.x;
+			extentsValues[1] = extents.y;
+			extentsValues[2] = extents.z;
+			ImGui::SeparatorText("Extents");
+			if (ImGui::InputFloat3("##ColliderExtents", extentsValues)) {
+				rigidbody->SetColliderExtents({ extentsValues[0], extentsValues[1], extentsValues[2] });
+			}
+			break;
+		}
+		}
 	}
 }
 

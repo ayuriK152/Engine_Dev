@@ -197,8 +197,10 @@ void Rigidbody::SetColliderExtents(const Bulb::Vector3& extents)
 {
 	_extents = extents;
 
-	if (_colliderShape == ColliderShape::Box)
+	if (_colliderShape == ColliderShape::Box) {
+		CreateShape();
 		UpdateShapeData();
+	}
 }
 
 void Rigidbody::SetColliderTrigger(bool value)

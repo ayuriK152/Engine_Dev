@@ -32,6 +32,7 @@ public:
 
 public:
 	// Box Only
+	Bulb::Vector3 GetColliderExtents() { return _extents; }
 	void SetColliderExtents(const Bulb::Vector3& size);
 
 	void SetColliderTrigger(bool value);
@@ -48,6 +49,7 @@ public:
 
 	Bulb::Vector3 GetColliderOffset() { return _colliderOffset; }
 
+	ColliderShape GetColliderShape() { return _colliderShape; }
 	void SetColliderShape(ColliderShape colliderShape);
 
 	bool IsGravity() { return _isGravity; }

@@ -16,7 +16,7 @@
       <Filter>Scripts</Filter>
     </ClInclude>
     <ClInclude Include="StartMenuSceneScript.h">
-      <Filter>Scripts</Filter>
+      <Filter>Scripts\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -35,12 +35,15 @@
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="StartMenuSceneScript.cpp">
-      <Filter>Scripts</Filter>
+      <Filter>Scripts\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">
       <UniqueIdentifier>{107ae496-467c-432f-9f47-3a64b4a2e05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Scene">
+      <UniqueIdentifier>{ffd435db-4483-4f1a-af7e-fa83775e9bdb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

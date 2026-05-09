@@ -14,11 +14,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, i
 	desc.clientWidth = 1600;
 	desc.clientHeight = 900;
 
-	SCENE->LoadScene("StartMenuScene.xml");
+	string startSceneName = FILEIO->ReadINI("Common", "StartScene", "./ClientSetting.ini");
+	//string startSceneName = "none";
+	if (startSceneName != "none") {
+		SCENE->LoadScene(startSceneName);
 
-	APP->SetAppInst(hInstance, desc);
+		APP->SetAppInst(hInstance, desc);
 
-	APP->Run();
+		APP->Run();
+	}
+	else {
+		string content = "Can't read start scene information from ClientSetting.ini.\nCheck ClientSetting.ini file exists or its content.";
+		MessageBoxA(
+			NULL,
+			content.c_str(),
+			"Error",
+			MB_OK | MB_ICONERROR
+		);
+	}
 
 	return 0;
 }

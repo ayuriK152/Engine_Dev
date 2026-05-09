@@ -251,6 +251,24 @@ shared_ptr<Transform> GameObject::GetTransform()
 	return transform;
 }
 
+void GameObject::DeleteComponent(shared_ptr<Component> component)
+{
+	if (component == nullptr) return;
+
+	int componentTypeIdx = GetComponentTypeIndex(component->type);
+
+	// Transform은 삭제되면 안됨
+	if (componentTypeIdx == 0) return;
+
+	--_componentCount;
+	for (int i = 0; i < _components[componentTypeIdx].size(); ++i) {
+		if (_components[componentTypeIdx][i] == component) {
+			_components[componentTypeIdx].erase(_components[componentTypeIdx].begin() + i);
+			component->OnDestroy();
+		}
+	}
+}
+
 int GameObject::GetComponentTypeIndex(ComponentType type)
 {
 	if (type == ComponentType::Undefined)			return -1;

@@ -50,6 +50,8 @@ public:
 	template<typename T>
 	const vector<shared_ptr<T>>& GetAllComponents();
 
+	void DeleteComponent(shared_ptr<Component> component);
+
 	int GetComponentCount() { return _componentCount; }
 
 	array<vector<shared_ptr<Component>>, COUNT_COMPONENTTYPE> GetAllComponents() { return _components; }

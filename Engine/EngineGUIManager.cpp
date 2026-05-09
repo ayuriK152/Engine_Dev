@@ -604,7 +604,10 @@ void EngineGUIManager::ShowTransform()
 
 void EngineGUIManager::ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer)
 {
-	if (ImGui::CollapsingHeader("MeshRenderer", ImGuiTreeNodeFlags_DefaultOpen))
+	static bool deleteFlag;
+	deleteFlag = true;
+
+	if (ImGui::CollapsingHeader("MeshRenderer", &deleteFlag, ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::SeparatorText("Mesh");
 		{
@@ -645,6 +648,10 @@ void EngineGUIManager::ShowMeshRenderer(shared_ptr<MeshRenderer> meshRenderer)
 			shared_ptr<Material> mat = meshRenderer->GetMaterial();
 			ImGui::Text(mat != nullptr ? Utils::ToChar(meshRenderer->GetMaterial()->GetNameW()) : "null");
 		}
+	}
+
+	if (!deleteFlag) {
+		meshRenderer->GetGameObject()->DeleteComponent(meshRenderer);
 	}
 }
 

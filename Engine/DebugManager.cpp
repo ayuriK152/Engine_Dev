@@ -8,6 +8,9 @@ DebugManager::~DebugManager()
 #ifdef PRINT_DEBUG_CONSOLE_LOG
 	cout << "Released - DebugManager\n";
 #endif
+
+	_vertexUploadBuffer.reset();
+	_indexUploadBuffer.reset();
 }
 
 DebugManager* DebugManager::GetInstance()

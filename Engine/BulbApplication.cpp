@@ -72,6 +72,11 @@ int BulbApplication::Run()
 		// Otherwise, do animation/game stuff.
 		else
 		{
+			if (_isExitReserved) {
+				SendMessage(GRAPHIC->GetMainWnd(), WM_CLOSE, 0, 0);
+				continue;
+			}
+
 			TIME->Tick();
 
 			PreUpdate();
@@ -82,6 +87,11 @@ int BulbApplication::Run()
 	ExitApplication();
 
 	return (int)msg.wParam;
+}
+
+void BulbApplication::QuitApplication()
+{
+	_isExitReserved = true;
 }
 
 // 각 코어시스템별 초기화 진행
@@ -163,6 +173,11 @@ void BulbApplication::ExitApplication()
 #endif
 	RENDER->Delete();
 	PHYSICS->Delete();
+	PARTICLE->Delete();
+	SKELETON->Delete();
+	ANIMATION->Delete();
+	ENGINESTAT->Delete();
+	SOUND->Delete();
 	THREAD->Delete();
 
 	GRAPHIC->Delete();

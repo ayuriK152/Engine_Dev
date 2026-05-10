@@ -6,7 +6,7 @@
                 <Component ComponentType="Camera" MainCamera="true"/>
             </Components>
         </GameObject>
-        <GameObject>
+        <GameObject Name="SceneScript">
             <Components>
                 <Component ComponentType="StartMenuSceneScript"/>
             </Components>

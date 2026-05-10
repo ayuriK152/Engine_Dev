@@ -1,0 +1,6 @@
+<Prefab Name="Pillar" PSO="opaque_solid" Tag="Default">
+    <Components>
+        <Component ComponentType="Transform" PosX="-2" PosY="1.5" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710677"/>
+        <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Pillar1.bmesh" Material="..\Resources\Materials\Dungeon assets\Black metal.xml"/>
+    </Components>
+</Prefab>

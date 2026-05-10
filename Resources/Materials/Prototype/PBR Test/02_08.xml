@@ -1,0 +1,11 @@
+<Material>
+    <Name>02_08</Name>
+    <Ambient r="1" g="0" b="0" a="1"/>
+    <Diffuse r="1" g="0" b="0" a="1"/>
+    <Specular r="1" g="1" b="1" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <Metallic value="0.2"/>
+    <Roughness value="0.8"/>
+    <DiffuseTexture></DiffuseTexture>
+    <NormalTexture></NormalTexture>
+</Material>

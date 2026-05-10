@@ -1,6 +1,11 @@
 <Scene Name="MainScene">
     <Skybox Texture="..\Resources\Textures\Skybox\CloudySkybox.dds"/>
     <GameObjects>
+        <GameObject Name="SceneScript">
+            <Components>
+                <Component ComponentType="MainSceneScript"/>
+            </Components>
+        </GameObject>
         <GameObject Name="GlobalLight" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.18301269" QuatY="-0.68301272" QuatZ="0.18301271" QuatW="0.68301266"/>
@@ -26,7 +31,7 @@
         </GameObject>
         <GameObject Name="GameObject" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosX="4" PosY="-2.3499999" PosZ="6.25" ScaleX="1" ScaleY="1" ScaleZ="1.3" QuatX="-8.429371e-08" QuatY="0.70710677" QuatZ="-0.70710683" QuatW="-8.4293703e-08"/>
+                <Component ComponentType="Transform" PosX="4" PosY="-1.75" PosZ="6" ScaleX="1" ScaleY="0.89999998" ScaleZ="1" QuatX="-8.429371e-08" QuatY="0.70710677" QuatZ="-0.70710683" QuatW="-8.4293703e-08"/>
                 <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Stair.bmesh" Material="Mat_Default"/>
             </Components>
         </GameObject>
@@ -38,7 +43,6 @@
                 <GameObject Name="Ground" PSO="opaque_solid" Tag="Default">
                     <Components>
                         <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="12" ScaleY="0.5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
                                 <Extent x="6" y="0.25" z="4"/>
@@ -51,10 +55,9 @@
                 <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
                     <Components>
                         <Component ComponentType="Transform" PosX="-2" PosY="1.5" PosZ="4.25" ScaleX="8" ScaleY="2.5" ScaleZ="0.5" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
-                                <Extent x="4" y="1.5" z="0.25"/>
+                                <Extent x="4" y="1.25" z="0.25"/>
                                 <Offset x="0" y="0" z="0"/>
                                 <RotOffset x="0" y="0" z="0"/>
                             </Collider>
@@ -64,10 +67,9 @@
                 <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
                     <Components>
                         <Component ComponentType="Transform" PosX="0" PosY="1.5" PosZ="-4.25" ScaleX="12" ScaleY="2.5" ScaleZ="0.5" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
-                                <Extent x="6" y="1.5" z="0.25"/>
+                                <Extent x="6" y="1.25" z="0.25"/>
                                 <Offset x="0" y="0" z="0"/>
                                 <RotOffset x="0" y="0" z="0"/>
                             </Collider>
@@ -77,10 +79,9 @@
                 <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
                     <Components>
                         <Component ComponentType="Transform" PosX="-6.25" PosY="1.5" PosZ="0" ScaleX="0.5" ScaleY="2.5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
-                                <Extent x="0.25" y="1.5" z="4"/>
+                                <Extent x="0.25" y="1.25" z="4"/>
                                 <Offset x="0" y="0" z="0"/>
                                 <RotOffset x="0" y="0" z="0"/>
                             </Collider>
@@ -90,10 +91,9 @@
                 <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
                     <Components>
                         <Component ComponentType="Transform" PosX="6.25" PosY="1.5" PosZ="0" ScaleX="0.5" ScaleY="2.5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
-                                <Extent x="0.25" y="1.5" z="4"/>
+                                <Extent x="0.25" y="1.25" z="4"/>
                                 <Offset x="0" y="0" z="0"/>
                                 <RotOffset x="0" y="0" z="0"/>
                             </Collider>
@@ -102,8 +102,7 @@
                 </GameObject>
                 <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
                     <Components>
-                        <Component ComponentType="Transform" PosX="4" PosY="-1.5" PosZ="3.75" ScaleX="4" ScaleY="2.5" ScaleZ="0.5" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
+                        <Component ComponentType="Transform" PosX="4" PosY="-1" PosZ="3.75" ScaleX="4" ScaleY="2.5" ScaleZ="0.5" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
                                 <Extent x="2" y="1.25" z="0.25"/>
@@ -115,8 +114,7 @@
                 </GameObject>
                 <GameObject Name="Ground" PSO="opaque_solid" Tag="Default">
                     <Components>
-                        <Component ComponentType="Transform" PosX="4" PosY="-3" PosZ="8" ScaleX="4" ScaleY="0.5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
-                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
+                        <Component ComponentType="Transform" PosX="4" PosY="-2.5" PosZ="8" ScaleX="4" ScaleY="0.5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
                                 <Extent x="2" y="0.25" z="4"/>
@@ -128,10 +126,36 @@
                 </GameObject>
                 <GameObject Name="Stair" PSO="opaque_solid" Tag="Default">
                     <Components>
-                        <Component ComponentType="Transform" PosX="4" PosY="-1.45" PosZ="5.8499999" ScaleX="1.25" ScaleY="0.49999997" ScaleZ="4.9999995" QuatX="0.31622866" QuatY="0" QuatZ="-0" QuatW="0.94868302"/>
+                        <Component ComponentType="Transform" PosX="4" PosY="-1.2" PosZ="5.8499999" ScaleX="1.25" ScaleY="0.49999997" ScaleZ="4.717" QuatX="0.27563736" QuatY="0" QuatZ="0" QuatW="0.96126169"/>
                         <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                             <Collider Shape="Box" Height="0.5" Radius="0.5">
-                                <Extent x="0.625" y="0.24999999" z="2.4999998"/>
+                                <Extent x="0.625" y="0.24999999" z="2.3585"/>
+                                <Offset x="0" y="0" z="0"/>
+                                <RotOffset x="0" y="0" z="0"/>
+                            </Collider>
+                        </Component>
+                    </Components>
+                </GameObject>
+                <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="1.75" PosY="0.25" PosZ="8" ScaleX="0.5" ScaleY="5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
+                        <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                            <Collider Shape="Box" Height="0.5" Radius="0.5">
+                                <Extent x="0.25" y="2.5" z="4"/>
+                                <Offset x="0" y="0" z="0"/>
+                                <RotOffset x="0" y="0" z="0"/>
+                            </Collider>
+                        </Component>
+                    </Components>
+                </GameObject>
+                <GameObject Name="Wall" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="6.25" PosY="0.25" PosZ="8" ScaleX="0.5" ScaleY="5" ScaleZ="8" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                        <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="Mat_Default"/>
+                        <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                            <Collider Shape="Box" Height="0.5" Radius="0.5">
+                                <Extent x="0.25" y="2.5" z="4"/>
                                 <Offset x="0" y="0" z="0"/>
                                 <RotOffset x="0" y="0" z="0"/>
                             </Collider>
@@ -139,6 +163,160 @@
                     </Components>
                 </GameObject>
             </GameObjects>
+        </GameObject>
+        <GameObject Name="MapRenderObjs" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+            </Components>
+            <GameObjects>
+                <GameObject Name="Walls" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                    </Components>
+                    <GameObjects>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="0" PosY="1.5" PosZ="4" ScaleX="1" ScaleY="0.99999994" ScaleZ="0.99999994" QuatX="0.70710683" QuatY="0" QuatZ="-0" QuatW="0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-4" PosY="1.5" PosZ="4" ScaleX="1" ScaleY="0.99999994" ScaleZ="0.99999994" QuatX="0.70710683" QuatY="0" QuatZ="-0" QuatW="0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-4" PosY="1.5" PosZ="-4" ScaleX="1" ScaleY="0.99999994" ScaleZ="0.99999994" QuatX="0.70710683" QuatY="0" QuatZ="-0" QuatW="0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="0" PosY="1.5" PosZ="-4" ScaleX="1" ScaleY="0.99999994" ScaleZ="0.99999994" QuatX="0.70710683" QuatY="0" QuatZ="-0" QuatW="0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="4" PosY="1.5" PosZ="-4" ScaleX="1" ScaleY="0.99999994" ScaleZ="0.99999994" QuatX="0.70710683" QuatY="0" QuatZ="-0" QuatW="0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-6" PosY="1.5" PosZ="2" ScaleX="1.0000002" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.50000018" QuatY="0.49999997" QuatZ="-0.50000006" QuatW="0.49999991"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-6" PosY="1.5" PosZ="-2" ScaleX="1.0000002" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.50000018" QuatY="0.49999997" QuatZ="-0.50000006" QuatW="0.49999991"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="6" PosY="1.5" PosZ="2" ScaleX="1.0000002" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.50000018" QuatY="0.49999997" QuatZ="-0.50000006" QuatW="0.49999991"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\StoneWall1.xml" Name="StoneWall1" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="6" PosY="1.5" PosZ="-2" ScaleX="1.0000002" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.50000018" QuatY="0.49999997" QuatZ="-0.50000006" QuatW="0.49999991"/>
+                            </Components>
+                        </GameObject>
+                    </GameObjects>
+                </GameObject>
+                <GameObject Name="Floors" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                    </Components>
+                    <GameObjects>
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-4" PosY="0.15000001" PosZ="2" ScaleX="1" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-4" PosY="0.15000001" PosZ="-2" ScaleX="1" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="0" PosY="0.15000001" PosZ="2" ScaleX="1" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="0" PosY="0.15000001" PosZ="-2" ScaleX="1" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="4" PosY="0.15000001" PosZ="2" ScaleX="1" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="4" PosY="0.15000001" PosZ="-2" ScaleX="1" ScaleY="1.0000001" ScaleZ="1.0000001" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+                            </Components>
+                        </GameObject>
+                    </GameObjects>
+                </GameObject>
+                <GameObject Name="Pillars" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                    </Components>
+                    <GameObjects>
+                        <GameObject Name="Pillar" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-2" PosY="1.5" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="0.70710683"/>
+                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Pillar1.bmesh" Material="..\Resources\Materials\Dungeon assets\Black metal.xml"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject Name="EnterancePillar" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="2" PosY="1.5" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0.70710683" QuatW="0.70710683"/>
+                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Cube.024.bmesh" Material="Mat_Default"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject Name="EnterancePillar" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="6" PosY="1.5" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0" QuatY="0" QuatZ="0.70710683" QuatW="0.70710683"/>
+                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\Cube.024.bmesh" Material="Mat_Default"/>
+                            </Components>
+                        </GameObject>
+                    </GameObjects>
+                </GameObject>
+                <GameObject Name="Bars" PSO="opaque_solid" Tag="Default">
+                    <Components>
+                        <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                    </Components>
+                    <GameObjects>
+                        <GameObject Name="HorizontalBar" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="4" PosY="2.75" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                                <Component ComponentType="MeshRenderer" Mesh="..\Resources\Meshes\Dungeon assets\HorizontalBar4.bmesh" Material="Mat_Default"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\HorizontalBar.xml" Name="HorizontalBar" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="0" PosY="2.75" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                            </Components>
+                        </GameObject>
+                        <GameObject PrefabPath="..\Resources\Prefabs\HorizontalBar.xml" Name="HorizontalBar" PSO="opaque_solid" Tag="Default">
+                            <Components>
+                                <Component ComponentType="Transform" PosX="-4" PosY="2.75" PosZ="4" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="-0" QuatY="0" QuatZ="-0" QuatW="1"/>
+                            </Components>
+                        </GameObject>
+                    </GameObjects>
+                </GameObject>
+            </GameObjects>
+        </GameObject>
+        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="4" PosY="-2.3" PosZ="6" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+            </Components>
+        </GameObject>
+        <GameObject PrefabPath="..\Resources\Prefabs\Tiles4x4.xml" Name="Tiles4x4" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="4" PosY="-2.3" PosZ="10" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.70710683" QuatY="0" QuatZ="0" QuatW="-0.70710683"/>
+            </Components>
         </GameObject>
     </GameObjects>
 </Scene>

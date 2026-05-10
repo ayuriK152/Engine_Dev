@@ -110,7 +110,7 @@ float3 ComputeDirectionalLight(Light light, Material mat, float4 albedo, VertexO
     float3 kS = F;
     float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (float3(1.0, 1.0, 1.0) - metallicValue);
 
-    float3 diffuse = kD * albedo.rgb / acos(-1);
+    float3 diffuse = kD * albedo.rgb * mat.Diffuse.rgb / acos(-1);
     return (diffuse + specular) * light.Diffuse.rgb * max(dot(pixel.Normal, L), 0.0);
 }
 
@@ -126,10 +126,11 @@ float3 ComputePointLight(Light light, Material mat, float4 albedo, VertexOut pix
 
     float NdotL = dot(pixel.Normal, L);
     float NdotH = dot(pixel.Normal, H);
+    float HdotV = dot(H, V);
 
     float D = DistributionGGX(NdotH, roughnessValue);
     float G = GeometrySmith(NdotV, NdotL, roughnessValue);
-    float3 F = FresnelSchlick(F0, NdotV);
+    float3 F = FresnelSchlick(F0, HdotV);
 
     float3 nom = D * G * F;
     float denom = 4 * max(dot(L, pixel.Normal), 0.0) * max(dot(V, pixel.Normal), 0.0) + 0.0001;
@@ -139,7 +140,7 @@ float3 ComputePointLight(Light light, Material mat, float4 albedo, VertexOut pix
     float3 kS = F;
     float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (float3(1.0, 1.0, 1.0) - metallicValue);
 
-    float3 diffuse = kD * albedo.rgb / acos(-1);
+    float3 diffuse = kD * albedo.rgb * mat.Diffuse.rgb / acos(-1);
     return (diffuse + specular) * light.Diffuse.rgb * max(dot(pixel.Normal, L), 0.0) * att;
 }
 
@@ -152,7 +153,7 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
 
     float roughnessValue = mat.Roughness;
     if (mat.RoughnessMapIndex != 0)
-        roughnessValue = TextureMaps[mat.SpecularMapIndex].Sample(samAnisotropicWrap, pixelIn.TexUV * mat.Tilling).r;
+        roughnessValue = TextureMaps[mat.RoughnessMapIndex].Sample(samAnisotropicWrap, pixelIn.TexUV * mat.Tilling).r;
     roughnessValue = max(roughnessValue, 0.045);
 
     float3 specularValue = { 1.0, 1.0, 1.0 };
@@ -160,7 +161,7 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
         specularValue *= TextureMaps[mat.SpecularMapIndex].Sample(samAnisotropicWrap, pixelIn.TexUV * mat.Tilling).rgb;
 
 
-    float3 F0 = lerp(float3(0.04, 0.04, 0.04), albedo.rgb, metallicValue);
+    float3 F0 = lerp(float3(0.04, 0.04, 0.04), albedo.rgb * mat.Diffuse.rgb, metallicValue);
 
     float NdotV = dot(pixelIn.Normal, V);
 
@@ -178,7 +179,7 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
                     float lightDepthValue = pixelIn.ShadowPos.z / pixelIn.ShadowPos.w;
                     lightDepthValue = lightDepthValue - bias;
 
-                    if (lightDepthValue >= depthValue) l *= 0.3;
+                    // if (lightDepthValue >= depthValue) l *= 0.3;
                 }
                 color += l;
                 break;

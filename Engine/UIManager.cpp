@@ -9,6 +9,10 @@ UIManager::~UIManager()
 	cout << "Released - UIManager\n";
 #endif
 
+	for (auto& e : _elements) {
+		e->OnDestroy();
+	}
+
 	_elements.clear();
 	_panels.clear();
 }

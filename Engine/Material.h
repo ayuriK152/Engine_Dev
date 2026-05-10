@@ -38,11 +38,11 @@ public:
 	string specularTextureName;
 
 	int matSBIndex;
-	int diffuseSrvHeapIndex;
-	int normalSrvHeapIndex;
-	int metallicSrvHeapIndex;
-	int roughnessSrvHeapIndex;
-	int specularSrvHeapIndex;
+	int diffuseSrvHeapIndex = 0;
+	int normalSrvHeapIndex = 0;
+	int metallicSrvHeapIndex = 0;
+	int roughnessSrvHeapIndex = 0;
+	int specularSrvHeapIndex = 0;
 
 	int numFramesDirty;
 

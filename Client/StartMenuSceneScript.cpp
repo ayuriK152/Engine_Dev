@@ -10,6 +10,8 @@ StartMenuSceneScript::~StartMenuSceneScript()
 
 void StartMenuSceneScript::Init()
 {
+	weak_ptr<StartMenuSceneScript> weak = static_pointer_cast<StartMenuSceneScript>(shared_from_this());
+
 	_states.push_back(new MenuFadeIn());
 	_states.push_back(new Menu());
 	_states.push_back(new MenuFadeOut());
@@ -28,8 +30,28 @@ void StartMenuSceneScript::Init()
 	_startButton->background->GetTransform()->SetSize({ 300.0f, 75.0f });
 	_startButton->text->SetFont("Georgia");
 	_startButton->text->SetText("Start Game");
-	_startButton->mouseEnterEvent += [this]() { OnMouseEnterStartButton(); };
+	_startButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
 	_startButton->mouseDownEvent += [this]() { OnClickedStartButton(); };
+
+	_exitButton = UI->CreateUI<UIButton>();
+	_exitButton->GetTransform()->SetDepth(3.0f);
+	_exitButton->GetTransform()->SetPosition({ 0.0f, -250.0f, 0.0f });
+	_exitButton->background->SetTexture(L"..\\Resources\\Textures\\UI\\ButtonHovered.png");
+	_exitButton->background->GetTransform()->SetSize({ 300.0f, 75.0f });
+	_exitButton->text->SetFont("Georgia");
+	_exitButton->text->SetText("Exit");
+	_exitButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
+	_exitButton->mouseDownEvent += [this]() { OnClickedExitButton(); };
+
+	_settingButton = UI->CreateUI<UIButton>();
+	_settingButton->GetTransform()->SetDepth(3.0f);
+	_settingButton->GetTransform()->SetPosition({ 0.0f, -175.0f, 0.0f });
+	_settingButton->background->SetTexture(L"..\\Resources\\Textures\\UI\\ButtonHovered.png");
+	_settingButton->background->GetTransform()->SetSize({ 300.0f, 75.0f });
+	_settingButton->text->SetFont("Georgia");
+	_settingButton->text->SetText("Settings");
+	_settingButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
+	_settingButton->mouseDownEvent += [this]() { OnClickedExitButton(); };
 
 	shared_ptr<UIPanel> mainTitlePanel = UI->CreateUI<UIPanel>();
 	mainTitlePanel->SetTexture(L"..\\Resources\\Textures\\Logos\\MainTitle.png");
@@ -58,7 +80,14 @@ void StartMenuSceneScript::Update()
 
 void StartMenuSceneScript::OnDestroy()
 {
+	for (int i = 0; i < _states.size(); ++i) {
+		delete _states[i];
+	}
 
+	_fadePanel.reset();
+	_startButton.reset();
+	_exitButton.reset();
+	_settingButton.reset();
 }
 
 void StartMenuSceneScript::LoadXML(Bulb::XMLElement compElem)
@@ -86,7 +115,7 @@ void StartMenuSceneScript::RestoreSnapshot(ComponentSnapshot snapshot)
 	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 }
 
-void StartMenuSceneScript::OnMouseEnterStartButton()
+void StartMenuSceneScript::OnMouseEnterButton()
 {
 	SOUND->PlaySound("Sounds/UIButtonHovered.mp3");
 }
@@ -95,6 +124,17 @@ void StartMenuSceneScript::OnClickedStartButton()
 {
 	SOUND->PlaySound("Sounds/StartGameButton.mp3");
 	SetState(StartMenuSceneState::MenuFadeOut);
+}
+
+void StartMenuSceneScript::OnClickedSettingsButton()
+{
+	SOUND->PlaySound("Sounds/UIButtonHovered.mp3");
+}
+
+void StartMenuSceneScript::OnClickedExitButton()
+{
+	SOUND->PlaySound("Sounds/UIButtonHovered.mp3");
+	APP->QuitApplication();
 }
 
 void StartMenuSceneScript::MenuFadeIn::StateStart(StartMenuSceneScript* owner)

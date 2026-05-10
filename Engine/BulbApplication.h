@@ -20,8 +20,7 @@ public:
 	// Run Bulb Application
 	int Run();
 
-	// Exit Bulb Application
-	void ExitApplication();
+	void QuitApplication();
 
 	HINSTANCE	GetAppInst()const;
 	void		SetAppInst(HINSTANCE hInstance, AppDesc appDesc);
@@ -30,9 +29,14 @@ public:
 	void		SetAppStatus(AppStatus appStatus);
 
 private:
+	// Exit Bulb Application
+	void ExitApplication();
+
+private:
 	static BulbApplication* s_instance;
 
 	HINSTANCE _hAppInst = nullptr; // application instance handle
+	bool _isExitReserved = false;
 
 	AppStatus _appStatus;
 };

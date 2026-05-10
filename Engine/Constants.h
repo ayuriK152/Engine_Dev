@@ -29,9 +29,9 @@ struct MaterialConstants
 	float Roughness = 0.5f;
 	UINT DiffuseMapIndex;
 	UINT NormalMapIndex;
-	UINT MetallicMapIndex;
-	UINT RoughnessMapIndex;
-	UINT SpecularMapIndex;
+	UINT MetallicMapIndex = 0;
+	UINT RoughnessMapIndex = 0;
+	UINT SpecularMapIndex = 0;
 	XMFLOAT3 padding;
 };
 

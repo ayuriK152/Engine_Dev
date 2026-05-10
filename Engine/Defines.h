@@ -6,13 +6,16 @@
 #define ReleaseCom(x) { if (x) { x->Release(); x = 0; } }
 #endif
 
+#ifdef BULB_EDITOR
+#define EDITOR		GET_SINGLE(EditorManager)
+#define ENGINEGUI	GET_SINGLE(EngineGUIManager)
+#endif
 #define APP			GET_SINGLE(BulbApplication)
 #define GRAPHIC		GET_SINGLE(Graphic)
 #define TIME		GET_SINGLE(GameTimer)
 #define RESOURCE	GET_SINGLE(ResourceManager)
 #define RENDER		GET_SINGLE(RenderManager)
 #define INPUTM		GET_SINGLE(InputManager)
-#define ENGINEGUI	GET_SINGLE(EngineGUIManager)
 #define ENGINESTAT	GET_SINGLE(EngineStatusManager)
 #define DEBUG		GET_SINGLE(DebugManager)
 #define PHYSICS		GET_SINGLE(PhysicsManager)
@@ -22,7 +25,6 @@
 #define ANIMATION	GET_SINGLE(AnimationManager)
 #define UI			GET_SINGLE(UIManager)
 #define SCENE		GET_SINGLE(SceneManager)
-#define EDITOR		GET_SINGLE(EditorManager)
 #define SOUND		GET_SINGLE(SoundManager)
 
 #define FILEIO		GET_SINGLE(FileIOUtil)

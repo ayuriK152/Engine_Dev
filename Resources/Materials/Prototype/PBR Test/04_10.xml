@@ -1,0 +1,11 @@
+<Material>
+    <Name>04_10</Name>
+    <Ambient r="1" g="0" b="0" a="1"/>
+    <Diffuse r="1" g="0" b="0" a="1"/>
+    <Specular r="1" g="1" b="1" a="1"/>
+    <Emissive r="0" g="0" b="0" a="1"/>
+    <Metallic value="0.4"/>
+    <Roughness value="1.0"/>
+    <DiffuseTexture></DiffuseTexture>
+    <NormalTexture></NormalTexture>
+</Material>

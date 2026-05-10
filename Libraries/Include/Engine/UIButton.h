@@ -11,6 +11,8 @@ public:
 	void Init() override;
 	void Update() override;
 
+	void OnDestroy() override;
+
 	void LoadXML(XMLElement* uiElem) override;
 
 	void OnMouseEnter() override;

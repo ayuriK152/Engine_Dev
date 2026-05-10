@@ -4,6 +4,7 @@
 #include "PlayerScript.h"
 #include "TPVCamera.h"
 #include "StartMenuSceneScript.h"
+#include "MainSceneScript.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR cmdLine, int nShowCmd)
 {

@@ -38,6 +38,13 @@ void UIButton::Update()
 
 }
 
+void UIButton::OnDestroy()
+{
+	mouseEnterEvent.Clear();
+	mouseExitEvent.Clear();
+	mouseDownEvent.Clear();
+}
+
 void UIButton::LoadXML(XMLElement* uiElem)
 {
 	XMLElement* textElem = uiElem->FirstChildElement("Text");

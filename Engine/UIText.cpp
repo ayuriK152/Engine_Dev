@@ -9,6 +9,14 @@ UIText::UIText() : UIPanel(UIType::Text)
 UIText::~UIText()
 {
 	cout << "Released - UIText\n";
+
+	_textLayout.Reset();
+	_textFormat.Reset();
+	_brush.Reset();
+
+	_textTexture.Reset();
+	_wrappedResource.Reset();
+	_d2dBitmap.Reset();
 }
 
 void UIText::Init()

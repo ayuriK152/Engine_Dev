@@ -293,6 +293,7 @@
   <ItemGroup>
     <ClInclude Include="BaseState.h" />
     <ClInclude Include="EnemyScript.h" />
+    <ClInclude Include="MainSceneScript.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="pch.h" />
@@ -302,6 +303,7 @@
   <ItemGroup>
     <ClCompile Include="BaseState.cpp" />
     <ClCompile Include="EnemyScript.cpp" />
+    <ClCompile Include="MainSceneScript.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">

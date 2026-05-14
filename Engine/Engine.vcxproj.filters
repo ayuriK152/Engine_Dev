@@ -228,6 +228,9 @@
     <ClInclude Include="UIButton.h">
       <Filter>06. UI</Filter>
     </ClInclude>
+    <ClInclude Include="SSAO.h">
+      <Filter>03. Resources\Not Inherited</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Core">
@@ -500,6 +503,9 @@
     </ClCompile>
     <ClCompile Include="UIButton.cpp">
       <Filter>06. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SSAO.cpp">
+      <Filter>03. Resources\Not Inherited</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

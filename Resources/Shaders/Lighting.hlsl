@@ -1,5 +1,6 @@
 #include "Common.hlsl"
 
+#define MIPMAP_LEVEL_MAX    10
 
 // Legacy Blinh Phong
 // float4 ProcessAmbient(float4 ambient, float4 albedo) {
@@ -91,6 +92,15 @@ float3 FresnelSchlick(float3 F0, float NdotV) {
     return F0 + (1.0 - F0) * pow(1.0 - NdotV, 5.0);
 }
 
+float3 FresnelSchlick(float3 F0, float NdotV, float roughness) {
+    return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(1.0 - NdotV, 5.0);
+}
+
+float3 ACESToneMap(float3 color) {
+    const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
+    return saturate((color * (A * color + B)) / (color * (C * color + D) + E));
+}
+
 float3 ComputeDirectionalLight(Light light, Material mat, float4 albedo, VertexOut pixel, float3 V, float NdotV, float3 F0, float3 metallicValue, float roughnessValue, float3 specularValue) {
     float3 L = normalize(-light.Direction);
     float3 H = normalize(V + L);
@@ -135,7 +145,7 @@ float3 ComputePointLight(Light light, Material mat, float4 albedo, VertexOut pix
     float3 nom = D * G * F;
     float denom = 4 * max(dot(L, pixel.Normal), 0.0) * max(dot(V, pixel.Normal), 0.0) + 0.0001;
     float3 specular = nom / max(denom, 0.0001);
-    specular *= specularValue;
+    specular *= specularValue * light.Diffuse.rgb;
 
     float3 kS = F;
     float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (float3(1.0, 1.0, 1.0) - metallicValue);
@@ -179,7 +189,7 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
                     float lightDepthValue = pixelIn.ShadowPos.z / pixelIn.ShadowPos.w;
                     lightDepthValue = lightDepthValue - bias;
 
-                    // if (lightDepthValue >= depthValue) l *= 0.3;
+                    if (lightDepthValue >= depthValue) l = 0;
                 }
                 color += l;
                 break;
@@ -189,8 +199,24 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
         }
     }
 
+    // IBL
+    float3 R = reflect(-V, pixelIn.Normal);
+    float3 prefilteredColor = CubeMap.SampleLevel(samAnisotropicClamp, R, roughnessValue * MIPMAP_LEVEL_MAX).rgb;
+    float3 F = FresnelSchlick(F0, max(NdotV, 0.0), roughnessValue);
+    float3 kS = F;
+    float3 kD = (1.0 - kS) * (1.0 - metallicValue);
+
+    float3 irradiance = CubeMap.SampleLevel(samAnisotropicClamp, pixelIn.Normal, MIPMAP_LEVEL_MAX).rgb;
+    float3 diffuseIBL = irradiance * albedo.rgb * mat.Diffuse.rgb * kD;
+
+    float3 specularIBL = prefilteredColor * F;
+
+    float3 ambientIBL = diffuseIBL + specularIBL;
+    color += ambientIBL;
+    //color = color / (color + float3(1.0, 1.0, 1.0));
+
+    color = ACESToneMap(color);
     color = pow(color, 1.0 / 2.2);
-    color += albedo.rgb * 0.2;
 
     return float4(color, albedo.a);
 }

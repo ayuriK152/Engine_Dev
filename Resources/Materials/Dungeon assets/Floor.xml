@@ -8,4 +8,5 @@
     <Roughness value="0.5"/>
     <DiffuseTexture>..\Resources\Textures\Dungeon\Flag_Stone_Floor_BaseColor_With_AO.png</DiffuseTexture>
     <NormalTexture>..\Resources\Textures\Dungeon\Flag_Stone_Floor_Normal.png</NormalTexture>
+    <RoughnessTexture>..\Resources\Textures\Dungeon\Flag_Stone_Floor_Roughness.png</RoughnessTexture>
 </Material>

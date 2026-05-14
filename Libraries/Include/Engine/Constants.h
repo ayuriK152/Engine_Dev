@@ -59,7 +59,8 @@ struct LightConstants
 	float SpotPower = 0.0f;
 	float FallOffStart;
 	float FallOffEnd;
-	XMFLOAT2 padding;
+	float intensity;
+	float padding;
 };
 
 struct LightGatherConstants

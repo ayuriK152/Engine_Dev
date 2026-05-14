@@ -175,10 +175,13 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
 
     float NdotV = dot(pixelIn.Normal, V);
 
+    Light currentLight;
     for (int i = 0; i < gNumLights; i++) {
-        switch (Lights[i].LightType) {
+        currentLight = Lights[i];
+        currentLight.Diffuse *= currentLight.Intensity;
+        switch (currentLight.LightType) {
             case 0:
-                float3 l = ComputeDirectionalLight(Lights[i], mat, albedo, pixelIn, V, NdotV, F0, metallicValue, roughnessValue, specularValue);
+                float3 l = ComputeDirectionalLight(currentLight, mat, albedo, pixelIn, V, NdotV, F0, metallicValue, roughnessValue, specularValue);
                 if (i == 0) {
                     float2 shadowMapTex;
                     float bias = 0.001;
@@ -194,7 +197,7 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
                 color += l;
                 break;
             case 1:
-                color += ComputePointLight(Lights[i], mat, albedo, pixelIn, V, NdotV, F0, metallicValue, roughnessValue, specularValue);
+                color += ComputePointLight(currentLight, mat, albedo, pixelIn, V, NdotV, F0, metallicValue, roughnessValue, specularValue);
                 break;
         }
     }

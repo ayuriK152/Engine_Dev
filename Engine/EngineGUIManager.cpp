@@ -55,7 +55,7 @@ void EngineGUIManager::Init()
 	init_info.Device = GRAPHIC->GetDevice();
 	init_info.CommandQueue = GRAPHIC->GetCommandQueue();
 	init_info.NumFramesInFlight = RENDER->GetNumFrameResources();
-	init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	init_info.RTVFormat = GRAPHIC->GetBackBufferFormat();
 
 	RENDER->GetAndIncreaseSRVHeapIndex();
 	init_info.SrvDescriptorHeap = RENDER->GetCommonSRVHeap().Get();
@@ -691,19 +691,21 @@ void EngineGUIManager::ShowLight(shared_ptr<Light> light)
 {
 	if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Text("Light Color");
 		static float diffuse[4];
 		diffuse[0] = light->diffuse.r;
 		diffuse[1] = light->diffuse.g;
 		diffuse[2] = light->diffuse.b;
 		diffuse[3] = light->diffuse.a;
 
+		ImGui::Text("Light Color");
 		if (ImGui::InputFloat4("##DiffuseLight", diffuse)) {
 			light->diffuse.r = clamp(diffuse[0], 0.0f, 1.0f);
 			light->diffuse.g = clamp(diffuse[1], 0.0f, 1.0f);
 			light->diffuse.b = clamp(diffuse[2], 0.0f, 1.0f);
 			light->diffuse.a = clamp(diffuse[3], 0.0f, 1.0f);
 		}
+
+		ImGui::InputFloat("##LightIntensity", &light->intensity);
 
 		switch (light->GetLightType()) {
 		case LightType::Directional: {

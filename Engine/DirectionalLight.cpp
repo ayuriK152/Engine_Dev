@@ -73,6 +73,8 @@ void DirectionalLight::OnDestroy()
 
 void DirectionalLight::LoadXML(Bulb::XMLElement compElem)
 {
+	intensity = compElem.FloatAttribute("Intensity", 1.0f);
+
 	Bulb::XMLElement diffuseElem = compElem.FirstChildElement("Diffuse");
 	if (!diffuseElem.IsNullPtr()) {
 		Bulb::Color color;
@@ -87,6 +89,8 @@ void DirectionalLight::LoadXML(Bulb::XMLElement compElem)
 void DirectionalLight::SaveXML(Bulb::XMLElement compElem)
 {
 	compElem.SetAttribute("ComponentType", "DirectionalLight");
+
+	compElem.SetAttribute("Intensity", intensity);
 
 	Bulb::XMLElement diffuseElem = compElem.InsertNewChildElement("Diffuse");
 	diffuseElem.SetAttribute("r", diffuse.r);
@@ -118,6 +122,7 @@ LightConstants DirectionalLight::GetLightConstants()
 	constants.Proj = _matProj;
 	constants.Diffuse = diffuse;
 	constants.Direction = direction;
+	constants.intensity = intensity;
 
 	return constants;
 }

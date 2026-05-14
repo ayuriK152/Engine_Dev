@@ -51,6 +51,8 @@ void PointLight::OnDestroy()
 
 void PointLight::LoadXML(Bulb::XMLElement compElem)
 {
+	intensity = compElem.FloatAttribute("Intensity", 1.0f);
+
 	Bulb::XMLElement diffuseElem = compElem.FirstChildElement("Diffuse");
 	if (!diffuseElem.IsNullPtr()) {
 		Bulb::Color color;
@@ -65,6 +67,8 @@ void PointLight::LoadXML(Bulb::XMLElement compElem)
 void PointLight::SaveXML(Bulb::XMLElement compElem)
 {
 	compElem.SetAttribute("ComponentType", "PointLight");
+
+	compElem.SetAttribute("Intensity", intensity);
 
 	Bulb::XMLElement diffuseElem = compElem.InsertNewChildElement("Diffuse");
 	diffuseElem.SetAttribute("r", diffuse.r);
@@ -96,6 +100,7 @@ LightConstants PointLight::GetLightConstants()
 	constants.FallOffStart = _fallOffStart;
 	constants.FallOffEnd = _fallOffEnd;
 	constants.Diffuse = diffuse;
+	constants.intensity = intensity;
 
 	return constants;
 }

@@ -39,6 +39,7 @@ public:
 
 public:
 	Bulb::Color diffuse;
+	float intensity = 1.0f;
 
 protected:
 	XMFLOAT4X4 _matView;

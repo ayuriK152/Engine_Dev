@@ -36,7 +36,8 @@ struct Light {
     float    SpotPower;
     float    FallOffStart;
     float    FallOffEnd;
-    float2   padding1;
+    float    Intensity;
+    float    padding1;
 };
 
 struct Instance {

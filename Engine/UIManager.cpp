@@ -9,6 +9,10 @@ UIManager::~UIManager()
 	cout << "Released - UIManager\n";
 #endif
 
+	_quadMesh.reset();
+	_prevHoveredUI.reset();
+	_hoveredUI.reset();
+
 	for (auto& e : _elements) {
 		e->OnDestroy();
 	}
@@ -66,8 +70,7 @@ void UIManager::Update()
 
 	_uiConstants.clear();
 
-	static shared_ptr<UIElement> prevUI;
-	prevUI = _hoveredUI;
+	_prevHoveredUI = _hoveredUI;
 	_hoveredUI = nullptr;
 	for (auto& ui : _elements) {
 		ui->Update();
@@ -85,8 +88,8 @@ void UIManager::Update()
 		}
 	}
 
-	if (prevUI != _hoveredUI) {
-		if (prevUI != nullptr) prevUI->OnMouseExit();
+	if (_prevHoveredUI != _hoveredUI) {
+		if (_prevHoveredUI != nullptr) _prevHoveredUI->OnMouseExit();
 		if (_hoveredUI != nullptr) _hoveredUI->OnMouseEnter();
 	}
 	if (_hoveredUI != nullptr) {

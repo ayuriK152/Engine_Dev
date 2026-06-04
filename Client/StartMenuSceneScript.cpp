@@ -33,6 +33,16 @@ void StartMenuSceneScript::Init()
 	_startButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
 	_startButton->mouseDownEvent += [this]() { OnClickedStartButton(); };
 
+	_settingButton = UI->CreateUI<UIButton>();
+	_settingButton->GetTransform()->SetDepth(3.0f);
+	_settingButton->GetTransform()->SetPosition({ 0.0f, -175.0f, 0.0f });
+	_settingButton->background->SetTexture(L"..\\Resources\\Textures\\UI\\ButtonHovered.png");
+	_settingButton->background->GetTransform()->SetSize({ 300.0f, 75.0f });
+	_settingButton->text->SetFont("Georgia");
+	_settingButton->text->SetText("Settings");
+	_settingButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
+	_settingButton->mouseDownEvent += [this]() { OnClickedSettingsButton(); };
+
 	_exitButton = UI->CreateUI<UIButton>();
 	_exitButton->GetTransform()->SetDepth(3.0f);
 	_exitButton->GetTransform()->SetPosition({ 0.0f, -250.0f, 0.0f });
@@ -42,16 +52,6 @@ void StartMenuSceneScript::Init()
 	_exitButton->text->SetText("Exit");
 	_exitButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
 	_exitButton->mouseDownEvent += [this]() { OnClickedExitButton(); };
-
-	_settingButton = UI->CreateUI<UIButton>();
-	_settingButton->GetTransform()->SetDepth(3.0f);
-	_settingButton->GetTransform()->SetPosition({ 0.0f, -175.0f, 0.0f });
-	_settingButton->background->SetTexture(L"..\\Resources\\Textures\\UI\\ButtonHovered.png");
-	_settingButton->background->GetTransform()->SetSize({ 300.0f, 75.0f });
-	_settingButton->text->SetFont("Georgia");
-	_settingButton->text->SetText("Settings");
-	_settingButton->mouseEnterEvent += [this]() { OnMouseEnterButton(); };
-	_settingButton->mouseDownEvent += [this]() { OnClickedExitButton(); };
 
 	shared_ptr<UIPanel> mainTitlePanel = UI->CreateUI<UIPanel>();
 	mainTitlePanel->SetTexture(L"..\\Resources\\Textures\\Logos\\MainTitle.png");

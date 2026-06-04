@@ -165,13 +165,13 @@ void BulbApplication::ExitApplication()
 #endif
 	DEBUG->Delete();
 	SCENE->Delete();
-	UI->Delete();
 	FILEIO->Delete();
 	RESOURCE->Delete();
 #ifdef BULB_EDITOR
 	ENGINEGUI->Delete();
 #endif
 	RENDER->Delete();
+	UI->Delete();
 	PHYSICS->Delete();
 	PARTICLE->Delete();
 	SKELETON->Delete();

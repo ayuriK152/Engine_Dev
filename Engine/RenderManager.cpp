@@ -147,6 +147,12 @@ void RenderManager::Render()
 		ThrowIfFailed(_cmdLists[2]->Reset(_currFrameResource->cmdListAlloc[2], nullptr));
 	}
 
+	bool isMsaaEnabled = GRAPHIC->IsMSAAEnabled();
+	ID3D12Resource* backBuffer = GRAPHIC->GetCurrentBackBuffer();
+	ID3D12Resource* msaaRenderTarget = GRAPHIC->GetMSAARenderTarget();
+
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = isMsaaEnabled ? GRAPHIC->GetMSAARTVHandle() : GRAPHIC->GetCurrentBackBufferView();
+
 	// ShadowMap Pass
 	_futures[0] = THREAD->EnqueueJob([this] {
 		SetStateDefault(_cmdLists[0]);
@@ -189,19 +195,26 @@ void RenderManager::Render()
 	});
 
 	// Main Pass
-	_futures[1] = THREAD->EnqueueJob([this] {
+	_futures[1] = THREAD->EnqueueJob([this, isMsaaEnabled, backBuffer, msaaRenderTarget, rtvHandle] {
 		SetStateDefault(_cmdLists[1]);
 
-		_cmdLists[1]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
-			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		// MSAA Buffer Barrier Setting
+		if (!isMsaaEnabled) {
+			_cmdLists[1]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffer,
+				D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		}
+		else {
+			_cmdLists[1]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(msaaRenderTarget,
+				D3D12_RESOURCE_STATE_RESOLVE_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		}
 
 		_cmdLists[1]->RSSetViewports(1, &GRAPHIC->GetViewport());
 		_cmdLists[1]->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
 
-		_cmdLists[1]->ClearRenderTargetView(GRAPHIC->GetCurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+		_cmdLists[1]->ClearRenderTargetView(rtvHandle, Colors::LightSteelBlue, 0, nullptr);
 		_cmdLists[1]->ClearDepthStencilView(GRAPHIC->GetDSVHandle(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-		_cmdLists[1]->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
+		_cmdLists[1]->OMSetRenderTargets(1, &rtvHandle, true, &GRAPHIC->GetDSVHandle());
 
 		// Skybox
 		_cmdLists[1]->SetPipelineState(_PSOs[PSO_SKYBOX].Get());
@@ -258,7 +271,7 @@ void RenderManager::Render()
 		_cmdLists[2]->RSSetViewports(1, &GRAPHIC->GetViewport());
 		_cmdLists[2]->RSSetScissorRects(1, &GRAPHIC->GetScissorRect());
 
-		_cmdLists[2]->OMSetRenderTargets(1, &GRAPHIC->GetCurrentBackBufferView(), true, &GRAPHIC->GetDSVHandle());
+		_cmdLists[2]->OMSetRenderTargets(1, &rtvHandle, true, &GRAPHIC->GetDSVHandle());
 
 		_cmdLists[2]->SetPipelineState(_PSOs[PSO_PARTICLE_RENDER].Get());
 		_cmdLists[2]->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -276,8 +289,22 @@ void RenderManager::Render()
 		ENGINEGUI->Render(_cmdLists[2]);
 #endif
 
-		_cmdLists[2]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(GRAPHIC->GetCurrentBackBuffer(),
-			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+		if (GRAPHIC->IsMSAAEnabled()) {
+			_cmdLists[2]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(msaaRenderTarget,
+				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_RESOLVE_SOURCE));
+
+			_cmdLists[2]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffer,
+				D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RESOLVE_DEST));
+
+			_cmdLists[2]->ResolveSubresource(backBuffer, 0, msaaRenderTarget, 0, GRAPHIC->GetBackBufferFormat());
+
+			_cmdLists[2]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffer,
+				D3D12_RESOURCE_STATE_RESOLVE_DEST, D3D12_RESOURCE_STATE_PRESENT));
+		}
+		else {
+			_cmdLists[2]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffer,
+				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+		}
 
 		ThrowIfFailed(_cmdLists[2]->Close());
 	}

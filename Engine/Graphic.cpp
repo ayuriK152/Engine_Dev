@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Graphic.h"
 #include "Camera.h"
 
@@ -106,6 +106,8 @@ void Graphic::OnResize()
 		rtvHeapHandle.Offset(1, _rtvDescriptorSize);
 	}
 
+	BuildMSAARenderTarget();
+
 	D3D12_RESOURCE_DESC depthStencilDesc;
 	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Alignment = 0;
@@ -135,7 +137,7 @@ void Graphic::OnResize()
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.ViewDimension = _appDesc._4xMsaaState ? D3D12_DSV_DIMENSION_TEXTURE2DMS : D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = _depthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
 
@@ -175,7 +177,7 @@ void Graphic::RenderEnd(FrameResource* currentFrameResource)
 }
 
 
-// ������ �޼��� ó����
+// 윈도우 메세지 처리부
 LRESULT Graphic::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// ImGUI test
@@ -346,7 +348,7 @@ void Graphic::ExecuteGraphicsCommandList()
 	}
 }
 
-// ������ �ʱ�ȭ
+// 윈도우 초기화
 bool Graphic::InitMainWindow()
 {
 	WNDCLASS wc;
@@ -395,7 +397,7 @@ bool Graphic::InitMainWindow()
 }
 
 
-// dx �ʱ�ȭ
+// dx 초기화
 bool Graphic::InitDirect3D()
 {
 	#if defined(DEBUG) || defined(_DEBUG) 
@@ -479,22 +481,22 @@ void Graphic::Init11On12()
 
 	ThrowIfFailed(_d3d11Device.As(&_d3d11On12Device));
 
-	// Direct2D ���丮 ����
+	// Direct2D 팩토리 생성
 	D2D1_FACTORY_OPTIONS options = {};
 #if defined(DEBUG) || defined(_DEBUG)
 	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
 	ThrowIfFailed(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &options, &_d2dFactory));
 
-	//  DXGI ����̽� ȹ�� (D3D11 ����̽��κ���)
+	//  DXGI 디바이스 획득 (D3D11 디바이스로부터)
 	ComPtr<IDXGIDevice> dxgiDevice;
 	ThrowIfFailed(_d3d11On12Device.As(&dxgiDevice));
 
-	// D2D ����̽� �� ���ؽ�Ʈ ����
+	// D2D 디바이스 및 컨텍스트 생성
 	ThrowIfFailed(_d2dFactory->CreateDevice(dxgiDevice.Get(), &_d2dDevice));
 	ThrowIfFailed(_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &_d2dContext));
 
-	// DirectWrite ���丮 ����
+	// DirectWrite 팩토리 생성
 	ThrowIfFailed(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &_dWriteFactory));
 }
 
@@ -531,8 +533,10 @@ void Graphic::BuildSwapChain()
 	sd.BufferDesc.Format = _backBufferFormat;
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
-	sd.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
+	//sd.SampleDesc.Count = _appDesc._4xMsaaState ? 4 : 1;
+	//sd.SampleDesc.Quality = _appDesc._4xMsaaState ? (_appDesc._4xMsaaQuality - 1) : 0;
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = _SwapChainBufferCount;
 	sd.OutputWindow = _hMainWnd;
@@ -550,12 +554,21 @@ void Graphic::BuildDescriptorHeaps()
 {
 	// Render Target View
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
-	rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
+	rtvHeapDesc.NumDescriptors = _SwapChainBufferCount + 1;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	rtvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
+
+	//// MSAA Render Target View
+	//D3D12_DESCRIPTOR_HEAP_DESC msaaRtvHeapDesc;
+	//rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
+	//rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	//rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	//rtvHeapDesc.NodeMask = 0;
+	//ThrowIfFailed(_device->CreateDescriptorHeap(
+	//	&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
 
 	// Depth Stencil View
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
@@ -565,6 +578,68 @@ void Graphic::BuildDescriptorHeaps()
 	dsvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
+}
+
+void Graphic::BuildMSAARenderTarget()
+{
+	if (!_appDesc._4xMsaaState) return;
+
+	// 1. MSAA 품질 레벨 확인 (필수)
+	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msaaQualityLevels;
+	msaaQualityLevels.Format = _backBufferFormat;
+	msaaQualityLevels.SampleCount = _msaaSampleCount;
+	msaaQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
+	msaaQualityLevels.NumQualityLevels = 0;
+
+	_device->CheckFeatureSupport(
+		D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
+		&msaaQualityLevels,
+		sizeof(msaaQualityLevels));
+
+	// NumQualityLevels가 0이면 지원 안 함
+	_msaaQuality = msaaQualityLevels.NumQualityLevels - 1;
+
+	D3D12_RESOURCE_DESC msaaRTDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+		_backBufferFormat,
+		_appDesc.clientWidth,
+		_appDesc.clientHeight,
+		1,
+		1,
+		_msaaSampleCount
+	);
+
+	msaaRTDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+	D3D12_CLEAR_VALUE clearVal = {};
+	clearVal.Format = _backBufferFormat;
+	clearVal.Color[3] = 1.0f;
+
+	// _msaaRenderTarget.Reset();
+
+	CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
+	ThrowIfFailed(_device->CreateCommittedResource(
+		&heapProp, D3D12_HEAP_FLAG_NONE,
+		&msaaRTDesc, D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
+		&clearVal, IID_PPV_ARGS(_msaaRenderTarget.GetAddressOf())));
+	//_device->CreateCommittedResource(
+	//	&heapProp, D3D12_HEAP_FLAG_NONE,
+	//	&msaaRTDesc, D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
+	//	&clearVal, IID_PPV_ARGS(&_msaaRenderTarget));
+
+	// 3. RTV 생성 (_rtvHeap의 슬롯 2개 뒤에 추가 — 스왑체인 버퍼가 0,1 사용 중)
+	_msaaRtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(
+		_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+		_SwapChainBufferCount,   // 슬롯 인덱스 2
+		_rtvDescriptorSize);
+
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = _backBufferFormat;
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DMS;
+
+	_device->CreateRenderTargetView(_msaaRenderTarget.Get(), &rtvDesc, _msaaRtvHandle);
+
+	// 4. 뎁스 버퍼도 MSAA와 SampleDesc 일치시켜야 함 ← 자주 놓치는 부분
+	//    기존 _depthStencilBuffer 생성 코드에서 SampleDesc를 동일하게 수정
 }
 
 void Graphic::FlushCommandQueue()

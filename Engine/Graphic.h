@@ -30,7 +30,7 @@ public:
 
 	float GetAspectRatio() const { return static_cast<float>(_appDesc.clientWidth) / _appDesc.clientHeight; }
 
-	bool Get4xMsaaState() const { return _appDesc._4xMsaaState; }
+	bool IsMSAAEnabled() const { return _appDesc._4xMsaaState; }
 	void Set4xMsaaState(bool value) {
 		if (_appDesc._4xMsaaState != value)
 		{
@@ -66,6 +66,9 @@ public:
 			_rtvDescriptorSize);
 	}
 
+	ID3D12Resource* GetMSAARenderTarget() const { return _msaaRenderTarget.Get(); }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetMSAARTVHandle() const { return _msaaRtvHandle; }
+
 	UINT GetAndIncreaseDSVHeapIndex() {
 		return _dsvHeapIndex++;
 	}
@@ -99,6 +102,7 @@ private:
 	void BuildCommandObjects();
 	void BuildSwapChain();
 	void BuildDescriptorHeaps();
+	void BuildMSAARenderTarget();
 
 	void FlushCommandQueue();
 
@@ -111,54 +115,62 @@ private:
 	HWND      _hMainWnd = nullptr;
 
 	// DX12
-	ComPtr<ID3D12Device> _device;
+	ComPtr<ID3D12Device>			_device;
 
 	// DX11
-	ComPtr<ID3D11Device> _d3d11Device;
-	ComPtr<ID3D11DeviceContext> _d3d11DeviceContext;
-	ComPtr<ID3D11On12Device> _d3d11On12Device;
+	ComPtr<ID3D11Device>			_d3d11Device;
+	ComPtr<ID3D11DeviceContext>		_d3d11DeviceContext;
+	ComPtr<ID3D11On12Device>		_d3d11On12Device;
 
 	// DX2D
-	ComPtr<ID2D1Factory3> _d2dFactory;
-	ComPtr<ID2D1Device2> _d2dDevice;
-	ComPtr<ID2D1DeviceContext2> _d2dContext;
+	ComPtr<ID2D1Factory3>			_d2dFactory;
+	ComPtr<ID2D1Device2>			_d2dDevice;
+	ComPtr<ID2D1DeviceContext2>		_d2dContext;
 
 	// DirectWrite
-	ComPtr<IDWriteFactory> _dWriteFactory;
+	ComPtr<IDWriteFactory>			_dWriteFactory;
 
-	ComPtr<IDXGIFactory4> _dxgiFactory;
-	ComPtr<IDXGISwapChain> _swapChain;
+	ComPtr<IDXGIFactory4>			_dxgiFactory;
+	ComPtr<IDXGISwapChain>			_swapChain;
 
-	ComPtr<ID3D12Fence> _fence;
-	UINT64 _currentFence = 0;
+	ComPtr<ID3D12Fence>				_fence;
+	UINT64							_currentFence = 0;
 
-	ComPtr<ID3D12CommandQueue> _commandQueue;
-	ID3D12GraphicsCommandList* _graphicsCmdList;
-	ID3D12CommandAllocator* _graphicsCmdListAlloc;
-	bool _isCmdListUsed = false;
+	ComPtr<ID3D12CommandQueue>		_commandQueue;
+	ID3D12GraphicsCommandList*		_graphicsCmdList;
+	ID3D12CommandAllocator*			_graphicsCmdListAlloc;
+	bool							_isCmdListUsed = false;
 
-	static const int _SwapChainBufferCount = 2;
-	int _currBackBuffer = 0;
-	ComPtr<ID3D12Resource> _swapChainBuffer[_SwapChainBufferCount];
-	ComPtr<ID3D12Resource> _depthStencilBuffer;
+	static const int				_SwapChainBufferCount = 2;
+	int								_currBackBuffer = 0;
+	ComPtr<ID3D12Resource>			_swapChainBuffer[_SwapChainBufferCount];
+	ComPtr<ID3D12Resource>			_depthStencilBuffer;
 
-	UINT _dsvHeapIndex = 0;
+	// MSAA
+	ComPtr<ID3D12Resource>			_msaaRenderTarget;
+	D3D12_CPU_DESCRIPTOR_HANDLE		_msaaRtvHandle;
+	UINT							_msaaSampleCount = 4;
+	UINT							_msaaQuality = 0;
 
-	ComPtr<ID3D12DescriptorHeap> _rtvHeap;
-	ComPtr<ID3D12DescriptorHeap> _dsvHeap;
-	ComPtr<ID3D12DescriptorHeap> _cbvHeap;
+	UINT							_dsvHeapIndex = 0;
 
-	D3D12_VIEWPORT _screenViewport;
-	D3D12_RECT _scissorRect;
-	Bulb::Vector2 _center;
+	ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
+	ComPtr<ID3D12DescriptorHeap>	_msaaRtvHeap;
+	ComPtr<ID3D12DescriptorHeap>	_dsvHeap;
+	ComPtr<ID3D12DescriptorHeap>	_cbvHeap;
 
-	UINT _rtvDescriptorSize = 0;
-	UINT _dsvDescriptorSize = 0;
-	UINT _cbvSrvUavDescriptorSize = 0;
+	D3D12_VIEWPORT					_screenViewport;
+	D3D12_RECT						_scissorRect;
+	Bulb::Vector2					_center;
 
-	D3D_DRIVER_TYPE _d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
-	DXGI_FORMAT _backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-	DXGI_FORMAT _depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	UINT							_rtvDescriptorSize = 0;
+	UINT							_dsvDescriptorSize = 0;
+	UINT							_cbvSrvUavDescriptorSize = 0;
+
+	D3D_DRIVER_TYPE					_d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
+	DXGI_FORMAT						_backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	DXGI_FORMAT						_depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DXGI_FORMAT						_msaaFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	AppDesc _appDesc;
 

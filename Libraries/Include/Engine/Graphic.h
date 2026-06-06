@@ -73,7 +73,7 @@ public:
 		return _dsvHeapIndex++;
 	}
 	ComPtr<ID3D12DescriptorHeap> GetDSVHeap()const { return _dsvHeap; }
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return _dsvHeap->GetCPUDescriptorHandleForHeapStart(); }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return _dsvHandle; }
 
 	D3D12_VIEWPORT GetViewport()const { return _screenViewport; }
 	D3D12_RECT GetScissorRect()const { return _scissorRect; }
@@ -152,6 +152,7 @@ private:
 	UINT							_msaaSampleCount = 4;
 	UINT							_msaaQuality = 0;
 
+	D3D12_CPU_DESCRIPTOR_HANDLE		_dsvHandle;
 	UINT							_dsvHeapIndex = 0;
 
 	ComPtr<ID3D12DescriptorHeap>	_rtvHeap;

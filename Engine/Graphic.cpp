@@ -141,8 +141,9 @@ void Graphic::OnResize()
 	dsvDesc.Format = _depthStencilFormat;
 	dsvDesc.Texture2D.MipSlice = 0;
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hDsv(GetDSVHandle());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDsv(_dsvHeap->GetCPUDescriptorHandleForHeapStart());
 	_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &dsvDesc, hDsv);
+	_dsvHandle = hDsv;
 
 	_graphicsCmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_depthStencilBuffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
@@ -561,15 +562,6 @@ void Graphic::BuildDescriptorHeaps()
 	ThrowIfFailed(_device->CreateDescriptorHeap(
 		&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
 
-	//// MSAA Render Target View
-	//D3D12_DESCRIPTOR_HEAP_DESC msaaRtvHeapDesc;
-	//rtvHeapDesc.NumDescriptors = _SwapChainBufferCount;
-	//rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	//rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	//rtvHeapDesc.NodeMask = 0;
-	//ThrowIfFailed(_device->CreateDescriptorHeap(
-	//	&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
-
 	// Depth Stencil View
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
 	dsvHeapDesc.NumDescriptors = 2;
@@ -584,7 +576,6 @@ void Graphic::BuildMSAARenderTarget()
 {
 	if (!_appDesc._4xMsaaState) return;
 
-	// 1. MSAA 품질 레벨 확인 (필수)
 	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msaaQualityLevels;
 	msaaQualityLevels.Format = _backBufferFormat;
 	msaaQualityLevels.SampleCount = _msaaSampleCount;
@@ -637,9 +628,6 @@ void Graphic::BuildMSAARenderTarget()
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DMS;
 
 	_device->CreateRenderTargetView(_msaaRenderTarget.Get(), &rtvDesc, _msaaRtvHandle);
-
-	// 4. 뎁스 버퍼도 MSAA와 SampleDesc 일치시켜야 함 ← 자주 놓치는 부분
-	//    기존 _depthStencilBuffer 생성 코드에서 SampleDesc를 동일하게 수정
 }
 
 void Graphic::FlushCommandQueue()

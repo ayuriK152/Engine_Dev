@@ -107,6 +107,15 @@ void Camera::RestoreSnapshot(ComponentSnapshot snapshot)
 		SetAsMainCamera();
 }
 
+shared_ptr<Camera> Camera::GetCurrentCamera()
+{
+#ifdef BULB_EDITOR
+	return EDITOR->IsOnPlay() ? _currentCamera : _editorCamera;
+#else
+	return _currentCamera;
+#endif
+}
+
 XMFLOAT3& Camera::GetEyePos()
 {
 #ifdef BULB_EDITOR
@@ -175,6 +184,10 @@ int Camera::GetFramesDirty()
 
 void Camera::SetAsMainCamera()
 {
+#ifdef BULB_EDITOR
+	if (GetGameObject()->GetTag() == "EditorCamera") return;
+#endif
+
 	if (_currentCamera != nullptr) _currentCamera->_isMainCamera = false;
 	_isMainCamera = true;
 	_currentCamera = static_pointer_cast<Camera>(shared_from_this());

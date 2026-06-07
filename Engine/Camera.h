@@ -21,7 +21,7 @@ public:
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 public:
-	static shared_ptr<Camera> GetCurrentCamera() { return _currentCamera; }
+	static shared_ptr<Camera> GetCurrentCamera();
 
 	static XMFLOAT3& GetEyePos();
 

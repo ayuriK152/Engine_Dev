@@ -36,7 +36,10 @@ void DirectionalLight::Init()
 
 void DirectionalLight::Update()
 {
-	if (_gameObject.lock()->GetFramesDirty() > 0) {
+	if (Camera::GetCurrentCamera()->GetFramesDirty() > 0)
+		_transform->SetPosition(Camera::GetCurrentCamera()->GetEyePos());
+
+	if (_gameObject.lock()->GetFramesDirty() > 0 || Camera::GetCurrentCamera()->GetFramesDirty() > 0) {
 		direction = _transform->GetLook();
 
 		XMVECTOR eyePos = XMLoadFloat3(&_transform->GetPosition());
@@ -47,7 +50,8 @@ void DirectionalLight::Update()
 		XMStoreFloat4x4(&_matView, XMMatrixTranspose(matView));
 
 		// projMat 갱신 부분 추가해야함
-		auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
+		// ㄴ굳이 갱신 해야하나? 잘 모르겠음
+		// auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
 		XMMATRIX matProj = XMMatrixOrthographicLH(
 			50.0f,
 			50.0f,

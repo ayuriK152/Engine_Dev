@@ -81,6 +81,8 @@ void Terrain::SetTestHeightSample()
 		0.10f, 0.18f, 0.28f, 0.38f, 0.45f, 0.42f, 0.35f, 0.25f, 0.15f, 0.08f,
 		0.05f, 0.12f, 0.18f, 0.25f, 0.32f, 0.28f, 0.22f, 0.15f, 0.10f, 0.05f };
 	// SetHeightMap(RESOURCE->Get<Texture>(L"..\\Resources\\Textures\\Height Map 1.jpg"));
+
+	GeometryGenerator::CreateTerrain(_sampleCount);
 }
 
 void Terrain::LoadXML(Bulb::XMLElement compElem)

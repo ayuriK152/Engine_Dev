@@ -181,9 +181,32 @@ shared_ptr<Geometry> GeometryGenerator::CreateQuad()
 	return geometry;
 }
 
-shared_ptr<Geometry> GeometryGenerator::CreateTerrain(UINT widthCount, UINT heightCount)
+shared_ptr<Geometry> GeometryGenerator::CreateTerrain(UINT oneSideSampleCount)
 {
 	shared_ptr<Geometry> geometry = make_shared<Geometry>();
+	
+	const UINT totalSampleCount = oneSideSampleCount * oneSideSampleCount;
+
+	vector<Vertex> v;
+	for (int y = 0; y < oneSideSampleCount; ++y) {
+		for (int x = 0; x < oneSideSampleCount; ++x) {
+			v.push_back(Vertex(x, 0, y, 0, 1, 0, 1, 0, 0, (float)x/(float)(oneSideSampleCount - 1), (float)y/(float)(oneSideSampleCount - 1)));
+		}
+	}
+	geometry->GetVertices().assign(v.begin(), v.end());
+
+	vector<UINT32> i;
+	for (int y = 0; y < oneSideSampleCount - 1; ++y) {
+		for (int x = 0; x < oneSideSampleCount - 1; ++x) {
+			i.push_back(x + (y + 1) * oneSideSampleCount);
+			i.push_back(x + y * oneSideSampleCount + 1);
+			i.push_back(x + y * oneSideSampleCount);
+			i.push_back(x + (y + 1) * oneSideSampleCount);
+			i.push_back(x + (y + 1) * oneSideSampleCount + 1);
+			i.push_back(x + y * oneSideSampleCount + 1);
+		}
+	}
+	geometry->GetIndices().assign(i.begin(), i.end());
 
 	return geometry;
 }

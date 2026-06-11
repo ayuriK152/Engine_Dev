@@ -49,7 +49,7 @@ void Mesh::CreateBuffer()
 		return;
 
 	const UINT vbByteSize = (UINT)_geometry->GetVertexCount() * sizeof(Vertex);
-	const UINT ibByteSize = (UINT)_geometry->GetIndexCount() * sizeof(UINT16);
+	const UINT ibByteSize = (UINT)_geometry->GetIndexCount() * sizeof(UINT32);
 
 	//ThrowIfFailed(D3DCreateBlob(vbByteSize, &this->vertexBufferCPU));
 	//CopyMemory(this->vertexBufferCPU->GetBufferPointer(), _vertices.data(), vbByteSize);
@@ -73,7 +73,7 @@ void Mesh::CreateBuffer()
 
 	{	// Index Buffer View Setting
 		indexBufferView.BufferLocation = indexBufferGPU->GetGPUVirtualAddress();
-		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
+		indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 		indexBufferView.SizeInBytes = ibByteSize;
 	}
 }

@@ -21,11 +21,17 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
 
     vin.Pos = posL;
 #endif
+    
+    Instance instanceData;
+    if (MeshType == 0)
+        instanceData = Instances[instanceID + InstanceStartIndex];
+    else if (MeshType == 1)
+        instanceData = TerrainInstances[TerrainInstanceIdx];
 
 #ifdef SKINNED
     float4 posW = float4(vin.Pos, 1.0f);
 #else
-    float4 posW = mul(float4(vin.Pos, 1.0f), Instances[instanceID + InstanceStartIndex].World);
+    float4 posW = mul(float4(vin.Pos, 1.0f), instanceData.World);
 #endif
     vout.Position = mul(posW, mul(Lights[0].View, Lights[0].Proj));
 

@@ -28,7 +28,12 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
     vin.Tangent = tangentL;
 #endif
 
-    Instance instanceData = Instances[instanceID + InstanceStartIndex];
+    Instance instanceData;
+    if (MeshType == 0)
+        instanceData = Instances[instanceID + InstanceStartIndex];
+    else if (MeshType == 1)
+        instanceData = TerrainInstances[TerrainInstanceIdx];
+        
     float4 posW;
 
 #ifdef SKINNED

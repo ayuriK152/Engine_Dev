@@ -144,7 +144,7 @@ void ResourceManager::SaveMesh(shared_ptr<Mesh> mesh, const string& filePath)
 
 	UINT32 indexCount = mesh->GetIndexCount();
 	FILEIO->WriteToFile(fileHandle, indexCount);
-	for (UINT16 i : mesh->GetIndices())
+	for (UINT32 i : mesh->GetIndices())
 	{
 		FILEIO->WriteToFile(fileHandle, i);
 	}
@@ -463,9 +463,12 @@ shared_ptr<Mesh> ResourceManager::LoadMesh(const string& filePath)
 
 	UINT32 indexCount;
 	FILEIO->ReadFileData(fileHandle, &indexCount, sizeof(UINT32));
-	vector<UINT16> indices;
+	vector<UINT32> indices;
 	for (int i = 0; i < indexCount; i++)
 	{
+		// 바이너리 파일 UINT16 -> UINT32 교체작업이 이루어지지 않음.
+		// 임시로 UINT16을 읽고 UINT32로 캐스팅하도록 처리해둠.
+		// 후에 리소스 관련해서 일괄 수정이 반드시 필요한 부분.
 		UINT16 index;
 		FILEIO->ReadFileData(fileHandle, &index, sizeof(UINT16));
 		indices.push_back(index);

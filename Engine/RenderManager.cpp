@@ -645,6 +645,8 @@ void RenderManager::BuildRootSignature()
 	instanceTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 1);
+	CD3DX12_DESCRIPTOR_RANGE terrainTable;
+	terrainTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 1);
 
 	// UI
 	CD3DX12_DESCRIPTOR_RANGE uiTable;
@@ -664,10 +666,12 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
 		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(2, REGISTER_NUM_MESHINFO_C);
 
+		slotRootParameter[ROOT_PARAM_TERRAININFO_C].InitAsConstants(1, REGISTER_NUM_TERRAININFO_C, 1);
 		slotRootParameter[ROOT_PARAM_INSTCANCE_SB].InitAsDescriptorTable(1, &instanceTable);
 		slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
+		slotRootParameter[ROOT_PARAM_TERRAIN_SB].InitAsDescriptorTable(1, &terrainTable);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT_DEFAULT, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -702,7 +706,7 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
 		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(2, REGISTER_NUM_MESHINFO_C);
 
 		slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 1);
 		slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterSetting) / 4, REGISTER_NUM_EMITTER_CB, 1);
@@ -740,7 +744,7 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
 		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(2, REGISTER_NUM_MESHINFO_C);
 
 		slotRootParameter[ROOT_PARAM_UI_SB].InitAsDescriptorTable(1, &uiTable);
 

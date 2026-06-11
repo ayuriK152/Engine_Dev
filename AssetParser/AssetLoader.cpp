@@ -352,7 +352,7 @@ shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene)
 	shared_ptr<Geometry> geometry = make_shared<Geometry>();
 
 	vector<Vertex> vertices;
-	vector<UINT16> indices;
+	vector<UINT32> indices;
 
 	// Get Vertices
 	vertices.reserve(aimesh->mNumVertices);

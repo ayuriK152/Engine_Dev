@@ -3,6 +3,7 @@
 cbuffer TerrainInfo : register(b0, space1) {
     uint TerrainInstanceIdx;
     uint TerrainHeightMapIdx;
+    float HeightFactor;
 };
 
 StructuredBuffer<Instance> Instances            : register(t0, space1);

@@ -30,12 +30,13 @@ void Terrain::Init()
 	_terrainId = _terrainCount++;
 	UpdateConstant();
 
+	// TEST
 	SetTestHeightSample();
 
 	// 설정 객체 생성
 	JPH::HeightFieldShapeSettings settings;
 	settings.mOffset = Vec3(0, 0, 0); // 지형의 시작점 오프셋
-	settings.mScale = Vec3(1.0f, 1.0f, 1.0f); // 각 샘플 사이의 거리 및 높이 배율
+	settings.mScale = Vec3(1.0f, _heightFactor, 1.0f); // 각 샘플 사이의 거리 및 높이 배율
 	settings.mSampleCount = _sampleCount;
 	settings.mHeightSamples.resize(_sampleCount * _sampleCount);
 	for (int y = 0; y < _sampleCount; ++y) {
@@ -86,6 +87,8 @@ void Terrain::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, 0, 0);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, MESHTYPE_TERRAIN, 1);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _terrainId, 0);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightMapTextureIndex, 1);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightFactor, 2);
 	
 	cmdList->DrawIndexedInstanced(_terrainMesh->GetIndexCount(), 1, 0, 0, 0);
 }
@@ -127,21 +130,6 @@ void Terrain::ReleaseBuffer()
 
 void Terrain::SetTestHeightSample()
 {
-	//_sampleCount = 10;
-	//_heightSamples.clear();
-	//_heightSamples.resize(_sampleCount * _sampleCount);
-	//_heightSamples = vector<float>(_sampleCount * _sampleCount);
-	//_heightSamples = {
-	//	0.12f, 0.15f, 0.22f, 0.35f, 0.42f, 0.38f, 0.25f, 0.18f, 0.12f, 0.10f,
-	//	0.18f, 0.25f, 0.38f, 0.52f, 0.58f, 0.55f, 0.42f, 0.28f, 0.20f, 0.15f,
-	//	0.25f, 0.42f, 0.55f, 0.72f, 0.85f, 0.78f, 0.62f, 0.45f, 0.32f, 0.22f,
-	//	0.32f, 0.58f, 0.75f, 0.88f, 0.95f, 0.92f, 0.78f, 0.55f, 0.38f, 0.28f,
-	//	0.35f, 0.62f, 0.82f, 0.95f, 1.00f, 0.98f, 0.85f, 0.62f, 0.42f, 0.32f,
-	//	0.28f, 0.55f, 0.78f, 0.92f, 0.98f, 0.95f, 0.82f, 0.58f, 0.38f, 0.25f,
-	//	0.22f, 0.45f, 0.65f, 0.78f, 0.85f, 0.75f, 0.62f, 0.42f, 0.28f, 0.18f,
-	//	0.15f, 0.28f, 0.42f, 0.55f, 0.62f, 0.58f, 0.45f, 0.32f, 0.22f, 0.12f,
-	//	0.10f, 0.18f, 0.28f, 0.38f, 0.45f, 0.42f, 0.35f, 0.25f, 0.15f, 0.08f,
-	//	0.05f, 0.12f, 0.18f, 0.25f, 0.32f, 0.28f, 0.22f, 0.15f, 0.10f, 0.05f };
 	SetHeightMap(RESOURCE->Get<Texture>(L"..\\Resources\\Textures\\HeightMap.png"));
 
 	_terrainMesh = make_shared<Mesh>(GeometryGenerator::CreateTerrain(_sampleCount));
@@ -155,7 +143,7 @@ void Terrain::LoadXML(Bulb::XMLElement compElem)
 
 void Terrain::SaveXML(Bulb::XMLElement compElem)
 {
-
+	compElem.SetAttribute("ComponentType", "Terrain");
 }
 
 ComponentSnapshot Terrain::CaptureSnapshot()
@@ -175,7 +163,11 @@ void Terrain::RestoreSnapshot(ComponentSnapshot snapshot)
 
 void Terrain::SetHeightMap(shared_ptr<Texture> texture)
 {
+	_heightMapTextureIndex = texture->GetSRVHeapIndex();
 	_heightMapTexturePath = texture->GetPath();
+	
+	_heightFactor = 10.0f;
+
 	int height, width, channels;
 	unsigned char* samples = stbi_load(_heightMapTexturePath.c_str(), &width, &height, &channels, 1);
 
@@ -183,7 +175,7 @@ void Terrain::SetHeightMap(shared_ptr<Texture> texture)
 
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
-			_heightSamples.push_back(samples[y * height + x]);
+			_heightSamples.push_back(samples[y * height + x] / 255.0f);
 		}
 	}
 }

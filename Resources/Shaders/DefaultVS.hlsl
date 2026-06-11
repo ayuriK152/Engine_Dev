@@ -31,9 +31,12 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
     Instance instanceData;
     if (MeshType == 0)
         instanceData = Instances[instanceID + InstanceStartIndex];
-    else if (MeshType == 1)
+    else if (MeshType == 1) {
         instanceData = TerrainInstances[TerrainInstanceIdx];
-        
+        vin.Pos.y += TextureMaps[TerrainHeightMapIdx].SampleLevel(samAnisotropicWrap, vin.TexC, 0).r * 10;
+        // vin.Pos.y *= HeightFactor;
+    }
+
     float4 posW;
 
 #ifdef SKINNED

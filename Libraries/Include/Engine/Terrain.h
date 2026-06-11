@@ -39,10 +39,12 @@ private:
 	static int _terrainCount;
 	int _terrainId;
 	int _instanceSrvIdx;
+	string _heightMapTexturePath;
+	int _heightMapTextureIndex;
 
 	int _sampleCount;
 	vector<float> _heightSamples;
-	string _heightMapTexturePath;
+	float _heightFactor = 1.0f;
 
 	shared_ptr<Mesh> _terrainMesh;
 

@@ -1,8 +1,8 @@
 #pragma once
 #include <Jolt/Renderer/DebugRenderer.h>
 
-#define DEFAULT_VERTEX_BUFFER_SIZE	1000000
-#define DEFAULT_INDEX_BUFFER_SIZE	1000000
+#define DEFAULT_VERTEX_BUFFER_SIZE	10000000
+#define DEFAULT_INDEX_BUFFER_SIZE	10000000
 
 enum BULB_API LogLevel
 {

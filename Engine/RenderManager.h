@@ -84,7 +84,7 @@
 
 #define		DESCRIPTOR_HEAP_SIZE			512
 #define		DEFAULT_TEXTURE_ARR_SIZE		100
-#define		STATIC_SAMPLER_COUNT			6
+#define		STATIC_SAMPLER_COUNT			7
 
 #define		DEFAULT_ANIMATION_COUNT			500		// Not used yet
 

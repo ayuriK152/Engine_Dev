@@ -79,6 +79,12 @@ void ResourceManager::Init()
 	auto particlePS = make_shared<Shader>(L"ParticlePS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"particlePS", particlePS);
 
+	// terrain shaders
+	auto terrainVS = make_shared<Shader>(L"TerrainVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"terrainVS", terrainVS);
+	auto terrainPS = make_shared<Shader>(L"TerrainPS.hlsl", nullptr, ShaderType::PS);
+	Add<Shader>(L"terrainPS", terrainPS);
+
 	// ui shaders
 	auto uiVS = make_shared<Shader>(L"UIVS.hlsl", nullptr, ShaderType::VS);
 	Add<Shader>(L"uiVS", uiVS);

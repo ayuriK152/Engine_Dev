@@ -188,6 +188,16 @@ void RenderManager::Render()
 
 		RefreshMeshShadowRenderCheckMap();
 
+		SetStateTerrain(_cmdLists[0]);
+
+		// Terrain
+		if (_terrains.size() > 0) {
+			_cmdLists[0]->SetPipelineState(_PSOs[PSO_TERRAIN].Get());
+			for (auto& t : _terrains) {
+				t->Render(_cmdLists[0], RENDERSTATE_SHADOWMAP);
+			}
+		}
+
 		_cmdLists[0]->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_shadowMap->GetResource(),
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
 
@@ -253,6 +263,16 @@ void RenderManager::Render()
 		}
 
 		RefreshMeshRenderCheckMap();
+
+		SetStateTerrain(_cmdLists[1]);
+
+		// Terrain
+		if (_terrains.size() > 0) {
+			_cmdLists[1]->SetPipelineState(_PSOs[PSO_TERRAIN].Get());
+			for (auto& t : _terrains) {
+				t->Render(_cmdLists[1], RENDERSTATE_MAIN);
+			}
+		}
 
 #ifdef BULB_EDITOR
 		_cmdLists[1]->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
@@ -578,6 +598,15 @@ void RenderManager::DeleteLight(shared_ptr<Light> light)
 	}
 }
 
+void RenderManager::DeleteTerrain(shared_ptr<Terrain> terrain)
+{
+	for (int i = 0; i < _terrains.size(); ++i) {
+		if (_terrains[i] == terrain) {
+			_terrains.erase(_terrains.begin() + i);
+		}
+	}
+}
+
 void RenderManager::UpdateMeshInstanceStartIndices()
 {
 	int indexStack = 0;
@@ -645,8 +674,10 @@ void RenderManager::BuildRootSignature()
 	instanceTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
 	CD3DX12_DESCRIPTOR_RANGE boneTable;
 	boneTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 1);
+
+	// Terrain
 	CD3DX12_DESCRIPTOR_RANGE terrainTable;
-	terrainTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 1);
+	terrainTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 1);
 
 	// UI
 	CD3DX12_DESCRIPTOR_RANGE uiTable;
@@ -662,16 +693,14 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_LIGHT_SB].InitAsDescriptorTable(1, &lightTable);
 		slotRootParameter[ROOT_PARAM_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
-		slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable);
+		slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
 		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(2, REGISTER_NUM_MESHINFO_C);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
 
-		slotRootParameter[ROOT_PARAM_TERRAININFO_C].InitAsConstants(3, REGISTER_NUM_TERRAININFO_C, 1);
 		slotRootParameter[ROOT_PARAM_INSTCANCE_SB].InitAsDescriptorTable(1, &instanceTable);
 		slotRootParameter[ROOT_PARAM_BONE_SB].InitAsDescriptorTable(1, &boneTable);
-		slotRootParameter[ROOT_PARAM_TERRAIN_SB].InitAsDescriptorTable(1, &terrainTable);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT_DEFAULT, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -694,6 +723,44 @@ void RenderManager::BuildRootSignature()
 			IID_PPV_ARGS(_rootSignatureDefault.GetAddressOf())));
 	}
 
+	// Terrain
+	{
+		CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT_TERRAIN];
+
+		slotRootParameter[ROOT_PARAM_MATERIAL_SB].InitAsDescriptorTable(1, &matTable);
+		slotRootParameter[ROOT_PARAM_LIGHT_SB].InitAsDescriptorTable(1, &lightTable);
+		slotRootParameter[ROOT_PARAM_SKYBOX_SR].InitAsDescriptorTable(1, &cubemapTable, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[ROOT_PARAM_SHADOWMAP_SR].InitAsDescriptorTable(1, &shadowTexTable, D3D12_SHADER_VISIBILITY_PIXEL);
+		slotRootParameter[ROOT_PARAM_TEXTURE_ARR].InitAsDescriptorTable(1, &texTable);
+		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
+		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
+		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
+
+		slotRootParameter[ROOT_PARAM_TERRAININFO_C].InitAsConstants(3, REGISTER_NUM_TERRAININFO_C, 1);
+		slotRootParameter[ROOT_PARAM_TERRAIN_SB].InitAsDescriptorTable(1, &terrainTable);
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT_TERRAIN, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		ComPtr<ID3DBlob> serializedRootSig = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+			serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+
+		if (errorBlob != nullptr)
+		{
+			::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		}
+		ThrowIfFailed(hr);
+
+		ThrowIfFailed(GRAPHIC->GetDevice()->CreateRootSignature(
+			0,
+			serializedRootSig->GetBufferPointer(),
+			serializedRootSig->GetBufferSize(),
+			IID_PPV_ARGS(_rootSignatureTerrain.GetAddressOf())));
+	}
+
 	// Particle
 	{
 		CD3DX12_ROOT_PARAMETER slotRootParameter[ROOT_PARAMETER_COUNT_PARTICLE];
@@ -706,7 +773,7 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
 		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(2, REGISTER_NUM_MESHINFO_C);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
 
 		slotRootParameter[ROOT_PARAM_PARTICLES_RW].InitAsUnorderedAccessView(REGISTER_NUM_PARTICLES_RW, 1);
 		slotRootParameter[ROOT_PARAM_EMITTER_CB].InitAsConstants(sizeof(EmitterSetting) / 4, REGISTER_NUM_EMITTER_CB, 1);
@@ -744,7 +811,7 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_CLIENTINFO_C].InitAsConstants(2, REGISTER_NUM_CLIENTINFO_C);
 		slotRootParameter[ROOT_PARAM_LIGHTINFO_C].InitAsConstants(1, REGISTER_NUM_LIGHTINFO_C);
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
-		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(2, REGISTER_NUM_MESHINFO_C);
+		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
 
 		slotRootParameter[ROOT_PARAM_UI_SB].InitAsDescriptorTable(1, &uiTable);
 
@@ -881,6 +948,9 @@ void RenderManager::BuildPSOs()
 		skinnedShadow.SampleDesc.Quality = 0;
 	}
 
+	// Terrain Layout
+	auto terrain = CreatePSODesc(_solidInputLayout, _rootSignatureTerrain.Get(), L"terrainVS", L"terrainPS");
+
 	// Particle Layout
 	auto particleUpdate = CreateCSPSODesc(_rootSignatureParticle.Get(), L"particleCS");
 	auto particleRender = CreatePSODesc(_rootSignatureParticle.Get(), L"particleVS", L"particlePS", L"", L"", L"particleGS");
@@ -940,6 +1010,7 @@ void RenderManager::BuildPSOs()
 	BuildPSO(PSO_SHADOWMAP, shadow);
 	BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
 	BuildPSO(PSO_DEBUG_PHYSICS, debug);
+	BuildPSO(PSO_TERRAIN, terrain);
 	BuildPSO(PSO_PARTICLE_UPDATE, particleUpdate);
 	BuildPSO(PSO_PARTICLE_RENDER, particleRender);
 	BuildPSO(PSO_UI, clientUI);
@@ -947,15 +1018,10 @@ void RenderManager::BuildPSOs()
 	SetDefaultPSO();
 }
 
-void RenderManager::SetStateDefault(ID3D12GraphicsCommandList* cmdList)
+void RenderManager::SetStateCommon(ID3D12GraphicsCommandList* cmdList)
 {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-	cmdList->SetGraphicsRootSignature(_rootSignatureDefault.Get());
-
-	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
-	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
@@ -978,17 +1044,34 @@ void RenderManager::SetStateDefault(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
 
 	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _currFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
+}
+
+void RenderManager::SetStateDefault(ID3D12GraphicsCommandList* cmdList)
+{
+	cmdList->SetGraphicsRootSignature(_rootSignatureDefault.Get());
+
+	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
+	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
+
+	SetStateCommon(cmdList);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE instance(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	instance.Offset(_currFrameResource->GetInstanceSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
 	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_INSTCANCE_SB, instance);
 }
 
+void RenderManager::SetStateTerrain(ID3D12GraphicsCommandList* cmdList)
+{
+	cmdList->SetGraphicsRootSignature(_rootSignatureTerrain.Get());
+
+	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
+	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
+
+	SetStateCommon(cmdList);
+}
+
 void RenderManager::SetStateParticle(ID3D12GraphicsCommandList* cmdList)
 {
-	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
 	cmdList->SetGraphicsRootSignature(_rootSignatureParticle.Get());
 	cmdList->SetComputeRootSignature(_rootSignatureParticle.Get());
 
@@ -996,61 +1079,14 @@ void RenderManager::SetStateParticle(ID3D12GraphicsCommandList* cmdList)
 	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
 	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(_currFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	skybox.Offset(_skyboxTexSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SKYBOX_SR, skybox);
-
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
-
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
-
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _currFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
+	SetStateCommon(cmdList);
 }
 
 void RenderManager::SetStateUI(ID3D12GraphicsCommandList* cmdList)
 {
-	ID3D12DescriptorHeap* descriptorHeaps[] = { _srvHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
 	cmdList->SetGraphicsRootSignature(_rootSignatureUI.Get());
 
-	float clientInfo[2] = { TIME->DeltaTime(), TIME->TotalTime() };
-	cmdList->SetGraphicsRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
-	cmdList->SetComputeRoot32BitConstants(ROOT_PARAM_CLIENTINFO_C, 2, &clientInfo, 0);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE mat(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	mat.Offset(_currFrameResource->GetMaterialSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_MATERIAL_SB, mat);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE lightDesc(GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	lightDesc.Offset(_currFrameResource->GetLightSRVHeapIndex(), GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_LIGHT_SB, lightDesc);
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE skybox(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	skybox.Offset(_skyboxTexSrvHeapIndex, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SKYBOX_SR, skybox);
-
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_SHADOWMAP_SR, _shadowMap->GetSrv());
-
-	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
-	tex.Offset(0, GRAPHIC->GetCBVSRVDescriptorSize());
-	cmdList->SetGraphicsRootDescriptorTable(ROOT_PARAM_TEXTURE_ARR, tex);
-
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_LIGHTINFO_C, _lights.size(), 0);
-
-	cmdList->SetGraphicsRootConstantBufferView(ROOT_PARAM_CAMERA_CB, _currFrameResource->cameraCB->GetResource()->GetGPUVirtualAddress());
+	SetStateCommon(cmdList);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE uiInstances(RENDER->GetCommonSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 	uiInstances.Offset(UI->GetUIBufferSRVIndex(), GRAPHIC->GetCBVSRVDescriptorSize());

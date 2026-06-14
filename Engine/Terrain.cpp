@@ -57,6 +57,8 @@ void Terrain::Init()
 
 	JPH::BodyInterface& bodyInterface = PHYSICS->GetPhysicsSystem()->GetBodyInterface();
 	_bodyID = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
+
+	RENDER->AddTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 }
 
 void Terrain::PreUpdate()
@@ -85,7 +87,6 @@ void Terrain::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, 0, 0);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, MESHTYPE_TERRAIN, 1);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _terrainId, 0);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightMapTextureIndex, 1);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightFactor, 2);

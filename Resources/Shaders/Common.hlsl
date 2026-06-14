@@ -46,7 +46,6 @@ cbuffer cbCamera : register(b2) {
 
 cbuffer MeshInfo : register(b3) {
     uint InstanceStartIndex;
-    uint MeshType;  // Common = 0, Terrain = 1
 };
 
 

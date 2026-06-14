@@ -10,7 +10,8 @@ UINT32 GameObject::_updateBypassFlag =
 	(UINT32)ComponentType::Light;
 
 UINT32 GameObject::_renderBypassFlag = 
-	(UINT32)ComponentType::ParticleEmitter;
+	(UINT32)ComponentType::ParticleEmitter |
+	(UINT32)ComponentType::Terrain;
 
 int GameObject::_idCount = 0;
 

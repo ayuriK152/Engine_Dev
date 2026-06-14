@@ -101,6 +101,7 @@ float3 ACESToneMap(float3 color) {
     return saturate((color * (A * color + B)) / (color * (C * color + D) + E));
 }
 
+// PCF 3x3
 float CalcDirectionalLightShadow(Light light, VertexOut pixel) {
     float shadowFactor;
 

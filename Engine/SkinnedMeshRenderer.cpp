@@ -50,7 +50,6 @@ void SkinnedMeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT render
 
 	UINT startIndex = RENDER->GetMeshInstanceStartIndex(_mesh);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, startIndex, 0);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, MESHTYPE_COMMON, 1);
 
 	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), 1, 0, 0, 0);
 }

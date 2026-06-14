@@ -1,9 +1,6 @@
 #pragma once
 #include "Resource.h"
 
-#define MESHTYPE_COMMON		0
-#define MESHTYPE_TERRAIN	1
-
 #pragma region 전방선언
 struct Vertex;
 #pragma endregion

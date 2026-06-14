@@ -42,7 +42,6 @@ void MeshRenderer::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 
 	UINT startIndex = RENDER->GetMeshInstanceStartIndex(_mesh);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, startIndex, 0);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, MESHTYPE_COMMON, 1);
 
 	cmdList->DrawIndexedInstanced(_mesh->GetIndexCount(), _mesh->GetInstanceCount(), 0, 0, 0);
 }

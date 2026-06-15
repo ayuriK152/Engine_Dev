@@ -29,6 +29,7 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
 #endif
 
     Instance instanceData = Instances[instanceID + InstanceStartIndex];
+
     float4 posW;
 
 #ifdef SKINNED

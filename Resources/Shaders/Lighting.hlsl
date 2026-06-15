@@ -101,6 +101,52 @@ float3 ACESToneMap(float3 color) {
     return saturate((color * (A * color + B)) / (color * (C * color + D) + E));
 }
 
+// PCF 3x3
+float CalcDirectionalLightShadow(Light light, VertexOut pixel) {
+    float shadowFactor;
+
+    float4 worldPos = float4(pixel.PositionWorld, 1.0f);
+    float3 lightDir = light.Direction;
+
+    float bias = 0.001;
+    float3 shadowMapTex = pixel.ShadowPos.xyz / pixel.ShadowPos.w;
+    shadowMapTex.x = shadowMapTex.x / 2.0 + 0.5;
+    shadowMapTex.y = -shadowMapTex.y / 2.0 + 0.5;
+
+    float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex.xy).r;
+    float lightDepthValue = shadowMapTex.z;
+    lightDepthValue = lightDepthValue - bias;
+
+    if (shadowMapTex.x < 0.0f || shadowMapTex.x > 1.0f || 
+        shadowMapTex.y < 0.0f || shadowMapTex.y > 1.0f || 
+        lightDepthValue > 1.0f) {
+        shadowFactor = 1;
+    }
+    else {
+        uint width, height, numMips;
+        ShadowMap.GetDimensions(0, width, height, numMips);
+
+        float dx = 1.0f / (float)width;
+        const float2 offsets[9] =
+        {
+            float2(-dx,  -dx), float2(0.0f,  -dx), float2(dx,  -dx),
+            float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+            float2(-dx,  +dx), float2(0.0f,  +dx), float2(dx,  +dx)
+        };
+
+        float percentLit = 0.0f;
+        [unroll]
+        for (int i = 0; i < 9; ++i) {
+            percentLit += ShadowMap.SampleCmpLevelZero(samShadow,
+                shadowMapTex.xy + offsets[i], lightDepthValue).r;
+        }
+
+        shadowFactor = percentLit / 9;
+    }
+
+    return shadowFactor;
+}
+
 float3 ComputeDirectionalLight(Light light, Material mat, float4 albedo, VertexOut pixel, float3 V, float NdotV, float3 F0, float3 metallicValue, float roughnessValue, float3 specularValue) {
     float3 L = normalize(-light.Direction);
     float3 H = normalize(V + L);
@@ -183,16 +229,7 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
             case 0:
                 float3 l = ComputeDirectionalLight(currentLight, mat, albedo, pixelIn, V, NdotV, F0, metallicValue, roughnessValue, specularValue);
                 if (i == 0) {
-                    float2 shadowMapTex;
-                    float bias = 0.001;
-                    shadowMapTex.x = pixelIn.ShadowPos.x / pixelIn.ShadowPos.w / 2.0 + 0.5;
-                    shadowMapTex.y = -pixelIn.ShadowPos.y / pixelIn.ShadowPos.w / 2.0 + 0.5;
-
-                    float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex).r;
-                    float lightDepthValue = pixelIn.ShadowPos.z / pixelIn.ShadowPos.w;
-                    lightDepthValue = lightDepthValue - bias;
-
-                    if (lightDepthValue >= depthValue) l = 0;
+                    l *= CalcDirectionalLightShadow(currentLight, pixelIn);
                 }
                 color += l;
                 break;

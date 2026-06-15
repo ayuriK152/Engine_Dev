@@ -1,7 +1,5 @@
 #pragma once
 
-#define		PSO_COUNT				11		// Except Skybox
-
 #define		PSO_OPAQUE_SOLID		"opaque_solid"
 #define		PSO_OPAQUE_SKINNED		"opaque_skinned"
 #define		PSO_TRANS_SOLID			"trans_solid"
@@ -12,6 +10,7 @@
 #define		PSO_WIREFRAME			"wireframe"
 #define		PSO_DEBUG_PHYSICS		"debug_physics"
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
+#define		PSO_TERRAIN				"terrain"
 #define		PSO_PARTICLE_UPDATE		"particle_update"
 #define		PSO_PARTICLE_RENDER		"particle_render"
 #define		PSO_UI					"ui"
@@ -25,9 +24,12 @@
 #define		PSO_IDX_WIREFRAME			6
 #define		PSO_IDX_DEBUG_PHYSICS		7
 #define		PSO_IDX_DEBUG_SHADOW		8
-#define		PSO_IDX_PARTICLE_UPDATE		9
-#define		PSO_IDX_PARTICLE_RENDER		10
-#define		PSO_IDX_UI					11
+#define		PSO_IDX_TERRAIN				9
+#define		PSO_IDX_PARTICLE_UPDATE		10
+#define		PSO_IDX_PARTICLE_RENDER		11
+#define		PSO_IDX_UI					12
+
+#define		PSO_COUNT				13		// Except Skybox
 
 #define		RENDERSTATE_MAIN		0
 #define		RENDERSTATE_SHADOWMAP	1
@@ -36,9 +38,11 @@
 #pragma region Root_Parameters
 #define		ROOT_PARAMETER_COUNT_BASE			9
 #define		ROOT_PARAMETER_COUNT_DEFAULT		11
+#define		ROOT_PARAMETER_COUNT_TERRAIN		11
 #define		ROOT_PARAMETER_COUNT_PARTICLE		11
 #define		ROOT_PARAMETER_COUNT_UI				10
 
+// Common
 #define		ROOT_PARAM_MATERIAL_SB		0
 #define		ROOT_PARAM_LIGHT_SB			1
 #define		ROOT_PARAM_SKYBOX_SR		2
@@ -49,12 +53,19 @@
 #define		ROOT_PARAM_CAMERA_CB		7
 #define		ROOT_PARAM_MESHINFO_C		8
 
+// Default
 #define		ROOT_PARAM_INSTCANCE_SB		9
 #define		ROOT_PARAM_BONE_SB			10
 
+// Terrain
+#define		ROOT_PARAM_TERRAININFO_C	9
+#define		ROOT_PARAM_TERRAIN_SB		10
+
+// Particle
 #define		ROOT_PARAM_PARTICLES_RW		9
 #define		ROOT_PARAM_EMITTER_CB		10
 
+// UI
 #define		ROOT_PARAM_UI_SB			9
 #pragma endregion
 
@@ -69,18 +80,25 @@
 #define		REGISTER_NUM_CAMERA_CB			2
 #define		REGISTER_NUM_MESHINFO_C			3
 
+// Default
 #define		REGISTER_NUM_INSTANCE_SB		0
 #define		REGISTER_NUM_BONE_SB			1
 
+// Terrain
+#define		REGISTER_NUM_TERRAININFO_C		0
+#define		REGISTER_NUM_TERRAIN_SB			0
+
+// Particle
 #define		REGISTER_NUM_PARTICLES_RW		0
 #define		REGISTER_NUM_EMITTER_CB			0
 
+// UI
 #define		REGISTER_NUM_UIINSTANCE_SB		0
 #pragma endregion
 
 #define		DESCRIPTOR_HEAP_SIZE			512
 #define		DEFAULT_TEXTURE_ARR_SIZE		100
-#define		STATIC_SAMPLER_COUNT			6
+#define		STATIC_SAMPLER_COUNT			7
 
 #define		DEFAULT_ANIMATION_COUNT			500		// Not used yet
 
@@ -150,6 +168,9 @@ public:
 	void AddLight(shared_ptr<Light> light) { _lights.push_back(light); }
 	void DeleteLight(shared_ptr<Light> light);
 
+	void AddTerrain(shared_ptr<Terrain> terrain) { _terrains.push_back(terrain); }
+	void DeleteTerrain(shared_ptr<Terrain> terrain);
+
 	int GetSkyboxTexSRVHeapIndex() { return _skyboxTexSrvHeapIndex; }
 	void SetSkyboxTexture(shared_ptr<Texture> tex) {
 		_skyboxTexture = tex;
@@ -192,7 +213,9 @@ private:
 	void BuildSRVDescriptorHeap();
 	void BuildPSOs();
 
+	void SetStateCommon(ID3D12GraphicsCommandList* cmdList);
 	void SetStateDefault(ID3D12GraphicsCommandList* cmdList);
+	void SetStateTerrain(ID3D12GraphicsCommandList* cmdList);
 	void SetStateParticle(ID3D12GraphicsCommandList* cmdList);
 	void SetStateUI(ID3D12GraphicsCommandList* cmdList);
 
@@ -205,6 +228,7 @@ private:
 	ID3D12GraphicsCommandList* _cmdLists[3];
 
 	ComPtr<ID3D12RootSignature> _rootSignatureDefault;
+	ComPtr<ID3D12RootSignature> _rootSignatureTerrain;
 	ComPtr<ID3D12RootSignature> _rootSignatureParticle;
 	ComPtr<ID3D12RootSignature> _rootSignatureUI;
 
@@ -233,6 +257,7 @@ private:
 	vector<bool> _meshShadowRenderCheckMap;
 
 	vector<shared_ptr<Light>> _lights;
+	vector<shared_ptr<Terrain>> _terrains;
 
 	// SRV Heap
 	ComPtr<ID3D12DescriptorHeap> _srvHeap;

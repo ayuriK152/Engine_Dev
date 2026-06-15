@@ -1,15 +1,18 @@
 #include "Structs.hlsl"
 
+#pragma once
+
 /************/
 /* Samplers */
 /************/
 
-SamplerState samPointWrap        : register(s0);
-SamplerState samPointClamp       : register(s1);
-SamplerState samLinearWrap       : register(s2);
-SamplerState samLinearClamp      : register(s3);
-SamplerState samAnisotropicWrap  : register(s4);
-SamplerState samAnisotropicClamp : register(s5);
+SamplerState samPointWrap            : register(s0);
+SamplerState samPointClamp           : register(s1);
+SamplerState samLinearWrap           : register(s2);
+SamplerState samLinearClamp          : register(s3);
+SamplerState samAnisotropicWrap      : register(s4);
+SamplerState samAnisotropicClamp     : register(s5);
+SamplerComparisonState samShadow     : register(s6);
 
 
 /***********/

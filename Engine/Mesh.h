@@ -19,7 +19,7 @@ public:
 	void* GetVertexData() { return _geometry->GetVertices().data(); }
 	UINT GetVertexCount() { return _geometry->GetVertices().size(); }
 
-	vector<UINT16>& GetIndices() { return _geometry->GetIndices(); }
+	vector<UINT32>& GetIndices() { return _geometry->GetIndices(); }
 
 	void SetMaterial(shared_ptr<Material> mat) {
 		_material = mat;

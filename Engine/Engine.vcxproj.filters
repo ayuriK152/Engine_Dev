@@ -221,7 +221,6 @@
     <ClInclude Include="PointLight.h">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h" />
     <ClInclude Include="SoundManager.h">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClInclude>
@@ -230,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="SSAO.h">
       <Filter>03. Resources\Not Inherited</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>02. GameObject\Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -497,7 +499,6 @@
     <ClCompile Include="PointLight.cpp">
       <Filter>02. GameObject\Components\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="SoundManager.cpp">
       <Filter>01. EngineComponents\01. Managers</Filter>
     </ClCompile>
@@ -506,6 +507,9 @@
     </ClCompile>
     <ClCompile Include="SSAO.cpp">
       <Filter>03. Resources\Not Inherited</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>02. GameObject\Components\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

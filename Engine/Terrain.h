@@ -20,7 +20,7 @@ public:
 
 	static void ReleaseBuffer();
 
-	void SetTestHeightSample();
+	void SetTest();
 
 	void LoadXML(Bulb::XMLElement compElem) override;
 
@@ -29,6 +29,8 @@ public:
 	ComponentSnapshot CaptureSnapshot() override;
 
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
+
+	void SetTerrainTexture(shared_ptr<Texture> texture);
 
 	void SetHeightMap(shared_ptr<Texture> texture);
 
@@ -39,7 +41,11 @@ private:
 	static int _terrainCount;
 	int _terrainId;
 	int _instanceSrvIdx;
-	string _heightMapTexturePath;
+
+	shared_ptr<Texture> _terrainDiffuse;
+	int _terrainTextureIndex;
+
+	shared_ptr<Texture> _heightMap;
 	int _heightMapTextureIndex;
 
 	int _sampleCount;

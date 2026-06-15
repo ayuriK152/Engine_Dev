@@ -28,10 +28,10 @@ private:
 		REGISTER_COMPONENT(CharacterController);
 		REGISTER_COMPONENT(ParticleEmitter);
 		REGISTER_COMPONENT(Transform);
+		REGISTER_COMPONENT(Terrain);
 #ifdef BULB_EDITOR
 		REGISTER_COMPONENT(EditorCamera);
 #endif
-		REGISTER_COMPONENT(Terrain);
 	}
 
 	static unordered_map<string, Creator>& GetMap() {

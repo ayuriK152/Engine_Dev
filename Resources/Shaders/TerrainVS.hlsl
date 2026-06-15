@@ -4,8 +4,8 @@ VertexOut VS(VertexIn vin, uint instanceID : SV_InstanceID) {
 	VertexOut vout = (VertexOut)0.0f;
 
     Instance instanceData = TerrainInstances[TerrainInstanceIdx];
-    vin.Pos.y += TextureMaps[TerrainHeightMapIdx].SampleLevel(samAnisotropicWrap, vin.TexC, 0).r * 10;
-    // vin.Pos.y *= HeightFactor;
+    vin.Pos.y += TextureMaps[TerrainHeightMapIdx].SampleLevel(samAnisotropicWrap, vin.TexC, 0).r;
+    vin.Pos.y *= (float)HeightFactor;
 
     float4 posW;
 

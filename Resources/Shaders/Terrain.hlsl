@@ -1,7 +1,8 @@
-#include "Common.hlsl"
+#include "Lighting.hlsl"
 
 cbuffer TerrainInfo : register(b0, space1) {
     uint TerrainInstanceIdx;
+    uint TerrainTextureIdx;
     uint TerrainHeightMapIdx;
     float HeightFactor;
 };

@@ -737,7 +737,7 @@ void RenderManager::BuildRootSignature()
 		slotRootParameter[ROOT_PARAM_CAMERA_CB].InitAsConstantBufferView(REGISTER_NUM_CAMERA_CB);
 		slotRootParameter[ROOT_PARAM_MESHINFO_C].InitAsConstants(1, REGISTER_NUM_MESHINFO_C);
 
-		slotRootParameter[ROOT_PARAM_TERRAININFO_C].InitAsConstants(3, REGISTER_NUM_TERRAININFO_C, 1);
+		slotRootParameter[ROOT_PARAM_TERRAININFO_C].InitAsConstants(4, REGISTER_NUM_TERRAININFO_C, 1);
 		slotRootParameter[ROOT_PARAM_TERRAIN_SB].InitAsDescriptorTable(1, &terrainTable);
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(ROOT_PARAMETER_COUNT_TERRAIN, slotRootParameter, (UINT)staticSamplers.size(), staticSamplers.data(),

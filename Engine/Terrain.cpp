@@ -31,7 +31,7 @@ void Terrain::Init()
 	UpdateConstant();
 
 	// TEST
-	SetTestHeightSample();
+	SetTest();
 
 	// 설정 객체 생성
 	JPH::HeightFieldShapeSettings settings;
@@ -88,8 +88,10 @@ void Terrain::Render(ID3D12GraphicsCommandList* cmdList, UINT renderState)
 
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_MESHINFO_C, 0, 0);
 	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _terrainId, 0);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightMapTextureIndex, 1);
-	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightFactor, 2);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _terrainTextureIndex, 1);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, _heightMapTextureIndex, 2);
+	UINT bitHeightFactor = *reinterpret_cast<UINT*>(&_heightFactor);
+	cmdList->SetGraphicsRoot32BitConstant(ROOT_PARAM_TERRAININFO_C, bitHeightFactor, 3);
 	
 	cmdList->DrawIndexedInstanced(_terrainMesh->GetIndexCount(), 1, 0, 0, 0);
 }
@@ -104,6 +106,7 @@ void Terrain::OnDestroy()
 	bodyInterface.RemoveBody(_bodyID);
 	bodyInterface.DestroyBody(_bodyID);
 	PHYSICS->DeleteRigidbody(static_pointer_cast<Rigidbody>(shared_from_this()));
+	RENDER->DeleteTerrain(static_pointer_cast<Terrain>(shared_from_this()));
 }
 
 void Terrain::BuildBuffer()
@@ -129,9 +132,10 @@ void Terrain::ReleaseBuffer()
 
 }
 
-void Terrain::SetTestHeightSample()
+void Terrain::SetTest()
 {
-	SetHeightMap(RESOURCE->Get<Texture>(L"..\\Resources\\Textures\\HeightMap.png"));
+	SetTerrainTexture(RESOURCE->Get<Texture>(L"..\\Resources\\Textures\\Terrain\\Diffuse.png"));
+	SetHeightMap(RESOURCE->Get<Texture>(L"..\\Resources\\Textures\\Terrain\\HeightMap.png"));
 
 	_terrainMesh = make_shared<Mesh>(GeometryGenerator::CreateTerrain(_sampleCount));
 	_terrainMesh->CreateBuffer();
@@ -139,12 +143,36 @@ void Terrain::SetTestHeightSample()
 
 void Terrain::LoadXML(Bulb::XMLElement compElem)
 {
+	_heightFactor = compElem.FloatAttribute("HeightFactor");
 
+	Bulb::XMLElement diffuseElem = compElem.FirstChildElement("Diffuse");
+	if (!diffuseElem.IsNullPtr()) {
+		const char* diffuse = diffuseElem.Attribute("Path");
+		if (diffuse != 0) {
+			SetTerrainTexture(RESOURCE->Get<Texture>(Utils::ToWString(diffuse)));
+		}
+	}
+
+	Bulb::XMLElement heightElem = compElem.FirstChildElement("HeightMap");
+	if (!heightElem.IsNullPtr()) {
+		const char* height = heightElem.Attribute("Path");
+		if (height != 0) {
+			SetHeightMap(RESOURCE->Get<Texture>(Utils::ToWString(height)));
+		}
+	}
 }
 
 void Terrain::SaveXML(Bulb::XMLElement compElem)
 {
 	compElem.SetAttribute("ComponentType", "Terrain");
+
+	compElem.SetAttribute("HeightFactor", _heightFactor);
+
+	Bulb::XMLElement diffuse = compElem.InsertNewChildElement("Diffuse");
+	diffuse.SetAttribute("Path", _terrainDiffuse->GetPath().c_str());
+
+	Bulb::XMLElement height = compElem.InsertNewChildElement("HeightMap");
+	height.SetAttribute("Path", _heightMap->GetPath().c_str());
 }
 
 ComponentSnapshot Terrain::CaptureSnapshot()
@@ -162,21 +190,31 @@ void Terrain::RestoreSnapshot(ComponentSnapshot snapshot)
 
 }
 
+void Terrain::SetTerrainTexture(shared_ptr<Texture> texture)
+{
+	if (texture != nullptr) {
+		_terrainDiffuse = texture;
+		_terrainTextureIndex = texture->GetSRVHeapIndex();
+	}
+}
+
 void Terrain::SetHeightMap(shared_ptr<Texture> texture)
 {
-	_heightMapTextureIndex = texture->GetSRVHeapIndex();
-	_heightMapTexturePath = texture->GetPath();
-	
-	_heightFactor = 10.0f;
+	if (texture != nullptr) {
+		_heightMap = texture;
+		_heightMapTextureIndex = _heightMap->GetSRVHeapIndex();
 
-	int height, width, channels;
-	unsigned char* samples = stbi_load(_heightMapTexturePath.c_str(), &width, &height, &channels, 1);
+		_heightFactor = 100.0f;
 
-	_sampleCount = max(height, width);
+		int height, width, channels;
+		unsigned char* samples = stbi_load(_heightMap->GetPath().c_str(), &width, &height, &channels, 1);
 
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
-			_heightSamples.push_back(samples[y * height + x] / 255.0f);
+		_sampleCount = max(height, width);
+
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				_heightSamples.push_back(samples[y * height + x] / 255.0f);
+			}
 		}
 	}
 }

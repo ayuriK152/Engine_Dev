@@ -1,5 +1,7 @@
 #include "Structs.hlsl"
 
+#pragma once
+
 /************/
 /* Samplers */
 /************/

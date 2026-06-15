@@ -22,5 +22,5 @@ float4 PS(VertexOut pin) : SV_TARGET {
 
     float4 lighting = BRDFLighting(mat, albedo, pin, eyeDir);
     
-    return albedo;
+    return lighting;
 }

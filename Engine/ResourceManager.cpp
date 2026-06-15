@@ -84,6 +84,8 @@ void ResourceManager::Init()
 	Add<Shader>(L"terrainVS", terrainVS);
 	auto terrainPS = make_shared<Shader>(L"TerrainPS.hlsl", nullptr, ShaderType::PS);
 	Add<Shader>(L"terrainPS", terrainPS);
+	auto terrainShadowVS = make_shared<Shader>(L"TerrainShadowVS.hlsl", nullptr, ShaderType::VS);
+	Add<Shader>(L"terrainShadowVS", terrainShadowVS);
 
 	// ui shaders
 	auto uiVS = make_shared<Shader>(L"UIVS.hlsl", nullptr, ShaderType::VS);

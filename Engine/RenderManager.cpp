@@ -192,7 +192,7 @@ void RenderManager::Render()
 
 		// Terrain
 		if (_terrains.size() > 0) {
-			_cmdLists[0]->SetPipelineState(_PSOs[PSO_TERRAIN].Get());
+			_cmdLists[0]->SetPipelineState(_PSOs[PSO_SHADOWMAP_TERRAIN].Get());
 			for (auto& t : _terrains) {
 				t->Render(_cmdLists[0], RENDERSTATE_SHADOWMAP);
 			}
@@ -948,6 +948,20 @@ void RenderManager::BuildPSOs()
 		skinnedShadow.SampleDesc.Quality = 0;
 	}
 
+	auto terrainShadow = CreatePSODesc(_solidInputLayout, _rootSignatureTerrain.Get(), L"terrainShadowVS", L"shadowPS");
+	{
+		terrainShadow.RTVFormats[0] = DXGI_FORMAT_UNKNOWN; // ���̸�
+		terrainShadow.NumRenderTargets = 0;
+		terrainShadow.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+		terrainShadow.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		terrainShadow.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		terrainShadow.RasterizerState.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		terrainShadow.RasterizerState.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		terrainShadow.RasterizerState.SlopeScaledDepthBias = 0.0f;
+		terrainShadow.SampleDesc.Count = 1;
+		terrainShadow.SampleDesc.Quality = 0;
+	}
+
 	// Terrain Layout
 	auto terrain = CreatePSODesc(_solidInputLayout, _rootSignatureTerrain.Get(), L"terrainVS", L"terrainPS");
 
@@ -1009,6 +1023,7 @@ void RenderManager::BuildPSOs()
 	BuildPSO(PSO_SKYBOX, skybox);
 	BuildPSO(PSO_SHADOWMAP, shadow);
 	BuildPSO(PSO_SHADOWMAP_SKINNED, skinnedShadow);
+	BuildPSO(PSO_SHADOWMAP_TERRAIN, terrainShadow);
 	BuildPSO(PSO_DEBUG_PHYSICS, debug);
 	BuildPSO(PSO_TERRAIN, terrain);
 	BuildPSO(PSO_PARTICLE_UPDATE, particleUpdate);

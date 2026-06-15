@@ -7,6 +7,7 @@
 #define		PSO_SKYBOX				"skybox"
 #define		PSO_SHADOWMAP			"shadowmap"
 #define		PSO_SHADOWMAP_SKINNED	"shadowmap_skinned"
+#define		PSO_SHADOWMAP_TERRAIN	"shadowmap_terrain"
 #define		PSO_WIREFRAME			"wireframe"
 #define		PSO_DEBUG_PHYSICS		"debug_physics"
 #define		PSO_DEBUG_SHADOW		"debug_shadow"
@@ -21,15 +22,16 @@
 #define		PSO_IDX_TRANS_SKINNED		3
 #define		PSO_IDX_SHADOWMAP			4
 #define		PSO_IDX_SHADOWMAP_SKINNED	5
-#define		PSO_IDX_WIREFRAME			6
-#define		PSO_IDX_DEBUG_PHYSICS		7
-#define		PSO_IDX_DEBUG_SHADOW		8
-#define		PSO_IDX_TERRAIN				9
-#define		PSO_IDX_PARTICLE_UPDATE		10
-#define		PSO_IDX_PARTICLE_RENDER		11
-#define		PSO_IDX_UI					12
+#define		PSO_IDX_SHADOWMAP_TERRAIN	6
+#define		PSO_IDX_WIREFRAME			7
+#define		PSO_IDX_DEBUG_PHYSICS		8
+#define		PSO_IDX_DEBUG_SHADOW		9
+#define		PSO_IDX_TERRAIN				10
+#define		PSO_IDX_PARTICLE_UPDATE		11
+#define		PSO_IDX_PARTICLE_RENDER		12
+#define		PSO_IDX_UI					13
 
-#define		PSO_COUNT				13		// Except Skybox
+#define		PSO_COUNT					14		// Except Skybox
 
 #define		RENDERSTATE_MAIN		0
 #define		RENDERSTATE_SHADOWMAP	1

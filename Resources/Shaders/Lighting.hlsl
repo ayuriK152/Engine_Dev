@@ -153,10 +153,11 @@ float3 ComputeDirectionalLight(Light light, Material mat, float4 albedo, VertexO
 
     float NdotL = dot(pixel.Normal, L);
     float NdotH = dot(pixel.Normal, H);
+    float HdotV = dot(H, V);
 
     float D = DistributionGGX(NdotH, roughnessValue);
     float G = GeometrySmith(NdotV, NdotL, roughnessValue);
-    float3 F = FresnelSchlick(F0, NdotV);
+    float3 F = FresnelSchlick(F0, HdotV);
 
     float3 nom = D * G * F;
     float denom = 4 * max(dot(L, pixel.Normal), 0.0) * max(dot(V, pixel.Normal), 0.0) + 0.0001;
@@ -173,6 +174,7 @@ float3 ComputeDirectionalLight(Light light, Material mat, float4 albedo, VertexO
 float3 ComputePointLight(Light light, Material mat, float4 albedo, VertexOut pixel, float3 V, float NdotV, float3 F0, float3 metallicValue, float roughnessValue, float3 specularValue) {
     float3 L = light.Position - pixel.PositionWorld;
     float len = length(L);
+    L = normalize(L);
 
     if (len > light.FallOffEnd) return float3(0, 0, 0);
 

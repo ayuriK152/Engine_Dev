@@ -258,6 +258,9 @@ private:
 	vector<bool> _meshRenderCheckMap;
 	vector<bool> _meshShadowRenderCheckMap;
 
+	shared_ptr<Texture> _iblBRDFlutTexture;
+	int _iblBRDFlutTextureIdx;
+
 	vector<shared_ptr<Light>> _lights;
 	vector<shared_ptr<Terrain>> _terrains;
 

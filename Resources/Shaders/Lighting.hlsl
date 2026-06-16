@@ -193,7 +193,7 @@ float3 ComputePointLight(Light light, Material mat, float4 albedo, VertexOut pix
     float3 nom = D * G * F;
     float denom = 4 * max(dot(L, pixel.Normal), 0.0) * max(dot(V, pixel.Normal), 0.0) + 0.0001;
     float3 specular = nom / max(denom, 0.0001);
-    specular *= specularValue * light.Diffuse.rgb;
+    specular *= specularValue;
 
     float3 kS = F;
     float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (float3(1.0, 1.0, 1.0) - metallicValue);
@@ -243,18 +243,21 @@ float4 BRDFLighting(Material mat, float4 albedo, VertexOut pixelIn, float3 V) {
 
     // IBL
     float3 R = reflect(-V, pixelIn.Normal);
-    float3 prefilteredColor = CubeMap.SampleLevel(samAnisotropicClamp, R, roughnessValue * MIPMAP_LEVEL_MAX).rgb;
-    float3 F = FresnelSchlick(F0, max(NdotV, 0.0), roughnessValue);
-    float3 kS = F;
-    float3 kD = (1.0 - kS) * (1.0 - metallicValue);
 
-    float3 irradiance = CubeMap.SampleLevel(samAnisotropicClamp, pixelIn.Normal, MIPMAP_LEVEL_MAX).rgb;
+    float3 prefilteredColor = CubeMap.SampleLevel(samLinearWrap, R, roughnessValue * MIPMAP_LEVEL_MAX).rgb;
+    float3 irradiance = CubeMap.SampleLevel(samLinearWrap, pixelIn.Normal, MIPMAP_LEVEL_MAX).rgb;
+    float2 brdf = TextureMaps[BRDFLutTextureIdx].Sample(samLinearWrap, float2(max(dot(pixelIn.Normal, -V), 0), roughnessValue));
+    
+    float3 kS = FresnelSchlick(F0, max(NdotV, 0.0), roughnessValue);
+    float3 kD = (float3(1.0, 1.0, 1.0) - kS) * (float3(1.0, 1.0, 1.0) - metallicValue);
+
     float3 diffuseIBL = irradiance * albedo.rgb * mat.Diffuse.rgb * kD;
 
-    float3 specularIBL = prefilteredColor * F;
+    float3 specularIBL = prefilteredColor * (kS * brdf.x + brdf.y);
+    //float3 specularIBL = prefilteredColor * kS;
 
     float3 ambientIBL = diffuseIBL + specularIBL;
-    color += ambientIBL;
+    color += ambientIBL / acos(-1);
     //color = color / (color + float3(1.0, 1.0, 1.0));
 
     color = ACESToneMap(color);

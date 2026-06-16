@@ -10,7 +10,7 @@
         <GameObject Name="GlobalLight" PSO="opaque_solid" Tag="Default">
             <Components>
                 <Component ComponentType="Transform" PosX="0" PosY="0" PosZ="0" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.18301269" QuatY="-0.68301272" QuatZ="0.18301271" QuatW="0.68301266"/>
-                <Component ComponentType="DirectionalLight" Intensity="5">
+                <Component ComponentType="DirectionalLight" Intensity="2">
                     <Diffuse r="1" g="0.75" b="0.60000002" a="1"/>
                 </Component>
             </Components>

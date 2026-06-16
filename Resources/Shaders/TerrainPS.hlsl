@@ -4,7 +4,7 @@ float4 PS(VertexOut pin) : SV_TARGET {
     Material mat = Materials[pin.MaterialIdx];
 
     float3 eyePos = GetCameraPosition();
-    float4 albedo = TextureMaps[TerrainTextureIdx].Sample(samAnisotropicWrap, pin.TexUV * mat.Tilling);
+    float4 albedo = TextureMaps[TerrainTextureIdx].Sample(samLinearWrap, pin.TexUV * mat.Tilling);
     float3 eyeDir = normalize(eyePos - pin.PositionWorld);
     pin.Normal = normalize(pin.Normal);
 

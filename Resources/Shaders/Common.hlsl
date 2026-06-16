@@ -32,6 +32,7 @@ cbuffer ClientInfo : register(b0) {
 
 cbuffer LightInfo : register(b1) {
     uint gNumLights;
+    uint BRDFLutTextureIdx;
 }
 
 cbuffer cbCamera : register(b2) {

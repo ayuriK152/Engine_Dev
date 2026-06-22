@@ -38,15 +38,15 @@ void FrameResource::Update()
 	}
 
 	// 순서 바꾸면 안됨!!!
-	_futures[0] = THREAD->EnqueueJob([this] { UpdateCameraCB(); });
-	_futures[1] = THREAD->EnqueueJob([this] { UpdateObjectSB(); });
-	_futures[2] = THREAD->EnqueueJob([this] { UpdateMaterialSB(); });
-	_futures[3] = THREAD->EnqueueJob([this] { UpdateLightSB(); });
+	_futures[0] = THREAD->EnqueueJob([this] { UpdateObjectSB(); });
+	_futures[1] = THREAD->EnqueueJob([this] { UpdateCameraCB(); });
+	_futures[2] = THREAD->EnqueueJob([this] { UpdateLightSB(); });
+
+	UpdateMaterialSB();
 
 	_futures[0].get();
 	_futures[1].get();
 	_futures[2].get();
-	_futures[3].get();
 }
 
 void FrameResource::UpdateObjectSB()
@@ -151,31 +151,7 @@ void FrameResource::UpdateLightSB()
 
 void FrameResource::UpdateCameraCB()
 {
-	//if (Camera::GetFramesDirty() > 0) {
-		CameraConstants cameraConstants;
-		XMMATRIX view = XMLoadFloat4x4(&Camera::GetViewMatrix());
-		XMMATRIX proj = XMLoadFloat4x4(&Camera::GetProjMatrix());
-		XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-
-		XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
-		XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
-		XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
-
-		XMMATRIX ortho = XMLoadFloat4x4(&Camera::GetOrthoMatrix());
-
-		XMStoreFloat4x4(&cameraConstants.View, XMMatrixTranspose(view));
-		XMStoreFloat4x4(&cameraConstants.InvView, XMMatrixTranspose(invView));
-		XMStoreFloat4x4(&cameraConstants.Proj, XMMatrixTranspose(proj));
-		XMStoreFloat4x4(&cameraConstants.InvProj, XMMatrixTranspose(invProj));
-		XMStoreFloat4x4(&cameraConstants.ViewProj, XMMatrixTranspose(viewProj));
-		XMStoreFloat4x4(&cameraConstants.InvViewProj, XMMatrixTranspose(invViewProj));
-		XMStoreFloat4x4(&cameraConstants.Ortho, XMMatrixTranspose(ortho));
-
-		cameraConstants.RenderTargetSize = XMFLOAT2((float)GRAPHIC->GetAppDesc().clientWidth, (float)GRAPHIC->GetAppDesc().clientHeight);
-		cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / GRAPHIC->GetAppDesc().clientWidth, 1.0f / GRAPHIC->GetAppDesc().clientHeight);
-
-		cameraCB->CopyData(0, cameraConstants);
-	//}
+	cameraCB->CopyData(0, Camera::GetCurrentCamera()->GetCameraConstants());
 }
 
 void FrameResource::BuildInstanceBufferSRV()

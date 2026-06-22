@@ -46,6 +46,7 @@ struct CameraConstants
 	XMFLOAT4X4 Ortho = MathHelper::Identity4x4();
 	XMFLOAT2 RenderTargetSize = { 0.0f, 0.0f };
 	XMFLOAT2 InvRenderTargetSize = { 0.0f, 0.0f };
+	Bulb::Color CameraColorBlend = { 1.0f, 1.0f, 1.0f, 0.0f };
 };
 
 struct LightConstants

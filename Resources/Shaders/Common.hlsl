@@ -45,6 +45,7 @@ cbuffer cbCamera : register(b2) {
     float4x4 Ortho;
     float2 RenderTargetSize;
     float2 InvRenderTargetSize;
+    float4 CameraColorBlend;
 };
 
 cbuffer MeshInfo : register(b3) {

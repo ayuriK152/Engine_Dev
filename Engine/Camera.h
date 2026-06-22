@@ -34,6 +34,10 @@ public:
 	static XMFLOAT4X4& GetOrthoMatrix();
 
 	static int GetFramesDirty();
+
+	CameraConstants GetCameraConstants();
+
+	void SetColorBlend(Bulb::Color color, float blendTime = 0.0f);
 	
 	void SetAsMainCamera();
 	bool IsMainCamera() { return _isMainCamera; }
@@ -49,6 +53,11 @@ private:
 	bool _isMainCamera = false;
 	static shared_ptr<Camera> _currentCamera;
 	static UINT _cameraCount;
+
+	float _blendTime = 0.0f;
+	float _elapsedBlendTime = 0.0f;
+	Bulb::Color _colorBlend = { 1.0f, 1.0f, 1.0f, 0.0f };
+	Bulb::Color _colorDiff;
 
 	static shared_ptr<Camera> _editorCamera;
 };

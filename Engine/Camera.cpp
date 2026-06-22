@@ -41,6 +41,10 @@ void Camera::Init()
 
 void Camera::Update()
 {
+	if (_blendTime > _elapsedBlendTime) {
+		_elapsedBlendTime += TIME->DeltaTime();
+	}
+
 	if (GetGameObject()->GetFramesDirty() > 0) {
 		XMVECTOR eyePos = XMLoadFloat3(&GetTransform()->GetPosition());
 		XMVECTOR targetPos = eyePos + XMLoadFloat3(&GetTransform()->GetLook());
@@ -180,6 +184,48 @@ int Camera::GetFramesDirty()
 		return _editorCamera->GetGameObject()->GetFramesDirty();
 #endif
 	return _currentCamera->GetGameObject()->GetFramesDirty();
+}
+
+CameraConstants Camera::GetCameraConstants()
+{
+	CameraConstants cameraConstants;
+	XMMATRIX view = XMLoadFloat4x4(&_matView);
+	XMMATRIX proj = XMLoadFloat4x4(&_matProj);
+	XMMATRIX viewProj = XMLoadFloat4x4(&_matViewProj);
+
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+	XMMATRIX ortho = XMLoadFloat4x4(&_matOrtho);
+
+	XMStoreFloat4x4(&cameraConstants.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&cameraConstants.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4(&cameraConstants.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&cameraConstants.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&cameraConstants.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4(&cameraConstants.InvViewProj, XMMatrixTranspose(invViewProj));
+	XMStoreFloat4x4(&cameraConstants.Ortho, XMMatrixTranspose(ortho));
+
+	AppDesc appDesc = GRAPHIC->GetAppDesc();
+
+	cameraConstants.RenderTargetSize = XMFLOAT2((float)appDesc.clientWidth, (float)appDesc.clientHeight);
+	cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / appDesc.clientWidth, 1.0f / appDesc.clientHeight);
+
+	cameraConstants.CameraColorBlend = _colorBlend;
+
+	return cameraConstants;
+}
+
+void Camera::SetColorBlend(Bulb::Color color, float blendTime /*= 0.0f*/)
+{
+	_blendTime = blendTime;
+	if (_blendTime <= 0.0f)
+		_colorBlend = color;
+	else {
+		_colorDiff = color - _colorBlend;
+		_elapsedBlendTime = 0.0f;
+	}
 }
 
 void Camera::SetAsMainCamera()

@@ -140,6 +140,7 @@ void BulbApplication::Update()
 		RENDER->Update();
 		ANIMATION->Update();
 		ENGINESTAT->Update();
+		SOUND->Update();
 		UI->Update();
 #ifdef BULB_EDITOR
 		ENGINEGUI->Update();

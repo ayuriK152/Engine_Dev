@@ -14,12 +14,6 @@ void MainSceneScript::Init()
 	_states.push_back(new Common());
 	_states.push_back(new FadeOut());
 	SetState(MainSceneState::FadeIn);
-
-	//_fadePanel = UI->CreateUI<UIPanel>();
-	//_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-	//_fadePanel->SetPassthroughMouse(true);
-	//_fadePanel->GetTransform()->SetStretchSize(true);
-	//_fadePanel->GetTransform()->SetSize({ 1.0f, 1.0f });
 }
 
 void MainSceneScript::Update()

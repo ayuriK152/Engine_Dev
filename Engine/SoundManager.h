@@ -17,6 +17,8 @@ public:
 
 	void Init();
 
+	void Update(); 
+
 	void StopAllSounds();
 
 	void StopSoundGroup(const string& group);

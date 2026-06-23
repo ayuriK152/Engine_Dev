@@ -37,6 +37,11 @@ void SoundManager::Init()
 	_system->getMasterChannelGroup(&_masterGroup);
 }
 
+void SoundManager::Update()
+{
+	_system->update();
+}
+
 void SoundManager::StopAllSounds()
 {
 	_masterGroup->stop();

@@ -281,8 +281,10 @@ void RenderManager::Render()
 		}
 
 #ifdef BULB_EDITOR
-		_cmdLists[1]->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
-		DEBUG->Render(_cmdLists[1]);
+		if (DEBUG->IsPhysicsDebugRenderEnabled()) {
+			_cmdLists[1]->SetPipelineState(_PSOs[PSO_DEBUG_PHYSICS].Get());
+			DEBUG->Render(_cmdLists[1]);
+		}
 #endif
 
 		ThrowIfFailed(_cmdLists[1]->Close());

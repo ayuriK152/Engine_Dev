@@ -53,5 +53,6 @@ private:
 
 	vector<int> _instanceIndices;
 
-	array<future<void>, BUFFER_COUNT> _futures;
+	// (Buffer Count) - (Material) <- Material Update Needs only few resources.
+	array<future<void>, BUFFER_COUNT - 1> _futures;
 };

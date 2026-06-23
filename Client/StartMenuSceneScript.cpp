@@ -17,12 +17,6 @@ void StartMenuSceneScript::Init()
 	_states.push_back(new MenuFadeOut());
 	SetState(StartMenuSceneState::MenuFadeIn);
 
-	_fadePanel = UI->CreateUI<UIPanel>();
-	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-	_fadePanel->SetPassthroughMouse(true);
-	_fadePanel->GetTransform()->SetStretchSize(true);
-	_fadePanel->GetTransform()->SetSize({ 1.0f, 1.0f });
-
 	_startButton = UI->CreateUI<UIButton>();
 	_startButton->GetTransform()->SetDepth(3.0f);
 	_startButton->GetTransform()->SetPosition({ 0.0f, -100.0f, 0.0f });
@@ -84,7 +78,6 @@ void StartMenuSceneScript::OnDestroy()
 		delete _states[i];
 	}
 
-	_fadePanel.reset();
 	_startButton.reset();
 	_exitButton.reset();
 	_settingButton.reset();
@@ -112,7 +105,7 @@ ComponentSnapshot StartMenuSceneScript::CaptureSnapshot()
 void StartMenuSceneScript::RestoreSnapshot(ComponentSnapshot snapshot)
 {
 	SetState(StartMenuSceneState::MenuFadeIn);
-	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 1.0f });
 }
 
 void StartMenuSceneScript::OnMouseEnterButton()
@@ -139,6 +132,8 @@ void StartMenuSceneScript::OnClickedExitButton()
 
 void StartMenuSceneScript::MenuFadeIn::StateStart(StartMenuSceneScript* owner)
 {
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 1.0f });
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 0.0f }, owner->_fadeInTime);
 	_elapsedTime = 0.0f;
 }
 
@@ -146,11 +141,8 @@ void StartMenuSceneScript::MenuFadeIn::StateUpdate(StartMenuSceneScript* owner)
 {
 	_elapsedTime += TIME->DeltaTime();
 	if (_elapsedTime >= owner->_fadeInTime) {
-		owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+		_elapsedTime = 0.0f;
 		owner->SetState(StartMenuSceneState::Menu);
-	}
-	else {
-		owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f - _elapsedTime / owner->_fadeInTime });
 	}
 }
 
@@ -162,7 +154,7 @@ void StartMenuSceneScript::Menu::StateStart(StartMenuSceneScript* owner)
 void StartMenuSceneScript::MenuFadeOut::StateStart(StartMenuSceneScript* owner)
 {
 	_elapsedTime = 0.0f;
-	owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 1.0f });
 }
 
 void StartMenuSceneScript::MenuFadeOut::StateUpdate(StartMenuSceneScript* owner)

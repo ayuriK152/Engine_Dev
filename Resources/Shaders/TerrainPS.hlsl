@@ -20,7 +20,8 @@ float4 PS(VertexOut pin) : SV_TARGET {
         pin.Normal = mul(normalT, TBN);
     }
 
-    float4 lighting = BRDFLighting(mat, albedo, pin, eyeDir);
-    
-    return lighting * (1.0 - CameraColorBlend.a) + CameraColorBlend * CameraColorBlend.a;
+    float4 result = BRDFLighting(mat, albedo, pin, eyeDir);
+    result.rgb = result.rgb * (1.0 - CameraColorBlend.a) + CameraColorBlend.rgb * CameraColorBlend.a;
+
+    return result;
 }

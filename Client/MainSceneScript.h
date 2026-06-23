@@ -58,8 +58,6 @@ private:
 	MainSceneState _currentState = MainSceneState::Init;
 	bool _isStateChanged = false;
 
-	shared_ptr<UIPanel> _fadePanel;
-
 	float _fadeInTime = 1.0f;
 	float _fadeOutTime = 1.0f;
 };

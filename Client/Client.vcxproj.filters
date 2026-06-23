@@ -18,7 +18,9 @@
     <ClInclude Include="StartMenuSceneScript.h">
       <Filter>Scripts\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MainSceneScript.h" />
+    <ClInclude Include="MainSceneScript.h">
+      <Filter>Scripts\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -38,7 +40,9 @@
     <ClCompile Include="StartMenuSceneScript.cpp">
       <Filter>Scripts\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MainSceneScript.cpp" />
+    <ClCompile Include="MainSceneScript.cpp">
+      <Filter>Scripts\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">

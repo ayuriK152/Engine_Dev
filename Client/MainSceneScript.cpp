@@ -15,11 +15,11 @@ void MainSceneScript::Init()
 	_states.push_back(new FadeOut());
 	SetState(MainSceneState::FadeIn);
 
-	_fadePanel = UI->CreateUI<UIPanel>();
-	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-	_fadePanel->SetPassthroughMouse(true);
-	_fadePanel->GetTransform()->SetStretchSize(true);
-	_fadePanel->GetTransform()->SetSize({ 1.0f, 1.0f });
+	//_fadePanel = UI->CreateUI<UIPanel>();
+	//_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+	//_fadePanel->SetPassthroughMouse(true);
+	//_fadePanel->GetTransform()->SetStretchSize(true);
+	//_fadePanel->GetTransform()->SetSize({ 1.0f, 1.0f });
 }
 
 void MainSceneScript::Update()
@@ -34,7 +34,9 @@ void MainSceneScript::Update()
 
 void MainSceneScript::OnDestroy()
 {
-
+	for (int i = 0; i < _states.size(); ++i) {
+		delete _states[i];
+	}
 }
 
 void MainSceneScript::LoadXML(Bulb::XMLElement compElem)
@@ -59,42 +61,37 @@ ComponentSnapshot MainSceneScript::CaptureSnapshot()
 void MainSceneScript::RestoreSnapshot(ComponentSnapshot snapshot)
 {
 	SetState(MainSceneState::FadeIn);
-	_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+	//_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 }
 
 void MainSceneScript::FadeIn::StateStart(MainSceneScript* owner)
 {
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 1.0f });
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 0.0f }, owner->_fadeInTime);
 	_elapsedTime = 0.0f;
-	owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 }
 
 void MainSceneScript::FadeIn::StateUpdate(MainSceneScript* owner)
 {
 	_elapsedTime += TIME->DeltaTime();
 	if (_elapsedTime >= owner->_fadeInTime) {
-		owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+		_elapsedTime = 0.0f;
 		owner->SetState(MainSceneState::Common);
-	}
-	else {
-		owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f - _elapsedTime / owner->_fadeInTime });
 	}
 }
 
 void MainSceneScript::FadeOut::StateStart(MainSceneScript* owner)
 {
+	Camera::GetCurrentCamera()->SetColorBlend({ 0.0f, 0.0f, 0.0f, 1.0f }, owner->_fadeOutTime);
 	_elapsedTime = 0.0f;
-	owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 }
 
 void MainSceneScript::FadeOut::StateUpdate(MainSceneScript* owner)
 {
 	_elapsedTime += TIME->DeltaTime();
-	if (_elapsedTime >= owner->_fadeInTime) {
-		owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+	if (_elapsedTime >= owner->_fadeOutTime) {
+		_elapsedTime = 0.0f;
 		// 사망시 FadeOut, 다시 씬을 로드하는 부분 필요
 		// owner->SetState(MainSceneState::Common);
-	}
-	else {
-		owner->_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, _elapsedTime / owner->_fadeOutTime });
 	}
 }

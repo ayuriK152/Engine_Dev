@@ -65,7 +65,6 @@ private:
 	StartMenuSceneState _currentState = StartMenuSceneState::Init;
 	bool _isStateChanged = false;
 
-	shared_ptr<UIPanel> _fadePanel;
 	shared_ptr<UIButton> _startButton;
 	shared_ptr<UIButton> _settingButton;
 	shared_ptr<UIButton> _exitButton;

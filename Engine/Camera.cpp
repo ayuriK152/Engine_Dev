@@ -43,6 +43,12 @@ void Camera::Update()
 {
 	if (_blendTime > _elapsedBlendTime) {
 		_elapsedBlendTime += TIME->DeltaTime();
+
+		if (_elapsedBlendTime > _blendTime) {
+			_colorBlend = _colorTarget;
+			_blendTime = 0.0f;
+			_elapsedBlendTime = 0.0f;
+		}
 	}
 
 	if (GetGameObject()->GetFramesDirty() > 0) {
@@ -212,7 +218,12 @@ CameraConstants Camera::GetCameraConstants()
 	cameraConstants.RenderTargetSize = XMFLOAT2((float)appDesc.clientWidth, (float)appDesc.clientHeight);
 	cameraConstants.InvRenderTargetSize = XMFLOAT2(1.0f / appDesc.clientWidth, 1.0f / appDesc.clientHeight);
 
-	cameraConstants.CameraColorBlend = _colorBlend;
+	if (_blendTime > 0.0f) {
+		float blendRatio = _elapsedBlendTime / _blendTime;
+		cameraConstants.CameraColorBlend = _colorBlend * (1.0f - blendRatio) + _colorTarget * blendRatio;
+	}
+	else
+		cameraConstants.CameraColorBlend = _colorBlend;
 
 	return cameraConstants;
 }
@@ -223,7 +234,7 @@ void Camera::SetColorBlend(Bulb::Color color, float blendTime /*= 0.0f*/)
 	if (_blendTime <= 0.0f)
 		_colorBlend = color;
 	else {
-		_colorDiff = color - _colorBlend;
+		_colorTarget = color;
 		_elapsedBlendTime = 0.0f;
 	}
 }

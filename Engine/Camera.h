@@ -56,8 +56,8 @@ private:
 
 	float _blendTime = 0.0f;
 	float _elapsedBlendTime = 0.0f;
-	Bulb::Color _colorBlend = { 1.0f, 1.0f, 1.0f, 0.0f };
-	Bulb::Color _colorDiff;
+	Bulb::Color _colorBlend = { 0.0f, 0.0f, 0.0f, 0.0f };
+	Bulb::Color _colorTarget;
 
 	static shared_ptr<Camera> _editorCamera;
 };

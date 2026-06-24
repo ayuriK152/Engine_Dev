@@ -40,7 +40,7 @@ void MainSceneScript::LoadXML(Bulb::XMLElement compElem)
 
 void MainSceneScript::SaveXML(Bulb::XMLElement compElem)
 {
-
+	compElem.SetAttribute("ComponentType", "MainSceneScript");
 }
 
 ComponentSnapshot MainSceneScript::CaptureSnapshot()

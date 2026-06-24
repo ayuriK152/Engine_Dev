@@ -90,7 +90,7 @@ void StartMenuSceneScript::LoadXML(Bulb::XMLElement compElem)
 
 void StartMenuSceneScript::SaveXML(Bulb::XMLElement compElem)
 {
-
+	compElem.SetAttribute("ComponentType", "StartMenuSceneScript");
 }
 
 ComponentSnapshot StartMenuSceneScript::CaptureSnapshot()

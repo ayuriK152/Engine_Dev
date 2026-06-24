@@ -113,7 +113,7 @@ float CalcDirectionalLightShadow(Light light, VertexOut pixel) {
     shadowMapTex.x = shadowMapTex.x / 2.0 + 0.5;
     shadowMapTex.y = -shadowMapTex.y / 2.0 + 0.5;
 
-    float depthValue = ShadowMap.Sample(samAnisotropicClamp, shadowMapTex.xy).r;
+    float depthValue = ShadowMap.Sample(samLinearClamp, shadowMapTex.xy).r;
     float lightDepthValue = shadowMapTex.z;
     lightDepthValue = lightDepthValue - bias;
 

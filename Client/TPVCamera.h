@@ -21,7 +21,7 @@ public:
 	shared_ptr<Transform> onwerTransform;
 	shared_ptr<Transform> lockOnTargetTransform;
 
-	float distance = 5.0f;
+	float distance = 3.5f;
 	Bulb::Vector3 offset = { 0.0f, 0.0f, 0.0f };
 	float sensitivity = 1.0f;
 	Bulb::Vector2 pitchLimit = { 80.0f, -80.0f };

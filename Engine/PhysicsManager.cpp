@@ -213,3 +213,27 @@ vector<shared_ptr<GameObject>> PhysicsManager::OverlapSphere(Bulb::Vector3 posit
 
 	return results;
 }
+
+Bulb::RayCastResult PhysicsManager::RayCast(Bulb::Vector3 origin, Bulb::Vector3 direction, float distance /*= 1.0f*/)
+{
+	// ray with negative length => get lost
+	if (distance <= 0.0f) return Bulb::RayCastResult(false);
+
+	Bulb::Vector3 finalDirVec = direction.Normalize() * distance;
+
+	JPH::RRayCast ray;
+	ray.mOrigin = JPH::Vec3(origin.x, origin.y, origin.z);
+	ray.mDirection = JPH::Vec3(finalDirVec.x, finalDirVec.y, finalDirVec.z);
+
+	JPH::RayCastResult result;
+	bool isHit = _physicsSystem->GetNarrowPhaseQuery().CastRay(
+		ray,
+		result
+	);
+
+	if (isHit) {
+		return Bulb::RayCastResult(true, distance * result.mFraction, origin + finalDirVec * result.mFraction);
+	}
+	else
+		return Bulb::RayCastResult(false, distance, origin + finalDirVec);
+}

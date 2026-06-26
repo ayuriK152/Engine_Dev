@@ -50,6 +50,21 @@ private:
 	JPH::BroadPhaseLayer _objectToBP[Layers::NUM_LAYERS];
 };
 
+namespace Bulb {
+	struct BULB_API RayCastResult {
+		RayCastResult(bool HitFlag) : HitFlag(HitFlag) {}
+
+		RayCastResult(bool HitFlag, float Distance, Bulb::Vector3 HitPosition) :
+			HitFlag(HitFlag), 
+			Distance(Distance), 
+			HitPosition(HitPosition) {}
+
+		bool HitFlag = false;
+		float Distance;
+		Bulb::Vector3 HitPosition;
+	};
+}
+
 // ¿Ã∞« πª±Ó
 class ObjectVsBPFilterImpl : public JPH::ObjectVsBroadPhaseLayerFilter
 {
@@ -110,6 +125,9 @@ public:
 	void DeleteRigidbody(shared_ptr<Rigidbody> rbd);
 
 	vector<shared_ptr<GameObject>> OverlapSphere(Bulb::Vector3 position, float radius, string tag = "");
+
+	// Returns position of collision point.
+	Bulb::RayCastResult RayCast(Bulb::Vector3 origin, Bulb::Vector3 direction, float distance = 1.0f);
 
 private:
 	static PhysicsManager* s_instance;

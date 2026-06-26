@@ -75,10 +75,16 @@ void TPVCamera::Update()
 		_targetPivotPosition = onwerTransform->GetPosition() + offset;
 	}
 
+	// targetPivotPosition -> actual dest
+	// pivotPosition -> lerp dest
 	if ((_targetPivotPosition - _pivotPosition).Length() > 0.000001f) {
 		_pivotPosition = _pivotPosition + (_targetPivotPosition - _pivotPosition) * pivotMovementSharpness * TIME->DeltaTime();
 		_transform->SetPosition(_pivotPosition);
 	}
+
+	Bulb::RayCastResult rayCastResult = PHYSICS->RayCast(_pivotPosition, cameraTransform->GetPosition() - _pivotPosition, distance);
+	if (rayCastResult.HitFlag) cameraTransform->SetLocalPosition({ 0.0f, 0.0f, -rayCastResult.Distance });
+	else cameraTransform->SetLocalPosition({ 0.0f, 0.0f, -distance });
 
 	if (!isLockOn) {
 		float deltaX = INPUTM->GetMouseDelta().x * sensitivity * TIME->DeltaTime();

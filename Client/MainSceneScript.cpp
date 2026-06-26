@@ -55,7 +55,6 @@ ComponentSnapshot MainSceneScript::CaptureSnapshot()
 void MainSceneScript::RestoreSnapshot(ComponentSnapshot snapshot)
 {
 	SetState(MainSceneState::FadeIn);
-	//_fadePanel->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 }
 
 void MainSceneScript::FadeIn::StateStart(MainSceneScript* owner)

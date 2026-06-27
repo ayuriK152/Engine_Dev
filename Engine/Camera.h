@@ -33,6 +33,12 @@ public:
 
 	static XMFLOAT4X4& GetOrthoMatrix();
 
+	float GetNearZ() { return _nearZ; }
+	void SetNearZ(float value) { _nearZ = value; }
+
+	float GetFarZ() { return _farZ; }
+	void SetFarZ(float value) { _farZ = value; }
+
 	static int GetFramesDirty();
 
 	CameraConstants GetCameraConstants();
@@ -48,6 +54,8 @@ private:
 	XMFLOAT4X4 _matViewProj;
 	XMFLOAT4X4 _matOrtho;
 	float _aspectRatio;
+	float _nearZ = 1.0f;
+	float _farZ = 100.0f;
 	Bulb::Vector2 _viewportSize;
 
 	bool _isMainCamera = false;

@@ -62,11 +62,10 @@ void Camera::Update()
 
 		// Proj
 		if (_aspectRatio != GRAPHIC->GetAspectRatio())
-		{
 			_aspectRatio = GRAPHIC->GetAspectRatio();
-			XMMATRIX matProj = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, 1.0f, 1000.0f);
-			XMStoreFloat4x4(&_matProj, matProj);
-		}
+
+		XMMATRIX matProj = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, _aspectRatio, _nearZ, _farZ);
+		XMStoreFloat4x4(&_matProj, matProj);
 
 		// View * Proj
 		XMStoreFloat4x4(&_matViewProj, matView * XMLoadFloat4x4(&_matProj));
@@ -74,7 +73,7 @@ void Camera::Update()
 
 	D3D12_VIEWPORT viewport = GRAPHIC->GetViewport();
 	if (_viewportSize.x != viewport.Width || _viewportSize.y != viewport.Height) {
-		XMMATRIX O = XMMatrixOrthographicLH(viewport.Width, viewport.Height, 0.0f, 1000.0f);
+		XMMATRIX O = XMMatrixOrthographicLH(viewport.Width, viewport.Height, _nearZ, _farZ);
 		XMStoreFloat4x4(&_matOrtho, O);
 	}
 }
@@ -90,12 +89,17 @@ void Camera::OnDestroy()
 
 void Camera::LoadXML(Bulb::XMLElement compElem)
 {
+	_nearZ = compElem.FloatAttribute("NearZ", 1.0f);
+	_farZ = compElem.FloatAttribute("FarZ", 100.0f);
+
 	_isMainCamera = compElem.BoolAttribute("MainCamera");
 }
 
 void Camera::SaveXML(Bulb::XMLElement compElem)
 {
 	compElem.SetAttribute("ComponentType", "Camera");
+	compElem.SetAttribute("NearZ", _nearZ);
+	compElem.SetAttribute("FarZ", _farZ);
 	compElem.SetAttribute("MainCamera", _isMainCamera);
 }
 

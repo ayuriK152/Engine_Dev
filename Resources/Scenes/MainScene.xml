@@ -9,7 +9,7 @@
         </GameObject>
         <GameObject Name="GlobalLight" PSO="opaque_solid" Tag="Default">
             <Components>
-                <Component ComponentType="Transform" PosX="7.1971169" PosY="13.543361" PosZ="9.8153553" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.18301269" QuatY="-0.68301272" QuatZ="0.18301271" QuatW="0.68301266"/>
+                <Component ComponentType="Transform" PosX="29.296885" PosY="27.210896" PosZ="15.069971" ScaleX="1" ScaleY="1" ScaleZ="1" QuatX="0.18301269" QuatY="-0.68301272" QuatZ="0.18301271" QuatW="0.68301266"/>
                 <Component ComponentType="DirectionalLight" Intensity="2">
                     <Diffuse r="1" g="0.75" b="0.60000002" a="1"/>
                 </Component>
@@ -466,6 +466,71 @@
                 <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
                     <Collider Shape="Box" Height="0.5" Radius="0.5">
                         <Extent x="0.25" y="2.5" z="2"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="GameObject" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="-6.25" PosY="0.25" PosZ="26" ScaleX="0.5" ScaleY="5" ScaleZ="12" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="0.25" y="2.5" z="6"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="GameObject" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="0" PosY="-2.5" PosZ="28" ScaleX="12" ScaleY="0.5" ScaleZ="8" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="6" y="0.25" z="4"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="GameObject" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="6.25" PosY="0.25" PosZ="28" ScaleX="0.5" ScaleY="5" ScaleZ="8" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="0.25" y="2.5" z="4"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="GameObject" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="-4" PosY="-2.25" PosZ="34" ScaleX="4" ScaleY="10" ScaleZ="4" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="2" y="5" z="2"/>
+                        <Offset x="0" y="0" z="0"/>
+                        <RotOffset x="0" y="0" z="0"/>
+                    </Collider>
+                </Component>
+            </Components>
+        </GameObject>
+        <GameObject Name="GameObject" PSO="opaque_solid" Tag="Default">
+            <Components>
+                <Component ComponentType="Transform" PosX="4" PosY="-2.25" PosZ="34" ScaleX="4" ScaleY="10" ScaleZ="4" QuatX="0" QuatY="0" QuatZ="0" QuatW="1"/>
+                <Component ComponentType="MeshRenderer" Mesh="Mesh_BasicBox" Material="..\Resources\Materials\Prototype\PrototypeGrey1_1_1.xml"/>
+                <Component ComponentType="Rigidbody" Static="true" Gravity="false" Trigger="false" PhysicsActive="true">
+                    <Collider Shape="Box" Height="0.5" Radius="0.5">
+                        <Extent x="2" y="5" z="2"/>
                         <Offset x="0" y="0" z="0"/>
                         <RotOffset x="0" y="0" z="0"/>
                     </Collider>

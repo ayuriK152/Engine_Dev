@@ -674,6 +674,17 @@ void EngineGUIManager::ShowCamera(shared_ptr<Camera> camera)
 {
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		float nearZ = camera->GetNearZ();
+		float farZ = camera->GetFarZ();
+
+		ImGui::SeparatorText("Settings");
+		ImGui::InputFloat("##CameraNearZ", &nearZ);
+		if (ImGui::IsItemDeactivatedAfterEdit())
+			camera->SetNearZ(nearZ > 0.f ? nearZ : 0.1f);
+		ImGui::InputFloat("##CameraFarZ", &farZ);
+		if (ImGui::IsItemDeactivatedAfterEdit())
+			camera->SetFarZ(farZ > nearZ ? farZ : nearZ);
+
 		ImGui::SeparatorText("Main Camera");
 		if (ImGui::Button("Set Main Camera")) {
 			camera->SetAsMainCamera();

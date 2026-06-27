@@ -83,7 +83,7 @@ void TPVCamera::Update()
 	}
 
 	Bulb::RayCastResult rayCastResult = PHYSICS->RayCast(_pivotPosition, cameraTransform->GetPosition() - _pivotPosition, distance);
-	if (rayCastResult.HitFlag) cameraTransform->SetLocalPosition({ 0.0f, 0.0f, -rayCastResult.Distance });
+	if (rayCastResult.HitFlag) cameraTransform->SetLocalPosition({ 0.0f, 0.0f, -max(rayCastResult.Distance, 0.5f)});
 	else cameraTransform->SetLocalPosition({ 0.0f, 0.0f, -distance });
 
 	if (!isLockOn) {

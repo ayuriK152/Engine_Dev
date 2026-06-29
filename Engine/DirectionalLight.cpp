@@ -53,10 +53,10 @@ void DirectionalLight::Update()
 		// ㄴ굳이 갱신 해야하나? 잘 모르겠음
 		// auto shadowMapViewport = RENDER->GetShadowMap()->GetViewport();
 		XMMATRIX matProj = XMMatrixOrthographicLH(
-			50.0f,
-			50.0f,
-			-50.0f,
-			50.0f
+			500.0f,
+			500.0f,
+			-500.0f,
+			500.0f
 		);
 		XMStoreFloat4x4(&_matProj, XMMatrixTranspose(matProj));
 

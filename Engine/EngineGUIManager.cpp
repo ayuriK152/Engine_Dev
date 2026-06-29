@@ -203,6 +203,10 @@ void EngineGUIManager::ShowHierarchyView()
 	if (ImGui::Begin("Hierarchy View", nullptr, windowFlags))
 	{
 		if (ImGui::IsWindowHovered()) {
+			if (ImGui::IsMouseClicked(0)) {
+				if (_selectedObj != nullptr)
+					_selectedObj = nullptr;
+			}
 			if (ImGui::IsMouseClicked(1)) {
 				ImGui::OpenPopup("hierarchy_funcs");
 			}

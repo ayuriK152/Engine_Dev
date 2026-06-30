@@ -91,6 +91,17 @@ void SkinnedMeshRenderer::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("RootBoneName", _rootBoneName.c_str());
 }
 
+shared_ptr<Component> SkinnedMeshRenderer::Duplicate()
+{
+	shared_ptr<SkinnedMeshRenderer> comp = static_pointer_cast<SkinnedMeshRenderer>(ComponentFactory::Create("SkinnedMeshRenderer"));
+
+	comp->SetMesh(_mesh);
+	comp->SetMaterial(_material);
+	comp->SetRootBone(_rootBoneName);
+
+	return comp;
+}
+
 ComponentSnapshot SkinnedMeshRenderer::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

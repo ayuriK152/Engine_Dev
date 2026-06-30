@@ -214,7 +214,7 @@ void EngineGUIManager::ShowHierarchyView()
 
 		if (ImGui::BeginPopup("hierarchy_funcs")) {
 			if (ImGui::Selectable("Create Object")) {
-				GameObject::Instantiate();
+				_selectedObj = GameObject::Instantiate();
 			}
 			if (ImGui::BeginMenu("Instantiate Prefab")) {
 				vector<string> prefabDirectories = EDITOR->GetPrefabList();
@@ -438,7 +438,8 @@ void EngineGUIManager::HierarchyObjectRecursion(shared_ptr<Transform> transform)
 			_selectedObj = nullptr;
 		}
 		if (ImGui::Selectable("Duplicate ##Object")) {
-			// _selectedObj->Duplicate();
+			_selectedObj = _selectedObj->Duplicate();
+			_selectedObj->SetName(_selectedObj->GetName() + " (copy)");
 		}
 		if (ImGui::Selectable("Save as Prefab ##Object")) {
 			RESOURCE->SavePrefabXML(_selectedObj);

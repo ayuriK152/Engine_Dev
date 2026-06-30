@@ -148,6 +148,21 @@ void ParticleEmitter::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("ParticleTexture", _particleTexture.c_str());
 }
 
+shared_ptr<Component> ParticleEmitter::Duplicate()
+{
+	shared_ptr<ParticleEmitter> comp = static_pointer_cast<ParticleEmitter>(ComponentFactory::Create("ParticleEmitter"));
+
+	comp->SetPlay(_isPlaying);
+	comp->SetMountPerTick(_mountPerTick);
+	comp->SetParticleSetting(_emitterSetting);
+	comp->SetEmitterShape(_emitterShape);
+	comp->SetParticleOffset(_offset);
+	comp->SetConeDirection(_coneDirection);
+	comp->SetParticleTexture(_particleTexture);
+
+	return comp;
+}
+
 ComponentSnapshot ParticleEmitter::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

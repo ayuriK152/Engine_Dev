@@ -103,6 +103,16 @@ void DirectionalLight::SaveXML(Bulb::XMLElement compElem)
 	diffuseElem.SetAttribute("a", diffuse.a);
 }
 
+shared_ptr<Component> DirectionalLight::Duplicate()
+{
+	shared_ptr<DirectionalLight> comp = static_pointer_cast<DirectionalLight>(ComponentFactory::Create("DirectionalLight"));
+
+	comp->intensity = intensity;
+	comp->diffuse = diffuse;
+
+	return comp;
+}
+
 ComponentSnapshot DirectionalLight::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

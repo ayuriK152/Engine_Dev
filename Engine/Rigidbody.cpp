@@ -161,6 +161,24 @@ void Rigidbody::SaveXML(Bulb::XMLElement compElem)
 	rotOffsetElem.SetAttribute("z", _colliderRotationOffset.z);
 }
 
+shared_ptr<Component> Rigidbody::Duplicate()
+{
+	shared_ptr<Rigidbody> comp = static_pointer_cast<Rigidbody>(ComponentFactory::Create("Rigidbody"));
+
+	comp->SetStatic(_isStatic);
+	comp->SetGravity(_isGravity);
+	comp->SetColliderTrigger(_isTrigger);
+	comp->SetPhysicsActive(_isPhysicsActive);
+	comp->SetColliderShape(_colliderShape);
+	comp->SetColliderHalfHeight(_height);
+	comp->SetColliderRadius(_radius);
+	comp->SetColliderExtents(_extents);
+	comp->SetColliderOffset(_colliderOffset);
+	comp->SetColliderRotationOffset(_colliderRotationOffset);
+
+	return comp;
+}
+
 ComponentSnapshot Rigidbody::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

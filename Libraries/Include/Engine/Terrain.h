@@ -26,11 +26,15 @@ public:
 
 	void SaveXML(Bulb::XMLElement compElem) override;
 
+	shared_ptr<Component> Duplicate() override;
+
 	ComponentSnapshot CaptureSnapshot() override;
 
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 	void SetTerrainTexture(shared_ptr<Texture> texture);
+
+	void SetHeightFactor(float value);
 
 	void SetHeightMap(shared_ptr<Texture> texture);
 

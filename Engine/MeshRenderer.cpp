@@ -76,6 +76,16 @@ void MeshRenderer::SaveXML(Bulb::XMLElement compElem)
 	if (_material != nullptr) compElem.SetAttribute("Material", _material->GetPath().c_str());
 }
 
+shared_ptr<Component> MeshRenderer::Duplicate()
+{
+	shared_ptr<MeshRenderer> comp = static_pointer_cast<MeshRenderer>(ComponentFactory::Create("MeshRenderer"));
+
+	comp->SetMesh(_mesh);
+	comp->SetMaterial(_material);
+
+	return comp;
+}
+
 ComponentSnapshot MeshRenderer::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

@@ -13,6 +13,8 @@ public:
 	void LoadXML(Bulb::XMLElement compElem) override;
 	void SaveXML(Bulb::XMLElement compElem) override;
 
+	shared_ptr<Component> Duplicate() override;
+
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
@@ -155,7 +157,6 @@ public:
 
 	const vector<shared_ptr<Transform>>& GetChilds() { return _childs; }
 	shared_ptr<Transform> GetChild(const string& name);
-	void AddChild(shared_ptr<Transform> child);
 	bool RemoveChild(shared_ptr<Transform> child);
 
 	bool HasParent() { return _parent != nullptr; }
@@ -166,6 +167,7 @@ public:
 	UINT GetDepthLevel() { return _depthLevel; }
 
 protected:
+	void AddChild(shared_ptr<Transform> child);
 	void UpdateDepthLevel();
 
 private:

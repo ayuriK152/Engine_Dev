@@ -153,6 +153,18 @@ void Animator::SaveXML(Bulb::XMLElement compElem)
 	}
 }
 
+shared_ptr<Component> Animator::Duplicate()
+{
+	shared_ptr<Animator> comp = static_pointer_cast<Animator>(ComponentFactory::Create("Animator"));
+
+	comp->SetBone(_boneFileName);
+	for (auto& anim : _animations) {
+		comp->AddAnimation(anim.second);
+	}
+
+	return comp;
+}
+
 ComponentSnapshot Animator::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

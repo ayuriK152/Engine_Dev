@@ -96,6 +96,13 @@ void CharacterController::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("ComponentType", "CharacterController");
 }
 
+shared_ptr<Component> CharacterController::Duplicate()
+{
+	shared_ptr<CharacterController> comp = static_pointer_cast<CharacterController>(ComponentFactory::Create("CharacterController"));
+
+	return comp;
+}
+
 ComponentSnapshot CharacterController::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

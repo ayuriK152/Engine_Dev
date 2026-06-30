@@ -175,6 +175,17 @@ void Terrain::SaveXML(Bulb::XMLElement compElem)
 	height.SetAttribute("Path", _heightMap->GetPath().c_str());
 }
 
+std::shared_ptr<Component> Terrain::Duplicate()
+{
+	shared_ptr<Terrain> comp = static_pointer_cast<Terrain>(ComponentFactory::Create("Terrain"));
+
+	comp->SetHeightFactor(_heightFactor);
+	comp->SetTerrainTexture(_terrainDiffuse);
+	comp->SetHeightMap(_heightMap);
+
+	return comp;
+}
+
 ComponentSnapshot Terrain::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;
@@ -196,6 +207,12 @@ void Terrain::SetTerrainTexture(shared_ptr<Texture> texture)
 		_terrainDiffuse = texture;
 		_terrainTextureIndex = texture->GetSRVHeapIndex();
 	}
+}
+
+void Terrain::SetHeightFactor(float value)
+{
+	// 일단 값만 대입하도록 구현, 실시간 갱신하도록 기능 구현해야함.
+	_heightFactor = value;
 }
 
 void Terrain::SetHeightMap(shared_ptr<Texture> texture)

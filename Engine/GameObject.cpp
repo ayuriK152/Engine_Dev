@@ -294,7 +294,9 @@ void GameObject::SetPSOName(const string& name)
 
 void GameObject::SetFramesDirty()
 {
-	_numFramesDirty = RENDER->GetNumFrameResources();
+	// 컴포넌트 인스턴스 생성 후 아직 오브젝트 인스턴스에 추가하기 전 호출
+	if (this != nullptr)
+		_numFramesDirty = RENDER->GetNumFrameResources();
 }
 
 void GameObject::SetActive(bool flag)
@@ -319,6 +321,30 @@ void GameObject::SetPrefabPath(string path)
 {
 	_prefabPath = path;
 	_isPrefab = true;
+}
+
+shared_ptr<GameObject> GameObject::Duplicate()
+{
+	shared_ptr<GameObject> copy = GameObject::Instantiate();
+
+	// 1. 컴포넌트 카피
+	for (int i = 0; i < COUNT_COMPONENTTYPE; ++i) {
+		if (_components[i].size() == 0) continue;
+
+		for (int j = 0; j < _components[i].size(); ++j) {
+			shared_ptr<Component> compCopy = _components[i][j]->Duplicate();
+			copy->AddComponent(compCopy);
+		}
+	}
+
+	// 2. 자식 오브젝트 재귀 카피
+	auto childs = GetTransform()->GetChilds();
+	for (auto& child : childs) {
+		shared_ptr<GameObject> childCopy = child->GetGameObject()->Duplicate();
+		childCopy->GetTransform()->SetParent(copy->GetTransform());
+	}
+
+	return copy;
 }
 
 void GameObject::Delete(float time)

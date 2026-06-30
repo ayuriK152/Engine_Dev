@@ -88,6 +88,8 @@ public:
 	string GetPrefabPath() { return _prefabPath; }
 	void SetPrefabPath(string path);
 
+	shared_ptr<GameObject> Duplicate();
+
 	void Delete(float time = 0);
 
 	GameObjectSnapshot CaptureSnapshot();

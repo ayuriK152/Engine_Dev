@@ -53,6 +53,8 @@ public:
 	void LoadXML(Bulb::XMLElement compElem) override;
 	void SaveXML(Bulb::XMLElement compElem) override;
 
+	shared_ptr<Component> Duplicate() override;
+
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
@@ -67,6 +69,8 @@ public:
 
 	EmitterShape GetEmitterShape() { return _emitterShape; }
 	void SetEmitterShape(EmitterShape shape) { _emitterShape = shape; }
+
+	void SetMountPerTick(UINT value) { _mountPerTick = value; }
 
 	Bulb::Vector3 GetConeDirection() { return _coneDirection; }
 	void SetConeDirection(Bulb::Vector3& dir) { _coneDirection = dir; }

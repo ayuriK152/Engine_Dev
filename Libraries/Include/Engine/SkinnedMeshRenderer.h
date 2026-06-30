@@ -18,11 +18,14 @@ public:
 	void LoadXML(Bulb::XMLElement compElem) override;
 	void SaveXML(Bulb::XMLElement compElem) override;
 
+	shared_ptr<Component> Duplicate() override;
+
 	ComponentSnapshot CaptureSnapshot() override;
 	void RestoreSnapshot(ComponentSnapshot snapshot) override;
 
 public:
 	void SetRootBone(const shared_ptr<Transform> rootBone);
+	void SetRootBone(const string rootBoneName) { _rootBoneName = rootBoneName; }
 	shared_ptr<Transform> GetRootBone() const { return _rootBone; }
 
 private:

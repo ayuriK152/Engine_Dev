@@ -77,6 +77,17 @@ void PointLight::SaveXML(Bulb::XMLElement compElem)
 	diffuseElem.SetAttribute("a", diffuse.a);
 }
 
+shared_ptr<Component> PointLight::Duplicate()
+{
+	shared_ptr<PointLight> comp = static_pointer_cast<PointLight>(ComponentFactory::Create("PointLight"));
+
+	comp->intensity = intensity;
+	comp->diffuse = diffuse;
+	comp->SetFallOffValues(_fallOffStart, _fallOffEnd);
+
+	return comp;
+}
+
 ComponentSnapshot PointLight::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

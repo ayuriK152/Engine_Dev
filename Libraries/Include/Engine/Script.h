@@ -12,6 +12,8 @@ public:
 	virtual void LoadXML(Bulb::XMLElement compElem) override = 0;
 	virtual void SaveXML(Bulb::XMLElement compElem) override = 0;
 
+	shared_ptr<Component> Duplicate() override { return nullptr; }
+
 	virtual ComponentSnapshot CaptureSnapshot() override { 
 		ComponentSnapshot snapshot;
 

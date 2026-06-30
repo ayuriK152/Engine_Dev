@@ -103,6 +103,17 @@ void Camera::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("MainCamera", _isMainCamera);
 }
 
+shared_ptr<Component> Camera::Duplicate()
+{
+	shared_ptr<Camera> comp = static_pointer_cast<Camera>(ComponentFactory::Create("Camera"));
+
+	comp->SetNearZ(_nearZ);
+	comp->SetFarZ(_farZ);
+	// comp->SetAsMainCamera();
+
+	return comp;
+}
+
 ComponentSnapshot Camera::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;

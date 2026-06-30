@@ -27,6 +27,8 @@ public:
 	virtual void LoadXML(Bulb::XMLElement compElem) = 0;
 	virtual void SaveXML(Bulb::XMLElement compElem) = 0;
 
+	virtual shared_ptr<Component> Duplicate() = 0;
+
 	virtual ComponentSnapshot CaptureSnapshot() = 0;
 	virtual void RestoreSnapshot(ComponentSnapshot snapshot) = 0;
 

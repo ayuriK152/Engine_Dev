@@ -83,6 +83,19 @@ void Transform::SaveXML(Bulb::XMLElement compElem)
 	compElem.SetAttribute("QuatW", quat.w);
 }
 
+shared_ptr<Component> Transform::Duplicate()
+{
+	shared_ptr<Transform> comp = static_pointer_cast<Transform>(ComponentFactory::Create("Transform"));
+
+	comp->SetPosition(_position);
+	comp->SetScale(_scale);
+	comp->SetQuaternion(_quaternion);
+
+	comp->ForceUpdateTransform();
+
+	return comp;
+}
+
 ComponentSnapshot Transform::CaptureSnapshot()
 {
 	ComponentSnapshot snapshot;
